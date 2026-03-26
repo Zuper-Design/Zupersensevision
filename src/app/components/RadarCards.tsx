@@ -2,7 +2,19 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar, ReferenceLine, Area, AreaChart, Cell,
 } from 'recharts';
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import { Pencil } from 'lucide-react';
+import { useRadarTheme } from './RadarThemeContext';
+
+export interface RenameProps {
+  customTitle?: string;
+  isRenaming?: boolean;
+  renameValue?: string;
+  onRenameStart?: () => void;
+  onRenameChange?: (v: string) => void;
+  onRenameSubmit?: () => void;
+  onRenameCancel?: () => void;
+}
 
 /* ─── Shared ─── */
 
@@ -10,43 +22,97 @@ const CustomDot = ({ cx, cy, stroke }: any) => (
   <circle cx={cx} cy={cy} r={4} fill="white" stroke={stroke} strokeWidth={2} />
 );
 
-const StatRow = ({ stats }: { stats: { label: string; value: string; color: string }[] }) => (
-  <div className="flex items-center gap-6 mt-4 pt-3 border-t border-[#F0F0F0]">
-    {stats.map((s) => (
-      <div key={s.label}>
-        <p className="text-[11px] text-[#9CA3AF]">{s.label}</p>
-        <p className="text-[16px]" style={{ fontWeight: 600, color: s.color }}>{s.value}</p>
-      </div>
-    ))}
-  </div>
-);
-
-const CardFooter = ({ footer }: { footer?: React.ReactNode }) =>
-  footer ? <div className="mt-4 pt-3 border-t border-[#F0F0F0]">{footer}</div> : null;
-
 const CardShell = ({
   title,
   subtitle,
   children,
   stats,
   footer,
+  renameProps,
 }: {
   title: string;
   subtitle: string;
   children: React.ReactNode;
   stats: { label: string; value: string; color: string }[];
   footer?: React.ReactNode;
-}) => (
-  <div className="w-full bg-white rounded-xl border border-[#E6E8EC] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] relative group/card">
-    <div className="mb-4">
-      <h3 className="text-[15px] text-[#1C1E21]" style={{ fontWeight: 700 }}>{title}</h3>
-      <p className="text-[13px] text-[#6B7280] mt-0.5">{subtitle}</p>
+  renameProps?: RenameProps;
+}) => {
+  const t = useRadarTheme();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (renameProps?.isRenaming && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [renameProps?.isRenaming]);
+
+  const displayTitle = renameProps?.customTitle ?? title;
+
+  return (
+    <div
+      className="w-full relative group/card"
+      style={{
+        backgroundColor: t.cardBg,
+        border: t.cardBorder,
+        borderRadius: t.cardRadius,
+        boxShadow: t.cardShadow,
+        fontFamily: t.fontFamily,
+        padding: '20px',
+      }}
+    >
+      <div className="mb-4">
+        <div className="flex items-center gap-1.5 group/rename">
+          {renameProps?.isRenaming ? (
+            <input
+              ref={inputRef}
+              value={renameProps.renameValue ?? ''}
+              onChange={e => renameProps.onRenameChange?.(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') renameProps.onRenameSubmit?.();
+                if (e.key === 'Escape') renameProps.onRenameCancel?.();
+              }}
+              onBlur={() => renameProps.onRenameSubmit?.()}
+              style={{
+                fontSize: 15, fontWeight: 700, color: t.titleColor,
+                background: '#FFFFFF',
+                border: `1.5px solid ${t.headerBorder || '#E6E8EC'}`,
+                borderRadius: 6, outline: 'none',
+                padding: '2px 8px', margin: 0,
+                width: '100%', maxWidth: 400, fontFamily: t.fontFamily,
+                boxShadow: `0 0 0 3px ${t.accentColor}22`,
+              }}
+            />
+          ) : (
+            <>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: t.titleColor, margin: 0 }}>{displayTitle}</h3>
+              {renameProps?.onRenameStart && (
+                <button
+                  onClick={e => { e.stopPropagation(); renameProps.onRenameStart?.(); }}
+                  className="opacity-0 group-hover/rename:opacity-100 transition-opacity duration-150 flex-shrink-0 p-0.5 rounded"
+                  style={{ lineHeight: 0 }}
+                >
+                  <Pencil className="w-3 h-3" style={{ color: t.subtitleColor }} />
+                </button>
+              )}
+            </>
+          )}
+        </div>
+        <p style={{ fontSize: 13, color: t.subtitleColor, marginTop: 2, marginBottom: 0 }}>{subtitle}</p>
+      </div>
+      {children}
+      <div style={{ display: 'flex', gap: 24, marginTop: 16, paddingTop: 12, borderTop: `1px solid ${t.dividerColor}` }}>
+        {stats.map((s) => (
+          <div key={s.label}>
+            <p style={{ fontSize: 11, color: t.subtitleColor, margin: 0 }}>{s.label}</p>
+            <p style={{ fontSize: 16, fontWeight: 600, color: t.name === 'night' ? t.valueColor : s.color, margin: 0 }}>{s.value}</p>
+          </div>
+        ))}
+      </div>
+      {footer && <div style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${t.dividerColor}` }}>{footer}</div>}
     </div>
-    {children}
-    <StatRow stats={stats} />
-    <CardFooter footer={footer} />
-  </div>
-);
+  );
+};
 
 const SharedTooltip = ({ active, payload, label, unit }: any) => {
   if (active && payload && payload.length) {
@@ -76,11 +142,12 @@ const revenueMTDData = [
   { day: '28', actual: 284500, target: 260000 },
 ];
 
-export function RevenueMTDCard({ footer }: { footer?: React.ReactNode }) {
+export function RevenueMTDCard({ footer, renameProps }: { footer?: React.ReactNode; renameProps?: RenameProps }) {
   return (
     <CardShell
       title="Revenue MTD vs Target"
       subtitle="Daily cumulative revenue against monthly target pace"
+      renameProps={renameProps}
       stats={[
         { label: 'Revenue MTD', value: '$284,500', color: '#10B981' },
         { label: 'Monthly Target', value: '$260,000', color: '#1C1E21' },
@@ -157,11 +224,12 @@ const overdueData = [
   { bucket: '60+ days', amount: 12200, fill: '#DC2626' },
 ];
 
-export function OverdueInvoicesCard({ footer }: { footer?: React.ReactNode }) {
+export function OverdueInvoicesCard({ footer, renameProps }: { footer?: React.ReactNode; renameProps?: RenameProps }) {
   return (
     <CardShell
       title="Overdue Invoices"
       subtitle="Invoice aging breakdown by overdue period"
+      renameProps={renameProps}
       stats={[
         { label: 'Total Overdue', value: '$38,200', color: '#DC2626' },
         { label: 'Invoices', value: '14', color: '#1C1E21' },
@@ -232,11 +300,12 @@ const quoteConvData = [
   { month: 'Feb', rate: 61, industry: 55 },
 ];
 
-export function QuoteConversionCard({ footer }: { footer?: React.ReactNode }) {
+export function QuoteConversionCard({ footer, renameProps }: { footer?: React.ReactNode; renameProps?: RenameProps }) {
   return (
     <CardShell
       title="Quote-to-Invoice Conversion"
       subtitle="Monthly conversion rate trend over the last 8 months"
+      renameProps={renameProps}
       stats={[
         { label: 'Current Rate', value: '61%', color: '#10B981' },
         { label: 'Industry Avg', value: '55%', color: '#10B981' },
@@ -323,11 +392,12 @@ const CrewTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function CrewUtilisationCard({ footer }: { footer?: React.ReactNode }) {
+export function CrewUtilisationCard({ footer, renameProps }: { footer?: React.ReactNode; renameProps?: RenameProps }) {
   return (
     <CardShell
       title="Crew Utilisation"
       subtitle="Weekly utilisation rate by crew — target 80%"
+      renameProps={renameProps}
       stats={[
         { label: 'Overall Utilisation', value: '74%', color: '#F59E0B' },
         { label: 'Above Target', value: '2 crews', color: '#10B981' },
@@ -405,11 +475,12 @@ const jobsWeekData = [
   { day: 'Sun', completed: 38, atRisk: 7 },
 ];
 
-export function JobsCompletedCard({ footer }: { footer?: React.ReactNode }) {
+export function JobsCompletedCard({ footer, renameProps }: { footer?: React.ReactNode; renameProps?: RenameProps }) {
   return (
     <CardShell
       title="Jobs — Completed vs At Risk"
       subtitle="Weekly job completion and active risk flags — current week"
+      renameProps={renameProps}
       stats={[
         { label: 'Completed This Week', value: '134', color: '#10B981' },
         { label: 'At Risk Right Now', value: '7', color: '#F59E0B' },

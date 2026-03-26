@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { X, FlaskConical } from 'lucide-react';
+import { RadarChatPanel } from './components/RadarChatPanel';
+import { motion, AnimatePresence } from 'motion/react';
 import { AppNavigation } from './components/AppNavigation';
 import { ChatInterface } from './components/ChatInterface';
 import { VoiceListeningIndicator } from './components/VoiceListeningIndicator';
@@ -30,6 +33,8 @@ function AppContent() {
   const { activePage, setActivePage } = usePublishedPages();
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState('RG');
+  const [showBetaBanner, setShowBetaBanner] = useState(true);
+  const [askSenseOpen, setAskSenseOpen] = useState(false);
 
   const handleUserChange = (user: string) => {
     setCurrentUser(user);
@@ -128,6 +133,8 @@ function AppContent() {
         onViewChange={setActiveView}
         currentUser={currentUser}
         onUserChange={handleUserChange}
+        onAskSense={() => setAskSenseOpen((prev) => !prev)}
+        askSenseOpen={askSenseOpen}
       />
 
       {/* Main Content Area */}
@@ -147,40 +154,88 @@ function AppContent() {
           }}
         />
 
-        {/* Main Content Area */}
-        {activeSubPage === 'Jobs' ? (
-          <JobListingPage onBack={() => setActiveSubPage(null)} />
-        ) : activePage ? (
-          <div className="flex-1 overflow-hidden">
-            <InvoicePageBuilderCard
-              key={activePage.id}
-              onClose={() => setActivePage(null)}
-              pageName={activePage.name}
-              workspace={activePage.workspace}
-              isPublishedView={true}
-            />
+        {/* Content + Ask Sense Panel */}
+        <div className="flex-1 flex overflow-hidden pb-2 pr-2 gap-2">
+          {/* Main content */}
+          <div className="flex-1 flex overflow-hidden">
+            {activeSubPage === 'Jobs' ? (
+              <JobListingPage onBack={() => setActiveSubPage(null)} />
+            ) : activePage ? (
+              <div className="flex-1 overflow-hidden">
+                <InvoicePageBuilderCard
+                  key={activePage.id}
+                  onClose={() => setActivePage(null)}
+                  pageName={activePage.name}
+                  workspace={activePage.workspace}
+                  isPublishedView={true}
+                />
+              </div>
+            ) : (
+              <>
+                {activeView === 'chat' ? (
+                  <div className="flex-1 flex flex-col bg-white rounded-xl overflow-hidden border border-[#E6E8EC]">
+                    {showBetaBanner && (
+                      <div className="flex-shrink-0 relative flex items-center justify-center px-10 py-2" style={{ background: '#1C1E21' }}>
+                        <div className="flex items-center gap-2">
+                          <FlaskConical className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} />
+                          <p className="text-[12px]" style={{ color: '#E5E7EB', fontFamily: 'DM Sans, system-ui, sans-serif', whiteSpace: 'nowrap' }}>
+                            <span style={{ fontWeight: 600, color: '#FFFFFF' }}>Sense is in Beta</span>
+                            <span style={{ color: '#9CA3AF' }}> — you're one of the first. Expect changes; your feedback shapes what's next.</span>
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => setShowBetaBanner(false)}
+                          className="absolute right-3 p-1 rounded transition-colors duration-150 hover:bg-white/10"
+                          aria-label="Dismiss"
+                        >
+                          <X className="w-3.5 h-3.5" style={{ color: '#6B7280' }} />
+                        </button>
+                      </div>
+                    )}
+                    <ChatInterface
+                      voiceMode={voiceMode}
+                      onToggleVoiceMode={() => setVoiceMode((prev) => !prev)}
+                      activeView={activeView}
+                      onViewChange={setActiveView}
+                      pendingConversation={pendingConversation}
+                      onConversationConsumed={handleConversationConsumed}
+                      onOpenFeedback={() => setIsFeedbackModalOpen(true)}
+                      pendingRadarCard={pendingRadarCard}
+                      onRadarCardConsumed={handleRadarCardConsumed}
+                    />
+                  </div>
+                ) : activeView === 'radar' ? (
+                  <RadarWorkspace
+                    isOpen={true}
+                    onClose={() => setActiveView('chat')}
+                    activeView={activeView}
+                    onViewChange={setActiveView}
+                    onOpenCard={handleOpenRadarCard}
+                    showBetaBanner={showBetaBanner}
+                    onCloseBetaBanner={() => setShowBetaBanner(false)}
+                  />
+                ) : null}
+              </>
+            )}
           </div>
-        ) : activeView === 'chat' ? (
-          <ChatInterface
-            voiceMode={voiceMode}
-            onToggleVoiceMode={() => setVoiceMode((prev) => !prev)}
-            activeView={activeView}
-            onViewChange={setActiveView}
-            pendingConversation={pendingConversation}
-            onConversationConsumed={handleConversationConsumed}
-            onOpenFeedback={() => setIsFeedbackModalOpen(true)}
-            pendingRadarCard={pendingRadarCard}
-            onRadarCardConsumed={handleRadarCardConsumed}
-          />
-        ) : activeView === 'radar' ? (
-          <RadarWorkspace
-            isOpen={true}
-            onClose={() => setActiveView('chat')}
-            activeView={activeView}
-            onViewChange={setActiveView}
-            onOpenCard={handleOpenRadarCard}
-          />
-        ) : null}
+
+          {/* Ask Sense panel — flex sibling, pushes main content */}
+          <AnimatePresence>
+            {askSenseOpen && (
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: 420, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+                className="flex-shrink-0 overflow-hidden"
+              >
+                <div className="h-full w-[420px] bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #E6E8EC', boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}>
+                  <RadarChatPanel title="Ask Sense" onClose={() => setAskSenseOpen(false)} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Persistent Voice Listening Indicator Pill */}

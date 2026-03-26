@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import {
   Briefcase, CalendarDays, UserCircle, Clock, Package, Wallet, BarChart3, MoreHorizontal,
   FolderOpen, Hammer, GitPullRequest, Camera, MessageCircle,
@@ -137,7 +138,7 @@ function NavFlyout({
     }
   }, [parentRef]);
 
-  return (
+  return ReactDOM.createPortal(
     <div
       ref={flyoutRef}
       className="fixed left-[76px] bg-white rounded-xl shadow-lg border border-[#E6E8EC] py-2 min-w-[200px] z-50"
@@ -172,7 +173,8 @@ function NavFlyout({
           </div>
         );
       })}
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -267,7 +269,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
   };
 
   return (
-    <div className="w-[72px] h-full flex flex-col items-center py-6 bg-[#F8F2EC] relative z-20">
+    <div className="w-[72px] h-full flex flex-col items-center py-4 bg-[#F8F2EC] relative z-20">
       {/* Navigation Items */}
       <nav className="flex-1 flex flex-col gap-1 w-full px-2 overflow-y-auto">
         {navigationItems.map((item, index) => {

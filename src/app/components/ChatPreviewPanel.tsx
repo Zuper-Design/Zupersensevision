@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { X, Maximize2, Minimize2, Send, Mic, ExternalLink, ChevronDown, MessageSquare } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { X, Maximize2, Send, Mic, ExternalLink, MessageSquare } from 'lucide-react';
 import { SavedCard } from './RadarContext';
 import { SenseLogo } from './SenseLogo';
 
@@ -85,31 +84,16 @@ function getCardConversation(card: SavedCard): { question: string; answer: strin
 }
 
 export function ChatPreviewPanel({ card, onClose, onExpandFullScreen }: ChatPreviewPanelProps) {
-  const [isMinimized, setIsMinimized] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const conversation = getCardConversation(card);
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ y: 40, opacity: 0, scale: 0.95 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: 40, opacity: 0, scale: 0.95 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-        className="fixed bottom-0 right-6 z-50 flex flex-col bg-white rounded-t-xl border border-[#E6E8EC] border-b-0 shadow-[0_-4px_30px_rgba(0,0,0,0.12)]"
-        style={{
-          width: '500px',
-          maxHeight: isMinimized ? '48px' : '640px',
-          fontFamily: 'DM Sans, system-ui, sans-serif',
-          transition: 'max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Header Bar — matches email editor style */}
-        <div
-          className="flex items-center justify-between px-4 py-2.5 bg-white border-b border-[#E6E8EC] rounded-t-xl cursor-pointer flex-shrink-0"
-          onClick={() => setIsMinimized(!isMinimized)}
-        >
+    <div
+      className="h-full flex flex-col bg-white"
+      style={{ fontFamily: 'DM Sans, system-ui, sans-serif' }}
+    >
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-[#E6E8EC] flex-shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-6 h-6 rounded-full bg-[#FFF4ED] flex items-center justify-center flex-shrink-0">
               <MessageSquare className="w-3.5 h-3.5 text-[#FD5000]" />
@@ -118,48 +102,27 @@ export function ChatPreviewPanel({ card, onClose, onExpandFullScreen }: ChatPrev
               {card.title}
             </span>
           </div>
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="flex items-center gap-0.5 flex-shrink-0">
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsMinimized(!isMinimized);
-              }}
+              onClick={() => onExpandFullScreen(card)}
               className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors"
-              title={isMinimized ? 'Expand' : 'Minimize'}
+              title="Open full screen"
             >
-              {isMinimized ? (
-                <ChevronDown className="w-4 h-4 text-[#6B7280] rotate-180" />
-              ) : (
-                <Minimize2 className="w-3.5 h-3.5 text-[#6B7280]" />
-              )}
+              <Maximize2 className="w-3.5 h-3.5 text-[#9CA3AF]" />
             </button>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onExpandFullScreen(card);
-              }}
-              className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors"
-              title="View full screen"
-            >
-              <Maximize2 className="w-3.5 h-3.5 text-[#6B7280]" />
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
+              onClick={onClose}
               className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors"
               title="Close"
             >
-              <X className="w-4 h-4 text-[#6B7280]" />
+              <X className="w-4 h-4 text-[#9CA3AF]" />
             </button>
           </div>
         </div>
 
         {/* Content Area */}
-        {!isMinimized && (
-          <>
-            <div className="flex-1 overflow-y-auto scrollbar-thin px-5 py-5 space-y-5 bg-white" style={{ maxHeight: '500px' }}>
+        <>
+          <div className="flex-1 overflow-y-auto scrollbar-thin px-5 py-5 space-y-5 bg-white">
               {/* Source badge */}
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FFF4ED] text-[#FD5000]" style={{ fontWeight: 600 }}>
@@ -235,9 +198,7 @@ export function ChatPreviewPanel({ card, onClose, onExpandFullScreen }: ChatPrev
                 <Send className={`w-4 h-4 ${inputValue.trim() ? 'text-white' : 'text-[#9CA3AF]'}`} />
               </button>
             </div>
-          </>
-        )}
-      </motion.div>
-    </AnimatePresence>
+        </>
+    </div>
   );
 }

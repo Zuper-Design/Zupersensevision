@@ -1,4 +1,5 @@
 import { X, ChevronDown, HelpCircle, Search, Bell, Settings, Flame } from 'lucide-react';
+import { SenseLogo } from './SenseLogo';
 import { useState, useRef, useEffect } from 'react';
 
 interface Tab {
@@ -13,9 +14,11 @@ interface TopNavigationProps {
   onViewChange: (view: 'chat' | 'radar') => void;
   currentUser?: string;
   onUserChange?: (user: string) => void;
+  onAskSense?: () => void;
+  askSenseOpen?: boolean;
 }
 
-export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange }: TopNavigationProps) {
+export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange, onAskSense, askSenseOpen = false }: TopNavigationProps) {
   const [tabs, setTabs] = useState<Tab[]>([
     { id: '1', type: 'job', label: 'Job -#JN-245...', isActive: true },
     { id: '2', type: 'invoice', label: 'Invoice- #7712...', isActive: false },
@@ -34,6 +37,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
   };
 
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
+  const [askSenseHovered, setAskSenseHovered] = useState(false);
   const avatarDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,7 +61,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
   const activeUserData = users.find(u => u.initials === currentUser) || users[0];
 
   return (
-    <div className="h-[44px] flex items-center justify-between flex-shrink-0 bg-[#f8f2ec] rounded-xl m-[0px] px-[16px] py-[4px]">
+    <div className="h-[44px] flex items-center justify-between flex-shrink-0 bg-[#f8f2ec] px-4 py-1">
       {/* Left Side: Logo + Tabs */}
       <div className="flex items-center gap-3 flex-1 overflow-hidden px-[8px] py-[0px]">
         {/* Logo */}
@@ -96,6 +100,22 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
 
       {/* Right Side: Action Buttons */}
       <div className="flex items-center gap-1.5 ml-4">
+        {/* Ask Sense — animated logo on hover */}
+        <button
+          className="flex items-center h-[30px] px-2 rounded-lg transition-colors duration-150"
+          style={{ background: askSenseOpen || askSenseHovered ? '#E8E3DC' : 'transparent' }}
+          onMouseEnter={() => setAskSenseHovered(true)}
+          onMouseLeave={() => setAskSenseHovered(false)}
+          onClick={onAskSense}
+        >
+          <span className="mr-1.5 flex items-center">
+            <SenseLogo size={13} animated={askSenseHovered} />
+          </span>
+          <span className="text-[12px] transition-colors duration-150" style={{ fontWeight: 500, color: askSenseOpen || askSenseHovered ? '#1C1E21' : '#374151' }}>Ask Sense</span>
+        </button>
+
+        <div className="w-px h-4 bg-[#E6E8EC] mx-0.5" />
+
         <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
           <HelpCircle className="w-4.5 h-4.5 text-[#6B7280]" />
         </button>

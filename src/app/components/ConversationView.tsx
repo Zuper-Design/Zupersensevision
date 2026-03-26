@@ -1,4 +1,4 @@
-import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive } from 'lucide-react';
+import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ResearchDisplay } from './ResearchDisplay';
 import { ConfirmationCard } from './ConfirmationCard';
@@ -7,13 +7,12 @@ import { ChecklistCard } from './ChecklistCard';
 import { ModernPDFPreview } from './ModernPDFPreview';
 import { ActionConfirmationCard } from './ActionConfirmationCard';
 import { DSOChartCard } from './DSOChartCard';
+import { RevenueMTDCard, OverdueInvoicesCard, QuoteConversionCard, CrewUtilisationCard, JobsCompletedCard } from './RadarCards';
 import { AgentRecommendationCard } from './AgentRecommendationCard';
 import { TypewriterText } from './TypewriterText';
 import { MessageToolbar } from './MessageToolbar';
-import { CardWithActions } from './CardWithActions';
-import { AddToRadarModal } from './AddToRadarModal';
 import { RadarSuccessToast } from './RadarSuccessToast';
-import { SavedCard } from './RadarContext';
+import { SavedCard, useRadar } from './RadarContext';
 import { SuggestedFollowups, getFollowupSuggestions } from './SuggestedFollowups';
 import { AttentionCardWidget } from './widgets/AttentionCardWidget';
 import { WeatherWidget } from './widgets/WeatherWidget';
@@ -72,6 +71,7 @@ interface Message {
   };
   dsoChart?: boolean;
   metricsCharts?: 'full' | 'team' | 'revenue' | 'jobs';
+  radarCardView?: SavedCard;
   typewriter?: boolean;
   emailCard?: {
     type: 'email' | 'message';
@@ -82,6 +82,20 @@ interface Message {
   };
 }
 
+function getRadarCardSentence(card: SavedCard): string {
+  const t = card.title.toLowerCase();
+  if (t.includes('revenue') || t.includes('mtd')) return "Here's your Revenue MTD vs Target card — tracking at $156K of a $200K goal.";
+  if (t.includes('overdue') || t.includes('dso') || t.includes('days sales')) return "Here are your overdue invoices — 14 open, totalling $127,400.";
+  if (t.includes('quote') || t.includes('conversion')) return "Here's your Quote-to-Invoice Conversion — at 64% this month.";
+  if (t.includes('crew') || t.includes('utilis') || t.includes('utiliz')) return "Here's your Crew Utilisation — currently at 71% across all teams.";
+  if (t.includes('job') || t.includes('at risk') || t.includes('completed')) return "Here's your Jobs overview — 48 completed, 3 at risk this month.";
+  return `Here's your "${card.title}" card.`;
+}
+
+function getRadarCardMessages(card: SavedCard): { responseText: string; extras: Partial<Message> } {
+  return { responseText: getRadarCardSentence(card), extras: { radarCardView: card } };
+}
+
 interface ConversationViewProps {
   question: string;
   onBack?: () => void;
@@ -90,6 +104,7 @@ interface ConversationViewProps {
   fromCanvas?: boolean;
   widgetId?: string | null;
   onOpenFeedback?: () => void;
+  radarCard?: SavedCard | null;
 }
 
 // Widget response text mapping
@@ -139,7 +154,24 @@ const CanvasWidgetInChat = ({ widgetId }: { widgetId: string }) => {
   );
 };
 
-export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback }: ConversationViewProps) {
+function RadarCardInChat({ card }: { card: SavedCard }) {
+  const t = card.title.toLowerCase();
+  if (t.includes('revenue') || t.includes('mtd')) return <RevenueMTDCard />;
+  if (t.includes('overdue') || t.includes('dso') || t.includes('days sales')) return <OverdueInvoicesCard />;
+  if (t.includes('quote') || t.includes('conversion')) return <QuoteConversionCard />;
+  if (t.includes('crew') || t.includes('utilis') || t.includes('utiliz')) return <CrewUtilisationCard />;
+  if (t.includes('job') || t.includes('at risk') || t.includes('completed')) return <JobsCompletedCard />;
+  // Saved card fallback — render card preview
+  return (
+    <div style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, padding: 16 }}>
+      <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', margin: 0, marginBottom: 4 }}>{card.title}</h3>
+      {card.preview && <p style={{ fontSize: 13, color: '#6B7280', margin: 0, lineHeight: 1.5 }}>{card.preview}</p>}
+    </div>
+  );
+}
+
+export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard }: ConversationViewProps) {
+  const { radars, activeRadarId, addCardToRadar } = useRadar();
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
@@ -150,7 +182,7 @@ export function ConversationView({ question, onBack, activeView = 'chat', onView
   const [isStarred, setIsStarred] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isConversationsExpanded, setIsConversationsExpanded] = useState(true);
-  const [isResearchComplete, setIsResearchComplete] = useState(fromCanvas ? true : false);
+  const [isResearchComplete, setIsResearchComplete] = useState(fromCanvas || !!radarCard ? true : false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(question);
@@ -171,10 +203,7 @@ export function ConversationView({ question, onBack, activeView = 'chat', onView
   });
   const [activeThreadId, setActiveThreadId] = useState(1); // Track which thread is active
   const [threadStatuses, setThreadStatuses] = useState<{ [key: number]: 'idle' | 'building' | 'completed' }>({});
-  const [isAddToRadarModalOpen, setIsAddToRadarModalOpen] = useState(false);
-  const [radarCardData, setRadarCardData] = useState<Omit<SavedCard, 'id' | 'timestamp'> | null>(null);
   const [radarToastVisible, setRadarToastVisible] = useState(false);
-  const [radarToastInfo, setRadarToastInfo] = useState<{ name: string; emoji: string }>({ name: '', emoji: '' });
 
   
   // Mock thread history data
@@ -197,27 +226,20 @@ export function ConversationView({ question, onBack, activeView = 'chat', onView
   const [messages, setMessages] = useState<Message[]>(() => {
     if (fromCanvas && widgetId) {
       return [
-        {
-          role: 'user',
-          content: question
-        },
-        {
-          role: 'assistant',
-          content: widgetResponseText[widgetId] || 'Here are the details from your canvas:',
-          canvasWidgetId: widgetId,
-        }
+        { role: 'user', content: question },
+        { role: 'assistant', content: widgetResponseText[widgetId] || 'Here are the details from your canvas:', canvasWidgetId: widgetId }
+      ];
+    }
+    if (radarCard) {
+      const { responseText, extras } = getRadarCardMessages(radarCard);
+      return [
+        { role: 'user', content: question },
+        { role: 'assistant', content: responseText, ...extras } as Message
       ];
     }
     return [
-      {
-        role: 'user',
-        content: question
-      },
-      {
-        role: 'assistant',
-        content: '',
-        showResearch: true
-      }
+      { role: 'user', content: question },
+      { role: 'assistant', content: '', showResearch: true }
     ];
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -1008,8 +1030,11 @@ Sarah`
   };
 
   const handleAddToRadar = (cardData: Omit<SavedCard, 'id' | 'timestamp'>) => {
-    setRadarCardData({ ...cardData, sourceThreadId: activeThreadId });
-    setIsAddToRadarModalOpen(true);
+    const targetRadar = radars.find(r => r.id === activeRadarId) || radars[0];
+    if (targetRadar) {
+      addCardToRadar(targetRadar.id, { ...cardData, sourceThreadId: activeThreadId });
+      setRadarToastVisible(true);
+    }
   };
 
   const handleSendMessage = () => {
@@ -1409,7 +1434,33 @@ Sarah`
           </button>
           
           {/* Chat Name */}
-          <h1 className="text-[15px] font-medium text-[#1C1E21]">{chatName}</h1>
+          <div className="flex items-center gap-1.5 group/chatname">
+            {isEditingName ? (
+              <input
+                autoFocus
+                value={editedName}
+                onChange={e => setEditedName(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleSaveEdit();
+                  if (e.key === 'Escape') handleCancelEdit();
+                }}
+                onBlur={handleSaveEdit}
+                className="text-[15px] font-medium text-[#1C1E21] outline-none rounded-md"
+                style={{ width: 360, background: '#FFFFFF', border: '1.5px solid #E6E8EC', padding: '2px 8px', boxShadow: '0 0 0 3px rgba(253,80,0,0.08)' }}
+              />
+            ) : (
+              <>
+                <h1 className="text-[15px] font-medium text-[#1C1E21]">{chatName}</h1>
+                <button
+                  onClick={handleStartEdit}
+                  className="opacity-0 group-hover/chatname:opacity-100 transition-opacity duration-150 p-0.5 rounded flex-shrink-0"
+                  style={{ lineHeight: 0 }}
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                </button>
+              </>
+            )}
+          </div>
         </div>
         
         {/* Canvas/Chat Switcher */}
@@ -1591,120 +1642,94 @@ Sarah`
                           {msg.canvasWidgetId ? (
                             /* Show Canvas Widget Card */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: `Canvas: ${msg.canvasWidgetId}`, preview: msg.content.substring(0, 100) })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.content)}
-                              >
-                                <div className="w-full min-w-0">
-                                  <CanvasWidgetInChat widgetId={msg.canvasWidgetId} />
-                                </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              <div className="w-full min-w-0">
+                                <CanvasWidgetInChat widgetId={msg.canvasWidgetId} />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: `Canvas: ${msg.canvasWidgetId}`, preview: msg.content.substring(0, 100) })} />
                             </>
                           ) : msg.actionConfirmationCard ? (
                             /* Show Action Confirmation Card */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.actionConfirmationCard!.action, preview: msg.actionConfirmationCard!.details || '' })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.actionConfirmationCard!.action)}
-                              >
-                                <div className="flex justify-start">
-                                  <ActionConfirmationCard
-                                    action={msg.actionConfirmationCard.action}
-                                    details={msg.actionConfirmationCard.details}
-                                    onConfirm={() => alert('Action confirmed! Proceeding...')}
-                                    onCancel={() => alert('Action cancelled.')}
-                                  />
-                                </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              <div className="flex justify-start">
+                                <ActionConfirmationCard
+                                  action={msg.actionConfirmationCard.action}
+                                  details={msg.actionConfirmationCard.details}
+                                  onConfirm={() => alert('Action confirmed! Proceeding...')}
+                                  onCancel={() => alert('Action cancelled.')}
+                                />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.actionConfirmationCard!.action, preview: msg.actionConfirmationCard!.details || '' })} />
                             </>
                           ) : msg.checklistCard ? (
                             /* Show Checklist Card */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.checklistCard!.title, preview: msg.checklistCard!.items.map(i => i.text).join(', ').substring(0, 100) })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.checklistCard!.items.map(i => i.text).join('\n'))}
-                              >
-                                <div className="flex justify-start">
-                                  <ChecklistCard
-                                    title={msg.checklistCard.title}
-                                    items={msg.checklistCard.items}
-                                  />
-                                </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              <div className="flex justify-start">
+                                <ChecklistCard
+                                  title={msg.checklistCard.title}
+                                  items={msg.checklistCard.items}
+                                />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.checklistCard!.title, preview: msg.checklistCard!.items.map(i => i.text).join(', ').substring(0, 100) })} />
                             </>
                           ) : msg.emailCard ? (
                             /* Show Email/Message Card */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.emailCard!.subject, preview: msg.emailCard!.body.substring(0, 100) })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.emailCard!.body)}
-                              >
-                                <div className="flex justify-start">
-                                  <EmailCard
-                                    subject={msg.emailCard.subject}
-                                    from={msg.emailCard.from}
-                                    to={msg.emailCard.to}
-                                    body={msg.emailCard.body}
-                                    type={msg.emailCard.type}
-                                    onSend={() => console.log('Email/message sent')}
-                                    onCancel={() => console.log('Email/message cancelled')}
-                                    onOpenEdit={() => openEmailEditor(msg.emailCard!)}
-                                  />
-                                </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              <div className="flex justify-start">
+                                <EmailCard
+                                  subject={msg.emailCard.subject}
+                                  from={msg.emailCard.from}
+                                  to={msg.emailCard.to}
+                                  body={msg.emailCard.body}
+                                  type={msg.emailCard.type}
+                                  onSend={() => console.log('Email/message sent')}
+                                  onCancel={() => console.log('Email/message cancelled')}
+                                  onOpenEdit={() => openEmailEditor(msg.emailCard!)}
+                                />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.emailCard!.subject, preview: msg.emailCard!.body.substring(0, 100) })} />
                             </>
                           ) : msg.confirmationCard ? (
                             /* Show Confirmation Card for module creation */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.confirmationCard!.moduleName, preview: msg.confirmationCard!.fields.map(f => `${f.label}: ${f.value}`).join(', ').substring(0, 100) })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.confirmationCard!.fields.map(f => `${f.label}: ${f.value}`).join('\n'))}
-                              >
-                                <div className="flex justify-start">
-                                  <ConfirmationCard
-                                    moduleType={msg.confirmationCard.moduleType}
-                                    moduleName={msg.confirmationCard.moduleName}
-                                    fields={msg.confirmationCard.fields}
-                                    onViewDetails={() => alert(`View ${msg.confirmationCard?.moduleName} Details`)}
-                                    onSecondaryAction={() => alert(`Create Another ${msg.confirmationCard?.moduleName}`)}
-                                    secondaryActionLabel="Deny"
-                                  />
+                              <div className="flex justify-start">
+                                <ConfirmationCard
+                                  moduleType={msg.confirmationCard.moduleType}
+                                  moduleName={msg.confirmationCard.moduleName}
+                                  fields={msg.confirmationCard.fields}
+                                  onViewDetails={() => alert(`View ${msg.confirmationCard?.moduleName} Details`)}
+                                  onSecondaryAction={() => alert(`Create Another ${msg.confirmationCard?.moduleName}`)}
+                                  secondaryActionLabel="Deny"
+                                />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.confirmationCard!.moduleName, preview: msg.confirmationCard!.fields.map(f => `${f.label}: ${f.value}`).join(', ').substring(0, 100) })} />
+                            </>
+                          ) : msg.radarCardView ? (
+                            /* Show exact radar card */
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[520px] min-w-0">
+                                  <RadarCardInChat card={msg.radarCardView} />
                                 </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.radarCardView!.title, preview: msg.radarCardView!.preview || msg.radarCardView!.title })} />
                             </>
                           ) : msg.metricsCharts ? (
                             /* Show Metrics Charts Dashboard */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.content)}
-                              >
-                                <div className="flex justify-start min-w-0 overflow-hidden">
-                                  <div className="w-full min-w-0">
-                                    <MetricsChartCards variant={msg.metricsCharts} />
-                                  </div>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full min-w-0">
+                                  <MetricsChartCards variant={msg.metricsCharts} />
                                 </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })} />
                             </>
                           ) : msg.dsoChart ? (
                             /* Show DSO Chart for overdue invoices */
                             <>
                               <div className="flex justify-start min-w-0 overflow-hidden">
                                 <div className="w-full max-w-[600px] min-w-0">
-                                  <DSOChartCard onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend — Current: 72 days, Industry Avg: 45 days' })} />
-                                  <MessageToolbar hideOnIdle />
+                                  <DSOChartCard />
+                                  <MessageToolbar hideOnIdle onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend — Current: 72 days, Industry Avg: 45 days' })} />
                                 </div>
                               </div>
                               {/* Trend warning as AI response */}
@@ -1716,60 +1741,37 @@ Sarah`
                                   </p>
                                 </div>
                               </div>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Agent Recommendation', preview: 'Collection Assistant Agent' })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText('Collection Assistant Agent recommendation')}
-                              >
-                                <div className="flex justify-start min-w-0 overflow-hidden mt-3">
-                                  <div className="w-full max-w-[600px] min-w-0">
-                                    <AgentRecommendationCard onHireAgent={() => {
-                                    setMessages(prev => [...prev, { role: 'user', content: 'Start the collection assistant agent to bring my DSO down' }]);
-                                    setTimeout(() => {
-                                      setMessages(prev => [...prev, { role: 'assistant', content: 'The **Collection Assistant Agent** is now active and running. It will automatically follow up on overdue invoices and flag high-risk accounts. You can check its work in progress in **Canvas**.', typewriter: true }]);
-                                    }, 1200);
-                                  }} />
+                              <div className="flex justify-start min-w-0 overflow-hidden mt-3">
+                                <div className="w-full max-w-[600px] min-w-0">
+                                  <AgentRecommendationCard onHireAgent={() => {
+                                  setMessages(prev => [...prev, { role: 'user', content: 'Start the collection assistant agent to bring my DSO down' }]);
+                                  setTimeout(() => {
+                                    setMessages(prev => [...prev, { role: 'assistant', content: 'The **Collection Assistant Agent** is now active and running. It will automatically follow up on overdue invoices and flag high-risk accounts. You can check its work in progress in **Canvas**.', typewriter: true }]);
+                                  }, 1200);
+                                }} />
                                 </div>
                               </div>
-                              </CardWithActions>
-                              <MessageToolbar hideOnIdle />
+                              <MessageToolbar hideOnIdle onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Agent Recommendation', preview: 'Collection Assistant Agent' })} />
                             </>
                           ) : invoicePageBuilderWasOpened && !isInvoicePageBuilderOpen ? (
                             /* Show Invoice Page Builder Preview Card when builder was opened but is now closed */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Invoice Page Builder', preview: 'Custom invoice page layout' })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText('Invoice Page Builder')}
-                              >
                               <div className="flex justify-start">
                                 <InvoicePageBuilderPreviewCard onClick={() => setIsInvoicePageBuilderOpen(true)} />
                               </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Invoice Page Builder', preview: 'Custom invoice page layout' })} />
                             </>
                           ) : pageBuilderWasOpened && !isPageBuilderOpen ? (
                             /* Show Page Builder Preview Card when builder was opened but is now closed */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Page Builder', preview: 'Custom page layout' })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText('Page Builder')}
-                              >
                               <div className="flex justify-start">
                                 <PageBuilderPreviewCard onClick={() => setIsPageBuilderOpen(true)} />
                               </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Page Builder', preview: 'Custom page layout' })} />
                             </>
                           ) : !isPageBuilderOpen && !pageBuilderWasOpened && !isPageBuilderLoading && !isInvoicePageBuilderOpen && !invoicePageBuilderWasOpened && !isInvoicePageBuilderLoading ? (
                             /* Show Data Cards for analysis queries (but not when page builder is/was open or loading) */
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Q4 Performance', preview: 'Revenue: $847,300 | Active Users: 25k' })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText('Q4 Performance: Revenue $847,300, Active Users 25k, Churn 2.1%, NPS 72')}
-                              >
                               <div className="bg-white border border-[#E6E8EC] rounded-[20px] overflow-hidden shadow-[0_2px_20px_rgba(0,0,0,0.06)]">
                                 {/* Header */}
                                 <div className="px-6 pt-6 pb-5 border-b border-[#E6E8EC]">
@@ -1836,10 +1838,9 @@ Sarah`
                                   </div>
                                 </div>
                               </div>
-                              </CardWithActions>
 
                               {/* Action Icons - All in one row */}
-                              <MessageToolbar />
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Q4 Performance', preview: 'Revenue: $847,300 | Active Users: 25k' })} />
                             </>
                           ) : null}
                         </>
@@ -1850,57 +1851,39 @@ Sarah`
                         <>
                           {msg.emailCard && (
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.emailCard!.subject, preview: msg.emailCard!.body.substring(0, 100) })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.emailCard!.body)}
-                              >
-                                <div className="flex justify-start">
-                                  <EmailCard
-                                    subject={msg.emailCard.subject}
-                                    from={msg.emailCard.from}
-                                    to={msg.emailCard.to}
-                                    body={msg.emailCard.body}
-                                    type={msg.emailCard.type}
-                                    onSend={() => console.log('Email/message sent')}
-                                    onCancel={() => console.log('Email/message cancelled')}
-                                    onOpenEdit={() => openEmailEditor(msg.emailCard!)}
-                                  />
-                                </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              <div className="flex justify-start">
+                                <EmailCard
+                                  subject={msg.emailCard.subject}
+                                  from={msg.emailCard.from}
+                                  to={msg.emailCard.to}
+                                  body={msg.emailCard.body}
+                                  type={msg.emailCard.type}
+                                  onSend={() => console.log('Email/message sent')}
+                                  onCancel={() => console.log('Email/message cancelled')}
+                                  onOpenEdit={() => openEmailEditor(msg.emailCard!)}
+                                />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.emailCard!.subject, preview: msg.emailCard!.body.substring(0, 100) })} />
                             </>
                           )}
                           {msg.metricsCharts && (
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText(msg.content)}
-                              >
-                                <div className="flex justify-start min-w-0 overflow-hidden">
-                                  <div className="w-full min-w-0">
-                                    <MetricsChartCards variant={msg.metricsCharts} />
-                                  </div>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full min-w-0">
+                                  <MetricsChartCards variant={msg.metricsCharts} />
                                 </div>
-                              </CardWithActions>
-                              <MessageToolbar />
+                              </div>
+                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })} />
                             </>
                           )}
                           {msg.dsoChart && (
                             <>
-                              <CardWithActions
-                                onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend' })}
-                                onPin={() => console.log('Pin card')}
-                                onCopy={() => navigator.clipboard.writeText('DSO: 72 days')}
-                              >
-                                <div className="flex justify-start min-w-0 overflow-hidden">
-                                  <div className="w-full max-w-[600px] min-w-0">
-                                    <DSOChartCard onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend — Current: 72 days, Industry Avg: 45 days' })} />
-                                    <MessageToolbar hideOnIdle />
-                                  </div>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[600px] min-w-0">
+                                  <DSOChartCard />
+                                  <MessageToolbar hideOnIdle onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend' })} />
                                 </div>
-                              </CardWithActions>
+                              </div>
                             </>
                           )}
                         </>
@@ -2173,24 +2156,9 @@ Sarah`
         </div>
       )}
 
-      {/* Add to Radar Modal */}
-      {radarCardData && (
-        <AddToRadarModal
-          isOpen={isAddToRadarModalOpen}
-          onClose={() => setIsAddToRadarModalOpen(false)}
-          cardData={radarCardData}
-          onSuccess={(name, emoji) => {
-            setRadarToastInfo({ name, emoji });
-            setRadarToastVisible(true);
-          }}
-        />
-      )}
-
       {/* Radar Success Toast */}
       <RadarSuccessToast
         isVisible={radarToastVisible}
-        radarName={radarToastInfo.name}
-        radarEmoji={radarToastInfo.emoji}
         onClose={() => setRadarToastVisible(false)}
         onGoToRadar={() => {
           setRadarToastVisible(false);

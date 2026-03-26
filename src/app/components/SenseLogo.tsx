@@ -100,6 +100,8 @@ export function SenseLogo({ size = 40, animated = false, animationType, monochro
       return () => {
         cleanup?.();
         clearInterval(loopInterval);
+        setIsAnimating(false);
+        setCurrentPatternIndex(0);
       };
     }
   }, [animated]);

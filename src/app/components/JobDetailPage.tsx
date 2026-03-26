@@ -254,20 +254,6 @@ export function JobDetailPage({ jobId, workOrderNumber, jobTitle, onBack }: JobD
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => { setRightPanel('sense'); setSensePanelTab('chat'); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer"
-            style={{
-              background: 'linear-gradient(135deg, #FFF7ED 0%, #FFF3E6 100%)',
-              border: '1px solid rgba(253,80,0,0.18)',
-              boxShadow: '0 1px 3px rgba(253,80,0,0.06)',
-            }}
-            title="Ask Sense"
-          >
-            <SenseLogo size={13} animated={false} />
-            <span className="text-[12px] text-[#D2600A]" style={{ fontWeight: 600 }}>Ask Sense</span>
-          </button>
-          <div className="h-4 w-px bg-[#E6E8EC]" />
           <div className="flex items-center gap-0.5 text-[12px] text-[#9CA3AF]">
             <span>1 / 30</span>
             <button className="p-1 hover:bg-[#F3F4F6] rounded transition-colors">

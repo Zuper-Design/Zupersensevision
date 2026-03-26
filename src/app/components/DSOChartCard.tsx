@@ -1,6 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import React from 'react';
-import { CardActionsMenu } from './CardActionsMenu';
+import React, { useRef, useEffect } from 'react';
+import { Pencil } from 'lucide-react';
+import { RenameProps } from './RadarCards';
 
 const data = [
   { month: 'Jul', dso: 38, industryAvg: 45 },
@@ -33,22 +34,56 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function DSOChartCard({ onAddToRadar, footer }: { onAddToRadar?: () => void; footer?: React.ReactNode }) {
+export function DSOChartCard({ onAddToRadar, footer, renameProps }: { onAddToRadar?: () => void; footer?: React.ReactNode; renameProps?: RenameProps }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (renameProps?.isRenaming && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [renameProps?.isRenaming]);
+
   return (
     <div className="w-full bg-white rounded-xl border border-[#E6E8EC] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] relative group/card">
-      {/* Three-dot menu inside the card top-right */}
-      <div className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100 transition-all duration-200">
-        <CardActionsMenu
-          onAddToRadar={onAddToRadar || (() => {})}
-          onPin={() => console.log('Pin card')}
-          onCopy={() => navigator.clipboard.writeText('DSO Chart Card')}
-        />
-      </div>
-
       <div className="mb-4">
-        <h3 className="text-[15px] text-[#1C1E21]" style={{ fontWeight: 700 }}>
-          Days Sales Outstanding (DSO)
-        </h3>
+        <div className="flex items-center gap-1.5 group/rename">
+          {renameProps?.isRenaming ? (
+            <input
+              ref={inputRef}
+              value={renameProps.renameValue ?? ''}
+              onChange={e => renameProps.onRenameChange?.(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') renameProps.onRenameSubmit?.();
+                if (e.key === 'Escape') renameProps.onRenameCancel?.();
+              }}
+              onBlur={() => renameProps.onRenameSubmit?.()}
+              className="text-[15px] text-[#1C1E21] w-full"
+              style={{
+                fontWeight: 700, background: '#FFFFFF',
+                border: '1.5px solid #E6E8EC', borderRadius: 6,
+                outline: 'none', padding: '2px 8px',
+                width: '100%', maxWidth: 400,
+                boxShadow: '0 0 0 3px rgba(253,80,0,0.08)',
+              }}
+            />
+          ) : (
+            <>
+              <h3 className="text-[15px] text-[#1C1E21]" style={{ fontWeight: 700, margin: 0 }}>
+                {renameProps?.customTitle ?? 'Days Sales Outstanding (DSO)'}
+              </h3>
+              {renameProps?.onRenameStart && (
+                <button
+                  onClick={e => { e.stopPropagation(); renameProps.onRenameStart?.(); }}
+                  className="opacity-0 group-hover/rename:opacity-100 transition-opacity duration-150 flex-shrink-0 p-0.5 rounded"
+                  style={{ lineHeight: 0 }}
+                >
+                  <Pencil className="w-3 h-3 text-[#9CA3AF]" />
+                </button>
+              )}
+            </>
+          )}
+        </div>
         <p className="text-[13px] text-[#6B7280] mt-0.5">
           Invoice collection trend over the last 8 months
         </p>

@@ -109,6 +109,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
   const [createdCard, setCreatedCard] = useState<{ type: string; data: any } | null>(null);
   const [isFromCanvas, setIsFromCanvas] = useState(false);
   const [canvasWidgetId, setCanvasWidgetId] = useState<string | null>(null);
+  const [activeRadarCard, setActiveRadarCard] = useState<SavedCard | null>(null);
   const listeningTimerRef = useRef<any>(null);
   const typewriterTimerRef = useRef<any>(null);
   const currentSegmentRef = useRef<number>(0);
@@ -377,6 +378,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
         setIsFromCanvas(false);
         setCanvasWidgetId(null);
         setCurrentQuestion(pendingConversation.topic);
+        setActiveRadarCard(pendingRadarCard);
         setConversationActive(true);
         setMessage('');
         setInputFocused(false);
@@ -402,7 +404,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
       {/* Loading Screen */}
       {isLoading && <LoadingScreen />}
       
-      <div className="flex-1 overflow-y-auto bg-white rounded-xl scrollbar-auto-hide">
+      <div className="flex-1 overflow-y-auto bg-white scrollbar-auto-hide">
         <div className="bg-white h-full overflow-hidden flex rounded-xl">
           {/* Collapsible Recent Conversations Sidebar */}
           
@@ -411,7 +413,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
           <div className="flex-1 overflow-y-auto relative scrollbar-auto-hide">
             {!conversationActive ? (
               // Welcome Screen
-              <div className="min-h-full flex flex-col bg-white relative mx-[0px] my-[2px]">
+              <div className="min-h-full flex flex-col bg-white relative">
                 {/* Top Header Bar */}
                 <div className="h-[56px] border-b border-[#E6E8EC] flex items-center justify-between px-6 flex-shrink-0 bg-white relative z-10">
                   <div className="flex items-center gap-3">
@@ -817,18 +819,20 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
               </div>
             ) : (
               // Conversation View
-              <ConversationView 
-                question={currentQuestion} 
+              <ConversationView
+                question={currentQuestion}
                 onBack={() => {
                   setConversationActive(false);
                   setIsFromCanvas(false);
                   setCanvasWidgetId(null);
+                  setActiveRadarCard(null);
                 }}
                 activeView={activeView}
                 onViewChange={onViewChange}
                 fromCanvas={isFromCanvas}
                 widgetId={canvasWidgetId}
                 onOpenFeedback={onOpenFeedback}
+                radarCard={activeRadarCard}
               />
             )}
           </div>

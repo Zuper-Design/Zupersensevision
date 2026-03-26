@@ -598,7 +598,7 @@ export function JobListingPage({ onBack }: JobListingPageProps) {
   }
 
   return (
-    <div className="flex-1 flex overflow-hidden bg-white" style={{ fontFamily: 'DM Sans, system-ui, sans-serif' }}>
+    <div className="flex-1 flex overflow-hidden bg-white rounded-xl border border-[#E6E8EC]" style={{ fontFamily: 'DM Sans, system-ui, sans-serif' }}>
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header - matches detail page style */}
       <div className="flex-shrink-0 bg-white">
@@ -611,16 +611,6 @@ export function JobListingPage({ onBack }: JobListingPageProps) {
             </span>
           </div>
           <div className="flex items-center gap-2.5">
-            <button
-              onClick={() => { setSenseOpen(true); setFilterOpen(false); setSenseResult(null); setSenseProcessing(false); }}
-              className="group/sense flex items-center gap-2 h-[32px] px-2.5 rounded-lg transition-all duration-200 text-[13px] cursor-pointer hover:bg-[#F8F9FB]"
-              style={{ fontWeight: 500 }}
-              title="Ask Sense (⌘K)"
-            >
-              <SenseLogo size={15} animated={false} />
-              <span className="text-[#1C1E21] transition-colors duration-200">Ask Sense</span>
-            </button>
-            <div className="w-px h-5 bg-[#E6E8EC]" />
             <button className="flex items-center gap-1.5 h-[32px] px-3 rounded-lg border border-[#E6E8EC] hover:bg-[#F8F9FB] transition-colors text-[13px] text-[#1C1E21]" style={{ fontWeight: 500 }}>
               <RotateCw className="w-3.5 h-3.5 text-[#1C1E21]" />
               Recurring Jobs
