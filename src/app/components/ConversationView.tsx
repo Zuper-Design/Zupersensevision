@@ -1,4 +1,4 @@
-import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3 } from 'lucide-react';
+import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ResearchDisplay } from './ResearchDisplay';
 import { ConfirmationCard } from './ConfirmationCard';
@@ -182,7 +182,7 @@ export function ConversationView({ question, onBack, activeView = 'chat', onView
   const [isStarred, setIsStarred] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isConversationsExpanded, setIsConversationsExpanded] = useState(true);
-  const [isResearchComplete, setIsResearchComplete] = useState(fromCanvas || !!radarCard ? true : false);
+  const [isResearchComplete, setIsResearchComplete] = useState(fromCanvas || !!radarCard || question.toLowerCase().includes('revenue growth') ? true : false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(question);
@@ -235,6 +235,12 @@ export function ConversationView({ question, onBack, activeView = 'chat', onView
       return [
         { role: 'user', content: question },
         { role: 'assistant', content: responseText, ...extras } as Message
+      ];
+    }
+    if (question.toLowerCase().includes('revenue growth')) {
+      return [
+        { role: 'user', content: question },
+        { role: 'assistant', content: "Here's your revenue growth analysis — tracking monthly trends, year-over-year comparisons, and key growth drivers.", metricsCharts: 'revenue' }
       ];
     }
     return [
@@ -1489,20 +1495,9 @@ Sarah`
           </div>
         </div>
         
-        {/* Action Buttons */}
+        {/* Beta Label */}
         <div className="flex items-center gap-2">
-          {onOpenFeedback && (
-            <Tooltip content="Help us improve">
-              <button
-                onClick={onOpenFeedback}
-                className="p-2 rounded-lg text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#F8F9FB] transition-colors"
-                aria-label="Help us improve"
-              >
-                <MessageSquare className="w-[18px] h-[18px]" />
-              </button>
-            </Tooltip>
-          )}
-        </div>
+                  </div>
         
       </div>
 

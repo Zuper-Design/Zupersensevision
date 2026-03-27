@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -447,10 +447,9 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                     </div>
                   </div>
                   
-                  {/* Right side placeholder */}
+                  {/* Right side — beta label */}
                   <div className="flex items-center gap-3">
-                    <div className="w-[18px] h-[18px]"></div>
-                  </div>
+                                      </div>
                 </div>
 
                 {/* Welcome Content */}
@@ -680,10 +679,10 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         </button>
                       </div>
                       <div className="flex gap-3 justify-center flex-wrap w-full">
-                        <button className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
+                        <button onClick={() => handlePromptClick("What's happening with my overdue invoices?")} className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
                           <div className="flex items-start justify-between gap-3 mb-1">
                             <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Overdue Jobs Report</h3>
+                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Overdue Invoices Chart</h3>
                               <p className="text-[12px] text-[#9CA3AF] font-medium">20 hours ago</p>
                             </div>
                             <div className="flex-shrink-0">
@@ -691,10 +690,10 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                             </div>
                           </div>
                         </button>
-                        <button className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
+                        <button onClick={() => handlePromptClick("Build a list of overdue invoices")} className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
                           <div className="flex items-start justify-between gap-3 mb-1">
                             <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Customer Satisfaction Analysis</h3>
+                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Build a Page</h3>
                               <p className="text-[12px] text-[#9CA3AF] font-medium">Yesterday</p>
                             </div>
                             <div className="flex-shrink-0">
@@ -702,7 +701,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                             </div>
                           </div>
                         </button>
-                        <button className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
+                        <button onClick={() => handlePromptClick("Show me the revenue growth analysis")} className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
                           <div className="flex items-start justify-between gap-3 mb-1">
                             <div className="flex-1">
                               <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Revenue Growth Analysis</h3>

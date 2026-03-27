@@ -382,25 +382,6 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
         >
           {/* Header */}
           <div className="flex-shrink-0 flex flex-col bg-white">
-            {/* Beta banner */}
-            {showBetaBanner && (
-              <div className="flex-shrink-0 relative flex items-center justify-center px-10 py-2" style={{ background: '#1C1E21' }}>
-                <div className="flex items-center gap-2">
-                  <FlaskConical className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} />
-                  <p className="text-[12px]" style={{ color: '#E5E7EB', fontFamily: 'DM Sans, system-ui, sans-serif', whiteSpace: 'nowrap' }}>
-                    <span style={{ fontWeight: 600, color: '#FFFFFF' }}>Sense is in Beta</span>
-                    <span style={{ color: '#9CA3AF' }}> — you're one of the first. Expect changes; your feedback shapes what's next.</span>
-                  </p>
-                </div>
-                <button
-                  onClick={onCloseBetaBanner}
-                  className="absolute right-3 p-1 rounded transition-colors duration-150 hover:bg-white/10"
-                  aria-label="Dismiss"
-                >
-                  <X className="w-3.5 h-3.5" style={{ color: '#6B7280' }} />
-                </button>
-              </div>
-            )}
             {/* Row 1: switcher + refreshed timestamp — matches chat header exactly */}
             <div className="h-[56px] flex items-center justify-between px-6 flex-shrink-0 border-b border-[#E6E8EC] relative">
               <div className="w-[120px]" />
@@ -416,11 +397,11 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   >Radar</button>
                 </div>
               </div>
-              <div className="w-[120px] flex justify-end">
+              <div className="w-auto flex items-center justify-end gap-3">
                 <span className="text-[11px] text-[#9CA3AF]">
                   Refreshed {formatLastRefreshed(lastRefreshed)}
                 </span>
-              </div>
+                              </div>
             </div>
 
             {/* Row 2: toolbar — no border below, line above comes from Row 1's border-b */}

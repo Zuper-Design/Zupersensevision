@@ -8,6 +8,7 @@ import { VoiceListeningIndicator } from './components/VoiceListeningIndicator';
 import { ExpandedChatView } from './components/ExpandedChatView';
 import { ReportBugModal } from './components/ReportBugModal';
 import { SendFeedbackModal } from './components/SendFeedbackModal';
+import { FeedbackActions } from './components/FeedbackActions';
 import { ConfirmationCardDemo } from './components/ConfirmationCardDemo';
 import { RadarWorkspace } from './components/RadarWorkspace';
 import { ViewToggle } from './components/ViewToggle';
@@ -174,24 +175,6 @@ function AppContent() {
               <>
                 {activeView === 'chat' ? (
                   <div className="flex-1 flex flex-col bg-white rounded-xl overflow-hidden border border-[#E6E8EC]">
-                    {showBetaBanner && (
-                      <div className="flex-shrink-0 relative flex items-center justify-center px-10 py-2" style={{ background: '#1C1E21' }}>
-                        <div className="flex items-center gap-2">
-                          <FlaskConical className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} />
-                          <p className="text-[12px]" style={{ color: '#E5E7EB', fontFamily: 'DM Sans, system-ui, sans-serif', whiteSpace: 'nowrap' }}>
-                            <span style={{ fontWeight: 600, color: '#FFFFFF' }}>Sense is in Beta</span>
-                            <span style={{ color: '#9CA3AF' }}> — you're one of the first. Expect changes; your feedback shapes what's next.</span>
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => setShowBetaBanner(false)}
-                          className="absolute right-3 p-1 rounded transition-colors duration-150 hover:bg-white/10"
-                          aria-label="Dismiss"
-                        >
-                          <X className="w-3.5 h-3.5" style={{ color: '#6B7280' }} />
-                        </button>
-                      </div>
-                    )}
                     <ChatInterface
                       voiceMode={voiceMode}
                       onToggleVoiceMode={() => setVoiceMode((prev) => !prev)}
@@ -251,6 +234,9 @@ function AppContent() {
         isOpen={isBugModalOpen}
         onClose={() => setIsBugModalOpen(false)}
       />
+
+      {/* Floating Help Us Improve Button */}
+      <FeedbackActions onOpenFeedback={() => setIsFeedbackModalOpen(true)} />
 
       {/* Send Feedback Modal */}
       <SendFeedbackModal
