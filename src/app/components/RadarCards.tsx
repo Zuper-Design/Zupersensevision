@@ -2,8 +2,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar, ReferenceLine, Area, AreaChart, Cell,
 } from 'recharts';
-import React, { useRef, useEffect } from 'react';
-import { Pencil } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Pencil, ChevronDown, Calendar } from 'lucide-react';
 import { useRadarTheme } from './RadarThemeContext';
 
 export interface RenameProps {
@@ -14,6 +14,148 @@ export interface RenameProps {
   onRenameChange?: (v: string) => void;
   onRenameSubmit?: () => void;
   onRenameCancel?: () => void;
+}
+
+/* ─── Date Filter ─── */
+
+const DATE_OPTIONS = ['15 days', '30 days', '1 month', '3 months', '6 months', 'Custom'] as const;
+
+export function DateFilter() {
+  const t = useRadarTheme();
+  const [selected, setSelected] = useState<string>('30 days');
+  const [isOpen, setIsOpen] = useState(false);
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo, setCustomTo] = useState('');
+  const [showCustom, setShowCustom] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setIsOpen(false);
+        setShowCustom(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative" style={{ fontFamily: t.fontFamily }}>
+      <button
+        onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); setShowCustom(false); }}
+        className="flex items-center gap-1.5 px-2.5 h-7 rounded-lg border border-[#E6E8EC] bg-white hover:bg-[#F8F9FB] transition-all duration-150"
+        style={{
+          fontSize: 11,
+          fontWeight: 500,
+          color: '#6B7280',
+        }}
+      >
+        <Calendar className="w-3 h-3" />
+        <span>{selected}</span>
+        <ChevronDown className="w-3 h-3" style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
+      </button>
+
+      {isOpen && (
+        <div
+          className="absolute right-0 top-full mt-1.5 z-50 rounded-xl overflow-hidden"
+          style={{
+            background: t.name === 'night' ? '#2A2A2A' : '#FFFFFF',
+            border: `1px solid ${t.name === 'night' ? 'rgba(255,255,255,0.1)' : '#E6E8EC'}`,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+            minWidth: showCustom ? 220 : 130,
+          }}
+        >
+          {!showCustom ? (
+            <div className="py-1">
+              {DATE_OPTIONS.map((opt) => (
+                <button
+                  key={opt}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (opt === 'Custom') {
+                      setShowCustom(true);
+                    } else {
+                      setSelected(opt);
+                      setIsOpen(false);
+                    }
+                  }}
+                  className="w-full text-left px-3.5 py-2 transition-colors duration-100"
+                  style={{
+                    fontSize: 12,
+                    fontWeight: selected === opt ? 600 : 400,
+                    color: selected === opt ? (t.name === 'night' ? '#FFFFFF' : '#1C1E21') : t.subtitleColor,
+                    background: selected === opt ? (t.name === 'night' ? 'rgba(255,255,255,0.06)' : '#F8F9FB') : 'transparent',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selected !== opt) (e.target as HTMLElement).style.background = t.name === 'night' ? 'rgba(255,255,255,0.04)' : '#F8F9FB';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selected !== opt) (e.target as HTMLElement).style.background = 'transparent';
+                  }}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="p-3" onClick={(e) => e.stopPropagation()}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: t.titleColor, marginBottom: 8 }}>Custom range</p>
+              <div className="flex flex-col gap-2">
+                <div>
+                  <label style={{ fontSize: 10, color: t.subtitleColor, display: 'block', marginBottom: 3 }}>From</label>
+                  <input
+                    type="date"
+                    value={customFrom}
+                    onChange={(e) => setCustomFrom(e.target.value)}
+                    className="w-full rounded-md px-2 py-1.5 outline-none"
+                    style={{
+                      fontSize: 11,
+                      color: t.titleColor,
+                      background: t.name === 'night' ? 'rgba(255,255,255,0.06)' : '#F8F9FB',
+                      border: `1px solid ${t.name === 'night' ? 'rgba(255,255,255,0.1)' : '#E6E8EC'}`,
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 10, color: t.subtitleColor, display: 'block', marginBottom: 3 }}>To</label>
+                  <input
+                    type="date"
+                    value={customTo}
+                    onChange={(e) => setCustomTo(e.target.value)}
+                    className="w-full rounded-md px-2 py-1.5 outline-none"
+                    style={{
+                      fontSize: 11,
+                      color: t.titleColor,
+                      background: t.name === 'night' ? 'rgba(255,255,255,0.06)' : '#F8F9FB',
+                      border: `1px solid ${t.name === 'night' ? 'rgba(255,255,255,0.1)' : '#E6E8EC'}`,
+                    }}
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    if (customFrom && customTo) {
+                      setSelected(`${customFrom} – ${customTo}`);
+                    }
+                    setIsOpen(false);
+                    setShowCustom(false);
+                  }}
+                  className="w-full mt-1 py-1.5 rounded-lg text-white transition-all duration-150"
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    background: 'linear-gradient(to right, #221E1F, #6D5F63)',
+                  }}
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 /* ─── Shared ─── */

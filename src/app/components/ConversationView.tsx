@@ -2160,6 +2160,7 @@ Sarah`
           onViewChange?.('radar');
         }}
       />
+
     </div>
     </div>
   );

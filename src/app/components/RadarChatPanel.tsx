@@ -1,6 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, MessageSquare, FileText, ArrowRight, ArrowUp, Mic, MicOff } from 'lucide-react';
+import { X, MessageSquare, FileText, ArrowRight, ArrowUp, Mic, MicOff, Maximize2 } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
+import { RevenueMTDCard, OverdueInvoicesCard, QuoteConversionCard, CrewUtilisationCard, JobsCompletedCard } from './RadarCards';
+import { DSOChartCard } from './DSOChartCard';
+
+function CardThumbnail({ cardTitle }: { cardTitle: string }) {
+  const t = cardTitle.toLowerCase();
+  let CardComponent: React.ReactNode = null;
+  if (t.includes('revenue') || t.includes('mtd')) CardComponent = <RevenueMTDCard />;
+  else if (t.includes('overdue') || t.includes('dso') || t.includes('days sales')) CardComponent = <OverdueInvoicesCard />;
+  else if (t.includes('quote') || t.includes('conversion')) CardComponent = <QuoteConversionCard />;
+  else if (t.includes('crew') || t.includes('utilis') || t.includes('utiliz')) CardComponent = <CrewUtilisationCard />;
+  else if (t.includes('job') || t.includes('at risk') || t.includes('completed')) CardComponent = <JobsCompletedCard />;
+  if (!CardComponent) return null;
+  return CardComponent;
+}
 
 interface Message {
   role: 'user' | 'ai';
@@ -91,15 +105,17 @@ function getCardSuggestions(cardTitle: string): { icon: 'msg' | 'doc'; text: str
 interface RadarChatPanelProps {
   initialCardTitle?: string;
   onClose: () => void;
+  onExpand?: () => void;
   title?: string;
 }
 
-export function RadarChatPanel({ initialCardTitle, onClose, title = 'Sense' }: RadarChatPanelProps) {
+export function RadarChatPanel({ initialCardTitle, onClose, onExpand, title = 'Sense' }: RadarChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [query, setQuery] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [listening, setListening] = useState(false);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -151,12 +167,23 @@ export function RadarChatPanel({ initialCardTitle, onClose, title = 'Sense' }: R
           <SenseLogo size={20} animated={processing} />
           <span className="text-[15px] text-[#1C1E21]" style={{ fontWeight: 600 }}>{title}</span>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-lg hover:bg-[#F3F4F6] transition-colors"
-        >
-          <X className="w-4 h-4 text-[#9CA3AF]" />
-        </button>
+        <div className="flex items-center gap-1">
+          {onExpand && (
+            <button
+              onClick={onExpand}
+              className="p-1.5 rounded-lg hover:bg-[#F3F4F6] transition-colors"
+              title="Expand"
+            >
+              <Maximize2 className="w-4 h-4 text-[#9CA3AF]" />
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg hover:bg-[#F3F4F6] transition-colors"
+          >
+            <X className="w-4 h-4 text-[#9CA3AF]" />
+          </button>
+        </div>
       </div>
 
       {/* Chat area */}
@@ -230,6 +257,24 @@ export function RadarChatPanel({ initialCardTitle, onClose, title = 'Sense' }: R
                       <span className="text-[12.5px] text-[#1C1E21]" style={{ fontWeight: 600 }}>Sense</span>
                     </div>
                     <p className="text-[13px] text-[#1C1E21] leading-relaxed" style={{ fontWeight: 400 }}>{msg.text}</p>
+                    {/* Minimized card thumbnail — only on first AI response */}
+                    {i === 1 && initialCardTitle && (
+                      <button
+                        onClick={() => setIsCardModalOpen(true)}
+                        className="mt-2 w-full rounded-xl border border-[#E6E8EC] bg-white overflow-hidden shadow-[0_1px_4px_rgba(0,0,0,0.04)] hover:shadow-[0_3px_12px_rgba(0,0,0,0.1)] hover:border-[#6D5F63]/30 transition-all duration-200 cursor-pointer group relative"
+                      >
+                        <div className="scale-[0.48] origin-top-left w-[208%] h-[160px] pointer-events-none">
+                          <CardThumbnail cardTitle={initialCardTitle} />
+                        </div>
+                        <div className="px-3 pb-2.5 -mt-[76px] relative z-10 bg-gradient-to-t from-white via-white to-transparent pt-5">
+                          <p className="text-[11px] font-semibold text-[#1C1E21] truncate">{initialCardTitle}</p>
+                          <p className="text-[10px] text-[#9CA3AF] mt-0.5 group-hover:text-[#6D5F63] transition-colors flex items-center gap-1">
+                            <Maximize2 className="w-2.5 h-2.5" />
+                            Click to expand
+                          </p>
+                        </div>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -249,45 +294,45 @@ export function RadarChatPanel({ initialCardTitle, onClose, title = 'Sense' }: R
               </div>
             )}
 
-            {/* Card-specific suggestions below the conversation */}
-            {!processing && cardSuggestions.length > 0 && (
-              <div className="pt-2">
-                <p className="text-[11px] text-[#B0B8C4] uppercase tracking-wider mb-2" style={{ fontWeight: 500, letterSpacing: '0.04em' }}>Try asking</p>
-                <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #ECEEF1' }}>
-                  {cardSuggestions.map((s, idx) => (
-                    <button
-                      key={s.text}
-                      onClick={() => {
-                        setMessages((prev) => [...prev, { role: 'user', text: s.text }]);
-                        setProcessing(true);
-                        setTimeout(() => {
-                          setMessages((prev) => [...prev, { role: 'ai', text: getCardResponse(s.text) }]);
-                          setProcessing(false);
-                        }, 800);
-                      }}
-                      className="group/sg flex items-center gap-3 w-full px-4 py-3 text-left transition-all duration-150 hover:bg-[#F8F9FB]"
-                      style={{ background: '#FFFFFF', borderBottom: idx < cardSuggestions.length - 1 ? '1px solid #F0F1F3' : 'none' }}
-                    >
-                      {s.icon === 'doc' ? (
-                        <FileText className="w-[14px] h-[14px] text-[#C8CCD4] flex-shrink-0 group-hover/sg:text-[#9CA3AF] transition-colors" />
-                      ) : (
-                        <MessageSquare className="w-[14px] h-[14px] text-[#C8CCD4] flex-shrink-0 group-hover/sg:text-[#9CA3AF] transition-colors" />
-                      )}
-                      <span className="flex-1 text-[12.5px] text-[#4B5563] group-hover/sg:text-[#1C1E21] transition-colors">{s.text}</span>
-                      <ArrowRight className="w-3 h-3 text-[#D1D5DB] group-hover/sg:text-[#9CA3AF] flex-shrink-0 opacity-60 group-hover/sg:opacity-100 transition-all" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             <div ref={chatEndRef} />
           </div>
         )}
       </div>
 
-      {/* Input */}
-      <div className="flex-shrink-0 px-4 py-3" style={{ background: '#FFFFFF', borderTop: '1px solid #ECEEF1' }}>
+      {/* Input area with suggestions above */}
+      <div className="flex-shrink-0" style={{ background: '#FFFFFF' }}>
+        {/* Try asking suggestions */}
+        {!processing && cardSuggestions.length > 0 && (
+          <div className="px-4 pt-2 pb-1.5">
+            <p className="text-[11px] text-[#B0B8C4] uppercase tracking-wider mb-1.5 px-1" style={{ fontWeight: 500, letterSpacing: '0.04em' }}>Try asking</p>
+            <div className="flex flex-col">
+              {cardSuggestions.map((s) => (
+                <button
+                  key={s.text}
+                  onClick={() => {
+                    setMessages((prev) => [...prev, { role: 'user', text: s.text }]);
+                    setProcessing(true);
+                    setTimeout(() => {
+                      setMessages((prev) => [...prev, { role: 'ai', text: getCardResponse(s.text) }]);
+                      setProcessing(false);
+                    }, 800);
+                  }}
+                  className="group/sg flex items-center gap-2.5 w-full px-1 py-1.5 text-left transition-colors duration-100 rounded-md hover:bg-[#F8F9FB]"
+                >
+                  <ArrowRight className="w-3 h-3 text-[#D1D5DB] group-hover/sg:text-[#9CA3AF] flex-shrink-0 transition-colors" />
+                  <span className="flex-1 text-[12px] text-[#6B7280] group-hover/sg:text-[#1C1E21] transition-colors truncate">{s.text}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Divider */}
+        <div style={{ borderTop: '1px solid #ECEEF1' }} />
+
+        {/* Input field */}
+        <div className="px-4 py-3">
         <div
           className="flex items-center gap-2 rounded-xl px-3.5 py-2.5"
           style={{
@@ -338,7 +383,37 @@ export function RadarChatPanel({ initialCardTitle, onClose, title = 'Sense' }: R
             close
           </span>
         </div>
+        </div>
       </div>
+
+      {/* Expanded Card Modal */}
+      {isCardModalOpen && initialCardTitle && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] transition-opacity duration-200"
+            onClick={() => setIsCardModalOpen(false)}
+          />
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 pointer-events-none">
+            <div
+              className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.15)] w-full max-w-[560px] pointer-events-auto overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-5 py-4 border-b border-[#E6E8EC]">
+                <h3 className="text-[15px] font-semibold text-[#1C1E21]">{initialCardTitle}</h3>
+                <button
+                  onClick={() => setIsCardModalOpen(false)}
+                  className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-[#F8F9FB] transition-colors"
+                >
+                  <X className="w-4 h-4 text-[#6B7280]" />
+                </button>
+              </div>
+              <div className="p-5">
+                <CardThumbnail cardTitle={initialCardTitle} />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
