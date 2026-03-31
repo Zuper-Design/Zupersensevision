@@ -142,6 +142,7 @@ function CardHoverActions({ onOpenInChat, onEdit, onUnpin, onResize, isFullWidth
   isFullWidth?: boolean;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const t = useRadarTheme();
 
@@ -161,68 +162,49 @@ function CardHoverActions({ onOpenInChat, onEdit, onUnpin, onResize, isFullWidth
       <DateFilter />
 
       <button
-        onClick={(e) => { e.stopPropagation(); onOpenInChat?.(); }}
-        className={`${btnClass} gap-1.5 px-2.5`}
-        style={{ ...btnStyle, fontSize: 12, fontWeight: 500 }}
+        onClick={(e) => { e.stopPropagation(); setShowRemoveConfirm(true); }}
+        className="flex items-center justify-center h-7 gap-1.5 px-2.5 rounded-lg border border-[#FECACA] bg-white hover:bg-[#FEF2F2] transition-all duration-150"
+        style={{ fontSize: 12, fontWeight: 500, color: '#DC2626' }}
       >
-        <ExternalLink className="w-3 h-3" />
-        <span>Open in Chat</span>
+        <X className="w-3 h-3" />
+        <span>Remove</span>
       </button>
 
-      <div className="relative" ref={menuRef}>
-        <button
-          onClick={(e) => { e.stopPropagation(); setMenuOpen(o => !o); }}
-          className={`${btnClass} w-7`}
-          style={btnStyle}
-        >
-          <MoreHorizontal className="w-3.5 h-3.5" />
-        </button>
-        <AnimatePresence>
-          {menuOpen && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -4 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -4 }}
-              transition={{ duration: 0.1 }}
-              className="absolute right-0 top-full mt-1 w-[130px] py-1 z-50"
-              style={{ background: t.cardBg, border: t.cardBorder, borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
+      {/* Remove Confirmation Dialog */}
+      {showRemoveConfirm && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/40 z-[100]"
+            onClick={(e) => { e.stopPropagation(); setShowRemoveConfirm(false); }}
+          />
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 pointer-events-none">
+            <div
+              className="w-full max-w-[380px] pointer-events-auto"
+              style={{ background: '#FFFFFF', borderRadius: 14, boxShadow: '0 16px 48px rgba(0,0,0,0.16)' }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={(e) => { e.stopPropagation(); onEdit?.(); setMenuOpen(false); }}
-                className="w-full px-3 py-2 flex items-center gap-2.5 transition-colors duration-100 text-left"
-                style={{ color: t.titleColor }}
-                onMouseEnter={e => (e.currentTarget.style.background = t.controlBg)}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
-                <Pencil className="w-3.5 h-3.5" style={{ color: t.subtitleColor }} />
-                <span style={{ fontSize: 13 }}>Start new</span>
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onResize?.(); setMenuOpen(false); }}
-                className="w-full px-3 py-2 flex items-center gap-2.5 transition-colors duration-100 text-left"
-                style={{ color: t.titleColor }}
-                onMouseEnter={e => (e.currentTarget.style.background = t.controlBg)}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
-                {isFullWidth
-                  ? <Minimize2 className="w-3.5 h-3.5" style={{ color: t.subtitleColor }} />
-                  : <Maximize2 className="w-3.5 h-3.5" style={{ color: t.subtitleColor }} />
-                }
-                <span style={{ fontSize: 13 }}>{isFullWidth ? 'Half' : 'Full row'}</span>
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onUnpin?.(); setMenuOpen(false); }}
-                className="w-full px-3 py-2 flex items-center gap-2.5 transition-colors duration-100 text-left"
-                onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
-                <PinOff className="w-3.5 h-3.5 text-red-500" />
-                <span style={{ fontSize: 13, color: '#DC2626' }}>Unpin</span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+              <div className="px-6 pt-6 pb-5">
+                <h3 className="text-[17px] font-bold text-[#1C1E21] mb-2">Remove from Radar?</h3>
+                <p className="text-[14px] text-[#6B7280] leading-relaxed">Are you sure you want to remove this card? You can always add it back from the conversation.</p>
+              </div>
+              <div className="flex items-center justify-end gap-2.5 px-6 pb-5">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowRemoveConfirm(false); }}
+                  className="px-5 py-2 text-[13px] font-medium text-[#1C1E21] bg-white border border-[#E6E8EC] hover:bg-[#F8F9FB] rounded-lg transition-colors duration-150"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowRemoveConfirm(false); onUnpin?.(); }}
+                  className="px-5 py-2 text-[13px] font-semibold text-white bg-[#DC2626] hover:bg-[#B91C1C] rounded-lg transition-colors duration-150"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -362,6 +344,10 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
     setCardWidths(prev => ({ ...prev, [id]: !isFullWidth(item) }));
   };
 
+  const removePinnedCard = (pinnedId: string) => {
+    setCardOrder(prev => prev.filter(c => !(c.kind === 'pinned' && c.id === pinnedId)));
+  };
+
   return (
     <RadarThemeContext.Provider value={t}>
       <div
@@ -494,13 +480,8 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
           <div className="flex-1 overflow-y-auto scrollbar-auto-hide">
             <div className="max-w-[1400px] mx-auto px-8 pt-4 pb-20">
 
-              {/* ── Sense Alerts ── */}
+              {/* ── Cards ── */}
               <div className="mb-8">
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles className="w-3.5 h-3.5" style={{ color: t.accentColor }} />
-                  <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: t.labelColor }}>Sense Alerts</span>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: t.badgeBg, color: t.badgeColor }}>3</span>
-                </div>
                 <div className="flex gap-4">
                   <SenseAlertCard
                     icon={<FileText className="w-3.5 h-3.5" />}
@@ -529,17 +510,12 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                 </div>
               </div>
 
-              {/* ── Pinned Cards (all cards) ── */}
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: t.labelColor }}>Pinned Cards</span>
-                    <span className="text-[11px]" style={{ color: t.subtitleColor }}>· {cardOrder.length} cards</span>
-                  </div>
-                  {isEditMode && (
+                {isEditMode && (
+                  <div className="flex items-center justify-end mb-3">
                     <span className="text-[11px] italic" style={{ color: t.subtitleColor }}>Drag to reorder</span>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <motion.div
                   key={refreshKey}
@@ -568,20 +544,46 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                         onDragOver={e => handleDragOver(e, idx)}
                         onDrop={() => handleDrop(idx)}
                         onDragEnd={() => { setDraggedIdx(null); setDragOverIdx(null); }}
+                        onClick={() => { if (!isEditMode) setChatCardTitle(cardTitle); }}
                         style={{
                           opacity: isDragging ? 0.35 : 1,
-                          outline: isDragTarget ? `2px solid ${t.accentColor}` : isActiveInChat ? '2px solid #6D5F63' : 'none',
+                          outline: isDragTarget ? `2px solid ${t.accentColor}` : isEditMode ? '2px dashed #D1D5DB' : isActiveInChat ? '2px solid #6D5F63' : 'none',
                           outlineOffset: '2px',
                           borderRadius: t.cardRadius,
-                          cursor: isEditMode ? 'grab' : 'default',
+                          cursor: isEditMode ? 'grab' : 'pointer',
                           boxShadow: isActiveInChat ? '0 0 0 4px rgba(109,95,99,0.12)' : undefined,
                         }}
                       >
-                        {/* Drag handle — top-right in edit mode */}
+                        {/* Edit mode overlay */}
                         {isEditMode && (
-                          <div className="absolute top-3 right-3 z-20 p-1 rounded-md" style={{ background: t.controlBg, opacity: 0.8 }}>
-                            <GripVertical className="w-4 h-4" style={{ color: t.subtitleColor }} />
-                          </div>
+                          <>
+                            <div className="absolute top-3 right-3 z-20 p-1 rounded-md cursor-grab" style={{ background: t.controlBg, opacity: 0.8 }}>
+                              <GripVertical className="w-4 h-4" style={{ color: t.subtitleColor }} />
+                            </div>
+                            <div className="absolute bottom-3 right-3 z-20">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (item.kind === 'saved') {
+                                    removeCardFromRadar(selectedRadarId!, item.data.id);
+                                  } else {
+                                    removePinnedCard(item.id);
+                                  }
+                                }}
+                                className="flex items-center gap-1 px-2.5 h-7 rounded-lg border border-[#FECACA] bg-[#FEF2F2] hover:bg-[#FEE2E2] transition-all duration-150 text-[11px] font-medium text-[#DC2626]"
+                              >
+                                <X className="w-3 h-3" />
+                                Remove
+                              </button>
+                            </div>
+                            {/* Right edge resize handle */}
+                            <div
+                              className="absolute top-0 -right-[6px] w-3 h-full z-30 cursor-col-resize flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-150"
+                              onClick={(e) => { e.stopPropagation(); toggleCardWidth(item); }}
+                            >
+                              <div className="w-1 h-10 rounded-full bg-[#9CA3AF]" />
+                            </div>
+                          </>
                         )}
 
                         {/* Card content */}
@@ -673,6 +675,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                               <CardHoverActions
                                 onOpenInChat={() => setChatCardTitle(item.title)}
                                 onEdit={() => onOpenCard?.({ id: item.id, type: 'card', content: {}, timestamp: new Date(), title: item.title })}
+                                onUnpin={() => removePinnedCard(item.id)}
                                 onResize={() => toggleCardWidth(item)}
                                 isFullWidth={isFullWidth(item)}
                               />

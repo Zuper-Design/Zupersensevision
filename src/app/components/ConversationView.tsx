@@ -1039,8 +1039,16 @@ Sarah`
     const targetRadar = radars.find(r => r.id === activeRadarId) || radars[0];
     if (targetRadar) {
       addCardToRadar(targetRadar.id, { ...cardData, sourceThreadId: activeThreadId });
-      setRadarToastVisible(true);
     }
+  };
+
+  const handleAddToRadarComplete = () => {
+    setRadarToastVisible(true);
+    setTimeout(() => setRadarToastVisible(false), 3000);
+  };
+
+  const handleViewInRadar = () => {
+    onViewChange?.('radar');
   };
 
   const handleSendMessage = () => {
@@ -1640,7 +1648,7 @@ Sarah`
                               <div className="w-full min-w-0">
                                 <CanvasWidgetInChat widgetId={msg.canvasWidgetId} />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: `Canvas: ${msg.canvasWidgetId}`, preview: msg.content.substring(0, 100) })} />
+                              <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: `Canvas: ${msg.canvasWidgetId}`, preview: msg.content.substring(0, 100) })} />
                             </>
                           ) : msg.actionConfirmationCard ? (
                             /* Show Action Confirmation Card */
@@ -1653,7 +1661,7 @@ Sarah`
                                   onCancel={() => alert('Action cancelled.')}
                                 />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.actionConfirmationCard!.action, preview: msg.actionConfirmationCard!.details || '' })} />
+                              <MessageToolbar />
                             </>
                           ) : msg.checklistCard ? (
                             /* Show Checklist Card */
@@ -1664,7 +1672,7 @@ Sarah`
                                   items={msg.checklistCard.items}
                                 />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.checklistCard!.title, preview: msg.checklistCard!.items.map(i => i.text).join(', ').substring(0, 100) })} />
+                              <MessageToolbar />
                             </>
                           ) : msg.emailCard ? (
                             /* Show Email/Message Card */
@@ -1681,7 +1689,7 @@ Sarah`
                                   onOpenEdit={() => openEmailEditor(msg.emailCard!)}
                                 />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.emailCard!.subject, preview: msg.emailCard!.body.substring(0, 100) })} />
+                              <MessageToolbar />
                             </>
                           ) : msg.confirmationCard ? (
                             /* Show Confirmation Card for module creation */
@@ -1696,7 +1704,7 @@ Sarah`
                                   secondaryActionLabel="Deny"
                                 />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.confirmationCard!.moduleName, preview: msg.confirmationCard!.fields.map(f => `${f.label}: ${f.value}`).join(', ').substring(0, 100) })} />
+                              <MessageToolbar />
                             </>
                           ) : msg.radarCardView ? (
                             /* Show exact radar card */
@@ -1706,7 +1714,7 @@ Sarah`
                                   <RadarCardInChat card={msg.radarCardView} />
                                 </div>
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.radarCardView!.title, preview: msg.radarCardView!.preview || msg.radarCardView!.title })} />
+                              <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.radarCardView!.title, preview: msg.radarCardView!.preview || msg.radarCardView!.title })} />
                             </>
                           ) : msg.metricsCharts ? (
                             /* Show Metrics Charts Dashboard */
@@ -1716,7 +1724,7 @@ Sarah`
                                   <MetricsChartCards variant={msg.metricsCharts} />
                                 </div>
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })} />
+                              <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })} />
                             </>
                           ) : msg.dsoChart ? (
                             /* Show DSO Chart for overdue invoices */
@@ -1724,7 +1732,7 @@ Sarah`
                               <div className="flex justify-start min-w-0 overflow-hidden">
                                 <div className="w-full max-w-[600px] min-w-0">
                                   <DSOChartCard />
-                                  <MessageToolbar hideOnIdle onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend — Current: 72 days, Industry Avg: 45 days' })} />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend — Current: 72 days, Industry Avg: 45 days' })} />
                                 </div>
                               </div>
                               {/* Trend warning as AI response */}
@@ -1746,7 +1754,7 @@ Sarah`
                                 }} />
                                 </div>
                               </div>
-                              <MessageToolbar hideOnIdle onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Agent Recommendation', preview: 'Collection Assistant Agent' })} />
+                              <MessageToolbar />
                             </>
                           ) : invoicePageBuilderWasOpened && !isInvoicePageBuilderOpen ? (
                             /* Show Invoice Page Builder Preview Card when builder was opened but is now closed */
@@ -1754,7 +1762,7 @@ Sarah`
                               <div className="flex justify-start">
                                 <InvoicePageBuilderPreviewCard onClick={() => setIsInvoicePageBuilderOpen(true)} />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Invoice Page Builder', preview: 'Custom invoice page layout' })} />
+                              <MessageToolbar />
                             </>
                           ) : pageBuilderWasOpened && !isPageBuilderOpen ? (
                             /* Show Page Builder Preview Card when builder was opened but is now closed */
@@ -1762,7 +1770,7 @@ Sarah`
                               <div className="flex justify-start">
                                 <PageBuilderPreviewCard onClick={() => setIsPageBuilderOpen(true)} />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Page Builder', preview: 'Custom page layout' })} />
+                              <MessageToolbar />
                             </>
                           ) : !isPageBuilderOpen && !pageBuilderWasOpened && !isPageBuilderLoading && !isInvoicePageBuilderOpen && !invoicePageBuilderWasOpened && !isInvoicePageBuilderLoading ? (
                             /* Show Data Cards for analysis queries (but not when page builder is/was open or loading) */
@@ -1835,7 +1843,7 @@ Sarah`
                               </div>
 
                               {/* Action Icons - All in one row */}
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Q4 Performance', preview: 'Revenue: $847,300 | Active Users: 25k' })} />
+                              <MessageToolbar />
                             </>
                           ) : null}
                         </>
@@ -1858,7 +1866,7 @@ Sarah`
                                   onOpenEdit={() => openEmailEditor(msg.emailCard!)}
                                 />
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: msg.emailCard!.subject, preview: msg.emailCard!.body.substring(0, 100) })} />
+                              <MessageToolbar />
                             </>
                           )}
                           {msg.metricsCharts && (
@@ -1868,7 +1876,7 @@ Sarah`
                                   <MetricsChartCards variant={msg.metricsCharts} />
                                 </div>
                               </div>
-                              <MessageToolbar onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })} />
+                              <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })} />
                             </>
                           )}
                           {msg.dsoChart && (
@@ -1876,7 +1884,7 @@ Sarah`
                               <div className="flex justify-start min-w-0 overflow-hidden">
                                 <div className="w-full max-w-[600px] min-w-0">
                                   <DSOChartCard />
-                                  <MessageToolbar hideOnIdle onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend' })} />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'DSO Chart', preview: 'Days Sales Outstanding trend' })} />
                                 </div>
                               </div>
                             </>

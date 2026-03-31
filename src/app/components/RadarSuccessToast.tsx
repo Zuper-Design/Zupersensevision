@@ -11,7 +11,7 @@ interface RadarSuccessToastProps {
 export function RadarSuccessToast({ isVisible, onClose, onGoToRadar }: RadarSuccessToastProps) {
   useEffect(() => {
     if (isVisible) {
-      const timer = setTimeout(onClose, 4000);
+      const timer = setTimeout(onClose, 3000);
       return () => clearTimeout(timer);
     }
   }, [isVisible, onClose]);
@@ -41,7 +41,7 @@ export function RadarSuccessToast({ isVisible, onClose, onGoToRadar }: RadarSucc
 
             {/* Text */}
             <span className="text-[13px] text-[#1C1E21]" style={{ fontWeight: 500 }}>
-              Added to Radar
+              Added to Radar successfully
             </span>
 
             {/* Divider */}
