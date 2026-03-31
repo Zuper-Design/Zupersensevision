@@ -117,7 +117,7 @@ export const PageBuilderCard: React.FC<PageBuilderCardProps> = ({ onClose, pageN
           </button>
           <button
             onClick={() => setShowPublishModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1C1E21] text-white text-[13px] font-medium hover:bg-[#2A2D31] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] text-white text-[13px] font-medium transition-all duration-150"
           >
             <Eye className="w-3.5 h-3.5" />
             Publish

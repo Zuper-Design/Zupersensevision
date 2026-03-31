@@ -615,7 +615,7 @@ export function JobListingPage({ onBack }: JobListingPageProps) {
               <RotateCw className="w-3.5 h-3.5 text-[#1C1E21]" />
               Recurring Jobs
             </button>
-            <button className="flex items-center gap-1.5 h-[32px] px-3 rounded-lg bg-[#1C1E21] hover:bg-[#2D3036] transition-colors text-white text-[13px]" style={{ fontWeight: 600 }}>
+            <button className="flex items-center gap-1.5 h-[32px] px-3 rounded-lg bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-all duration-150 text-white text-[13px]" style={{ fontWeight: 600 }}>
               <Plus className="w-3.5 h-3.5" />
               New Job
             </button>

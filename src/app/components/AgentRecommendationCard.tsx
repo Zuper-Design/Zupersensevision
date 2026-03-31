@@ -171,7 +171,7 @@ export function AgentRecommendationCard({ onHireAgent }: AgentRecommendationCard
                 <div className="flex justify-end">
                   <button 
                     onClick={handleHire}
-                    className="px-4 py-2 rounded-lg bg-[#1C1E21] text-white text-[12px] transition-all hover:bg-[#2D2F33] active:scale-[0.98]" style={{ fontWeight: 600 }}>
+                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] text-white text-[12px] transition-all duration-150 active:scale-[0.98]" style={{ fontWeight: 600 }}>
                     Run Agent
                   </button>
                 </div>

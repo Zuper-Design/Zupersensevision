@@ -184,7 +184,7 @@ export function PublishModal({ isOpen, onClose, defaultPageName = '' }: PublishM
                 ? 'bg-[#10B981] text-white'
                 : !pageName.trim() || !selectedWorkspace
                   ? 'bg-[#E6E8EC] text-[#9CA3AF] cursor-not-allowed'
-                  : 'bg-[#1C1E21] text-white hover:bg-[#2A2D31] shadow-sm'
+                  : 'bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] text-white shadow-sm'
             }`}
           >
             {isPublishing ? (
