@@ -1,4 +1,4 @@
-import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical } from 'lucide-react';
+import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical, ImagePlus } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ResearchDisplay } from './ResearchDisplay';
 import { ConfirmationCard } from './ConfirmationCard';
@@ -13,6 +13,7 @@ import { TypewriterText } from './TypewriterText';
 import { MessageToolbar } from './MessageToolbar';
 import { RadarSuccessToast } from './RadarSuccessToast';
 import { SavedCard, useRadar } from './RadarContext';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Line } from 'recharts';
 import { SuggestedFollowups, getFollowupSuggestions } from './SuggestedFollowups';
 import { AttentionCardWidget } from './widgets/AttentionCardWidget';
 import { WeatherWidget } from './widgets/WeatherWidget';
@@ -80,6 +81,8 @@ interface Message {
     to: string | string[];
     body: string;
   };
+  imageUrl?: string;
+  generatedChart?: boolean;
 }
 
 function getRadarCardSentence(card: SavedCard): string {
@@ -170,6 +173,59 @@ function RadarCardInChat({ card }: { card: SavedCard }) {
   );
 }
 
+function GeneratedChartCard() {
+  const data = [
+    { month: 'Jan', revenue: 42000, target: 38000, profit: 12000 },
+    { month: 'Feb', revenue: 48000, target: 40000, profit: 15000 },
+    { month: 'Mar', revenue: 45000, target: 42000, profit: 13000 },
+    { month: 'Apr', revenue: 56000, target: 44000, profit: 19000 },
+    { month: 'May', revenue: 52000, target: 46000, profit: 17000 },
+    { month: 'Jun', revenue: 61000, target: 48000, profit: 22000 },
+    { month: 'Jul', revenue: 58000, target: 50000, profit: 20000 },
+    { month: 'Aug', revenue: 67000, target: 52000, profit: 25000 },
+  ];
+
+  return (
+    <div className="w-full max-w-[560px] bg-white border border-[#E6E8EC] rounded-xl p-5" style={{ fontFamily: 'DM Sans, system-ui, sans-serif' }}>
+      <div className="mb-4">
+        <h3 className="text-[15px] font-bold text-[#1C1E21] mb-0.5">Generated Chart</h3>
+        <p className="text-[12px] text-[#9CA3AF]">Built from your uploaded image</p>
+      </div>
+      <div style={{ width: '100%', height: 220 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 5, right: 5, bottom: 0, left: -10 }}>
+            <defs>
+              <linearGradient id="genRevenue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#6D5F63" stopOpacity={0.2} />
+                <stop offset="100%" stopColor="#6D5F63" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="genProfit" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10B981" stopOpacity={0.15} />
+                <stop offset="100%" stopColor="#10B981" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#F0F1F3" vertical={false} />
+            <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 11, fill: '#9CA3AF' }} axisLine={false} tickLine={false} tickFormatter={(v: number) => `$${v / 1000}k`} />
+            <RechartsTooltip
+              contentStyle={{ background: '#fff', border: '1px solid #E6E8EC', borderRadius: 8, fontSize: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+              formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]}
+            />
+            <Area type="monotone" dataKey="revenue" stroke="#221E1F" strokeWidth={2} fill="url(#genRevenue)" name="Revenue" />
+            <Area type="monotone" dataKey="profit" stroke="#10B981" strokeWidth={2} fill="url(#genProfit)" name="Profit" />
+            <Line type="monotone" dataKey="target" stroke="#E6E8EC" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="Target" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="flex items-center gap-5 mt-3 pt-3 border-t border-[#F0F1F3]">
+        <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#221E1F]" /><span className="text-[11px] text-[#6B7280]">Revenue</span></div>
+        <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" /><span className="text-[11px] text-[#6B7280]">Profit</span></div>
+        <div className="flex items-center gap-1.5"><span className="w-2.5 h-0.5 border-t border-dashed border-[#D1D5DB]" style={{ width: 10 }} /><span className="text-[11px] text-[#6B7280]">Target</span></div>
+      </div>
+    </div>
+  );
+}
+
 export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard }: ConversationViewProps) {
   const { radars, activeRadarId, addCardToRadar } = useRadar();
   const [isListening, setIsListening] = useState(false);
@@ -250,6 +306,9 @@ export function ConversationView({ question, onBack, activeView = 'chat', onView
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImageName, setUploadedImageName] = useState<string | null>(null);
   
   // Detect if the question is about sending an email or message
   const detectEmailMessage = (text: string): { isEmail: boolean; isMessage: boolean; data?: any } => {
@@ -1051,20 +1110,42 @@ Sarah`
     onViewChange?.('radar');
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setUploadedImageName(file.name);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeUploadedImage = () => {
+    setUploadedImage(null);
+    setUploadedImageName(null);
+    if (imageInputRef.current) imageInputRef.current.value = '';
+  };
+
   const handleSendMessage = () => {
-    if (!message.trim()) return;
-    
+    if (!message.trim() && !uploadedImage) return;
+
     // Add user message
     const userMessage = message.trim();
     const lowerMessage = userMessage.toLowerCase();
-    
+    const currentImage = uploadedImage;
+
     // Detect if user wants to preview something
     if (lowerMessage.includes('preview') && !isPreviewMode) {
       setIsPreviewMode(true);
     }
-    
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+
+    setMessages(prev => [...prev, { role: 'user', content: userMessage, imageUrl: currentImage || undefined }]);
     setMessage('');
+    setUploadedImage(null);
+    setUploadedImageName(null);
+    if (imageInputRef.current) imageInputRef.current.value = '';
     
     // Stop listening if active
     if (isListening) {
@@ -1073,6 +1154,16 @@ Sarah`
     
     // Simulate AI response after a short delay
     setTimeout(() => {
+      // Detect chart building from uploaded image
+      const isBuildChart = currentImage && (lowerMessage.includes('chart') || lowerMessage.includes('graph') || lowerMessage.includes('build') || lowerMessage.includes('create') || lowerMessage.includes('generate'));
+      if (isBuildChart) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "I've analyzed the image and built a chart based on the data pattern. Here's your generated chart:",
+          generatedChart: true
+        }]);
+        return;
+      }
       if (detectInvoicePageBuilder(userMessage)) {
         // Trigger invoice page builder
         setIsInvoicePageBuilderLoading(true);
@@ -1591,6 +1682,11 @@ Sarah`
                 <div key={index} className={msg.role === 'user' ? 'flex justify-end' : 'relative flex flex-col group'}>
                   {msg.role === 'user' ? (
                     <div className="inline-block bg-[#F3F4F6] rounded-[16px] px-5 py-3 max-w-[80%]">
+                      {msg.imageUrl && (
+                        <div className="mb-2 rounded-lg overflow-hidden border border-[#E6E8EC]">
+                          <img src={msg.imageUrl} alt="Uploaded" className="max-w-full max-h-[200px] object-contain" />
+                        </div>
+                      )}
                       <p className="text-[15px] text-[#1C1E21] font-normal whitespace-pre-wrap">{msg.content}</p>
                     </div>
                   ) : (
@@ -1725,6 +1821,16 @@ Sarah`
                                 </div>
                               </div>
                               <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Metrics Dashboard', preview: msg.content.substring(0, 100) })} />
+                            </>
+                          ) : msg.generatedChart ? (
+                            /* Show Generated Chart from image */
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full min-w-0">
+                                  <GeneratedChartCard />
+                                </div>
+                              </div>
+                              <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Generated Chart', preview: 'Chart built from uploaded image' })} />
                             </>
                           ) : msg.dsoChart ? (
                             /* Show DSO Chart for overdue invoices */
@@ -1974,6 +2080,23 @@ Sarah`
               isListening ? 'border-[#FF6B35]/40 shadow-[0_0_0_3px_rgba(255,107,53,0.1)]' : 'border-[#E6E8EC] hover:border-[#FF6B35]/40 hover:shadow-[0_0_0_3px_rgba(255,107,53,0.1)] focus-within:border-[#FF6B35]/40 focus-within:shadow-[0_0_0_3px_rgba(255,107,53,0.1)]'
             }`}>
               <div className="flex flex-col px-4 py-3 gap-3">
+                {/* Image preview */}
+                {uploadedImage && (
+                  <div className="flex items-center gap-2 px-1">
+                    <div className="relative rounded-lg overflow-hidden border border-[#E6E8EC] w-16 h-16 flex-shrink-0">
+                      <img src={uploadedImage} alt="Upload" className="w-full h-full object-cover" />
+                      <button
+                        onClick={removeUploadedImage}
+                        className="absolute top-0.5 right-0.5 w-4 h-4 bg-black/60 rounded-full flex items-center justify-center"
+                      >
+                        <X className="w-2.5 h-2.5 text-white" />
+                      </button>
+                    </div>
+                    <span className="text-[12px] text-[#9CA3AF] truncate">{uploadedImageName}</span>
+                  </div>
+                )}
+                {/* Hidden file input */}
+                <input ref={imageInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 {/* First line: Textarea */}
                 <textarea
                   placeholder="Send a message..."
@@ -1992,13 +2115,21 @@ Sarah`
                 
                 {/* Second line: Mic and Send buttons */}
                 <div className="flex items-center justify-between">
-                  <button
-                    className={`relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 flex-shrink-0 ${
-                      isListening 
-                        ? 'bg-white mic-pulse' 
-                        : 'hover:bg-[#F8F9FB]'
-                    }`}
-                    onClick={toggleDictation}
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => imageInputRef.current?.click()}
+                      className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-[#F8F9FB] transition-all duration-200 flex-shrink-0"
+                      aria-label="Upload image"
+                    >
+                      <ImagePlus className="w-[18px] h-[18px] text-[#6B7280]" />
+                    </button>
+                    <button
+                      className={`relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 flex-shrink-0 ${
+                        isListening
+                          ? 'bg-white mic-pulse'
+                          : 'hover:bg-[#F8F9FB]'
+                      }`}
+                      onClick={toggleDictation}
                     aria-label={isListening ? "Stop dictation" : "Start dictation"}
                   >
                     <style>{`
@@ -2031,19 +2162,20 @@ Sarah`
                       }
                     `}</style>
                     <Mic className={`w-[18px] h-[18px] relative z-10 ${isListening ? 'text-[#FF6B35]' : 'text-[#6B7280]'}`} />
-                  </button>
-                  
-                  <button 
+                    </button>
+                  </div>
+
+                  <button
                     className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 flex-shrink-0 ${
-                      message.trim() 
-                        ? 'bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40]' 
+                      (message.trim() || uploadedImage)
+                        ? 'bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40]'
                         : 'bg-[#E6E8EC] cursor-not-allowed'
                     }`}
                     aria-label="Send message"
-                    disabled={!message.trim()}
+                    disabled={!message.trim() && !uploadedImage}
                     onClick={handleSendMessage}
                   >
-                    <ArrowUp className={`w-[18px] h-[18px] ${message.trim() ? 'text-white' : 'text-[#9CA3AF]'}`} />
+                    <ArrowUp className={`w-[18px] h-[18px] ${(message.trim() || uploadedImage) ? 'text-white' : 'text-[#9CA3AF]'}`} />
                   </button>
                 </div>
               </div>

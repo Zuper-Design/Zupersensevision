@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -96,7 +96,24 @@ const placeholderTexts = [
 
 export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed }: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+
+  const threadHistory = [
+    { id: 1, title: 'Q4 Performance Analysis', active: true },
+    { id: 2, title: 'Create new customer - ABC Roofing', active: false },
+    { id: 3, title: 'Team performance last week', active: false },
+    { id: 4, title: 'Revenue breakdown by project type', active: false },
+    { id: 5, title: 'Outstanding invoices review', active: false },
+    { id: 7, title: 'Material request for North Ave project', active: false },
+    { id: 8, title: 'Weekly team schedule review', active: false },
+    { id: 9, title: 'Quote follow-up automation', active: false },
+    { id: 10, title: 'Customer satisfaction analysis', active: false },
+    { id: 11, title: 'Inventory status check', active: false },
+    { id: 12, title: 'Project timeline updates', active: false },
+    { id: 13, title: 'Vendor payment processing', active: false },
+    { id: 14, title: 'Safety compliance checklist', active: false },
+    { id: 15, title: 'Monthly revenue report', active: false },
+  ];
   const [inputFocused, setInputFocused] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [typedPlaceholder, setTypedPlaceholder] = useState('');
@@ -406,8 +423,39 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
       
       <div className="flex-1 overflow-y-auto bg-white scrollbar-auto-hide">
         <div className="bg-white h-full overflow-hidden flex rounded-xl">
-          {/* Collapsible Recent Conversations Sidebar */}
-          
+          {/* Thread History Sidebar */}
+          <div
+            className={`transition-all duration-300 border-r border-[#E6E8EC] bg-[#FAFAFA] flex-shrink-0 ${
+              sidebarExpanded ? 'w-[260px]' : 'w-0'
+            } overflow-hidden`}
+          >
+            <div className="h-full flex flex-col w-[260px]">
+              <div className="px-3 pt-3 pb-3">
+                <button className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-[#E8E8E8] rounded-md transition-colors">
+                  <span className="text-[20px] text-[#1C1E21]">+</span>
+                  <span className="text-[14px] text-[#1C1E21] font-medium">New Thread</span>
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto scrollbar-auto-hide">
+                <div className="px-3">
+                  {threadHistory.map((thread) => (
+                    <button
+                      key={thread.id}
+                      onClick={() => handlePromptClick(thread.title)}
+                      className={`w-full px-3 py-2.5 text-left rounded-md transition-colors mb-1 group flex items-center gap-2 ${
+                        thread.active ? 'bg-[#E8E8E8]' : 'hover:bg-[#E8E8E8]'
+                      }`}
+                    >
+                      <p className={`text-[14px] truncate flex-1 ${thread.active ? 'text-[#1C1E21] font-medium' : 'text-[#1C1E21]'}`}>
+                        {thread.title}
+                      </p>
+                      <Archive className="w-4 h-4 text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto relative scrollbar-auto-hide">
@@ -417,8 +465,12 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 {/* Top Header Bar */}
                 <div className="h-[56px] border-b border-[#E6E8EC] flex items-center justify-between px-6 flex-shrink-0 bg-white relative z-10">
                   <div className="flex items-center gap-3">
-                    {/* Placeholder for left side - can add menu or other controls */}
-                    <div className="w-[18px] h-[18px]"></div>
+                    <button
+                      onClick={() => setSidebarExpanded(!sidebarExpanded)}
+                      className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
+                    >
+                      <PanelLeftClose className={`w-[18px] h-[18px] text-[#6B7280] transition-transform duration-200 ${sidebarExpanded ? '' : 'rotate-180'}`} />
+                    </button>
                   </div>
                   
                   {/* Canvas/Chat Switcher - Centered */}
