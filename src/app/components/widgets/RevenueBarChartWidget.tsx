@@ -12,15 +12,8 @@ export const RevenueBarChartWidget = () => {
   return (
     <div className="bg-white rounded-2xl border border-[#E6E8EC] shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-6 min-h-[380px] card-hover-elevate">
       <div className="mb-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-[14px] font-semibold text-[#1C1E21] mb-1">Revenue by Job Type</h3>
-            <p className="text-[12px] text-[#6B7280]">Revenue vs material & labor costs</p>
-          </div>
-          <div className="flex items-center gap-1 px-2 py-1 bg-[#F0FDF4] rounded-lg">
-            <span className="text-[11px] font-medium text-[#10B981]">Avg margin: 48%</span>
-          </div>
-        </div>
+        <h3 className="text-[14px] font-semibold text-[#1C1E21] mb-1">Revenue by Job Type</h3>
+        <p className="text-[12px] text-[#6B7280]">Revenue vs material & labor costs</p>
       </div>
 
       <div className="w-full h-[280px] min-w-0">

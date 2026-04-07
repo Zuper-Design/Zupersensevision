@@ -108,6 +108,11 @@ interface ConversationViewProps {
   widgetId?: string | null;
   onOpenFeedback?: () => void;
   radarCard?: SavedCard | null;
+  sidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
+  isTrial?: boolean;
+  isVp?: boolean;
+  onUpgrade?: () => void;
 }
 
 // Widget response text mapping
@@ -226,7 +231,7 @@ function GeneratedChartCard() {
   );
 }
 
-export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard }: ConversationViewProps) {
+export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade }: ConversationViewProps) {
   const { radars, activeRadarId, addCardToRadar } = useRadar();
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
@@ -1451,84 +1456,20 @@ Sarah`
 
   return (
     <div className="flex h-full bg-white">
-      {/* Thread History Sidebar - Left Most */}
-      <div 
-        className={`transition-all duration-300 border-r border-[#E6E8EC] bg-[#FAFAFA] flex-shrink-0 ${
-          isThreadHistoryOpen ? 'w-[260px]' : 'w-0'
-        } overflow-hidden`}
-      >
-        <div className="h-full flex flex-col">
-          {/* New Thread Button */}
-          <div className="px-3 pt-3 pb-3">
-            <button className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-[#E8E8E8] rounded-md transition-colors">
-              <span className="text-[20px] text-[#1C1E21]">+</span>
-              <span className="text-[14px] text-[#1C1E21]">New Thread</span>
-            </button>
-          </div>
-          
-          {/* Thread List */}
-          <div className="flex-1 overflow-y-auto scrollbar-auto-hide">
-            <div className="px-3">
-              {threadHistory.map((thread) => {
-                const threadStatus = threadStatuses[thread.id];
-                const isBuilding = threadStatus === 'building';
-                const isCompleted = threadStatus === 'completed';
-                
-                return (
-                  <button
-                    key={thread.id}
-                    onClick={() => handleThreadSwitch(thread.id)}
-                    className={`w-full px-3 py-2.5 text-left rounded-md transition-colors mb-1 group flex items-center gap-2 ${
-                      thread.id === activeThreadId ? 'bg-[#E8E8E8]' : 'hover:bg-[#E8E8E8]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <p className="text-[14px] text-[#1C1E21] truncate flex-1">
-                        {thread.title}
-                      </p>
-                      
-                      {/* Building indicator - monochrome animated logo */}
-                      {isBuilding && (
-                        <div className="flex-shrink-0">
-                          <SenseLogo size={16} animated={true} monochrome={true} />
-                        </div>
-                      )}
-                      
-                      {/* Completed indicator - red dot */}
-                      {isCompleted && !isBuilding && (
-                        <div className="flex-shrink-0 w-2 h-2 rounded-full bg-[#EF4444]" />
-                      )}
-                    </div>
-                    
-                    {/* Archive icon - only show when not building/completed */}
-                    {!isBuilding && !isCompleted && (
-                      <Archive className="w-4 h-4 text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content - Everything else */}
+      {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
       {/* Top Header - Full Width */}
       <div className="h-[56px] border-b border-[#E6E8EC] flex items-center justify-between px-6 flex-shrink-0 bg-white relative z-10">
         <div className="flex items-center gap-3">
-          {/* Chat Expand Icon */}
-          <button
-            onClick={() => setIsThreadHistoryOpen(!isThreadHistoryOpen)}
-            className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
-            aria-label={isThreadHistoryOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-          >
-            <PanelLeftClose className={`w-[18px] h-[18px] text-[#6B7280] transition-transform duration-200 ${isThreadHistoryOpen ? '' : 'rotate-180'}`} />
-          </button>
-          
-          {/* Separator */}
-          <div className="w-px h-[56px] bg-[#E6E8EC]"></div>
-          
+          {/* Sidebar toggle */}
+          {!sidebarOpen && onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
+            >
+              <PanelLeftClose className="w-[18px] h-[18px] text-[#6B7280] rotate-180" />
+            </button>
+          )}
           {/* Back Arrow */}
           <button
             onClick={onBack}
@@ -1596,8 +1537,14 @@ Sarah`
         
         {/* Beta Label */}
         <div className="flex items-center gap-2">
-                  </div>
-        
+          {isTrial && (
+            <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
+            </button>
+          )}
+        </div>
+
       </div>
 
       {/* Content Below Header */}
@@ -2076,7 +2023,18 @@ Sarah`
         {/* Minimal Input at Bottom - Fixed */}
         <div className="bg-white px-8 py-4 flex-shrink-0 bg-white">
           <div className="w-full max-w-[720px] mx-auto">
-            <div className={`w-full bg-white rounded-[20px] border transition-all duration-200 shadow-sm ${
+            {isVp && (
+              <div className="flex items-center justify-between gap-3 px-4 py-3 mb-[8px] rounded-xl bg-[#F3F4F6]">
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold text-[#1C1E21]">Your trial has ended</p>
+                  <p className="text-[12px] text-[#6B7280] mt-0.5">Upgrade Sense to continue asking questions.</p>
+                </div>
+                <button onClick={onUpgrade} className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
+                  Upgrade Sense
+                </button>
+              </div>
+            )}
+            <div className={`w-full bg-white rounded-[20px] border transition-all duration-200 shadow-sm ${isVp ? 'opacity-70 pointer-events-none cursor-not-allowed' : ''} ${
               isListening ? 'border-[#FF6B35]/40 shadow-[0_0_0_3px_rgba(255,107,53,0.1)]' : 'border-[#E6E8EC] hover:border-[#FF6B35]/40 hover:shadow-[0_0_0_3px_rgba(255,107,53,0.1)] focus-within:border-[#FF6B35]/40 focus-within:shadow-[0_0_0_3px_rgba(255,107,53,0.1)]'
             }`}>
               <div className="flex flex-col px-4 py-3 gap-3">

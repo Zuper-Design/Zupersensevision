@@ -13,16 +13,8 @@ export const RevenueChartWidget = () => {
   return (
     <div className="bg-white rounded-2xl border border-[#E6E8EC] shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-6 min-h-[380px] card-hover-elevate">
       <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-[16px] font-semibold text-[#1C1E21] mb-1">Monthly Revenue</h3>
-            <p className="text-[13px] text-[#6B7280]">6-month roofing revenue trend</p>
-          </div>
-          <div className="text-right">
-            <p className="text-[22px] font-semibold text-[#1C1E21]">$175K</p>
-            <p className="text-[12px] text-[#10B981] font-medium">↑ 12.4% vs last month</p>
-          </div>
-        </div>
+        <h3 className="text-[16px] font-semibold text-[#1C1E21] mb-1">Monthly Revenue</h3>
+        <p className="text-[13px] text-[#6B7280]">6-month roofing revenue trend</p>
       </div>
 
       <div className="w-full h-[280px] min-w-0">

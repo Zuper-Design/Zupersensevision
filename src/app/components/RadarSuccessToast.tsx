@@ -24,7 +24,7 @@ export function RadarSuccessToast({ isVisible, onClose, onGoToRadar }: RadarSucc
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 6 }}
           transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-          className="fixed bottom-5 right-5 z-[200]"
+          className="fixed bottom-20 right-6 z-[200]"
           style={{ fontFamily: 'DM Sans, system-ui, sans-serif' }}
         >
           <div

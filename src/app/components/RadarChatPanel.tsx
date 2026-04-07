@@ -107,9 +107,11 @@ interface RadarChatPanelProps {
   onClose: () => void;
   onExpand?: () => void;
   title?: string;
+  isVp?: boolean;
+  onUpgrade?: () => void;
 }
 
-export function RadarChatPanel({ initialCardTitle, onClose, onExpand, title = 'Sense' }: RadarChatPanelProps) {
+export function RadarChatPanel({ initialCardTitle, onClose, onExpand, title = 'Sense', isVp, onUpgrade }: RadarChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [query, setQuery] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
@@ -328,17 +330,31 @@ export function RadarChatPanel({ initialCardTitle, onClose, onExpand, title = 'S
           </div>
         )}
 
+        {isVp && (
+          <div className="px-4 pt-3 pb-[12px]">
+            <div className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-[#F3F4F6]">
+              <div className="min-w-0">
+                <p className="text-[12px] font-semibold text-[#1C1E21]">Your trial has ended</p>
+                <p className="text-[11px] text-[#6B7280] mt-0.5">Upgrade Sense to continue.</p>
+              </div>
+              <button onClick={onUpgrade} className="flex-shrink-0 px-2.5 py-1 rounded-md text-[11px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
+                Upgrade
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Divider */}
         <div style={{ borderTop: '1px solid #ECEEF1' }} />
 
         {/* Input field */}
         <div className="px-4 py-3">
         <div
-          className="flex items-center gap-2 rounded-xl px-3.5 py-2.5"
+          className={`flex items-center gap-2 rounded-xl px-3.5 py-2.5 ${isVp ? 'opacity-70 pointer-events-none cursor-not-allowed' : ''}`}
           style={{
             background: '#FFFFFF',
-            border: inputFocused ? '1px solid rgba(253,80,0,0.30)' : '1px solid #E2E4E8',
-            boxShadow: inputFocused
+            border: inputFocused && !isVp ? '1px solid rgba(253,80,0,0.30)' : '1px solid #E2E4E8',
+            boxShadow: inputFocused && !isVp
               ? '0 0 0 3px rgba(253,80,0,0.06), 0 1px 3px rgba(0,0,0,0.04)'
               : '0 1px 3px rgba(0,0,0,0.03)',
             transition: 'border 0.2s, box-shadow 0.2s',

@@ -1,9 +1,9 @@
-import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, Palette, X, FlaskConical, Maximize2, Minimize2 } from 'lucide-react';
+import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, Palette, X, FlaskConical, Maximize2, Minimize2, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRadar, SavedCard } from './RadarContext';
 import { DSOChartCard } from './DSOChartCard';
-import { RevenueMTDCard, OverdueInvoicesCard, QuoteConversionCard, CrewUtilisationCard, JobsCompletedCard, RenameProps, DateFilter } from './RadarCards';
+import { RevenueMTDCard, OverdueInvoicesCard, QuoteConversionCard, CrewUtilisationCard, JobsCompletedCard, JobsByPriorityCard, JobsByStatusCard, CompletedJobsByTechCard, MonthlyJobRevenueOrangeCard, MonthlyJobRevenueRedCard, RevenueVsCostCard, JobsTableCard, CustomerGrowthCard, RevenueMoMCard, RevenueTableCard, RenameProps, DateFilter } from './RadarCards';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { RadarThemeContext, RADAR_THEMES, useRadarTheme, RadarThemeConfig } from './RadarThemeContext';
 import { RadarChatPanel } from './RadarChatPanel';
@@ -17,6 +17,10 @@ interface RadarWorkspaceProps {
   onOpenCard?: (card: SavedCard) => void;
   showBetaBanner?: boolean;
   onCloseBetaBanner?: () => void;
+  onOpenCardChat?: (title: string) => void;
+  isTrial?: boolean;
+  isVp?: boolean;
+  onUpgrade?: () => void;
 }
 
 // Mini chart helpers
@@ -87,47 +91,60 @@ function isDSOChart(card: SavedCard) {
   return card.title?.toLowerCase().includes('dso') || card.title?.toLowerCase().includes('days sales outstanding');
 }
 
-// Sense Alert Card — horizontal card style
-function SenseAlertCard({ icon, iconBg, iconColor, title, value, subtitle, cta }: {
-  icon: React.ReactNode;
-  iconBg: string;
-  iconColor: string;
+// Sense Alert Card — KPI metric tile
+function SenseAlertCard({ title, value, valueUnit, icon, accent = '#6366F1', trend, trendDirection = 'up' }: {
   title: string;
+  dateRange?: string;
   value: string;
-  subtitle: string;
-  cta: string;
+  valueUnit?: string;
+  icon?: React.ReactNode;
+  accent?: string;
+  trend?: string;
+  trendDirection?: 'up' | 'down';
+  spark?: number[];
 }) {
   const t = useRadarTheme();
+  const isUp = trendDirection === 'up';
+  const trendColor = isUp ? '#10B981' : '#EF4444';
   return (
     <div
-      className="flex-1 min-w-0 flex flex-col gap-3 p-4 cursor-pointer group/alert transition-all duration-150"
+      className="relative flex-1 min-w-0 flex flex-col cursor-pointer transition-all duration-200"
       style={{
         backgroundColor: t.cardBg,
         border: t.cardBorder,
         borderRadius: t.cardRadius,
         boxShadow: t.cardShadow,
         fontFamily: t.fontFamily,
+        minHeight: 130,
       }}
-      onMouseEnter={e => (e.currentTarget.style.boxShadow = t.cardHoverShadow)}
-      onMouseLeave={e => (e.currentTarget.style.boxShadow = t.cardShadow)}
+      onMouseEnter={e => { (e.currentTarget.style.boxShadow = t.cardHoverShadow); (e.currentTarget.style.transform = 'translateY(-2px)'); }}
+      onMouseLeave={e => { (e.currentTarget.style.boxShadow = t.cardShadow); (e.currentTarget.style.transform = 'translateY(0)'); }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: iconBg }}>
-            <div style={{ color: iconColor }}>{icon}</div>
-          </div>
-          <span style={{ fontSize: 13, fontWeight: 600, color: t.titleColor }}>{title}</span>
+      <div className="px-5 pt-5 pb-5">
+        <div className="flex items-center justify-between gap-3">
+          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', color: t.subtitleColor, textTransform: 'uppercase', margin: 0 }}>{title}</p>
+          {icon && (
+            <div
+              className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+              style={{ background: `${accent}14`, color: accent }}
+            >
+              {icon}
+            </div>
+          )}
         </div>
-        <button
-          className="flex items-center gap-1 flex-shrink-0 transition-colors"
-          style={{ fontSize: 11, fontWeight: 600, color: t.accentColor, background: t.accentBg, padding: '3px 8px', borderRadius: 6 }}
-        >
-          {cta} <ArrowRight className="w-2.5 h-2.5" />
-        </button>
-      </div>
-      <div>
-        <p style={{ fontSize: 20, fontWeight: 700, color: t.valueColor, margin: 0, lineHeight: 1.2 }}>{value}</p>
-        <p style={{ fontSize: 11, color: t.subtitleColor, margin: 0, marginTop: 2 }}>{subtitle}</p>
+        <div className="flex items-end gap-2 mt-3">
+          <p style={{ fontSize: 36, fontWeight: 600, color: t.valueColor, margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}>
+            {value}{valueUnit && <span style={{ fontSize: 18, fontWeight: 600, marginLeft: 1, color: t.subtitleColor }}>{valueUnit}</span>}
+          </p>
+          {trend && (
+            <span
+              className="inline-flex items-center px-1.5 py-0.5 rounded-md mb-1"
+              style={{ background: `${trendColor}1A`, color: trendColor, fontSize: 11, fontWeight: 600 }}
+            >
+              {isUp ? '+' : '-'}{trend}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -162,13 +179,43 @@ function CardHoverActions({ onOpenInChat, onEdit, onUnpin, onResize, isFullWidth
       <DateFilter />
 
       <button
-        onClick={(e) => { e.stopPropagation(); setShowRemoveConfirm(true); }}
-        className="flex items-center justify-center h-7 gap-1.5 px-2.5 rounded-lg border border-[#FECACA] bg-white hover:bg-[#FEF2F2] transition-all duration-150"
-        style={{ fontSize: 12, fontWeight: 500, color: '#DC2626' }}
+        onClick={(e) => { e.stopPropagation(); onOpenInChat?.(); }}
+        className={`${btnClass} gap-1.5 px-2.5`}
+        style={{ ...btnStyle, fontSize: 12, fontWeight: 500 }}
       >
-        <X className="w-3 h-3" />
-        <span>Remove</span>
+        <ExternalLink className="w-3 h-3" />
+        <span>Open Chat</span>
       </button>
+
+      <div className="relative" ref={menuRef}>
+        <button
+          onClick={(e) => { e.stopPropagation(); setMenuOpen(o => !o); }}
+          className={`${btnClass} w-7`}
+          style={btnStyle}
+        >
+          <MoreHorizontal className="w-3.5 h-3.5" />
+        </button>
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -4 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -4 }}
+              transition={{ duration: 0.1 }}
+              className="absolute right-0 top-full mt-1 w-[130px] py-1 z-50"
+              style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 10, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
+            >
+              <button
+                onClick={(e) => { e.stopPropagation(); setMenuOpen(false); setShowRemoveConfirm(true); }}
+                className="w-full px-3 py-2 flex items-center gap-2.5 transition-colors duration-100 text-left hover:bg-[#FEF2F2]"
+              >
+                <X className="w-3.5 h-3.5 text-[#DC2626]" />
+                <span style={{ fontSize: 13, color: '#DC2626' }}>Remove</span>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Remove Confirmation Dialog */}
       {showRemoveConfirm && (
@@ -220,9 +267,19 @@ const PINNED_DEFS: UnifiedCardItem[] = [
   { kind: 'pinned', id: 'conversion', title: 'Quote-to-Invoice Conversion',  Component: QuoteConversionCard },
   { kind: 'pinned', id: 'crew',       title: 'Crew Utilisation',             Component: CrewUtilisationCard },
   { kind: 'pinned', id: 'jobs',       title: 'Jobs Completed vs At Risk',    Component: JobsCompletedCard, fullWidth: true },
+  { kind: 'pinned', id: 'jobsByPriority',  title: 'Jobs by Priority',              Component: JobsByPriorityCard },
+  { kind: 'pinned', id: 'jobsByStatus',    title: 'Jobs by Status',                Component: JobsByStatusCard },
+  { kind: 'pinned', id: 'jobsByTech',      title: 'Completed Jobs by Technician',  Component: CompletedJobsByTechCard },
+  { kind: 'pinned', id: 'monthlyRevOrange',title: 'Monthly Job Revenue (Orange)',  Component: MonthlyJobRevenueOrangeCard },
+  { kind: 'pinned', id: 'monthlyRevRed',   title: 'Monthly Job Revenue (Red)',     Component: MonthlyJobRevenueRedCard },
+  { kind: 'pinned', id: 'revVsCost',       title: 'Monthly Revenue vs Total Cost', Component: RevenueVsCostCard, fullWidth: true },
+  { kind: 'pinned', id: 'jobsTable',       title: 'Jobs Table',                    Component: JobsTableCard, fullWidth: true },
+  { kind: 'pinned', id: 'customerGrowth',  title: 'Customer Growth Trend',         Component: CustomerGrowthCard },
+  { kind: 'pinned', id: 'revenueMoM',      title: 'Monthly Revenue, MoM, Cumulative', Component: RevenueMoMCard, fullWidth: true },
+  { kind: 'pinned', id: 'revenueTable',    title: 'Monthly Job Revenue Table',     Component: RevenueTableCard, fullWidth: true },
 ];
 
-export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner }: RadarWorkspaceProps) {
+export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, onUpgrade }: RadarWorkspaceProps) {
   const { radars, activeRadarId, removeCardFromRadar } = useRadar();
   const [selectedRadarId] = useState<string | null>(activeRadarId || (radars.length > 0 ? radars[0].id : null));
   const [refreshKey, setRefreshKey] = useState(0);
@@ -356,8 +413,8 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
       >
         {/* Main section */}
         <div
-          className="flex-1 flex flex-col overflow-hidden rounded-xl min-w-0"
-          style={{ background: t.pageBg, border: `1px solid ${t.headerBorder}` }}
+          className="flex-1 flex flex-col overflow-hidden min-w-0"
+          style={{ background: t.pageBg }}
         >
           {/* Header */}
           <div className="flex-shrink-0 flex flex-col bg-white">
@@ -377,29 +434,25 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                 </div>
               </div>
               <div className="w-auto flex items-center justify-end gap-3">
-                <span className="text-[11px] text-[#9CA3AF]">
-                  Refreshed {formatLastRefreshed(lastRefreshed)}
-                </span>
-                              </div>
+                {isTrial && (
+                  <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
+                  </button>
+                )}
+                {isVp && (
+                  <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span className="text-[12px] font-medium text-[#44403C]">Trial period has ended</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Row 2: toolbar — no border below, line above comes from Row 1's border-b */}
             <div className="flex items-center justify-end px-5 pt-3 pb-3 gap-1.5">
-                <button
-                  onClick={() => setIsEditMode(v => !v)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px] font-medium transition-colors duration-150"
-                  style={{
-                    background: isEditMode ? t.accentColor : t.headerBg,
-                    borderColor: isEditMode ? t.accentColor : t.headerBorder,
-                    color: isEditMode ? '#FFFFFF' : t.controlColor,
-                  }}
-                  onMouseEnter={e => { if (!isEditMode) (e.currentTarget as HTMLElement).style.background = '#F3F4F6'; }}
-                  onMouseLeave={e => { if (!isEditMode) (e.currentTarget as HTMLElement).style.background = t.headerBg; }}
-                >
-                  {isEditMode ? <Check className="w-3.5 h-3.5" /> : <LayoutGrid className="w-3.5 h-3.5" />}
-                  <span>{isEditMode ? 'Done' : 'Edit'}</span>
-                </button>
-
+              <div className="flex items-center gap-1.5">
+                <DateFilter />
                 <div className="relative" ref={themePanelRef}>
                   <button
                     onClick={() => setShowThemePanel(v => !v)}
@@ -473,6 +526,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
                   <span>Refresh</span>
                 </button>
+              </div>
             </div>
           </div>
 
@@ -482,40 +536,55 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
 
               {/* ── Cards ── */}
               <div className="mb-8">
-                <div className="flex gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <SenseAlertCard
-                    icon={<FileText className="w-3.5 h-3.5" />}
-                    iconBg="#FEF3C7" iconColor="#D97706"
-                    title="3 Stuck Quotes"
-                    value="$84,000"
-                    subtitle="Sent 7+ days, no response"
-                    cta="Review"
+                    title="Stuck Quotes"
+                    dateRange="Sent 7+ days, no response"
+                    label="STUCK VALUE"
+                    value="$84"
+                    valueUnit="K"
+                    accent="#F59E0B"
+                    icon={<FileText className="w-4 h-4" />}
+                    trend="12%"
+                    trendDirection="up"
+                    spark={[3, 4, 3, 5, 6, 5, 7, 8]}
                   />
                   <SenseAlertCard
-                    icon={<Clock className="w-3.5 h-3.5" />}
-                    iconBg="#FEE2E2" iconColor="#DC2626"
-                    title="4 Jobs Behind SLA"
-                    value="4 jobs"
-                    subtitle="Overdue 2–5 days"
-                    cta="View"
+                    title="Jobs Behind SLA"
+                    dateRange="Overdue 2–5 days"
+                    label="JOBS"
+                    value="4"
+                    accent="#EF4444"
+                    icon={<Clock className="w-4 h-4" />}
+                    trend="8%"
+                    trendDirection="up"
+                    spark={[1, 2, 2, 3, 2, 3, 4, 4]}
                   />
                   <SenseAlertCard
-                    icon={<AlertTriangle className="w-3.5 h-3.5" />}
-                    iconBg="#FFF4ED" iconColor="#EA580C"
-                    title="6 Pending Invoices"
-                    value="$42,600"
-                    subtitle="Jobs done, not invoiced"
-                    cta="Generate"
+                    title="Pending Invoices"
+                    dateRange="Jobs done, not invoiced"
+                    label="PENDING VALUE"
+                    value="$42.6"
+                    valueUnit="K"
+                    accent="#EA580C"
+                    icon={<AlertTriangle className="w-4 h-4" />}
+                    trend="5%"
+                    trendDirection="down"
+                    spark={[6, 5, 6, 4, 5, 4, 3, 4]}
+                  />
+                  <SenseAlertCard
+                    title="Revenue Today"
+                    value="$12.4"
+                    valueUnit="K"
+                    accent="#10B981"
+                    icon={<TrendingUp className="w-4 h-4" />}
+                    trend="9%"
+                    trendDirection="up"
                   />
                 </div>
               </div>
 
               <div>
-                {isEditMode && (
-                  <div className="flex items-center justify-end mb-3">
-                    <span className="text-[11px] italic" style={{ color: t.subtitleColor }}>Drag to reorder</span>
-                  </div>
-                )}
 
                 <motion.div
                   key={refreshKey}
@@ -539,59 +608,54 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.25, delay: idx * 0.03 }}
                         className={`relative group/card transition-all duration-200 ${fw ? 'md:col-span-2' : ''}`}
-                        draggable={isEditMode}
+                        draggable
                         onDragStart={() => handleDragStart(idx)}
                         onDragOver={e => handleDragOver(e, idx)}
                         onDrop={() => handleDrop(idx)}
                         onDragEnd={() => { setDraggedIdx(null); setDragOverIdx(null); }}
-                        onClick={() => { if (!isEditMode) setChatCardTitle(cardTitle); }}
+                        onClick={() => { setChatCardTitle(cardTitle); onOpenCardChat?.(cardTitle); }}
                         style={{
                           opacity: isDragging ? 0.35 : 1,
-                          outline: isDragTarget ? `2px solid ${t.accentColor}` : isEditMode ? '2px dashed #D1D5DB' : isActiveInChat ? '2px solid #6D5F63' : 'none',
+                          outline: isDragTarget ? `2px solid ${t.accentColor}` : isActiveInChat ? '2px solid #6D5F63' : 'none',
                           outlineOffset: '2px',
                           borderRadius: t.cardRadius,
-                          cursor: isEditMode ? 'grab' : 'pointer',
+                          cursor: 'pointer',
                           boxShadow: isActiveInChat ? '0 0 0 4px rgba(109,95,99,0.12)' : undefined,
                         }}
                       >
-                        {/* Edit mode overlay */}
-                        {isEditMode && (
-                          <>
-                            <div className="absolute top-3 right-3 z-20 p-1 rounded-md cursor-grab" style={{ background: t.controlBg, opacity: 0.8 }}>
-                              <GripVertical className="w-4 h-4" style={{ color: t.subtitleColor }} />
-                            </div>
-                            <div className="absolute bottom-3 right-3 z-20">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (item.kind === 'saved') {
-                                    removeCardFromRadar(selectedRadarId!, item.data.id);
-                                  } else {
-                                    removePinnedCard(item.id);
-                                  }
-                                }}
-                                className="flex items-center gap-1 px-2.5 h-7 rounded-lg border border-[#FECACA] bg-[#FEF2F2] hover:bg-[#FEE2E2] transition-all duration-150 text-[11px] font-medium text-[#DC2626]"
-                              >
-                                <X className="w-3 h-3" />
-                                Remove
-                              </button>
-                            </div>
-                            {/* Right edge resize handle */}
-                            <div
-                              className="absolute top-0 -right-[6px] w-3 h-full z-30 cursor-col-resize flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-150"
-                              onClick={(e) => { e.stopPropagation(); toggleCardWidth(item); }}
-                            >
-                              <div className="w-1 h-10 rounded-full bg-[#9CA3AF]" />
-                            </div>
-                          </>
-                        )}
+                        {/* Hover reorder grip */}
+                        <div
+                          className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center h-5 w-8 rounded-full cursor-grab opacity-0 group-hover/card:opacity-100 transition-opacity duration-150"
+                          style={{ background: '#FFFFFF', border: `1px solid ${t.headerBorder || '#E6E8EC'}`, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+                          onClick={(e) => e.stopPropagation()}
+                          title="Drag to reorder"
+                        >
+                          <GripVertical className="w-3 h-3" style={{ color: t.subtitleColor }} />
+                        </div>
+
+                        {/* Right edge resize handle */}
+                        <div
+                          className="absolute top-0 -right-[6px] w-3 h-full z-30 cursor-col-resize flex items-center justify-center opacity-0 group-hover/card:opacity-60 hover:!opacity-100 transition-opacity duration-150"
+                          onClick={(e) => { e.stopPropagation(); toggleCardWidth(item); }}
+                          title={isFullWidth(item) ? 'Shrink' : 'Expand'}
+                        >
+                          <div className="w-1 h-10 rounded-full" style={{ background: t.subtitleColor }} />
+                        </div>
+                        {/* Bottom-right corner resize */}
+                        <div
+                          className="absolute -bottom-[6px] -right-[6px] w-4 h-4 z-30 cursor-nwse-resize opacity-0 group-hover/card:opacity-60 hover:!opacity-100 transition-opacity duration-150"
+                          onClick={(e) => { e.stopPropagation(); toggleCardWidth(item); }}
+                          title={isFullWidth(item) ? 'Shrink' : 'Expand'}
+                        >
+                          <div className="absolute bottom-1 right-1 w-2 h-2 border-r-2 border-b-2 rounded-[1px]" style={{ borderColor: t.subtitleColor }} />
+                        </div>
 
                         {/* Card content */}
                         {item.kind === 'saved' ? (
                           <>
-                            {!isEditMode && (
+                            {true && (
                               <CardHoverActions
-                                onOpenInChat={() => setChatCardTitle(item.data.title || 'this card')}
+                                onOpenInChat={() => { const ttl = item.data.title || 'this card'; setChatCardTitle(ttl); onOpenCardChat?.(ttl); }}
                                 onEdit={() => onOpenCard?.(item.data)}
                                 onUnpin={() => removeCardFromRadar(selectedRadarId!, item.data.id)}
                                 onResize={() => toggleCardWidth(item)}
@@ -602,8 +666,13 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                               <DSOChartCard
                                 footer={
                                   <span style={{ fontSize: 11, color: t.subtitleColor }}>
-                                    {new Date(item.data.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                    {item.data.sourceThreadId && ' · From conversation'}
+                                    {(() => {
+                                      const end = new Date(item.data.timestamp);
+                                      const start = new Date(end);
+                                      start.setMonth(start.getMonth() - 3);
+                                      const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                      return `${fmt(start)} – ${fmt(end)}`;
+                                    })()}
                                   </span>
                                 }
                                 renameProps={{
@@ -662,8 +731,13 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                                 )}
                                 <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${t.dividerColor}` }}>
                                   <span style={{ fontSize: 11, color: t.subtitleColor }}>
-                                    {new Date(item.data.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                    {item.data.sourceThreadId && ' · From conversation'}
+                                    {(() => {
+                                      const end = new Date(item.data.timestamp);
+                                      const start = new Date(end);
+                                      start.setMonth(start.getMonth() - 3);
+                                      const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                      return `${fmt(start)} – ${fmt(end)}`;
+                                    })()}
                                   </span>
                                 </div>
                               </div>
@@ -671,9 +745,9 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                           </>
                         ) : (
                           <>
-                            {!isEditMode && (
+                            {true && (
                               <CardHoverActions
-                                onOpenInChat={() => setChatCardTitle(item.title)}
+                                onOpenInChat={() => { setChatCardTitle(item.title); onOpenCardChat?.(item.title); }}
                                 onEdit={() => onOpenCard?.({ id: item.id, type: 'card', content: {}, timestamp: new Date(), title: item.title })}
                                 onUnpin={() => removePinnedCard(item.id)}
                                 onResize={() => toggleCardWidth(item)}
@@ -681,7 +755,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                               />
                             )}
                             <item.Component
-                              footer={<span style={{ fontSize: 11, color: t.subtitleColor }}>Mar 11 · From conversation</span>}
+                              footer={<span style={{ fontSize: 11, color: t.subtitleColor }}>Dec 11 – Mar 11</span>}
                               renameProps={{
                                 customTitle: cardNames[getCardId(item)] || undefined,
                                 isRenaming: renamingCardId === getCardId(item),
@@ -703,32 +777,6 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
           </div>
         </div>
 
-        {/* Chat panel */}
-        <AnimatePresence>
-          {chatCardTitle !== null && (
-            <motion.div
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 420, opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{ type: 'spring', damping: 32, stiffness: 300 }}
-              className="flex-shrink-0 overflow-hidden"
-            >
-              <div className="h-full w-[420px] bg-white rounded-xl overflow-hidden" style={{ border: `1px solid ${t.headerBorder}`, boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}>
-                <RadarChatPanel
-                  key={chatCardTitle}
-                  initialCardTitle={chatCardTitle}
-                  onClose={() => setChatCardTitle(null)}
-                  onExpand={() => {
-                    const card: SavedCard = { id: chatCardTitle, type: 'card', content: {}, timestamp: new Date(), title: chatCardTitle };
-                    setChatCardTitle(null);
-                    onOpenCard?.(card);
-                  }}
-                  title={chatCardTitle}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </RadarThemeContext.Provider>
   );

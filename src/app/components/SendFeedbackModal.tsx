@@ -13,6 +13,7 @@ export function SendFeedbackModal({ isOpen, onClose }: SendFeedbackModalProps) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -117,20 +118,19 @@ export function SendFeedbackModal({ isOpen, onClose }: SendFeedbackModalProps) {
   };
 
   const handleSubmit = () => {
-    // Handle feedback submission here
     console.log('Feedback:', { description, image: uploadedImage, category: selectedCategory });
-    
-    // Stop dictation if active
     if (isListening) {
       stopDictation();
     }
-    
-    // Reset form
-    setDescription('');
-    setUploadedImage(null);
-    setUploadedFileName(null);
-    setSelectedCategory('');
-    onClose();
+    setSubmitted(true);
+    setTimeout(() => {
+      setDescription('');
+      setUploadedImage(null);
+      setUploadedFileName(null);
+      setSelectedCategory('');
+      setSubmitted(false);
+      onClose();
+    }, 2400);
   };
 
   return (
@@ -147,6 +147,56 @@ export function SendFeedbackModal({ isOpen, onClose }: SendFeedbackModalProps) {
           className="bg-white rounded-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] w-full max-w-[440px] pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
+          {submitted && (
+            <div className="px-6 py-12 flex flex-col items-center justify-center text-center relative overflow-hidden">
+              <style>{`
+                @keyframes sfm-pop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(1); } }
+                @keyframes sfm-draw { to { stroke-dashoffset: 0; } }
+                @keyframes sfm-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes sfm-confetti {
+                  0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
+                  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--r)); opacity: 0; }
+                }
+                .sfm-check-circle { animation: sfm-pop 420ms cubic-bezier(.2,.8,.2,1) both; }
+                .sfm-check-path { stroke-dasharray: 32; stroke-dashoffset: 32; animation: sfm-draw 360ms ease-out 320ms forwards; }
+                .sfm-text { animation: sfm-fade 420ms ease-out 520ms both; }
+                .sfm-confetti-piece { position: absolute; left: 50%; top: 38%; width: 8px; height: 8px; border-radius: 2px; animation: sfm-confetti 1200ms ease-out forwards; }
+              `}</style>
+              {[
+                { c: '#6366F1', tx: -110, ty: -60, r: 240, d: 80 },
+                { c: '#F59E0B', tx: 120, ty: -50, r: -180, d: 120 },
+                { c: '#10B981', tx: -90, ty: 80, r: 160, d: 160 },
+                { c: '#EF4444', tx: 100, ty: 90, r: -220, d: 100 },
+                { c: '#8B5CF6', tx: -140, ty: 20, r: 300, d: 200 },
+                { c: '#EC4899', tx: 140, ty: 30, r: -260, d: 140 },
+                { c: '#14B8A6', tx: 0, ty: -120, r: 180, d: 180 },
+                { c: '#F97316', tx: 20, ty: 110, r: -140, d: 60 },
+              ].map((p, i) => (
+                <span
+                  key={i}
+                  className="sfm-confetti-piece"
+                  style={{
+                    background: p.c,
+                    // @ts-expect-error css vars
+                    '--tx': `${p.tx}px`,
+                    '--ty': `${p.ty}px`,
+                    '--r': `${p.r}deg`,
+                    animationDelay: `${p.d}ms`,
+                  }}
+                />
+              ))}
+              <div className="sfm-check-circle w-16 h-16 rounded-full bg-[#10B981] flex items-center justify-center mb-4 relative z-10">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path className="sfm-check-path" d="M8 16.5L14 22L24 11" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <h2 className="sfm-text text-[20px] font-semibold text-[#1C1E21] mb-1">Thank you!</h2>
+              <p className="sfm-text text-[14px] text-[#6B7280]">Your feedback has been submitted.</p>
+            </div>
+          )}
+
+          {!submitted && (
+          <>
           {/* Header */}
           <div className="relative px-6 pt-6 pb-5 border-b border-[#E6E8EC]">
             <h2 className="text-[20px] font-semibold text-[#1C1E21]">Help us improve</h2>
@@ -165,8 +215,7 @@ export function SendFeedbackModal({ isOpen, onClose }: SendFeedbackModalProps) {
               <label htmlFor="feedback-description" className="block text-[15px] font-semibold text-[#1C1E21] mb-1.5">
                 Share your feedback or report a bug
               </label>
-              <p className="text-[14px] text-[#6B7280] mb-3">Tell us what you think</p>
-              
+
               {/* Radio Options */}
               <div className="space-y-2 mb-3">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -356,6 +405,8 @@ export function SendFeedbackModal({ isOpen, onClose }: SendFeedbackModalProps) {
               Send
             </button>
           </div>
+          </>
+          )}
         </div>
       </div>
     </>

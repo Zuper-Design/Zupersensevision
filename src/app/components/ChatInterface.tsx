@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -17,6 +17,11 @@ interface ChatInterfaceProps {
   onOpenFeedback?: () => void;
   pendingRadarCard?: SavedCard | null;
   onRadarCardConsumed?: () => void;
+  sidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
+  isTrial?: boolean;
+  isVp?: boolean;
+  onUpgrade?: () => void;
 }
 
 const promptSuggestions = [
@@ -94,9 +99,12 @@ const placeholderTexts = [
   "Show me customer satisfaction scores...",
 ];
 
-export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed }: ChatInterfaceProps) {
+export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade }: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const threadHistory = [
     { id: 1, title: 'Q4 Performance Analysis', active: true },
@@ -423,40 +431,6 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
       
       <div className="flex-1 overflow-y-auto bg-white scrollbar-auto-hide">
         <div className="bg-white h-full overflow-hidden flex rounded-xl">
-          {/* Thread History Sidebar */}
-          <div
-            className={`transition-all duration-300 border-r border-[#E6E8EC] bg-[#FAFAFA] flex-shrink-0 ${
-              sidebarExpanded ? 'w-[260px]' : 'w-0'
-            } overflow-hidden`}
-          >
-            <div className="h-full flex flex-col w-[260px]">
-              <div className="px-3 pt-3 pb-3">
-                <button className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-[#E8E8E8] rounded-md transition-colors">
-                  <span className="text-[20px] text-[#1C1E21]">+</span>
-                  <span className="text-[14px] text-[#1C1E21] font-medium">New Thread</span>
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto scrollbar-auto-hide">
-                <div className="px-3">
-                  {threadHistory.map((thread) => (
-                    <button
-                      key={thread.id}
-                      onClick={() => handlePromptClick(thread.title)}
-                      className={`w-full px-3 py-2.5 text-left rounded-md transition-colors mb-1 group flex items-center gap-2 ${
-                        thread.active ? 'bg-[#E8E8E8]' : 'hover:bg-[#E8E8E8]'
-                      }`}
-                    >
-                      <p className={`text-[14px] truncate flex-1 ${thread.active ? 'text-[#1C1E21] font-medium' : 'text-[#1C1E21]'}`}>
-                        {thread.title}
-                      </p>
-                      <Archive className="w-4 h-4 text-[#6B7280] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto relative scrollbar-auto-hide">
             {!conversationActive ? (
@@ -465,12 +439,14 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 {/* Top Header Bar */}
                 <div className="h-[56px] border-b border-[#E6E8EC] flex items-center justify-between px-6 flex-shrink-0 bg-white relative z-10">
                   <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setSidebarExpanded(!sidebarExpanded)}
-                      className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
-                    >
-                      <PanelLeftClose className={`w-[18px] h-[18px] text-[#6B7280] transition-transform duration-200 ${sidebarExpanded ? '' : 'rotate-180'}`} />
-                    </button>
+                    {!sidebarOpen && onToggleSidebar && (
+                      <button
+                        onClick={onToggleSidebar}
+                        className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
+                      >
+                        <PanelLeftClose className="w-[18px] h-[18px] text-[#6B7280] rotate-180" />
+                      </button>
+                    )}
                   </div>
                   
                   {/* Canvas/Chat Switcher - Centered */}
@@ -501,7 +477,13 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                   
                   {/* Right side — beta label */}
                   <div className="flex items-center gap-3">
-                                      </div>
+                    {isTrial && (
+                      <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Welcome Content */}
@@ -525,8 +507,8 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
 
                   {/* Chat Input - Hero Element */}
                   <div className="w-full max-w-[680px]">
-                    <div 
-                      className={`relative w-full bg-white rounded-[16px] transition-all duration-300 ${
+                    <div
+                      className={`relative w-full bg-white rounded-[16px] transition-all duration-300 ${isVp ? 'opacity-70 pointer-events-none cursor-not-allowed' : ''} ${
                         inputFocused && !voiceMode
                           ? 'border border-[#FF6B35]/30 shadow-[0_0_0_3px_rgba(255,107,53,0.12),0_8px_24px_rgba(255,107,53,0.15)]'
                           : 'border border-[#E6E8EC] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]'
@@ -714,8 +696,20 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         </div>
                       )}
                     </div>
-                    
+
                   </div>
+
+                  {isVp && (
+                    <div className="w-full max-w-[680px] flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-[#F3F4F6] -mt-3">
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-semibold text-[#1C1E21]">Your trial has ended</p>
+                        <p className="text-[12px] text-[#6B7280] mt-0.5">Upgrade Sense to continue asking questions.</p>
+                      </div>
+                      <button onClick={onUpgrade} className="flex-shrink-0 px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
+                        Upgrade Sense
+                      </button>
+                    </div>
+                  )}
 
                   {/* Pick Where You Left Off Section */}
                   <div className="w-full max-w-[1000px] mt-10">
@@ -884,6 +878,11 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 widgetId={canvasWidgetId}
                 onOpenFeedback={onOpenFeedback}
                 radarCard={activeRadarCard}
+                sidebarOpen={sidebarOpen}
+                onToggleSidebar={onToggleSidebar}
+                isTrial={isTrial}
+                isVp={isVp}
+                onUpgrade={onUpgrade}
               />
             )}
           </div>
