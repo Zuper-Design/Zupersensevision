@@ -3,7 +3,7 @@ import {
   BarChart, Bar, ReferenceLine, Area, AreaChart, Cell,
 } from 'recharts';
 import React, { useState, useRef, useEffect } from 'react';
-import { Pencil, ChevronDown, Calendar } from 'lucide-react';
+import { Pencil, ChevronDown, Calendar, RefreshCw } from 'lucide-react';
 import { useRadarTheme } from './RadarThemeContext';
 
 export interface RenameProps {
@@ -20,7 +20,8 @@ export interface RenameProps {
 
 const DATE_OPTIONS = ['15 days', '30 days', '1 month', '3 months', '6 months', 'Custom'] as const;
 
-export function DateFilter() {
+export function DateFilter({ size = 'lg' }: { size?: 'sm' | 'lg' }) {
+  const isSm = size === 'sm';
   const t = useRadarTheme();
   const [selected, setSelected] = useState<string>('30 days');
   const [isOpen, setIsOpen] = useState(false);
@@ -44,16 +45,14 @@ export function DateFilter() {
     <div ref={ref} className="relative" style={{ fontFamily: t.fontFamily }}>
       <button
         onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); setShowCustom(false); }}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E6E8EC] bg-white hover:bg-[#F3F4F6] transition-colors duration-150"
-        style={{
-          fontSize: 13,
-          fontWeight: 500,
-          color: '#1C1E21',
-        }}
+        className={`inline-flex items-center gap-1.5 rounded-lg border border-[#E6E8EC] bg-white hover:bg-[#F3F4F6] transition-colors duration-150 font-medium ${
+          isSm ? 'h-7 px-2.5 text-[12px] leading-none' : 'px-3 py-1.5 text-[13px]'
+        }`}
+        style={{ color: '#1C1E21' }}
       >
-        <Calendar className="w-3.5 h-3.5" />
+        <Calendar className={isSm ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
         <span>{selected}</span>
-        <ChevronDown className="w-3.5 h-3.5" style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
+        <ChevronDown className={isSm ? 'w-3 h-3' : 'w-3.5 h-3.5'} style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
       </button>
 
       {isOpen && (
@@ -181,6 +180,9 @@ const CardShell = ({
 }) => {
   const t = useRadarTheme();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
+  const [refreshing, setRefreshing] = useState(false);
+  const [, forceTick] = useState(0);
 
   useEffect(() => {
     if (renameProps?.isRenaming && inputRef.current) {
@@ -189,7 +191,31 @@ const CardShell = ({
     }
   }, [renameProps?.isRenaming]);
 
+  useEffect(() => {
+    const id = setInterval(() => forceTick(n => n + 1), 30000);
+    return () => clearInterval(id);
+  }, []);
+
   const displayTitle = renameProps?.customTitle ?? title;
+
+  const formatRelative = (d: Date) => {
+    const diff = Math.floor((Date.now() - d.getTime()) / 1000);
+    if (diff < 10) return 'just now';
+    if (diff < 60) return `${diff}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return d.toLocaleDateString();
+  };
+
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRefreshing(true);
+    setTimeout(() => {
+      setLastRefreshed(new Date());
+      setRefreshing(false);
+    }, 600);
+  };
+
 
   return (
     <div
@@ -243,7 +269,25 @@ const CardShell = ({
         <p style={{ fontSize: 13, color: t.subtitleColor, marginTop: 2, marginBottom: 0 }}>{subtitle}</p>
       </div>
       {children}
-      {footer && <div style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${t.dividerColor}` }}>{footer}</div>}
+      <div
+        className="flex items-center justify-between gap-3"
+        style={{ marginTop: 14, paddingTop: 10, borderTop: `1px solid ${t.dividerColor}` }}
+      >
+        <div className="min-w-0">{footer}</div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span style={{ fontSize: 11, color: t.subtitleColor, fontFamily: t.fontFamily }}>
+            Updated {formatRelative(lastRefreshed)}
+          </span>
+          <button
+            onClick={handleRefresh}
+            title="Refresh"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-lg border border-[#E6E8EC] bg-white hover:bg-[#F3F4F6] transition-colors duration-150"
+            style={{ color: t.subtitleColor }}
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -715,18 +759,70 @@ const jobsByPriorityData = [
 ];
 
 export function JobsByPriorityCard({ footer, renameProps }: { footer?: React.ReactNode; renameProps?: RenameProps }) {
+  const [status, setStatus] = useState<'error' | 'loading' | 'loaded'>('error');
+
+  const handleRetry = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (status === 'loading') return;
+    setStatus('loading');
+    setTimeout(() => setStatus('loaded'), 1400);
+  };
+
   return (
     <CardShell title="Jobs by Priority — Jan to Mar 2026" subtitle="Distribution of jobs across priority levels" renameProps={renameProps} stats={[]} footer={footer}>
-      <div className="w-full min-w-0 overflow-hidden" style={{ height: 260 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={jobsByPriorityData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="0" {...baseGrid} vertical={false} />
-            <XAxis dataKey="priority" axisLine={false} tickLine={false} tick={baseAxis} dy={6} />
-            <YAxis axisLine={false} tickLine={false} tick={baseAxis} domain={[0, 280]} ticks={[0, 70, 140, 210, 280]} />
-            <Tooltip content={<SimpleTooltip />} cursor={{ fill: 'rgba(99,102,241,0.05)' }} />
-            <Bar dataKey="jobs" name="Total Jobs" radius={[3, 3, 0, 0]} barSize={52} fill={INDIGO} />
-          </BarChart>
-        </ResponsiveContainer>
+      <div className="w-full min-w-0 overflow-hidden" style={{ height: 260 }} onClick={(e) => { if (status !== 'loaded') e.stopPropagation(); }}>
+        {status === 'error' ? (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="34" width="10" height="18" rx="2" fill="#E5E7EB" />
+              <rect x="24" y="24" width="10" height="28" rx="2" fill="#E5E7EB" />
+              <rect x="38" y="40" width="10" height="12" rx="2" fill="#E5E7EB" />
+              <line x1="8" y1="54" x2="56" y2="54" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="48" cy="18" r="9" fill="#FEF2F2" stroke="#FCA5A5" strokeWidth="1.5" />
+              <line x1="48" y1="14" x2="48" y2="19" stroke="#DC2626" strokeWidth="1.8" strokeLinecap="round" />
+              <circle cx="48" cy="22.5" r="1" fill="#DC2626" />
+            </svg>
+            <div className="text-center">
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', margin: 0 }}>Couldn't load data</p>
+              <p style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>Something went wrong fetching this chart.</p>
+            </div>
+            <button
+              onClick={handleRetry}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#E6E8EC] bg-white hover:bg-[#F3F4F6] transition-colors duration-150"
+              style={{ fontSize: 12, fontWeight: 500, color: '#1C1E21' }}
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Reload</span>
+            </button>
+          </div>
+        ) : status === 'loading' ? (
+          <div className="w-full h-full flex flex-col justify-end px-2 pb-6">
+            <div className="flex items-end justify-around gap-4" style={{ height: '85%' }}>
+              {[78, 92, 45, 32].map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-t-md skeleton-shimmer"
+                  style={{ height: `${h}%`, maxWidth: 52 }}
+                />
+              ))}
+            </div>
+            <div className="flex justify-around gap-4 mt-3">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-2.5 w-10 rounded skeleton-shimmer" />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={jobsByPriorityData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="0" {...baseGrid} vertical={false} />
+              <XAxis dataKey="priority" axisLine={false} tickLine={false} tick={baseAxis} dy={6} />
+              <YAxis axisLine={false} tickLine={false} tick={baseAxis} domain={[0, 280]} ticks={[0, 70, 140, 210, 280]} />
+              <Tooltip content={<SimpleTooltip />} cursor={{ fill: 'rgba(99,102,241,0.05)' }} />
+              <Bar dataKey="jobs" name="Total Jobs" radius={[3, 3, 0, 0]} barSize={52} fill={INDIGO} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </CardShell>
   );

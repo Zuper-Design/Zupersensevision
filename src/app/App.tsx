@@ -15,6 +15,7 @@ import { RadarWorkspace } from './components/RadarWorkspace';
 import { ViewToggle } from './components/ViewToggle';
 import { CanvasView } from './components/CanvasView';
 import { TopNavigation } from './components/TopNavigation';
+import { RADAR_THEMES } from './components/RadarThemeContext';
 import { SenseLogo } from './components/SenseLogo';
 import { PublishedPagesProvider, usePublishedPages } from './components/PublishedPagesContext';
 import { RadarProvider } from './components/RadarContext';
@@ -41,6 +42,7 @@ function AppContent() {
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const openUpgrade = () => setUpgradeModalOpen(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [themeName, setThemeName] = useState<'clean' | 'rams' | 'neon'>('clean');
   const [sidebarSearch, setSidebarSearch] = useState('');
   const [sidebarSearchOpen, setSidebarSearchOpen] = useState(false);
   const sidebarSearchRef = useRef<HTMLInputElement>(null);
@@ -161,6 +163,8 @@ function AppContent() {
         onUserChange={handleUserChange}
         onAskSense={() => setAskSenseOpen((prev) => !prev)}
         askSenseOpen={askSenseOpen}
+        themeName={themeName}
+        onThemeChange={setThemeName}
       />
 
       {/* Main Content Area */}
@@ -338,7 +342,9 @@ function AppContent() {
                     onOpenCardChat={(title) => setRadarCardChatTitle(title)}
                     isTrial={currentUser === 'RG'}
                     isVp={currentUser === 'VP'}
+                    isAU={currentUser === 'AU'}
                     onUpgrade={openUpgrade}
+                    themeName={themeName}
                   />
                 ) : null}
               </>

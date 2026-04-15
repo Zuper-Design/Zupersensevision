@@ -1,4 +1,4 @@
-import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, Palette, X, FlaskConical, Maximize2, Minimize2, TrendingUp } from 'lucide-react';
+import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRadar, SavedCard } from './RadarContext';
@@ -20,7 +20,9 @@ interface RadarWorkspaceProps {
   onOpenCardChat?: (title: string) => void;
   isTrial?: boolean;
   isVp?: boolean;
+  isAU?: boolean;
   onUpgrade?: () => void;
+  themeName?: 'clean' | 'rams' | 'neon';
 }
 
 // Mini chart helpers
@@ -120,31 +122,49 @@ function SenseAlertCard({ title, value, valueUnit, icon, accent = '#6366F1', tre
       onMouseEnter={e => { (e.currentTarget.style.boxShadow = t.cardHoverShadow); (e.currentTarget.style.transform = 'translateY(-2px)'); }}
       onMouseLeave={e => { (e.currentTarget.style.boxShadow = t.cardShadow); (e.currentTarget.style.transform = 'translateY(0)'); }}
     >
-      <div className="px-5 pt-5 pb-5">
-        <div className="flex items-center justify-between gap-3">
-          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', color: t.subtitleColor, textTransform: 'uppercase', margin: 0 }}>{title}</p>
+      <div className="p-5 flex flex-col h-full">
+        {/* Header: icon + label */}
+        <div className="flex items-center gap-2.5">
           {icon && (
             <div
-              className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center"
+              className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
               style={{ background: `${accent}14`, color: accent }}
             >
               {icon}
             </div>
           )}
+          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', color: t.subtitleColor, textTransform: 'uppercase', margin: 0 }}>{title}</p>
         </div>
-        <div className="flex items-end gap-2 mt-3">
-          <p style={{ fontSize: 36, fontWeight: 600, color: t.valueColor, margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}>
-            {value}{valueUnit && <span style={{ fontSize: 18, fontWeight: 600, marginLeft: 1, color: t.subtitleColor }}>{valueUnit}</span>}
-          </p>
-          {trend && (
-            <span
-              className="inline-flex items-center px-1.5 py-0.5 rounded-md mb-1"
-              style={{ background: `${trendColor}1A`, color: trendColor, fontSize: 11, fontWeight: 600 }}
-            >
-              {isUp ? '+' : '-'}{trend}
-            </span>
+
+        {/* Value */}
+        <p
+          style={{
+            fontSize: 34,
+            fontWeight: 600,
+            color: t.valueColor,
+            margin: '14px 0 0 0',
+            lineHeight: 1,
+            letterSpacing: '-0.025em',
+          }}
+        >
+          {value}
+          {valueUnit && (
+            <span style={{ fontSize: 18, fontWeight: 600, marginLeft: 2, color: t.subtitleColor }}>{valueUnit}</span>
           )}
-        </div>
+        </p>
+
+        {/* Trend */}
+        {trend && (
+          <div className="flex items-center gap-1.5 mt-3">
+            <span
+              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md"
+              style={{ background: `${trendColor}1A`, color: trendColor, fontSize: 11, fontWeight: 600, lineHeight: 1 }}
+            >
+              {isUp ? '↑' : '↓'} {trend}
+            </span>
+            <span style={{ fontSize: 11, color: t.subtitleColor }}>vs last period</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -176,7 +196,7 @@ function CardHoverActions({ onOpenInChat, onEdit, onUnpin, onResize, isFullWidth
 
   return (
     <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 opacity-0 group-hover/card:opacity-100 transition-opacity duration-150">
-      <DateFilter />
+      <DateFilter size="sm" />
 
       <button
         onClick={(e) => { e.stopPropagation(); onOpenInChat?.(); }}
@@ -279,7 +299,7 @@ const PINNED_DEFS: UnifiedCardItem[] = [
   { kind: 'pinned', id: 'revenueTable',    title: 'Monthly Job Revenue Table',     Component: RevenueTableCard, fullWidth: true },
 ];
 
-export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, onUpgrade }: RadarWorkspaceProps) {
+export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean' }: RadarWorkspaceProps) {
   const { radars, activeRadarId, removeCardFromRadar } = useRadar();
   const [selectedRadarId] = useState<string | null>(activeRadarId || (radars.length > 0 ? radars[0].id : null));
   const [refreshKey, setRefreshKey] = useState(0);
@@ -291,11 +311,15 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
   const [cardNames, setCardNames] = useState<Record<string, string>>({});
   const [renamingCardId, setRenamingCardId] = useState<string | null>(null);
   const [renameInputValue, setRenameInputValue] = useState('');
-  const [themeName, setThemeName] = useState<'clean' | 'rams' | 'neon'>('clean');
-  const [showThemePanel, setShowThemePanel] = useState(false);
+  const themeName = themeNameProp;
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
-  const themePanelRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    const tmr = setTimeout(() => setLoading(false), 4000);
+    return () => clearTimeout(tmr);
+  }, []);
 
   const selectedRadar = radars.find(r => r.id === selectedRadarId);
   const t = RADAR_THEMES[themeName];
@@ -338,16 +362,6 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
     if (diffMin < 60) return `${diffMin}m ago`;
     return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
-
-  // Theme panel outside click
-  useEffect(() => {
-    if (!showThemePanel) return;
-    const handler = (e: MouseEvent) => {
-      if (themePanelRef.current && !themePanelRef.current.contains(e.target as Node)) setShowThemePanel(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [showThemePanel]);
 
   // Drag handlers
   const handleDragStart = (idx: number) => setDraggedIdx(idx);
@@ -433,98 +447,43 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   >Radar</button>
                 </div>
               </div>
-              <div className="w-auto flex items-center justify-end gap-3">
+              <div className="w-auto flex items-center justify-end gap-2">
                 {isTrial && (
-                  <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
+                  <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full border transition-colors" style={{ background: '#FFF8F2', borderColor: '#F5E0CF' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
-                  </button>
-                )}
-                {isVp && (
-                  <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <span className="text-[12px] font-medium text-[#44403C]">Trial period has ended</span>
                   </button>
                 )}
               </div>
             </div>
 
             {/* Row 2: toolbar — no border below, line above comes from Row 1's border-b */}
-            <div className="flex items-center justify-end px-5 pt-3 pb-3 gap-1.5">
+            <div className="max-w-[1400px] mx-auto w-full flex items-center justify-between px-8 pt-3 pb-3 gap-1.5">
               <div className="flex items-center gap-1.5">
                 <DateFilter />
-                <div className="relative" ref={themePanelRef}>
-                  <button
-                    onClick={() => setShowThemePanel(v => !v)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px] font-medium transition-colors duration-150"
-                    style={{ background: showThemePanel ? t.controlHoverBg : t.headerBg, borderColor: t.headerBorder, color: t.controlColor }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#F3F4F6'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = showThemePanel ? '#F3F4F6' : t.headerBg; }}
-                  >
-                    <Palette className="w-3.5 h-3.5" />
-                    <span>Theme</span>
+                {isVp && (
+                  <button onClick={onUpgrade} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors">
+                    <span className="text-[13px] font-medium text-[#1C1E21]">Your trial has ended.</span>
+                    <span className="text-[13px] text-[#6B7280] ml-1">Upgrade Sense to continue asking questions.</span>
                   </button>
-                  <AnimatePresence>
-                    {showThemePanel && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                        transition={{ duration: 0.12 }}
-                        className="absolute right-0 top-full mt-1.5 p-1.5 z-50 w-[210px]"
-                        style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
-                      >
-                        {([
-                          { key: 'clean', desc: 'Minimal & light' },
-                          { key: 'rams',  desc: 'Braun · Less but better' },
-                          { key: 'neon',  desc: 'Dark · Electric glow' },
-                        ] as const).map(({ key: tn, desc }) => {
-                          const th = RADAR_THEMES[tn];
-                          return (
-                            <button
-                              key={tn}
-                              onClick={() => { setThemeName(tn); setShowThemePanel(false); }}
-                              className="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-lg transition-colors text-left"
-                              style={{ background: themeName === tn ? '#F3F4F6' : 'transparent' }}
-                              onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-                              onMouseLeave={e => (e.currentTarget.style.background = themeName === tn ? '#F3F4F6' : 'transparent')}
-                            >
-                              {/* Swatch */}
-                              <div
-                                className="w-10 h-10 flex-shrink-0 flex flex-col gap-0.5 items-center justify-center overflow-hidden"
-                                style={{
-                                  background: th.pageBg,
-                                  border: tn === 'rams' ? '1.5px solid #0A0A0A' : tn === 'neon' ? '1px solid #2A2A6A' : '1px solid #E6E8EC',
-                                  borderRadius: tn === 'rams' ? '0px' : tn === 'neon' ? '4px' : '8px',
-                                  boxShadow: tn === 'neon' ? '0 0 8px rgba(123,63,255,0.4)' : 'none',
-                                }}
-                              >
-                                <div className="w-6 h-2" style={{ background: th.cardBg, border: tn === 'rams' ? '1px solid #0A0A0A' : tn === 'neon' ? '1px solid #7B3FFF' : '1px solid #E6E8EC', borderRadius: tn === 'rams' ? '0' : tn === 'neon' ? '2px' : '3px' }} />
-                                <div className="w-6 h-0.5" style={{ background: th.accentColor, opacity: 0.9 }} />
-                              </div>
-                              <div className="min-w-0">
-                                <p style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', margin: 0 }}>{th.name}</p>
-                                <p style={{ fontSize: 11, color: '#6B7280', margin: 0 }}>{desc}</p>
-                              </div>
-                              {themeName === tn && <Check className="w-3.5 h-3.5 ml-auto flex-shrink-0 text-[#1C1E21]" />}
-                            </button>
-                          );
-                        })}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-neutral-400 whitespace-nowrap">
+                  {isRefreshing ? 'Updating…' : `Updated ${formatLastRefreshed(lastRefreshed)}`}
+                </span>
 
                 <button
                   onClick={handleRefresh}
                   disabled={isRefreshing}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px] font-medium transition-colors duration-150 disabled:opacity-50"
-                  style={{ background: t.headerBg, borderColor: t.headerBorder, color: t.controlColor }}
+                  aria-label="Refresh"
+                  title="Refresh"
+                  className="flex items-center justify-center w-9 h-9 rounded-lg border transition-colors duration-150 disabled:opacity-50"
+                  style={{ background: t.headerBg, borderColor: t.headerBorder, color: '#1C1E21' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#F3F4F6'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = t.headerBg; }}
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span>Refresh</span>
+                  <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                 </button>
               </div>
             </div>
@@ -534,8 +493,33 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
           <div className="flex-1 overflow-y-auto scrollbar-auto-hide">
             <div className="max-w-[1400px] mx-auto px-8 pt-4 pb-20">
 
+{/* skeleton shimmer keyframes */}
+              <style>{`
+                @keyframes radar-shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
+                .radar-skel { background: linear-gradient(90deg, #D1D5DB 0%, #F3F4F6 50%, #D1D5DB 100%); background-size: 1200px 100%; animation: radar-shimmer 1.6s linear infinite; }
+              `}</style>
+
+              {isAU ? (
+                <RadarEmptyState onCTA={() => onViewChange?.('chat')} accentColor={t.accentColor} theme={t} />
+              ) : (
+                <div>
+
               {/* ── Cards ── */}
               <div className="mb-8">
+                {loading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {[0,1,2,3].map(i => (
+                      <div key={i} className="rounded-xl border border-[#E6E8EC] bg-white p-5 animate-pulse" style={{ minHeight: 130 }}>
+                        <div className="flex items-center gap-2.5 mb-4">
+                          <div className="w-7 h-7 rounded-lg radar-skel" />
+                          <div className="h-2.5 w-24 rounded radar-skel" />
+                        </div>
+                        <div className="h-7 w-28 rounded radar-skel mb-3" />
+                        <div className="h-3 w-32 rounded radar-skel" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <SenseAlertCard
                     title="Stuck Quotes"
@@ -582,10 +566,25 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                     trendDirection="up"
                   />
                 </div>
+                )}
               </div>
 
               <div>
 
+                {loading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {cardOrder.map((it, i) => {
+                      const fw = isFullWidth(it);
+                      return (
+                        <div key={i} className={`rounded-xl border border-[#E6E8EC] bg-white p-5 animate-pulse ${fw ? 'md:col-span-2' : ''}`} style={{ minHeight: 320 }}>
+                          <div className="h-3 w-40 rounded radar-skel mb-2" />
+                          <div className="h-2.5 w-56 rounded radar-skel mb-6" />
+                          <div className="h-[220px] rounded-lg radar-skel" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
                 <motion.div
                   key={refreshKey}
                   initial={{ opacity: 0 }}
@@ -772,12 +771,305 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                     );
                   })}
                 </motion.div>
+                )}
               </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
       </div>
     </RadarThemeContext.Provider>
+  );
+}
+
+function RadarEmptyState({ onCTA, accentColor = '#FD5000', theme }: { onCTA?: () => void; accentColor?: string; theme?: RadarThemeConfig }) {
+  const t = theme;
+
+  // Detect dark theme from page background luminance
+  const pageBgHex = (t?.pageBg ?? '#FFFFFF').replace('#', '');
+  const isDark = parseInt(pageBgHex.slice(0, 2), 16) < 100;
+
+  // Card surface
+  const cardFill = t?.cardBg ?? '#FFFFFF';
+  const cardStroke = t ? t.cardBorder.replace(/^[\d.]+px\s+solid\s+/, '') : '#E2E8F0';
+  const cardStrokeW = t ? parseFloat(t.cardBorder.split('px')[0]) * 0.6 : 0.75;
+
+  // Text
+  const textPrimary = t?.titleColor ?? '#0F172A';
+
+  // Derived illustration palette (light vs dark branch, with warm offset for rams)
+  const isWarm = !isDark && parseInt(pageBgHex.slice(4, 6), 16) < parseInt(pageBgHex.slice(0, 2), 16);
+  const skelColor  = isDark ? '#252558' : isWarm ? '#C4BEB0' : '#DCE3ED';
+  const gridColor  = isDark ? '#141445' : isWarm ? '#D0C8BC' : '#EEF0F4';
+  const gridAxis   = isDark ? '#1E1E50' : isWarm ? '#C0B8A8' : '#E2E8F0';
+  const dotColor   = isDark ? '#222268' : isWarm ? '#B8B0A0' : '#CBD5E1';
+
+  // Button gradient
+  const btnBg = isDark
+    ? `linear-gradient(135deg, ${t?.accentColor ?? '#7B3FFF'}, ${t?.accentColor ?? '#7B3FFF'}BB)`
+    : 'linear-gradient(to right, #221E1F, #6D5F63)';
+
+  return (
+    <div className="w-full flex flex-col items-center justify-center text-center" style={{ minHeight: 'calc(100vh - 220px)', paddingTop: 24, paddingBottom: 64 }}>
+      <div className="relative" style={{ width: 500, height: 380 }}>
+        <svg width="500" height="380" viewBox="-20 -20 500 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            {/* dot grid pattern */}
+            <pattern id="rdGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="0.7" fill={dotColor} />
+            </pattern>
+            {/* background radial atmosphere — uses accent color as subtle wash */}
+            <radialGradient id="rdBg" cx="50%" cy="38%" r="58%">
+              <stop offset="0%" stopColor={accentColor} stopOpacity={isDark ? 0.1 : 0.06} />
+              <stop offset="100%" stopColor={accentColor} stopOpacity="0" />
+            </radialGradient>
+            {/* card subtle gradient */}
+            <linearGradient id="rdCard" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={cardFill} />
+              <stop offset="100%" stopColor={cardFill} stopOpacity="0.96" />
+            </linearGradient>
+            {/* bar gradient — regular */}
+            <linearGradient id="rdBarA" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor={accentColor} stopOpacity="0.06" />
+              <stop offset="100%" stopColor={accentColor} stopOpacity="0.52" />
+            </linearGradient>
+            {/* bar gradient — highlighted (tallest bar) */}
+            <linearGradient id="rdBarB" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor={accentColor} stopOpacity="0.12" />
+              <stop offset="100%" stopColor={accentColor} stopOpacity="0.78" />
+            </linearGradient>
+            {/* area fill */}
+            <linearGradient id="rdAreaA" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+            </linearGradient>
+            {/* KPI card shadow */}
+            <filter id="rdShadow" x="-24%" y="-24%" width="148%" height="148%">
+              <feDropShadow dx="0" dy="3" stdDeviation="5" floodColor="#1E293B" floodOpacity="0.07" />
+            </filter>
+            {/* chart card shadow — slightly deeper */}
+            <filter id="rdShadowLg" x="-20%" y="-16%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="5" stdDeviation="10" floodColor="#1E293B" floodOpacity="0.09" />
+            </filter>
+          </defs>
+
+          {/* Background: dot grid texture */}
+          <rect x="-20" y="-20" width="500" height="380" fill="url(#rdGrid)" opacity="0.22" />
+          {/* Background: soft radial light */}
+          <rect x="-20" y="-20" width="500" height="380" fill="url(#rdBg)" />
+
+          {/* ── KPI tile 1 — revenue / green ── */}
+          <g filter="url(#rdShadow)" className="rd-tile rd-t1">
+            <rect x="8" y="8" width="142" height="92" rx="13" fill="url(#rdCard)" stroke={cardStroke} strokeWidth={cardStrokeW} />
+            {/* colored category badge */}
+            <rect x="20" y="20" width="50" height="14" rx="7" fill="#10B981" opacity="0.1" />
+            <rect x="27" y="25.5" width="36" height="3" rx="1.5" fill="#10B981" opacity="0.55" />
+            {/* subtitle line */}
+            <rect x="20" y="41" width="54" height="3" rx="1.5" fill={skelColor} />
+            {/* metric value */}
+            <text x="20" y="70" fontFamily="system-ui, -apple-system, sans-serif" fontSize="22" fontWeight="700" fill={textPrimary} letterSpacing="-0.5">$284K</text>
+            {/* up-arrow + delta bar */}
+            <polygon points="23,83 20,88 26,88" fill="#10B981" />
+            <rect x="30" y="81" width="38" height="3" rx="1.5" fill="#10B981" opacity="0.4" />
+            {/* mini sparkline — uptrend */}
+            <path d="M102 86 L110 79 L118 83 L126 74 L134 77" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+          </g>
+
+          {/* ── KPI tile 2 — tickets / red ── */}
+          <g filter="url(#rdShadow)" className="rd-tile rd-t2">
+            <rect x="160" y="8" width="142" height="92" rx="13" fill="url(#rdCard)" stroke={cardStroke} strokeWidth={cardStrokeW} />
+            <rect x="172" y="20" width="50" height="14" rx="7" fill="#EF4444" opacity="0.1" />
+            <rect x="179" y="25.5" width="36" height="3" rx="1.5" fill="#EF4444" opacity="0.5" />
+            <rect x="172" y="41" width="54" height="3" rx="1.5" fill={skelColor} />
+            <text x="172" y="70" fontFamily="system-ui, -apple-system, sans-serif" fontSize="22" fontWeight="700" fill={textPrimary} letterSpacing="-0.5">12</text>
+            {/* down-arrow + delta bar */}
+            <polygon points="175,88 172,83 178,83" fill="#EF4444" />
+            <rect x="182" y="81" width="36" height="3" rx="1.5" fill="#EF4444" opacity="0.4" />
+            {/* mini sparkline — downtrend */}
+            <path d="M250 76 L258 80 L266 77 L274 83 L282 87" fill="none" stroke="#EF4444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+          </g>
+
+          {/* ── KPI tile 3 — conversion / accent ── */}
+          <g filter="url(#rdShadow)" className="rd-tile rd-t3">
+            <rect x="312" y="8" width="140" height="92" rx="13" fill="url(#rdCard)" stroke={cardStroke} strokeWidth={cardStrokeW} />
+            <rect x="324" y="20" width="50" height="14" rx="7" fill={accentColor} opacity="0.1" />
+            <rect x="331" y="25.5" width="36" height="3" rx="1.5" fill={accentColor} opacity="0.5" />
+            <rect x="324" y="41" width="54" height="3" rx="1.5" fill={skelColor} />
+            <text x="324" y="70" fontFamily="system-ui, -apple-system, sans-serif" fontSize="22" fontWeight="700" fill={textPrimary} letterSpacing="-0.5">91%</text>
+            {/* up-arrow + delta bar */}
+            <polygon points="327,83 324,88 330,88" fill={accentColor} />
+            <rect x="334" y="81" width="42" height="3" rx="1.5" fill={accentColor} opacity="0.38" />
+            {/* mini sparkline — uptrend steep */}
+            <path d="M398 86 L406 81 L414 75 L422 71 L430 67" fill="none" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+          </g>
+
+          {/* ── Bar chart card ── */}
+          <g filter="url(#rdShadowLg)" className="rd-tile rd-t4">
+            <rect x="8" y="112" width="220" height="220" rx="14" fill="url(#rdCard)" stroke={cardStroke} strokeWidth={cardStrokeW} />
+            {/* header */}
+            <rect x="20" y="127" width="96" height="6" rx="3" fill={textPrimary} opacity="0.75" />
+            <rect x="20" y="140" width="70" height="4" rx="2" fill={skelColor} />
+            {/* chart-type mini icon (bar chart) */}
+            <rect x="196" y="124" width="18" height="18" rx="5" fill={skelColor} opacity="0.6" />
+            <rect x="199" y="134" width="3" height="5" rx="1" fill={textPrimary} opacity="0.25" />
+            <rect x="204" y="130" width="3" height="9" rx="1" fill={textPrimary} opacity="0.25" />
+            <rect x="209" y="136" width="3" height="3" rx="1" fill={textPrimary} opacity="0.25" />
+            {/* gridlines — 32px even intervals, axis at 288 */}
+            <line x1="22" y1="160" x2="216" y2="160" stroke={gridColor} strokeWidth="1" />
+            <line x1="22" y1="192" x2="216" y2="192" stroke={gridColor} strokeWidth="1" />
+            <line x1="22" y1="224" x2="216" y2="224" stroke={gridColor} strokeWidth="1" />
+            <line x1="22" y1="256" x2="216" y2="256" stroke={gridColor} strokeWidth="1" />
+            <line x1="22" y1="288" x2="216" y2="288" stroke={gridAxis} strokeWidth="1" />
+            {/* bars — 5 bars, bar 4 is tallest and uses stronger gradient rdBarB */}
+            <rect x="38"  y="220" width="24" height="68"  rx="4" fill="url(#rdBarA)" style={{ animation: 'rd-bar 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite',          transformOrigin: '50px 288px' }} />
+            <rect x="74"  y="186" width="24" height="102" rx="4" fill="url(#rdBarA)" style={{ animation: 'rd-bar 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite 0.18s',     transformOrigin: '86px 288px' }} />
+            <rect x="110" y="234" width="24" height="54"  rx="4" fill="url(#rdBarA)" style={{ animation: 'rd-bar 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite 0.36s',     transformOrigin: '122px 288px' }} />
+            <rect x="146" y="172" width="24" height="116" rx="4" fill="url(#rdBarB)" style={{ animation: 'rd-bar 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite 0.54s',     transformOrigin: '158px 288px' }} />
+            <rect x="182" y="206" width="24" height="82"  rx="4" fill="url(#rdBarA)" style={{ animation: 'rd-bar 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite 0.72s',     transformOrigin: '194px 288px' }} />
+            {/* footer divider + labels */}
+            <line x1="20" y1="304" x2="216" y2="304" stroke={gridAxis} strokeWidth="1" />
+            <rect x="20" y="312" width="56" height="3" rx="1.5" fill={skelColor} />
+            <rect x="20" y="318" width="36" height="3" rx="1.5" fill={gridColor} />
+            {/* refresh badge */}
+            <rect x="188" y="308" width="20" height="16" rx="5" fill={skelColor} opacity="0.4" stroke={cardStroke} strokeWidth={cardStrokeW} />
+            <circle cx="198" cy="316" r="3" fill="none" stroke={textPrimary} strokeWidth="1.2" opacity="0.3" />
+          </g>
+
+          {/* ── Line/area chart card ── */}
+          <g filter="url(#rdShadowLg)" className="rd-tile rd-t5">
+            <rect x="238" y="112" width="214" height="220" rx="14" fill="url(#rdCard)" stroke={cardStroke} strokeWidth={cardStrokeW} />
+            {/* header */}
+            <rect x="250" y="127" width="104" height="6" rx="3" fill={textPrimary} opacity="0.75" />
+            <rect x="250" y="140" width="76" height="4" rx="2" fill={skelColor} />
+            {/* chart-type mini icon (line chart) */}
+            <rect x="420" y="124" width="18" height="18" rx="5" fill={skelColor} opacity="0.6" />
+            <path d="M423 137 L427 132 L431 134 L435 129" fill="none" stroke={textPrimary} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.25" />
+            {/* gridlines — x2=440 matches inner right */}
+            <line x1="252" y1="182" x2="440" y2="182" stroke={gridColor} strokeWidth="1" />
+            <line x1="252" y1="216" x2="440" y2="216" stroke={gridColor} strokeWidth="1" />
+            <line x1="252" y1="250" x2="440" y2="250" stroke={gridColor} strokeWidth="1" />
+            <line x1="252" y1="284" x2="440" y2="284" stroke={gridAxis} strokeWidth="1" />
+            {/* area fill */}
+            <path d="M256 256 L284 226 L312 240 L340 198 L368 214 L396 178 L424 196 L424 284 L256 284 Z" fill="url(#rdAreaA)" />
+            {/* line */}
+            <path d="M256 256 L284 226 L312 240 L340 198 L368 214 L396 178 L424 196"
+              fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              strokeDasharray="320" strokeDashoffset="320"
+              style={{ animation: 'rd-line-loop 6s linear infinite 0.34s' }} />
+            {/* peak highlight dot */}
+            <circle cx="396" cy="178" r="3.5" fill="white" stroke="#3B82F6" strokeWidth="1.5" opacity="0.85" />
+            {/* end dot — animated */}
+            <circle cx="424" cy="196" r="4" fill="#3B82F6" style={{ animation: 'rd-dot 1.8s ease-in-out infinite', transformBox: 'fill-box', transformOrigin: 'center' }} />
+            {/* footer divider + labels */}
+            <line x1="250" y1="304" x2="440" y2="304" stroke={gridAxis} strokeWidth="1" />
+            <rect x="250" y="312" width="56" height="3" rx="1.5" fill={skelColor} />
+            <rect x="250" y="318" width="36" height="3" rx="1.5" fill={gridColor} />
+            {/* refresh badge — right-aligned with inner right (440) */}
+            <rect x="418" y="308" width="20" height="16" rx="5" fill={skelColor} opacity="0.4" stroke={cardStroke} strokeWidth={cardStrokeW} />
+            <circle cx="428" cy="316" r="3" fill="none" stroke={textPrimary} strokeWidth="1.2" opacity="0.3" />
+          </g>
+
+          {/* ── Decorative accents ── */}
+          {/* top-right sparkle */}
+          <circle cx="450" cy="7" r="3" fill={accentColor} opacity="0.5">
+            <animate attributeName="opacity" values="0.18;0.85;0.18" dur="2.4s" repeatCount="indefinite" />
+          </circle>
+          {/* bottom-left sparkle */}
+          <circle cx="8" cy="332" r="3" fill="#3B82F6" opacity="0.38">
+            <animate attributeName="opacity" values="0.12;0.65;0.12" dur="2.8s" repeatCount="indefinite" begin="0.6s" />
+          </circle>
+          {/* cross accent — right gutter */}
+          <line x1="455" y1="194" x2="455" y2="204" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" opacity="0.32" />
+          <line x1="450" y1="199" x2="460" y2="199" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" opacity="0.32" />
+          {/* small connector dots between KPI tiles */}
+          <circle cx="154" cy="54" r="1.8" fill="#94A3B8" opacity="0.28" />
+          <circle cx="308" cy="54" r="1.8" fill="#94A3B8" opacity="0.28" />
+        </svg>
+        <style>{`
+          @keyframes rd-bar { 0%, 100% { transform: scaleY(0.82); } 50% { transform: scaleY(1.0); } }
+          @keyframes rd-line-loop {
+            0%, 17%  { stroke-dashoffset: 320; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            52%      { stroke-dashoffset: 0; animation-timing-function: linear; }
+            82%      { stroke-dashoffset: 0; animation-timing-function: linear; }
+            100%     { stroke-dashoffset: 320; }
+          }
+          @keyframes rd-dot { 0%, 100% { opacity: 0.3; transform: scale(0.75); } 50% { opacity: 1; transform: scale(1.35); } }
+
+          .rd-tile {
+            opacity: 0;
+            transform-box: fill-box;
+            transform-origin: center;
+            animation-fill-mode: both;
+            animation-duration: 6s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+          }
+          /* 0–18% assemble (~1.1s, eased), 18–82% hold with gentle float, 82–100% disassemble (~1.1s, eased) */
+          @keyframes rd-assemble-tl {
+            0%   { opacity: 0; transform: translate(-90px, -60px) scale(0.85) rotate(-6deg); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            18%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            50%  { opacity: 1; transform: translate(-1px, -5px) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            82%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.64, 0, 0.78, 0); }
+            100% { opacity: 0; transform: translate(-90px, -60px) scale(0.85) rotate(-6deg); }
+          }
+          @keyframes rd-assemble-t {
+            0%   { opacity: 0; transform: translate(0, -90px) scale(0.85); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            18%  { opacity: 1; transform: translate(0, 0) scale(1); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            50%  { opacity: 1; transform: translate(0, -6px) scale(1); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            82%  { opacity: 1; transform: translate(0, 0) scale(1); animation-timing-function: cubic-bezier(0.64, 0, 0.78, 0); }
+            100% { opacity: 0; transform: translate(0, -90px) scale(0.85); }
+          }
+          @keyframes rd-assemble-tr {
+            0%   { opacity: 0; transform: translate(90px, -60px) scale(0.85) rotate(6deg); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            18%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            50%  { opacity: 1; transform: translate(1px, -5px) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            82%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.64, 0, 0.78, 0); }
+            100% { opacity: 0; transform: translate(90px, -60px) scale(0.85) rotate(6deg); }
+          }
+          @keyframes rd-assemble-bl {
+            0%   { opacity: 0; transform: translate(-100px, 70px) scale(0.85) rotate(-4deg); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            18%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            50%  { opacity: 1; transform: translate(-1px, -4px) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            82%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.64, 0, 0.78, 0); }
+            100% { opacity: 0; transform: translate(-100px, 70px) scale(0.85) rotate(-4deg); }
+          }
+          @keyframes rd-assemble-br {
+            0%   { opacity: 0; transform: translate(100px, 70px) scale(0.85) rotate(4deg); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+            18%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            50%  { opacity: 1; transform: translate(1px, -4px) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
+            82%  { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); animation-timing-function: cubic-bezier(0.64, 0, 0.78, 0); }
+            100% { opacity: 0; transform: translate(100px, 70px) scale(0.85) rotate(4deg); }
+          }
+
+          .rd-t1 { animation-name: rd-assemble-tl; animation-delay: 0.05s; }
+          .rd-t2 { animation-name: rd-assemble-t;  animation-delay: 0.18s; }
+          .rd-t3 { animation-name: rd-assemble-tr; animation-delay: 0.10s; }
+          .rd-t4 { animation-name: rd-assemble-bl; animation-delay: 0.28s; }
+          .rd-t5 { animation-name: rd-assemble-br; animation-delay: 0.34s; }
+        `}</style>
+      </div>
+
+      <h2 style={{ fontSize: 24, fontWeight: 700, color: textPrimary, marginTop: 24, marginBottom: 8, letterSpacing: '-0.01em' }}>
+        Welcome to Radar
+      </h2>
+      <p style={{ fontSize: 15, color: t?.subtitleColor ?? '#6B7280', maxWidth: 460, lineHeight: 1.55, margin: 0 }}>
+        Your always-on view of what matters in the business. Pin charts, KPIs, and answers from Sense. Radar keeps them updated so you spot what's working and what needs a nudge.
+      </p>
+
+      <button
+        onClick={onCTA}
+        className="inline-flex items-center gap-2 mt-7 px-5 py-2.5 rounded-xl text-white transition-transform duration-150 hover:-translate-y-[1px] active:scale-[0.97] active:translate-y-0"
+        style={{
+          fontSize: 14,
+          fontWeight: 600,
+          background: btnBg,
+          boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+        }}
+      >
+        Ask Sense to build your Radar
+      </button>
+    </div>
   );
 }

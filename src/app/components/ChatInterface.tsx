@@ -478,7 +478,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                   {/* Right side — beta label */}
                   <div className="flex items-center gap-3">
                     {isTrial && (
-                      <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
+                      <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full border transition-colors" style={{ background: '#FFF8F2', borderColor: '#F5E0CF' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
                       </button>
@@ -508,7 +508,8 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                   {/* Chat Input - Hero Element */}
                   <div className="w-full max-w-[680px]">
                     <div
-                      className={`relative w-full bg-white rounded-[16px] transition-all duration-300 ${isVp ? 'opacity-70 pointer-events-none cursor-not-allowed' : ''} ${
+                      style={isVp ? { opacity: 0.35, filter: 'grayscale(1)', pointerEvents: 'none', cursor: 'not-allowed' } : undefined}
+                      className={`relative w-full bg-white rounded-[16px] transition-all duration-300 ${
                         inputFocused && !voiceMode
                           ? 'border border-[#FF6B35]/30 shadow-[0_0_0_3px_rgba(255,107,53,0.12),0_8px_24px_rgba(255,107,53,0.15)]'
                           : 'border border-[#E6E8EC] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]'
@@ -710,57 +711,6 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                       </button>
                     </div>
                   )}
-
-                  {/* Pick Where You Left Off Section */}
-                  <div className="w-full max-w-[1000px] mt-10">
-                    <div className="flex flex-col items-center">
-                      <div className="flex items-center gap-1 mb-3">
-                        <h2 className="text-base font-medium text-[#1C1E21]">Continue where you left off</h2>
-                        <button 
-                          onClick={() => console.log('Open threads view')}
-                          className="p-0.5 hover:bg-[#F8F9FB] rounded-md transition-colors duration-150"
-                          aria-label="View all threads"
-                        >
-                          <ChevronRight className="w-[16px] h-[16px] text-[#9CA3AF]" />
-                        </button>
-                      </div>
-                      <div className="flex gap-3 justify-center flex-wrap w-full">
-                        <button onClick={() => handlePromptClick("What's happening with my overdue invoices?")} className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
-                          <div className="flex items-start justify-between gap-3 mb-1">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Overdue Invoices Chart</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">20 hours ago</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <History className="w-[18px] h-[18px] text-[#9CA3AF]" />
-                            </div>
-                          </div>
-                        </button>
-                        <button onClick={() => handlePromptClick("Build a list of overdue invoices")} className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
-                          <div className="flex items-start justify-between gap-3 mb-1">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Build a Page</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">Yesterday</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <History className="w-[18px] h-[18px] text-[#9CA3AF]" />
-                            </div>
-                          </div>
-                        </button>
-                        <button onClick={() => handlePromptClick("Show me the revenue growth analysis")} className="group p-3.5 bg-white/70 border border-[#E6EAF0]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)] w-full md:w-[calc(33.333%-8px)]">
-                          <div className="flex items-start justify-between gap-3 mb-1">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1">Revenue Growth Analysis</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">2 days ago</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <History className="w-[18px] h-[18px] text-[#9CA3AF]" />
-                            </div>
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Suggested Prompts Section */}
                   <div className="w-full max-w-[1000px] mt-8">

@@ -1470,15 +1470,6 @@ Sarah`
               <PanelLeftClose className="w-[18px] h-[18px] text-[#6B7280] rotate-180" />
             </button>
           )}
-          {/* Back Arrow */}
-          <button
-            onClick={onBack}
-            className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-[18px] h-[18px] text-[#6B7280]" />
-          </button>
-          
           {/* Chat Name */}
           <div className="flex items-center gap-1.5 group/chatname">
             {isEditingName ? (
@@ -1538,7 +1529,7 @@ Sarah`
         {/* Beta Label */}
         <div className="flex items-center gap-2">
           {isTrial && (
-            <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full bg-white border border-[#E6E8EC] hover:border-[#D1D5DB] transition-colors">
+            <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full border transition-colors" style={{ background: '#FFF8F2', borderColor: '#F5E0CF' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
             </button>
@@ -2034,7 +2025,9 @@ Sarah`
                 </button>
               </div>
             )}
-            <div className={`w-full bg-white rounded-[20px] border transition-all duration-200 shadow-sm ${isVp ? 'opacity-70 pointer-events-none cursor-not-allowed' : ''} ${
+            <div
+              style={isVp ? { opacity: 0.35, filter: 'grayscale(1)', pointerEvents: 'none', cursor: 'not-allowed' } : undefined}
+              className={`w-full bg-white rounded-[20px] border transition-all duration-200 shadow-sm ${
               isListening ? 'border-[#FF6B35]/40 shadow-[0_0_0_3px_rgba(255,107,53,0.1)]' : 'border-[#E6E8EC] hover:border-[#FF6B35]/40 hover:shadow-[0_0_0_3px_rgba(255,107,53,0.1)] focus-within:border-[#FF6B35]/40 focus-within:shadow-[0_0_0_3px_rgba(255,107,53,0.1)]'
             }`}>
               <div className="flex flex-col px-4 py-3 gap-3">

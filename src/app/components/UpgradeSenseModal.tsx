@@ -31,7 +31,7 @@ export function UpgradeSenseModal({ isOpen, onClose }: UpgradeSenseModalProps) {
           {/* Header */}
           <div className="flex items-start justify-between mb-1">
             <div className="flex items-center gap-2">
-              <h2 className="text-[22px] font-semibold text-[#1C1E21]">Sense Pro</h2>
+              <h2 className="text-[22px] font-semibold text-[#1C1E21]">Sense</h2>
               <span
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
                 style={{ background: 'rgba(253,80,0,0.10)', color: '#FD5000', fontSize: 11, fontWeight: 600 }}
@@ -104,7 +104,7 @@ export function UpgradeSenseModal({ isOpen, onClose }: UpgradeSenseModalProps) {
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
             onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
           >
-            Upgrade to Sense Pro
+            Upgrade to Sense
           </button>
         </div>
       </div>

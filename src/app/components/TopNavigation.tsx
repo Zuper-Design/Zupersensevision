@@ -1,6 +1,8 @@
-import { X, ChevronDown, HelpCircle, Search, Bell, Settings, Flame } from 'lucide-react';
+import { X, ChevronDown, HelpCircle, Search, Bell, Settings, Check } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
 import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { RADAR_THEMES } from './RadarThemeContext';
 
 interface Tab {
   id: string;
@@ -16,9 +18,11 @@ interface TopNavigationProps {
   onUserChange?: (user: string) => void;
   onAskSense?: () => void;
   askSenseOpen?: boolean;
+  themeName?: 'clean' | 'rams' | 'neon';
+  onThemeChange?: (theme: 'clean' | 'rams' | 'neon') => void;
 }
 
-export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange, onAskSense, askSenseOpen = false }: TopNavigationProps) {
+export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange, onAskSense, askSenseOpen = false, themeName = 'clean', onThemeChange }: TopNavigationProps) {
   const [tabs, setTabs] = useState<Tab[]>([
     { id: '1', type: 'job', label: 'Job -#JN-245...', isActive: true },
     { id: '2', type: 'invoice', label: 'Invoice- #7712...', isActive: false },
@@ -38,7 +42,9 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
 
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
   const [askSenseHovered, setAskSenseHovered] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const avatarDropdownRef = useRef<HTMLDivElement>(null);
+  const settingsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!avatarDropdownOpen) return;
@@ -50,6 +56,17 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [avatarDropdownOpen]);
+
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [settingsOpen]);
 
   const users = [
     { initials: 'RG', name: 'Ravi Gupta', role: 'Owner', color: '#6B7280' },
@@ -125,9 +142,64 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
         <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
           <Bell className="w-4.5 h-4.5 text-[#6B7280]" />
         </button>
-        <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
-          <Settings className="w-4.5 h-4.5 text-[#6B7280]" />
-        </button>
+        <div className="relative" ref={settingsRef}>
+          <button
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors"
+            onClick={() => setSettingsOpen(v => !v)}
+            style={{ background: settingsOpen ? 'rgba(255,255,255,0.5)' : 'transparent' }}
+          >
+            <Settings className="w-4.5 h-4.5 text-[#6B7280]" />
+          </button>
+          <AnimatePresence>
+            {settingsOpen && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                transition={{ duration: 0.12 }}
+                className="absolute right-0 top-full mt-1.5 z-50 w-[210px]"
+                style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.10)', padding: '8px 6px 6px' }}
+              >
+                <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 4px 10px' }}>Theme</p>
+                {([
+                  { key: 'clean', desc: 'Minimal & light' },
+                  { key: 'rams',  desc: 'Braun · Less but better' },
+                  { key: 'neon',  desc: 'Dark · Electric glow' },
+                ] as const).map(({ key: tn, desc }) => {
+                  const th = RADAR_THEMES[tn];
+                  return (
+                    <button
+                      key={tn}
+                      onClick={() => { onThemeChange?.(tn); setSettingsOpen(false); }}
+                      className="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-lg transition-colors text-left"
+                      style={{ background: themeName === tn ? '#F3F4F6' : 'transparent' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+                      onMouseLeave={e => (e.currentTarget.style.background = themeName === tn ? '#F3F4F6' : 'transparent')}
+                    >
+                      <div
+                        className="w-10 h-10 flex-shrink-0 flex flex-col gap-0.5 items-center justify-center overflow-hidden"
+                        style={{
+                          background: th.pageBg,
+                          border: tn === 'rams' ? '1.5px solid #0A0A0A' : tn === 'neon' ? '1px solid #2A2A6A' : '1px solid #E6E8EC',
+                          borderRadius: tn === 'rams' ? '0px' : tn === 'neon' ? '4px' : '8px',
+                          boxShadow: tn === 'neon' ? '0 0 8px rgba(123,63,255,0.4)' : 'none',
+                        }}
+                      >
+                        <div className="w-6 h-2" style={{ background: th.cardBg, border: tn === 'rams' ? '1px solid #0A0A0A' : tn === 'neon' ? '1px solid #7B3FFF' : '1px solid #E6E8EC', borderRadius: tn === 'rams' ? '0' : tn === 'neon' ? '2px' : '3px' }} />
+                        <div className="w-6 h-0.5" style={{ background: th.accentColor, opacity: 0.9 }} />
+                      </div>
+                      <div className="min-w-0">
+                        <p style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', margin: 0 }}>{th.name}</p>
+                        <p style={{ fontSize: 11, color: '#6B7280', margin: 0 }}>{desc}</p>
+                      </div>
+                      {themeName === tn && <Check className="w-3.5 h-3.5 ml-auto flex-shrink-0 text-[#1C1E21]" />}
+                    </button>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
         
         {/* User Avatar */}
         <div ref={avatarDropdownRef} className="relative">
