@@ -460,7 +460,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
             {/* Row 2: toolbar — no border below, line above comes from Row 1's border-b */}
             <div className="max-w-[1400px] mx-auto w-full flex items-center justify-between px-8 pt-3 pb-3 gap-1.5">
               <div className="flex items-center gap-1.5">
-                <DateFilter />
+                {!isAU && <DateFilter />}
                 {isVp && (
                   <button onClick={onUpgrade} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors">
                     <span className="text-[13px] font-medium text-[#1C1E21]">Your trial has ended.</span>
@@ -468,6 +468,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   </button>
                 )}
               </div>
+              {!isAU && (
               <div className="flex items-center gap-1.5">
                 <span className="text-xs text-neutral-400 whitespace-nowrap">
                   {isRefreshing ? 'Updating…' : `Updated ${formatLastRefreshed(lastRefreshed)}`}
@@ -486,6 +487,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                 </button>
               </div>
+              )}
             </div>
           </div>
 
