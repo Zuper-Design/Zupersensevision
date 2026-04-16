@@ -1,8 +1,9 @@
-import { X, ChevronDown, HelpCircle, Search, Bell, Settings, Check } from 'lucide-react';
+import { X, ChevronDown, HelpCircle, Search, Bell, Settings, Check, CreditCard } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RADAR_THEMES } from './RadarThemeContext';
+import { ManageSubscriptionModal } from './ManageSubscriptionModal';
 
 interface Tab {
   id: string;
@@ -41,6 +42,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
   };
 
   const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
+  const [manageSubOpen, setManageSubOpen] = useState(false);
   const [askSenseHovered, setAskSenseHovered] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const avatarDropdownRef = useRef<HTMLDivElement>(null);
@@ -200,7 +202,8 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
             )}
           </AnimatePresence>
         </div>
-        
+        <ManageSubscriptionModal isOpen={manageSubOpen} onClose={() => setManageSubOpen(false)} />
+
         {/* User Avatar */}
         <div ref={avatarDropdownRef} className="relative">
           <button
@@ -245,6 +248,16 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
                     )}
                   </button>
                 ))}
+                <div className="mx-3 my-1 h-px bg-[#F0F0F2]" />
+                <button
+                  className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#F8F9FB] transition-colors text-left"
+                  onClick={() => { setAvatarDropdownOpen(false); setManageSubOpen(true); }}
+                >
+                  <div className="w-6 h-6 rounded-md flex items-center justify-center bg-[#F3F4F6] flex-shrink-0">
+                    <CreditCard className="w-3.5 h-3.5 text-[#6B7280]" />
+                  </div>
+                  <span className="text-[13px] text-[#1C1E21]" style={{ fontWeight: 500 }}>Manage subscription</span>
+                </button>
               </div>
             </div>
           )}

@@ -1,4 +1,6 @@
 import { X, Check, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { CheckoutModal } from './CheckoutModal';
 
 interface UpgradeSenseModalProps {
   isOpen: boolean;
@@ -15,6 +17,7 @@ const FEATURES = [
 ];
 
 export function UpgradeSenseModal({ isOpen, onClose }: UpgradeSenseModalProps) {
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   if (!isOpen) return null;
 
   return (
@@ -95,7 +98,7 @@ export function UpgradeSenseModal({ isOpen, onClose }: UpgradeSenseModalProps) {
 
           {/* CTA */}
           <button
-            onClick={onClose}
+            onClick={() => setCheckoutOpen(true)}
             className="w-full py-3 rounded-[12px] text-[14px] font-semibold text-white transition-all duration-150"
             style={{
               background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)',
@@ -108,6 +111,7 @@ export function UpgradeSenseModal({ isOpen, onClose }: UpgradeSenseModalProps) {
           </button>
         </div>
       </div>
+      <CheckoutModal isOpen={checkoutOpen} onClose={() => { setCheckoutOpen(false); onClose(); }} />
     </>
   );
 }
