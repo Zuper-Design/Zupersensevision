@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Settings, Palette, CreditCard, Check } from 'lucide-react';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
 import { motion, AnimatePresence } from 'motion/react';
@@ -20,6 +20,8 @@ import { SenseLogo } from './components/SenseLogo';
 import { PublishedPagesProvider, usePublishedPages } from './components/PublishedPagesContext';
 import { RadarProvider } from './components/RadarContext';
 import { SavedCard } from './components/RadarContext';
+import { ManageSubscriptionModal } from './components/ManageSubscriptionModal';
+import { PersonalizationModal } from './components/PersonalizationModal';
 import { InvoicePageBuilderCard } from './components/InvoicePageBuilderCard';
 import { JobListingPage } from './components/JobListingPage';
 
@@ -46,6 +48,21 @@ function AppContent() {
   const [sidebarSearch, setSidebarSearch] = useState('');
   const [sidebarSearchOpen, setSidebarSearchOpen] = useState(false);
   const sidebarSearchRef = useRef<HTMLInputElement>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [manageSubOpen, setManageSubOpen] = useState(false);
+  const [personalizationOpen, setPersonalizationOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [settingsOpen]);
 
   const threadHistory = [
     { id: 1, title: 'Q4 Performance Analysis', active: true },
@@ -163,8 +180,6 @@ function AppContent() {
         onUserChange={handleUserChange}
         onAskSense={() => setAskSenseOpen((prev) => !prev)}
         askSenseOpen={askSenseOpen}
-        themeName={themeName}
-        onThemeChange={setThemeName}
       />
 
       {/* Main Content Area */}
@@ -257,8 +272,85 @@ function AppContent() {
                 )}
               </div>
 
-              {/* Plan / trial card — bottom of side nav */}
+              {/* Settings button + trial card — bottom of side nav */}
               <div className="px-3 pb-3 pt-2 flex-shrink-0">
+                {/* Settings gear */}
+                <div className="relative mb-2" ref={settingsRef}>
+                  <button
+                    onClick={() => setSettingsOpen(v => !v)}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors text-left"
+                    style={{ background: settingsOpen ? '#EEEEEE' : 'transparent' }}
+                    onMouseEnter={e => { if (!settingsOpen) (e.currentTarget as HTMLElement).style.background = '#EEEEEE'; }}
+                    onMouseLeave={e => { if (!settingsOpen) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                  >
+                    <Settings className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
+                    <span className="text-[13px] font-medium text-[#4B5563]">Settings</span>
+                  </button>
+                  <AnimatePresence>
+                    {settingsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.96, y: 4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.96, y: 4 }}
+                        transition={{ duration: 0.13, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute bottom-full mb-1.5 left-0 right-0 z-50"
+                        style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 -4px 24px rgba(0,0,0,0.09)', padding: '6px' }}
+                      >
+                        <button
+                          onClick={() => { setSettingsOpen(false); setPersonalizationOpen(true); }}
+                          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F3F4F6] transition-colors text-left"
+                        >
+                          <Palette className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
+                          <span className="text-[13px] font-medium text-[#1C1E21]">Personalization</span>
+                        </button>
+                        <button
+                          onClick={() => { setSettingsOpen(false); setManageSubOpen(true); }}
+                          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F3F4F6] transition-colors text-left"
+                        >
+                          <CreditCard className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
+                          <span className="text-[13px] font-medium text-[#1C1E21]">Manage subscription</span>
+                        </button>
+                        <div className="mx-2 my-1 h-px bg-[#F0F0F2]" />
+                        <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '4px 0 4px 10px' }}>Theme</p>
+                        {([
+                          { key: 'clean', desc: 'Minimal & light' },
+                          { key: 'rams',  desc: 'Braun · Less but better' },
+                          { key: 'neon',  desc: 'Dark · Electric glow' },
+                        ] as const).map(({ key: tn, desc }) => {
+                          const th = RADAR_THEMES[tn];
+                          return (
+                            <button
+                              key={tn}
+                              onClick={() => { setThemeName(tn); setSettingsOpen(false); }}
+                              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors text-left"
+                              style={{ background: themeName === tn ? '#F3F4F6' : 'transparent' }}
+                              onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
+                              onMouseLeave={e => (e.currentTarget.style.background = themeName === tn ? '#F3F4F6' : 'transparent')}
+                            >
+                              <div
+                                className="w-7 h-7 flex-shrink-0 flex flex-col gap-0.5 items-center justify-center overflow-hidden"
+                                style={{
+                                  background: th.pageBg,
+                                  border: tn === 'rams' ? '1.5px solid #0A0A0A' : tn === 'neon' ? '1px solid #2A2A6A' : '1px solid #E6E8EC',
+                                  borderRadius: tn === 'rams' ? '0px' : tn === 'neon' ? '3px' : '6px',
+                                  boxShadow: tn === 'neon' ? '0 0 6px rgba(123,63,255,0.4)' : 'none',
+                                }}
+                              >
+                                <div className="w-4 h-1.5" style={{ background: th.cardBg, border: tn === 'rams' ? '1px solid #0A0A0A' : tn === 'neon' ? '1px solid #7B3FFF' : '1px solid #E6E8EC', borderRadius: tn === 'rams' ? '0' : tn === 'neon' ? '1px' : '2px' }} />
+                                <div className="w-4 h-0.5" style={{ background: th.accentColor, opacity: 0.9 }} />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p style={{ fontSize: 12, fontWeight: 600, color: '#1C1E21', margin: 0 }}>{th.name}</p>
+                                <p style={{ fontSize: 10, color: '#6B7280', margin: 0 }}>{desc}</p>
+                              </div>
+                              {themeName === tn && <Check className="w-3 h-3 ml-auto flex-shrink-0 text-[#1C1E21]" />}
+                            </button>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
                 {currentUser === 'RG' ? (
                   <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
                     <div className="flex items-center gap-2.5 mb-3">
@@ -404,6 +496,8 @@ function AppContent() {
       />
 
       <UpgradeSenseModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
+      <ManageSubscriptionModal isOpen={manageSubOpen} onClose={() => setManageSubOpen(false)} />
+      <PersonalizationModal isOpen={personalizationOpen} onClose={() => setPersonalizationOpen(false)} />
 
       {/* Report Bug Modal */}
       <ReportBugModal
