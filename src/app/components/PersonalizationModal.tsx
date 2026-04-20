@@ -1,4 +1,4 @@
-import { X, Check, BookOpen, Plus, Search, Trash2, MoreHorizontal, Pencil } from 'lucide-react';
+import { X, Check, BookOpen, Plus, Search, Trash2, MoreHorizontal, Pencil, Paperclip, FileText, ImageIcon, Sheet } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -31,17 +31,19 @@ export function PersonalizationModal({ isOpen, onClose }: PersonalizationModalPr
   const [formUseWhen, setFormUseWhen] = useState('');
   const [formBody, setFormBody] = useState('');
   const [formEnabled, setFormEnabled] = useState(true);
+  const [formFile, setFormFile] = useState<File | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openAddForm = () => {
     setEditingId(null);
-    setFormTitle(''); setFormUseWhen(''); setFormBody(''); setFormEnabled(true);
+    setFormTitle(''); setFormUseWhen(''); setFormBody(''); setFormEnabled(true); setFormFile(null);
     setFormOpen(true);
   };
 
   const openEditForm = (item: KnowledgeItem) => {
     setEditingId(item.id);
-    setFormTitle(item.title); setFormUseWhen(item.useWhen); setFormBody(item.body); setFormEnabled(item.enabled);
+    setFormTitle(item.title); setFormUseWhen(item.useWhen); setFormBody(item.body); setFormEnabled(item.enabled); setFormFile(null);
     setFormOpen(true);
   };
 
@@ -329,13 +331,34 @@ export function PersonalizationModal({ isOpen, onClose }: PersonalizationModalPr
                         <textarea value={formBody} onChange={e => setFormBody(e.target.value)}
                           placeholder="Plain English definition or context..."
                           rows={4} style={inp} onFocus={onF} onBlur={onB} />
-                      </div>
-                      <div className="flex items-center gap-2.5 pt-1">
-                        <button onClick={() => setFormEnabled(v => !v)}
-                          style={{ width: 30, height: 17, borderRadius: 9, border: 'none', cursor: 'pointer', flexShrink: 0, background: formEnabled ? '#1C1E21' : '#E5E7EB', position: 'relative', transition: 'background 0.2s', padding: 0 }}>
-                          <span style={{ position: 'absolute', top: 2.5, width: 12, height: 12, borderRadius: '50%', background: '#fff', transition: 'left 0.2s cubic-bezier(0.22,1,0.36,1)', left: formEnabled ? 16 : 2.5, boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }} />
-                        </button>
-                        <span style={{ fontSize: 13, color: '#6B7280' }}>Enable this entry</span>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          className="hidden"
+                          accept="image/*,.xlsx,.xls,.csv,.pdf,.doc,.docx"
+                          onChange={e => setFormFile(e.target.files?.[0] ?? null)}
+                        />
+                        <div className="flex items-center gap-2 mt-2">
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-colors"
+                            style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', color: '#6B7280', fontSize: 11, fontWeight: 500, cursor: 'pointer' }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#F3F4F6'; (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB'; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#F9FAFB'; (e.currentTarget as HTMLElement).style.borderColor = '#E5E7EB'; }}
+                          >
+                            <Paperclip style={{ width: 11, height: 11 }} />
+                            Upload
+                          </button>
+                          {formFile && (
+                            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md" style={{ background: '#F3F4F6', border: '1px solid #E5E7EB', minWidth: 0 }}>
+                              {formFile.name.match(/\.(xlsx|xls|csv)$/i) ? <Sheet style={{ width: 11, height: 11, color: '#16A34A', flexShrink: 0 }} /> : formFile.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) ? <ImageIcon style={{ width: 11, height: 11, color: '#6366F1', flexShrink: 0 }} /> : <FileText style={{ width: 11, height: 11, color: '#6B7280', flexShrink: 0 }} />}
+                              <span style={{ fontSize: 11, color: '#374151', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formFile.name}</span>
+                              <button onClick={() => { setFormFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                                <X style={{ width: 10, height: 10, color: '#9CA3AF' }} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                     {/* Footer */}
