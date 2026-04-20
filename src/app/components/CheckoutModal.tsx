@@ -1,9 +1,11 @@
 import { X, ChevronDown, RotateCcw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { SenseLogo } from './SenseLogo';
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 const CARD_BRANDS = (
@@ -22,15 +24,23 @@ const CARD_BRANDS = (
   </svg>
 );
 
-export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
+export function CheckoutModal({ isOpen, onClose, onSuccess }: CheckoutModalProps) {
   const [payMethod, setPayMethod] = useState<'card' | 'paypal' | 'apple'>('card');
+  const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     firstName: '', lastName: '', phone: '',
     city: '', state: '', country: 'United States',
     cardName: '', cardNumber: '', expiry: '', cvv: '',
   });
 
+  useEffect(() => { if (!isOpen) setSubmitted(false); }, [isOpen]);
+
   if (!isOpen) return null;
+
+  const handleSubmit = () => {
+    onClose();
+    onSuccess?.();
+  };
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
@@ -313,7 +323,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 }}
                 onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
                 onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
-                onClick={onClose}
+                onClick={handleSubmit}
               >
                 Submit
               </button>

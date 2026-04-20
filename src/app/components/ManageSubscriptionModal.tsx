@@ -1,4 +1,4 @@
-import { X, CreditCard, ChevronDown, AlertTriangle, Check } from 'lucide-react';
+import { X, CreditCard, ChevronDown, Check } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -30,15 +30,6 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   outline: 'none',
 };
-
-const FEATURES = [
-  'Unlimited Sense conversations',
-  'Real-time Radar dashboards',
-  'Custom alerts & smart triggers',
-  'Priority support',
-  'All data source integrations',
-  'Premium AI models',
-];
 
 export function ManageSubscriptionModal({ isOpen, onClose }: ManageSubscriptionModalProps) {
   const [editingCard, setEditingCard] = useState(false);
@@ -87,7 +78,7 @@ export function ManageSubscriptionModal({ isOpen, onClose }: ManageSubscriptionM
           >
             <motion.div
               className="pointer-events-auto bg-white overflow-hidden w-full"
-              style={{ maxWidth: 860, borderRadius: 20, boxShadow: '0 24px 80px rgba(30,34,60,0.18)', maxHeight: '92vh', display: 'flex', flexDirection: 'column' }}
+              style={{ maxWidth: 560, borderRadius: 20, boxShadow: '0 24px 80px rgba(30,34,60,0.18)', maxHeight: '92vh', display: 'flex', flexDirection: 'column' }}
               initial={{ scale: 0.96, y: 8 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.96, y: 8 }}
@@ -105,272 +96,200 @@ export function ManageSubscriptionModal({ isOpen, onClose }: ManageSubscriptionM
                 </button>
               </div>
 
-              {/* Two-column body */}
-              <div className="flex flex-1 overflow-hidden">
+              {/* Body */}
+              <div className="flex flex-col p-7 gap-5 overflow-y-auto flex-1">
 
-                {/* LEFT — Plan info */}
-                <div className="flex flex-col gap-5 p-7 overflow-y-auto" style={{ width: 340, flexShrink: 0, borderRight: '1px solid #F0F2F5' }}>
-
-                  {/* Active plan card */}
-                  <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid #E8E9F8' }}>
-                    <div className="px-5 pt-5 pb-4" style={{ background: 'linear-gradient(135deg, #EEF0FB 0%, #E8EAFF 100%)' }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, color: '#6366F1', background: 'rgba(99,102,241,0.12)', padding: '2px 8px', borderRadius: 20, letterSpacing: '0.05em', display: 'inline-block', marginBottom: 10 }}>ACTIVE</span>
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <p style={{ fontSize: 15, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.01em', lineHeight: 1.2 }}>Sense Plan</p>
-                          <p style={{ fontSize: 13, color: '#6366F1', fontWeight: 500, marginTop: 2 }}>Monthly</p>
-                        </div>
-                        <div className="text-right">
-                          <p style={{ fontSize: 28, fontWeight: 800, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$300</p>
-                          <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>/month</p>
-                        </div>
+                {/* Plan card */}
+                <div className="relative overflow-hidden rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #FFF8F5 0%, #FFF3EC 100%)', border: '1.5px solid rgba(253,80,0,0.14)' }}>
+                  <div style={{ position: 'absolute', top: -24, right: -24, width: 140, height: 140, borderRadius: '50%', background: 'radial-gradient(circle, rgba(253,80,0,0.10) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(16,185,129,0.10)', border: '1px solid rgba(16,185,129,0.24)' }}>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
+                        <span style={{ fontSize: 11, fontWeight: 600, color: '#059669', letterSpacing: '0.04em' }}>ACTIVE</span>
+                      </div>
+                      <div className="text-right">
+                        <span style={{ fontSize: 30, fontWeight: 800, color: '#1C1E21', letterSpacing: '-0.04em', lineHeight: 1 }}>$300</span>
+                        <span style={{ fontSize: 12, color: '#9CA3AF', marginLeft: 3 }}>/mo</span>
                       </div>
                     </div>
-                    <div className="px-5 py-3" style={{ background: '#FAFBFF', borderTop: '1px solid #E8E9F8' }}>
-                      <div className="grid grid-cols-2 gap-y-3">
-                        {[
-                          { label: 'Plan', value: 'Sense Plan' },
-                          { label: 'Billing', value: 'Monthly' },
-                          { label: 'Seats', value: '4 users' },
-                          { label: 'Next charge', value: 'Jun 16, 2026' },
-                        ].map(({ label, value }) => (
-                          <div key={label}>
-                            <p style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
-                            <p style={{ fontSize: 12, color: '#374151', fontWeight: 500, marginTop: 2 }}>{value}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* What's included */}
-                  <div>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>What's included</p>
-                    <div className="flex flex-col gap-2.5">
-                      {FEATURES.map(f => (
-                        <div key={f} className="flex items-center gap-2.5">
-                          <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(99,102,241,0.10)', border: '1.5px solid #6366F1' }}>
-                            <Check className="w-2.5 h-2.5 text-[#6366F1]" strokeWidth={3} />
-                          </div>
-                          <span style={{ fontSize: 13, color: '#374151' }}>{f}</span>
-                        </div>
-                      ))}
+                    <p style={{ fontSize: 19, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', marginBottom: 6 }}>Sense Plan</p>
+                    <div className="flex items-center gap-3">
+                      <span style={{ fontSize: 12, color: '#6B7280' }}>Monthly · 4 seats</span>
+                      <span style={{ width: 3, height: 3, borderRadius: '50%', background: '#D1D5DB', display: 'inline-block' }} />
+                      <span style={{ fontSize: 12, color: '#9CA3AF' }}>Renews Jun 16, 2026</span>
                     </div>
                   </div>
                 </div>
 
-                {/* RIGHT — Payment & cancel */}
-                <div className="flex-1 flex flex-col gap-5 p-7 overflow-y-auto">
+                {/* Payment method */}
+                <div>
+                  <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10 }}>Payment method</p>
 
-                  {/* Payment method */}
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Payment method</p>
+                  {!editingCard && (
+                    <div className="flex items-center justify-between p-4 rounded-xl" style={{ background: '#FAFBFC' }}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: '#1A1F71' }}>
+                          <span style={{ fontSize: 7, fontWeight: 700, color: '#fff', fontFamily: 'Arial' }}>VISA</span>
+                        </div>
+                        <div>
+                          <p style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21' }}>Visa ending in <span style={{ fontFamily: 'monospace' }}>4242</span></p>
+                          <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>Expires 08/27</p>
+                        </div>
+                      </div>
                       <button
-                        onClick={() => setEditingCard(!editingCard)}
-                        style={{ fontSize: 12, fontWeight: 600, color: '#6366F1', background: 'none', border: 'none', cursor: 'pointer' }}
+                        onClick={() => setEditingCard(true)}
+                        className="px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-colors"
+                        style={{ background: '#F3F4F6', color: '#374151', border: 'none', cursor: 'pointer' }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#E5E7EB')}
+                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#F3F4F6')}
                       >
-                        {editingCard ? 'Cancel' : 'Update card'}
+                        Update card
                       </button>
                     </div>
+                  )}
 
-                    {!editingCard && (
-                      <div className="flex items-center justify-between p-4 rounded-xl" style={{ border: '1px solid #E6E8EC', background: '#FAFBFC' }}>
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: '#1A1F71' }}>
-                            <span style={{ fontSize: 7, fontWeight: 700, color: '#fff', fontFamily: 'Arial' }}>VISA</span>
-                          </div>
-                          <div>
-                            <p style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21' }}>Visa ending in <span style={{ fontFamily: 'monospace' }}>4242</span></p>
-                            <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>Expires 08/27</p>
-                          </div>
-                        </div>
-                        <button
-                          style={{ fontSize: 12, fontWeight: 500, color: '#EF4444', background: 'none', border: 'none', cursor: 'pointer' }}
-                          onClick={() => setConfirmCancel(true)}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    )}
-
-                    <AnimatePresence>
-                      {editingCard && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                          style={{ overflow: 'hidden' }}
-                        >
-                          <div className="space-y-3">
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>First name</label>
-                                <input value={cardForm.firstName} onChange={set('firstName')} placeholder="Ravi" style={inputStyle}
-                                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
-                                  onBlur={e => (e.target.style.boxShadow = 'none')} />
-                              </div>
-                              <div>
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>Last name</label>
-                                <input value={cardForm.lastName} onChange={set('lastName')} placeholder="Gupta" style={inputStyle}
-                                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
-                                  onBlur={e => (e.target.style.boxShadow = 'none')} />
-                              </div>
-                            </div>
+                  <AnimatePresence>
+                    {editingCard && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>Billing address</label>
-                              <input value={cardForm.address} onChange={set('address')} placeholder="123 Main St" style={inputStyle}
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>First name</label>
+                              <input value={cardForm.firstName} onChange={set('firstName')} placeholder="Ravi" style={inputStyle}
                                 onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
                                 onBlur={e => (e.target.style.boxShadow = 'none')} />
                             </div>
-                            <div className="grid grid-cols-3 gap-3">
-                              <div>
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>City</label>
-                                <input value={cardForm.city} onChange={set('city')} placeholder="San Francisco" style={inputStyle}
-                                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
-                                  onBlur={e => (e.target.style.boxShadow = 'none')} />
-                              </div>
-                              <div>
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>State</label>
-                                <div style={{ position: 'relative' }}>
-                                  <select value={cardForm.state} onChange={set('state')} style={{ ...inputStyle, appearance: 'none', paddingRight: 28, color: cardForm.state ? '#1C1E21' : '#9CA3AF' }}>
-                                    <option value="">State</option>
-                                    <option>CA</option><option>NY</option><option>TX</option><option>FL</option>
-                                  </select>
-                                  <ChevronDown style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, color: '#9CA3AF', pointerEvents: 'none' }} />
-                                </div>
-                              </div>
-                              <div>
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>ZIP</label>
-                                <input value={cardForm.zip} onChange={set('zip')} placeholder="94103" style={inputStyle} maxLength={5}
-                                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
-                                  onBlur={e => (e.target.style.boxShadow = 'none')} />
-                              </div>
-                            </div>
-
-                            <div style={{ height: 1, background: '#F0F2F5', margin: '4px 0' }} />
-
                             <div>
-                              <div className="flex items-center justify-between mb-1.5">
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280' }}>Card number</label>
-                                {CARD_BRANDS}
-                              </div>
-                              <input
-                                value={cardForm.cardNumber}
-                                onChange={e => setCardForm(f => ({ ...f, cardNumber: formatCard(e.target.value) }))}
-                                placeholder="1234 5678 9012 3456"
-                                style={{ ...inputStyle, fontFamily: 'monospace', letterSpacing: '0.05em' }}
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>Last name</label>
+                              <input value={cardForm.lastName} onChange={set('lastName')} placeholder="Gupta" style={inputStyle}
                                 onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
-                                onBlur={e => (e.target.style.boxShadow = 'none')}
-                              />
+                                onBlur={e => (e.target.style.boxShadow = 'none')} />
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>Expiration</label>
-                                <input
-                                  value={cardForm.expiry}
-                                  onChange={e => setCardForm(f => ({ ...f, expiry: formatExpiry(e.target.value) }))}
-                                  placeholder="MM/YY"
-                                  style={{ ...inputStyle, fontFamily: 'monospace' }}
-                                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
-                                  onBlur={e => (e.target.style.boxShadow = 'none')}
-                                />
-                              </div>
-                              <div>
-                                <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>CVV</label>
-                                <input
-                                  value={cardForm.cvv}
-                                  onChange={e => setCardForm(f => ({ ...f, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
-                                  placeholder="CVV"
-                                  style={{ ...inputStyle, fontFamily: 'monospace' }}
-                                  onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
-                                  onBlur={e => (e.target.style.boxShadow = 'none')}
-                                />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>Billing address</label>
+                            <input value={cardForm.address} onChange={set('address')} placeholder="123 Main St" style={inputStyle}
+                              onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
+                              onBlur={e => (e.target.style.boxShadow = 'none')} />
+                          </div>
+                          <div className="grid grid-cols-3 gap-3">
+                            <div>
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>City</label>
+                              <input value={cardForm.city} onChange={set('city')} placeholder="San Francisco" style={inputStyle}
+                                onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
+                                onBlur={e => (e.target.style.boxShadow = 'none')} />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>State</label>
+                              <div style={{ position: 'relative' }}>
+                                <select value={cardForm.state} onChange={set('state')} style={{ ...inputStyle, appearance: 'none', paddingRight: 28, color: cardForm.state ? '#1C1E21' : '#9CA3AF' }}>
+                                  <option value="">State</option>
+                                  <option>CA</option><option>NY</option><option>TX</option><option>FL</option>
+                                </select>
+                                <ChevronDown style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, color: '#9CA3AF', pointerEvents: 'none' }} />
                               </div>
                             </div>
-
-                            <button
-                              onClick={handleSaveCard}
-                              className="w-full py-2.5 rounded-xl text-[13px] font-semibold text-white flex items-center justify-center gap-2"
+                            <div>
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>ZIP</label>
+                              <input value={cardForm.zip} onChange={set('zip')} placeholder="94103" style={inputStyle} maxLength={5}
+                                onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
+                                onBlur={e => (e.target.style.boxShadow = 'none')} />
+                            </div>
+                          </div>
+                          <div style={{ height: 1, background: '#F0F2F5' }} />
+                          <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280' }}>Card number</label>
+                              {CARD_BRANDS}
+                            </div>
+                            <input
+                              value={cardForm.cardNumber}
+                              onChange={e => setCardForm(f => ({ ...f, cardNumber: formatCard(e.target.value) }))}
+                              placeholder="1234 5678 9012 3456"
+                              style={{ ...inputStyle, fontFamily: 'monospace', letterSpacing: '0.05em' }}
+                              onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
+                              onBlur={e => (e.target.style.boxShadow = 'none')}
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>Expiration</label>
+                              <input value={cardForm.expiry} onChange={e => setCardForm(f => ({ ...f, expiry: formatExpiry(e.target.value) }))} placeholder="MM/YY"
+                                style={{ ...inputStyle, fontFamily: 'monospace' }}
+                                onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
+                                onBlur={e => (e.target.style.boxShadow = 'none')} />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: 11, fontWeight: 500, color: '#6B7280', display: 'block', marginBottom: 4 }}>CVV</label>
+                              <input value={cardForm.cvv} onChange={e => setCardForm(f => ({ ...f, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) }))} placeholder="CVV"
+                                style={{ ...inputStyle, fontFamily: 'monospace' }}
+                                onFocus={e => (e.target.style.boxShadow = '0 0 0 2px rgba(99,102,241,0.22)')}
+                                onBlur={e => (e.target.style.boxShadow = 'none')} />
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={handleSaveCard}
+                              className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold text-white flex items-center justify-center gap-2"
                               style={{
                                 background: saveSuccess ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #6366F1, #4F46E5)',
                                 boxShadow: saveSuccess ? '0 4px 14px rgba(16,185,129,0.3)' : '0 4px 14px rgba(99,102,241,0.3)',
                                 transition: 'background 0.3s, box-shadow 0.3s',
-                              }}
-                            >
-                              {saveSuccess ? (
-                                <><Check className="w-4 h-4" strokeWidth={3} /> Saved</>
-                              ) : (
-                                <><CreditCard className="w-4 h-4" /> Save payment method</>
-                              )}
+                              }}>
+                              {saveSuccess ? <><Check className="w-4 h-4" strokeWidth={3} /> Saved</> : <><CreditCard className="w-4 h-4" /> Save card</>}
+                            </button>
+                            <button onClick={() => setEditingCard(false)}
+                              className="px-4 py-2.5 rounded-xl text-[13px] font-medium"
+                              style={{ background: '#F3F4F6', color: '#6B7280' }}>
+                              Cancel
                             </button>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
-                  {/* Spacer pushes cancel to bottom */}
-                  <div className="flex-1" />
-
-                  {/* Cancel subscription */}
-                  <div className="rounded-2xl px-5 py-4" style={{ border: '1px solid #FEE2E2', background: '#FFFAFA' }}>
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#FEE2E2' }}>
-                        <AlertTriangle className="w-4 h-4 text-[#EF4444]" />
-                      </div>
-                      <div className="flex-1">
-                        <p style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', marginBottom: 2 }}>Cancel subscription</p>
-                        <p style={{ fontSize: 12, color: '#6B7280', lineHeight: 1.5 }}>
-                          Removing your card will cancel your subscription. Access ends on <strong>June 16, 2026</strong>.
-                        </p>
-                        <AnimatePresence mode="wait">
-                          {!confirmCancel && !cancelled && (
-                            <motion.button
-                              key="cancel-btn"
-                              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                              onClick={() => setConfirmCancel(true)}
-                              className="mt-3 px-4 py-1.5 rounded-lg text-[12px] font-semibold transition-colors"
-                              style={{ background: '#FEE2E2', color: '#EF4444', border: '1px solid #FECACA' }}
-                              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#FECACA')}
-                              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#FEE2E2')}
-                            >
-                              Remove card &amp; cancel
-                            </motion.button>
-                          )}
-                          {confirmCancel && !cancelled && (
-                            <motion.div
-                              key="confirm"
-                              initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                              className="flex items-center gap-2 mt-3"
-                            >
-                              <p style={{ fontSize: 12, color: '#EF4444', fontWeight: 500 }}>Are you sure?</p>
-                              <button onClick={handleConfirmCancel}
-                                className="px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white"
-                                style={{ background: '#EF4444' }}>
-                                Yes, remove &amp; cancel
-                              </button>
-                              <button onClick={() => setConfirmCancel(false)}
-                                className="px-3 py-1.5 rounded-lg text-[12px] font-medium"
-                                style={{ background: '#F3F4F6', color: '#374151' }}>
-                                Keep plan
-                              </button>
-                            </motion.div>
-                          )}
-                          {cancelled && (
-                            <motion.p
-                              key="cancelled"
-                              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                              style={{ fontSize: 12, color: '#10B981', fontWeight: 500, marginTop: 8 }}
-                            >
-                              ✓ Card removed. Access ends June 16, 2026.
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </div>
-                  </div>
+                {/* Cancel subscription — demoted to plain text link */}
+                <div style={{ borderTop: '1px solid #F0F2F5', paddingTop: 16 }}>
+                  <AnimatePresence mode="wait">
+                    {!confirmCancel && !cancelled && (
+                      <motion.button key="cancel-link"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        onClick={() => setConfirmCancel(true)}
+                        style={{ fontSize: 12, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#EF4444')}
+                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF')}
+                      >
+                        Cancel subscription
+                      </motion.button>
+                    )}
+                    {confirmCancel && !cancelled && (
+                      <motion.div key="confirm"
+                        initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                        className="flex items-center gap-3">
+                        <p style={{ fontSize: 12, color: '#6B7280' }}>Cancel your subscription?</p>
+                        <button onClick={handleConfirmCancel}
+                          className="px-3 py-1.5 rounded-lg text-[12px] font-semibold text-white"
+                          style={{ background: '#EF4444' }}>Yes, cancel</button>
+                        <button onClick={() => setConfirmCancel(false)}
+                          className="px-3 py-1.5 rounded-lg text-[12px] font-medium"
+                          style={{ background: '#F3F4F6', color: '#374151' }}>Keep plan</button>
+                      </motion.div>
+                    )}
+                    {cancelled && (
+                      <motion.p key="cancelled" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                        style={{ fontSize: 12, color: '#10B981', fontWeight: 500 }}>
+                        ✓ Cancelled. Access ends June 16, 2026.
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </motion.div>
