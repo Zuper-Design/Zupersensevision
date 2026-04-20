@@ -1,4 +1,4 @@
-import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp } from 'lucide-react';
+import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRadar, SavedCard } from './RadarContext';
@@ -23,6 +23,7 @@ interface RadarWorkspaceProps {
   isAU?: boolean;
   onUpgrade?: () => void;
   themeName?: 'clean' | 'rams' | 'neon';
+  onSettingsClick?: () => void;
 }
 
 // Mini chart helpers
@@ -299,7 +300,7 @@ const PINNED_DEFS: UnifiedCardItem[] = [
   { kind: 'pinned', id: 'revenueTable',    title: 'Monthly Job Revenue Table',     Component: RevenueTableCard, fullWidth: true },
 ];
 
-export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean' }: RadarWorkspaceProps) {
+export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean', onSettingsClick }: RadarWorkspaceProps) {
   const { radars, activeRadarId, removeCardFromRadar } = useRadar();
   const [selectedRadarId] = useState<string | null>(activeRadarId || (radars.length > 0 ? radars[0].id : null));
   const [refreshKey, setRefreshKey] = useState(0);
@@ -454,6 +455,12 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                     <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
                   </button>
                 )}
+                <button
+                  onClick={onSettingsClick}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
+                >
+                  <Settings className="w-4 h-4 text-[#6B7280]" />
+                </button>
               </div>
             </div>
 

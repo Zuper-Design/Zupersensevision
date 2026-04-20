@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Settings, Palette, CreditCard, Check } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check } from 'lucide-react';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
 import { motion, AnimatePresence } from 'motion/react';
@@ -51,18 +51,6 @@ function AppContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [manageSubOpen, setManageSubOpen] = useState(false);
   const [personalizationOpen, setPersonalizationOpen] = useState(false);
-  const settingsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!settingsOpen) return;
-    const handleClick = (e: MouseEvent) => {
-      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
-        setSettingsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [settingsOpen]);
 
   const threadHistory = [
     { id: 1, title: 'Q4 Performance Analysis', active: true },
@@ -272,29 +260,19 @@ function AppContent() {
                 )}
               </div>
 
-              {/* Settings button + trial card — bottom of side nav */}
+              {/* Plan / trial card — bottom of side nav */}
               <div className="px-3 pb-3 pt-2 flex-shrink-0">
-                {/* Settings gear */}
-                <div className="relative mb-2" ref={settingsRef}>
-                  <button
-                    onClick={() => setSettingsOpen(v => !v)}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors text-left"
-                    style={{ background: settingsOpen ? '#EEEEEE' : 'transparent' }}
-                    onMouseEnter={e => { if (!settingsOpen) (e.currentTarget as HTMLElement).style.background = '#EEEEEE'; }}
-                    onMouseLeave={e => { if (!settingsOpen) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-                  >
-                    <Settings className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
-                    <span className="text-[13px] font-medium text-[#4B5563]">Settings</span>
-                  </button>
+                {/* Settings dropdown (fixed, triggered from header gear icon) */}
+                <div>
                   <AnimatePresence>
                     {settingsOpen && (
                       <motion.div
-                        initial={{ opacity: 0, scale: 0.96, y: 4 }}
+                        initial={{ opacity: 0, scale: 0.96, y: -4 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.96, y: 4 }}
+                        exit={{ opacity: 0, scale: 0.96, y: -4 }}
                         transition={{ duration: 0.13, ease: [0.22, 1, 0.36, 1] }}
-                        className="absolute bottom-full mb-1.5 left-0 right-0 z-50"
-                        style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 -4px 24px rgba(0,0,0,0.09)', padding: '6px' }}
+                        className="fixed z-[500]"
+                        style={{ top: 102, right: 16, width: 224, background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.10)', padding: '6px' }}
                       >
                         <button
                           onClick={() => { setSettingsOpen(false); setPersonalizationOpen(true); }}
@@ -420,6 +398,7 @@ function AppContent() {
                       isTrial={currentUser === 'RG'}
                       isVp={currentUser === 'VP'}
                       onUpgrade={openUpgrade}
+                      onSettingsClick={() => setSettingsOpen(v => !v)}
                     />
                   </div>
                 ) : activeView === 'radar' ? (
@@ -437,6 +416,7 @@ function AppContent() {
                     isAU={currentUser === 'AU'}
                     onUpgrade={openUpgrade}
                     themeName={themeName}
+                    onSettingsClick={() => setSettingsOpen(v => !v)}
                   />
                 ) : null}
               </>
@@ -495,6 +475,7 @@ function AppContent() {
         transcribedText={transcribedText}
       />
 
+      {settingsOpen && <div className="fixed inset-0 z-[499]" onClick={() => setSettingsOpen(false)} />}
       <UpgradeSenseModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
       <ManageSubscriptionModal isOpen={manageSubOpen} onClose={() => setManageSubOpen(false)} />
       <PersonalizationModal isOpen={personalizationOpen} onClose={() => setPersonalizationOpen(false)} />

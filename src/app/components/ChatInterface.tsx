@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -22,6 +22,7 @@ interface ChatInterfaceProps {
   isTrial?: boolean;
   isVp?: boolean;
   onUpgrade?: () => void;
+  onSettingsClick?: () => void;
 }
 
 const promptSuggestions = [
@@ -99,7 +100,7 @@ const placeholderTexts = [
   "Show me customer satisfaction scores...",
 ];
 
-export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade }: ChatInterfaceProps) {
+export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick }: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -475,14 +476,20 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                     </div>
                   </div>
                   
-                  {/* Right side — beta label */}
-                  <div className="flex items-center gap-3">
+                  {/* Right side */}
+                  <div className="flex items-center gap-2">
                     {isTrial && (
                       <button onClick={onUpgrade} className="inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full border transition-colors" style={{ background: '#FFF8F2', borderColor: '#F5E0CF' }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD5000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
                       </button>
                     )}
+                    <button
+                      onClick={onSettingsClick}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
+                    >
+                      <Settings className="w-4 h-4 text-[#6B7280]" />
+                    </button>
                   </div>
                 </div>
 
