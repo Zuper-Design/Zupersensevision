@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check } from 'lucide-react';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
+import { CheckoutModal } from './components/CheckoutModal';
 import { motion, AnimatePresence } from 'motion/react';
 import { AppNavigation } from './components/AppNavigation';
 import { ChatInterface } from './components/ChatInterface';
@@ -42,7 +43,12 @@ function AppContent() {
   const [askSenseOpen, setAskSenseOpen] = useState(false);
   const [radarCardChatTitle, setRadarCardChatTitle] = useState<string | null>(null);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
-  const openUpgrade = () => setUpgradeModalOpen(true);
+  const [checkoutPageOpen, setCheckoutPageOpen] = useState(false);
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [paymentFailed, setPaymentFailed] = useState(false);
+  const [paymentFailedModalOpen, setPaymentFailedModalOpen] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const openUpgrade = () => { setPurchaseSuccess(false); setUpgradeModalOpen(true); };
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [themeName, setThemeName] = useState<'clean' | 'rams' | 'neon'>('clean');
   const [sidebarSearch, setSidebarSearch] = useState('');
@@ -168,6 +174,9 @@ function AppContent() {
         onUserChange={handleUserChange}
         onAskSense={() => setAskSenseOpen((prev) => !prev)}
         askSenseOpen={askSenseOpen}
+        onSettingsClick={() => setSettingsOpen(v => !v)}
+        onPersonalizationClick={() => setPersonalizationOpen(true)}
+        onManageSubscriptionClick={() => setManageSubOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -272,23 +281,8 @@ function AppContent() {
                         exit={{ opacity: 0, scale: 0.96, y: -4 }}
                         transition={{ duration: 0.13, ease: [0.22, 1, 0.36, 1] }}
                         className="fixed z-[500]"
-                        style={{ top: 102, right: 16, width: 224, background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.10)', padding: '6px' }}
+                        style={{ top: 48, right: 56, width: 224, background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.10)', padding: '6px' }}
                       >
-                        <button
-                          onClick={() => { setSettingsOpen(false); setPersonalizationOpen(true); }}
-                          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F3F4F6] transition-colors text-left"
-                        >
-                          <Palette className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
-                          <span className="text-[13px] font-medium text-[#1C1E21]">Personalization</span>
-                        </button>
-                        <button
-                          onClick={() => { setSettingsOpen(false); setManageSubOpen(true); }}
-                          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F3F4F6] transition-colors text-left"
-                        >
-                          <CreditCard className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
-                          <span className="text-[13px] font-medium text-[#1C1E21]">Manage subscription</span>
-                        </button>
-                        <div className="mx-2 my-1 h-px bg-[#F0F0F2]" />
                         <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '4px 0 4px 10px' }}>Theme</p>
                         {([
                           { key: 'clean', desc: 'Minimal & light' },
@@ -329,7 +323,19 @@ function AppContent() {
                     )}
                   </AnimatePresence>
                 </div>
-                {currentUser === 'RG' ? (
+                {isSubscribed && currentUser === 'RG' ? (
+                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
+                        <Check className="w-3.5 h-3.5" style={{ color: '#10B981' }} strokeWidth={3} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-tight">Sense is active</p>
+                        <p className="text-[11px] text-[#6B7280] leading-tight mt-0.5">Renews May 21, 2026</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : currentUser === 'RG' || currentUser === 'AU' ? (
                   <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
                     <div className="flex items-center gap-2.5 mb-3">
                       <svg width="26" height="26" viewBox="0 0 26 26">
@@ -379,6 +385,45 @@ function AppContent() {
                   isPublishedView={true}
                 />
               </div>
+            ) : checkoutPageOpen ? (
+              <div className="flex-1 overflow-hidden">
+                <CheckoutModal
+                  isOpen={true}
+                  onClose={() => { setCheckoutPageOpen(false); setUpgradeModalOpen(true); }}
+                  onSuccess={() => { setCheckoutPageOpen(false); setPurchaseSuccess(true); setIsSubscribed(true); setPaymentFailed(false); }}
+                  onCancelVerification={currentUser === 'RG' ? () => { setCheckoutPageOpen(false); setPurchaseSuccess(true); setPaymentFailed(true); setPaymentFailedModalOpen(true); } : undefined}
+                />
+              </div>
+            ) : purchaseSuccess && currentUser === 'RG' ? (
+              <div className="flex-1 overflow-hidden">
+                <div className="w-full h-full overflow-y-auto bg-white rounded-xl border border-[#E6E8EC] flex items-center justify-center p-8">
+                  <div className="flex flex-col items-center text-center max-w-[440px]">
+                    <div
+                      className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+                      style={{ background: 'rgba(16,185,129,0.10)', border: '2px solid rgba(16,185,129,0.25)' }}
+                    >
+                      <Check className="w-8 h-8" style={{ color: '#10B981' }} strokeWidth={2.5} />
+                    </div>
+                    <h2 style={{ fontSize: 26, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 10 }}>You're all set!</h2>
+                    <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.65, marginBottom: 28 }}>
+                      Welcome to Sense. Ask anything about your JobNimbus data in plain English.
+                    </p>
+                    <button
+                      onClick={() => setPurchaseSuccess(false)}
+                      className="px-8 py-3 rounded-[12px] text-[14px] font-semibold text-white transition-all duration-150"
+                      style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+                    >
+                      Start using Sense
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : manageSubOpen ? (
+              <div className="flex-1 overflow-hidden">
+                <ManageSubscriptionModal isOpen={true} onClose={() => { setManageSubOpen(false); setActiveView('chat'); setActiveSubPage(null); setActivePage(null); }} isVp={currentUser === 'VP'} isAU={currentUser === 'AU'} paymentFailed={paymentFailed} onUpgrade={() => { setManageSubOpen(false); setPurchaseSuccess(false); setCheckoutPageOpen(true); }} />
+              </div>
             ) : (
               <>
                 {activeView === 'chat' ? (
@@ -398,7 +443,6 @@ function AppContent() {
                       isTrial={currentUser === 'RG'}
                       isVp={currentUser === 'VP'}
                       onUpgrade={openUpgrade}
-                      onSettingsClick={() => setSettingsOpen(v => !v)}
                     />
                   </div>
                 ) : activeView === 'radar' ? (
@@ -416,7 +460,6 @@ function AppContent() {
                     isAU={currentUser === 'AU'}
                     onUpgrade={openUpgrade}
                     themeName={themeName}
-                    onSettingsClick={() => setSettingsOpen(v => !v)}
                   />
                 ) : null}
               </>
@@ -476,9 +519,49 @@ function AppContent() {
       />
 
       {settingsOpen && <div className="fixed inset-0 z-[499]" onClick={() => setSettingsOpen(false)} />}
-      <UpgradeSenseModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
-      <ManageSubscriptionModal isOpen={manageSubOpen} onClose={() => setManageSubOpen(false)} />
+      <UpgradeSenseModal
+        isOpen={upgradeModalOpen}
+        onClose={() => setUpgradeModalOpen(false)}
+        isVp={currentUser === 'VP'}
+        isTrial={currentUser === 'RG'}
+        onSubscribe={() => { setUpgradeModalOpen(false); setCheckoutPageOpen(true); }}
+      />
       <PersonalizationModal isOpen={personalizationOpen} onClose={() => setPersonalizationOpen(false)} />
+
+      {paymentFailedModalOpen && (
+        <>
+          <div className="fixed bg-black/40 backdrop-blur-sm z-[400]" style={{ top: 44, left: 72, right: 0, bottom: 0 }} onClick={() => setPaymentFailedModalOpen(false)} />
+          <div className="fixed z-[410] flex items-center justify-center p-4 pointer-events-none" style={{ top: 44, left: 72, right: 0, bottom: 0 }}>
+            <div className="pointer-events-auto bg-white w-full p-6" style={{ maxWidth: 420, borderRadius: 16, boxShadow: '0 24px 60px rgba(30,34,60,0.22)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#FDECEC' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.01em' }}>Payment failed</h3>
+              </div>
+              <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55, marginBottom: 18 }}>
+                We couldn't process your card. Please update your payment method and try again to keep access to Sense.
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { setPaymentFailedModalOpen(false); setPurchaseSuccess(false); setManageSubOpen(true); }}
+                  className="flex-1 py-2.5 rounded-xl text-[13px] font-medium"
+                  style={{ background: '#F3F4F6', color: '#374151' }}
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => { setPaymentFailedModalOpen(false); setPurchaseSuccess(false); setCheckoutPageOpen(true); }}
+                  className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold text-white"
+                  style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)' }}
+                >
+                  Update payment
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Report Bug Modal */}
       <ReportBugModal

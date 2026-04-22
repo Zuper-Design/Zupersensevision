@@ -136,13 +136,14 @@ export function SendFeedbackModal({ isOpen, onClose }: SendFeedbackModalProps) {
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 transition-opacity duration-200"
+      <div
+        className="fixed bg-black/40 backdrop-blur-sm z-50 transition-opacity duration-200"
+        style={{ top: 44, left: 72, right: 0, bottom: 0 }}
         onClick={onClose}
       />
-      
+
       {/* Modal */}
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none">
+      <div className="fixed z-[60] flex items-center justify-center p-4 pointer-events-none" style={{ top: 44, left: 72, right: 0, bottom: 0 }}>
         <div 
           className="bg-white rounded-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] w-full max-w-[440px] pointer-events-auto"
           onClick={(e) => e.stopPropagation()}

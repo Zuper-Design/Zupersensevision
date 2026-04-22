@@ -8,6 +8,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarC
 import { RadarThemeContext, RADAR_THEMES, useRadarTheme, RadarThemeConfig } from './RadarThemeContext';
 import { RadarChatPanel } from './RadarChatPanel';
 import React from 'react';
+import { RadarWelcomeModal } from './RadarWelcomeModal';
 
 interface RadarWorkspaceProps {
   isOpen: boolean;
@@ -302,6 +303,7 @@ const PINNED_DEFS: UnifiedCardItem[] = [
 
 export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean', onSettingsClick }: RadarWorkspaceProps) {
   const { radars, activeRadarId, removeCardFromRadar } = useRadar();
+  const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [selectedRadarId] = useState<string | null>(activeRadarId || (radars.length > 0 ? radars[0].id : null));
   const [refreshKey, setRefreshKey] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -455,12 +457,6 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                     <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
                   </button>
                 )}
-                <button
-                  onClick={onSettingsClick}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
-                >
-                  <Settings className="w-4 h-4 text-[#6B7280]" />
-                </button>
               </div>
             </div>
 
