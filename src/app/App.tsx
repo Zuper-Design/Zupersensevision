@@ -26,6 +26,7 @@ import { PersonalizationModal } from './components/PersonalizationModal';
 import { InvoicePageBuilderCard } from './components/InvoicePageBuilderCard';
 import { JobListingPage } from './components/JobListingPage';
 import { AgentBuilderPage } from './components/AgentBuilderPage';
+import { SubscriptionFlowPage } from './components/SubscriptionFlowPage';
 
 function AppContent() {
   const [showDemo, setShowDemo] = useState(false);
@@ -59,6 +60,13 @@ function AppContent() {
   const [manageSubOpen, setManageSubOpen] = useState(false);
   const [personalizationOpen, setPersonalizationOpen] = useState(false);
   const [agentBuilderOpen, setAgentBuilderOpen] = useState(false);
+  const [subFlowOpen, setSubFlowOpen] = useState(typeof window !== 'undefined' && window.location.hash === '#sub-flow');
+
+  useEffect(() => {
+    const onHash = () => setSubFlowOpen(window.location.hash === '#sub-flow');
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   const threadHistory = [
     { id: 1, title: 'Q4 Performance Analysis', active: true },
@@ -377,7 +385,19 @@ function AppContent() {
 
           {/* Main content */}
           <div className="flex-1 flex overflow-hidden">
-            {agentBuilderOpen ? (
+            {subFlowOpen ? (
+              <SubscriptionFlowPage
+                onApply={(s) => {
+                  setCurrentUser(s.user);
+                  setIsSubscribed(s.isSubscribed);
+                  setPaymentFailed(s.paymentFailed);
+                  if (typeof window !== 'undefined') {
+                    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+                  }
+                  setSubFlowOpen(false);
+                }}
+              />
+            ) : agentBuilderOpen ? (
               <AgentBuilderPage onClose={() => setAgentBuilderOpen(false)} />
             ) : activeSubPage === 'Jobs' ? (
               <JobListingPage onBack={() => setActiveSubPage(null)} />
