@@ -10,7 +10,7 @@ import {
   FileText, Receipt, DollarSign, CreditCard,
   PieChart, LayoutGrid,
   Workflow, Settings,
-  Globe, Radar,
+  Globe, Radar, Bot,
   type LucideIcon
 } from 'lucide-react';
 import { usePublishedPages } from './PublishedPagesContext';
@@ -32,6 +32,7 @@ interface NavigationItem {
 
 const baseNavigationItems: NavigationItem[] = [
   { icon: null, label: 'Sense', active: true },
+  { icon: Bot, label: 'Agent Builder', active: false },
   {
     icon: Briefcase, label: 'Work', active: false,
     subItems: [
@@ -178,7 +179,7 @@ function NavFlyout({
   );
 }
 
-export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, onRadarClick }: { onSubItemNavigate?: (label: string, parentLabel: string) => void; onSenseClick?: () => void; currentUser?: string; onRadarClick?: () => void }) {
+export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, onRadarClick, onAgentBuilderClick, agentBuilderActive }: { onSubItemNavigate?: (label: string, parentLabel: string) => void; onSenseClick?: () => void; currentUser?: string; onRadarClick?: () => void; onAgentBuilderClick?: () => void; agentBuilderActive?: boolean }) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -272,7 +273,13 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
     <div className="w-[72px] h-full flex flex-col items-center py-4 bg-[#F8F2EC] relative z-20">
       {/* Navigation Items */}
       <nav className="flex-1 flex flex-col gap-1 w-full px-2 overflow-y-auto">
-        {navigationItems.map((item, index) => {
+        {navigationItems.map((rawItem, index) => {
+          // Override active state for Agent Builder vs Sense based on prop
+          const item = (() => {
+            if (agentBuilderActive && rawItem.label === 'Agent Builder') return { ...rawItem, active: true };
+            if (agentBuilderActive && rawItem.label === 'Sense') return { ...rawItem, active: false };
+            return rawItem;
+          })();
           const Icon = item.icon;
           const isHovered = hoveredIndex === index;
           const hasSubItems = item.subItems && item.subItems.length > 0;
@@ -292,6 +299,9 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
                   if (item.label === 'Sense') {
                     setActivePage(null);
                     onSenseClick?.();
+                  } else if (item.label === 'Agent Builder') {
+                    setActivePage(null);
+                    onAgentBuilderClick?.();
                   }
                 }}
               >

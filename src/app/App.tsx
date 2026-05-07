@@ -25,6 +25,7 @@ import { ManageSubscriptionModal } from './components/ManageSubscriptionModal';
 import { PersonalizationModal } from './components/PersonalizationModal';
 import { InvoicePageBuilderCard } from './components/InvoicePageBuilderCard';
 import { JobListingPage } from './components/JobListingPage';
+import { AgentBuilderPage } from './components/AgentBuilderPage';
 
 function AppContent() {
   const [showDemo, setShowDemo] = useState(false);
@@ -57,6 +58,7 @@ function AppContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [manageSubOpen, setManageSubOpen] = useState(false);
   const [personalizationOpen, setPersonalizationOpen] = useState(false);
+  const [agentBuilderOpen, setAgentBuilderOpen] = useState(false);
 
   const threadHistory = [
     { id: 1, title: 'Q4 Performance Analysis', active: true },
@@ -187,7 +189,9 @@ function AppContent() {
             setActiveSubPage(label);
             setActivePage(null);
           }}
-          onSenseClick={() => setActiveSubPage(null)}
+          onSenseClick={() => { setActiveSubPage(null); setAgentBuilderOpen(false); }}
+          onAgentBuilderClick={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
+          agentBuilderActive={agentBuilderOpen}
           currentUser={currentUser}
           onRadarClick={() => {
             setActiveView('radar');
@@ -202,7 +206,7 @@ function AppContent() {
           <div className="flex-1 flex overflow-hidden rounded-xl border border-[#E6E8EC] bg-white">
           <div
             className={`transition-all duration-300 bg-[#FAFAFA] flex-shrink-0 overflow-hidden border-r border-[#E6E8EC] ${
-              sidebarOpen && activeView !== 'radar' ? 'w-[230px]' : 'w-0 border-r-0'
+              sidebarOpen && activeView !== 'radar' && !agentBuilderOpen ? 'w-[230px]' : 'w-0 border-r-0'
             }`}
           >
             <div className="h-full flex flex-col w-[230px]">
@@ -373,7 +377,9 @@ function AppContent() {
 
           {/* Main content */}
           <div className="flex-1 flex overflow-hidden">
-            {activeSubPage === 'Jobs' ? (
+            {agentBuilderOpen ? (
+              <AgentBuilderPage onClose={() => setAgentBuilderOpen(false)} />
+            ) : activeSubPage === 'Jobs' ? (
               <JobListingPage onBack={() => setActiveSubPage(null)} />
             ) : activePage ? (
               <div className="flex-1 overflow-hidden">

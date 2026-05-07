@@ -22,7 +22,7 @@ export function MessageToolbar({ hideOnIdle = false, onAddToRadar, onAddToRadarC
   };
 
   return (
-    <div className="flex items-center mt-1.5">
+    <div className="flex items-center" style={{ marginTop: 4 }}>
       {/* Left: Add to Radar — always visible */}
       <div className="flex-1">
         {onAddToRadar && (

@@ -7,6 +7,14 @@ import { ChecklistCard } from './ChecklistCard';
 import { ModernPDFPreview } from './ModernPDFPreview';
 import { ActionConfirmationCard } from './ActionConfirmationCard';
 import { DSOChartCard } from './DSOChartCard';
+import { CustomerCountCard } from './cards/CustomerCountCard';
+import { CustomersByCityCard } from './cards/CustomersByCityCard';
+import { QuarterlyProfitMarginCard } from './cards/QuarterlyProfitMarginCard';
+import { UnassignedJobsCard } from './cards/UnassignedJobsCard';
+import { MonthlyInvoiceRevenueCard } from './cards/MonthlyInvoiceRevenueCard';
+import { EstimateConversionCard } from './cards/EstimateConversionCard';
+import { ProfitPerTechnicianCard } from './cards/ProfitPerTechnicianCard';
+import { NewUsersByMonthCard } from './cards/NewUsersByMonthCard';
 import { RevenueMTDCard, OverdueInvoicesCard, QuoteConversionCard, CrewUtilisationCard, JobsCompletedCard } from './RadarCards';
 import { AgentRecommendationCard } from './AgentRecommendationCard';
 import { TypewriterText } from './TypewriterText';
@@ -83,6 +91,14 @@ interface Message {
   };
   imageUrl?: string;
   generatedChart?: boolean;
+  customerCountCard?: boolean;
+  customersByCityCard?: boolean;
+  profitMarginCard?: boolean;
+  unassignedJobsCard?: boolean;
+  invoiceRevenueCard?: boolean;
+  conversionRateCard?: boolean;
+  profitPerTechCard?: boolean;
+  newUsersByMonthCard?: boolean;
 }
 
 function getRadarCardSentence(card: SavedCard): string {
@@ -410,6 +426,56 @@ Sarah`
     return { isChecklist: false };
   };
   
+  // Detect "how many new customers in last N months" queries
+  const detectNewCustomersCount = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    if (detectCustomersByCity(text)) return false;
+    return lower.includes('new customer') || lower.includes('new customers');
+  };
+
+  // Detect "customers by city" queries
+  const detectCustomersByCity = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    return lower.includes('customer') && (lower.includes('by city') || lower.includes('per city') || lower.includes('cities'));
+  };
+
+  // Detect "profit margin" queries (quarterly / yearly)
+  const detectProfitMargin = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    return lower.includes('profit margin') || (lower.includes('profit') && lower.includes('quarter'));
+  };
+
+  // Detect "unassigned jobs" queries
+  const detectUnassignedJobs = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    return lower.includes('unassigned') && lower.includes('job');
+  };
+
+  // Detect "invoice revenue by month" queries
+  const detectInvoiceRevenueByMonth = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    return lower.includes('invoice') && (lower.includes('revenue') || lower.includes('amount') || lower.includes('total')) && (lower.includes('month') || lower.includes('monthly'));
+  };
+
+  // Detect "estimate to job conversion" queries
+  const detectConversionRate = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    if (detectProfitPerTech(text)) return false;
+    return (lower.includes('conversion') || lower.includes('quote-to') || lower.includes('quote to job') || lower.includes('estimate to job'));
+  };
+
+  // Detect "profit per technician" queries
+  const detectProfitPerTech = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    return lower.includes('profit') && (lower.includes('technician') || lower.includes('tech'));
+  };
+
+  // Detect "new users by month" queries
+  const detectNewUsersByMonth = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    return lower.includes('new user') && (lower.includes('month') || lower.includes('monthly'));
+  };
+
   // Detect if the question is about overdue invoices / DSO
   const detectOverdueInvoices = (text: string): boolean => {
     const lowerText = text.toLowerCase();
@@ -1169,7 +1235,55 @@ Sarah`
         }]);
         return;
       }
-      if (detectInvoicePageBuilder(userMessage)) {
+      if (detectNewUsersByMonth(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "User additions in **2025** peaked at **19** in **January**, then stayed fairly steady through mid-year before tapering off to **2** in **September** and **5** in **October**. Strongest hiring or account-creation activity was in H1, with a clear slowdown by late Q3. **Might be worth checking whether this drop is concentrated in a specific role or team.**",
+          newUsersByMonthCard: true
+        }]);
+      } else if (detectProfitPerTech(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**Mike Johnson** leads at **$2,840/job**, with **Sarah Chen ($2,610)** and **David Patel ($2,450)** close behind. The bottom three — **Carlos Diaz, Jessica Park** — average under $1,600/job, suggesting either lower-margin work or coaching opportunities.",
+          profitPerTechCard: true
+        }]);
+      } else if (detectConversionRate(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**82.87% in 2025** — your quote-to-job conversion is strong, with roughly **8 out of 10** quotes turning into jobs. Solid close-through from quoting into booked work, with limited drop-off. **Next useful cut:** break this down by month to see where conversion tightened or slipped during the year.",
+          conversionRateCard: true
+        }]);
+      } else if (detectInvoiceRevenueByMonth(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**$22.29M in May 2025** is the clear outlier — more than **5.5x** April's **$3.99M** and nearly **8x** June's **$2.82M**. Outside that spike, invoice revenue was steadier early in the year, then dropped sharply in the last quarter, with **October at just $27.9K**. Worth breaking May down by customer or invoice status to see what drove the surge.",
+          invoiceRevenueCard: true
+        }]);
+      } else if (detectUnassignedJobs(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**5 unassigned jobs** are scheduled this week, all on **May 4–5**, all in **New** status. Priority splits **2 urgent / 3 low** — dispatch risk concentrated in a small set.",
+          unassignedJobsCard: true
+        }]);
+      } else if (detectProfitMargin(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "Quarterly profit margin held at **0%** through Q1–Q3 2025, then jumped to **71%** in Q4 — driven mainly by higher-margin re-roofing jobs.",
+          profitMarginCard: true
+        }]);
+      } else if (detectCustomersByCity(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**2,553 new customers** across **7 cities** in the last 6 months.\n\n**NYC, LA, and Chicago** drive **62%** of growth — 1,581 customers, NYC leads at 612.\n\nMid-tier hubs (**Houston, Phoenix, Philadelphia**) add ~200–300 each. Tail flattens at **San Diego (178)**.",
+          customersByCityCard: true
+        }]);
+      } else if (detectNewCustomersCount(userMessage)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "You've added **142 new customers** in the last 3 months — up **18.4%** compared to the previous quarter.",
+          customerCountCard: true
+        }]);
+      } else if (detectInvoicePageBuilder(userMessage)) {
         // Trigger invoice page builder
         setIsInvoicePageBuilderLoading(true);
         setTimeout(() => {
@@ -1298,6 +1412,108 @@ Sarah`
     }
   };
 
+  const handleFollowupSelect = (text: string) => {
+    setMessages([{ role: 'user', content: text }]);
+    setTimeout(() => {
+      if (detectNewUsersByMonth(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "User additions in **2025** peaked at **19** in **January**, then stayed fairly steady through mid-year before tapering off to **2** in **September** and **5** in **October**. Strongest hiring or account-creation activity was in H1, with a clear slowdown by late Q3. **Might be worth checking whether this drop is concentrated in a specific role or team.**",
+          newUsersByMonthCard: true
+        }]);
+      } else if (detectProfitPerTech(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**Mike Johnson** leads at **$2,840/job**, with **Sarah Chen ($2,610)** and **David Patel ($2,450)** close behind. The bottom three — **Carlos Diaz, Jessica Park** — average under $1,600/job, suggesting either lower-margin work or coaching opportunities.",
+          profitPerTechCard: true
+        }]);
+      } else if (detectConversionRate(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**82.87% in 2025** — your quote-to-job conversion is strong, with roughly **8 out of 10** quotes turning into jobs. Solid close-through from quoting into booked work, with limited drop-off. **Next useful cut:** break this down by month to see where conversion tightened or slipped during the year.",
+          conversionRateCard: true
+        }]);
+      } else if (detectInvoiceRevenueByMonth(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**$22.29M in May 2025** is the clear outlier — more than **5.5x** April's **$3.99M** and nearly **8x** June's **$2.82M**. Outside that spike, invoice revenue was steadier early in the year, then dropped sharply in the last quarter, with **October at just $27.9K**. Worth breaking May down by customer or invoice status to see what drove the surge.",
+          invoiceRevenueCard: true
+        }]);
+      } else if (detectUnassignedJobs(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**5 unassigned jobs** are scheduled this week, all on **May 4–5**, all in **New** status. Priority splits **2 urgent / 3 low** — dispatch risk concentrated in a small set.",
+          unassignedJobsCard: true
+        }]);
+      } else if (detectProfitMargin(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "Quarterly profit margin held at **0%** through Q1–Q3 2025, then jumped to **71%** in Q4 — driven mainly by higher-margin re-roofing jobs.",
+          profitMarginCard: true
+        }]);
+      } else if (detectCustomersByCity(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "**2,553 new customers** across **7 cities** in the last 6 months.\n\n**NYC, LA, and Chicago** drive **62%** of growth — 1,581 customers, NYC leads at 612.\n\nMid-tier hubs (**Houston, Phoenix, Philadelphia**) add ~200–300 each. Tail flattens at **San Diego (178)**.",
+          customersByCityCard: true
+        }]);
+      } else if (detectNewCustomersCount(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "You've added **142 new customers** in the last 3 months — up **18.4%** compared to the previous quarter.",
+          customerCountCard: true
+        }]);
+      } else if (detectInvoicePageBuilder(text)) {
+        setIsInvoicePageBuilderLoading(true);
+        setTimeout(() => {
+          setIsInvoicePageBuilderLoading(false);
+          setIsInvoicePageBuilderOpen(true);
+          setInvoicePageBuilderWasOpened(true);
+        }, 3000);
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
+        }]);
+      } else if (detectOverdueInvoices(text)) {
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
+          dsoChart: true
+        }]);
+      } else if (detectEmailMessage(text).isEmail || detectEmailMessage(text).isMessage) {
+        const emailData = detectEmailMessage(text);
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: emailData.isEmail
+            ? "I've drafted an email for you. Please review the content below before sending:"
+            : "I've drafted a message for you. Please review the content below before sending:",
+          emailCard: emailData.data
+        }]);
+      } else {
+        const metricsResult = detectMetricsQuery(text);
+        if (metricsResult.isMetrics) {
+          const variantMessages: Record<string, string> = {
+            'full': "Here's an updated overview of your business performance across all key areas:",
+            'team': "Here's your team performance breakdown with crew-level analytics:",
+            'revenue': "Here's your revenue analytics with trends and comparisons:",
+            'jobs': "Here's your job analytics dashboard with category breakdowns:",
+          };
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: variantMessages[metricsResult.variant] || variantMessages['full'],
+            metricsCharts: metricsResult.variant
+          }]);
+        } else {
+          const response = generateFollowUpResponse(text);
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: response
+          }]);
+        }
+      }
+    }, 1000);
+  };
+
   const handleResearchComplete = useCallback(() => {
     const creationData = detectModuleCreation(question);
     const checklistData = detectChecklist(question);
@@ -1411,6 +1627,54 @@ Sarah`
             newMessages[1] = {
               ...newMessages[1],
               content: "I've built the page for you. Go ahead and customize it based on your preferences using the page builder on the right."
+            };
+          } else if (detectNewUsersByMonth(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "User additions in **2025** peaked at **19** in **January**, then stayed fairly steady through mid-year before tapering off to **2** in **September** and **5** in **October**. Strongest hiring or account-creation activity was in H1, with a clear slowdown by late Q3. **Might be worth checking whether this drop is concentrated in a specific role or team.**",
+              newUsersByMonthCard: true
+            };
+          } else if (detectProfitPerTech(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "**Mike Johnson** leads at **$2,840/job**, with **Sarah Chen ($2,610)** and **David Patel ($2,450)** close behind. The bottom three — **Carlos Diaz, Jessica Park** — average under $1,600/job, suggesting either lower-margin work or coaching opportunities.",
+              profitPerTechCard: true
+            };
+          } else if (detectConversionRate(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "**82.87% in 2025** — your quote-to-job conversion is strong, with roughly **8 out of 10** quotes turning into jobs. Solid close-through from quoting into booked work, with limited drop-off. **Next useful cut:** break this down by month to see where conversion tightened or slipped during the year.",
+              conversionRateCard: true
+            };
+          } else if (detectInvoiceRevenueByMonth(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "**$22.29M in May 2025** is the clear outlier — more than **5.5x** April's **$3.99M** and nearly **8x** June's **$2.82M**. Outside that spike, invoice revenue was steadier early in the year, then dropped sharply in the last quarter, with **October at just $27.9K**. Worth breaking May down by customer or invoice status to see what drove the surge.",
+              invoiceRevenueCard: true
+            };
+          } else if (detectUnassignedJobs(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "**5 unassigned jobs** are scheduled this week, all on **May 4–5**, all in **New** status. Priority splits **2 urgent / 3 low** — dispatch risk concentrated in a small set.",
+              unassignedJobsCard: true
+            };
+          } else if (detectProfitMargin(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "Quarterly profit margin held at **0%** through Q1–Q3 2025, then jumped to **71%** in Q4 — driven mainly by higher-margin re-roofing jobs.",
+              profitMarginCard: true
+            };
+          } else if (detectCustomersByCity(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "**2,553 new customers** across **7 cities** in the last 6 months.\n\n**NYC, LA, and Chicago** drive **62%** of growth — 1,581 customers, NYC leads at 612.\n\nMid-tier hubs (**Houston, Phoenix, Philadelphia**) add ~200–300 each. Tail flattens at **San Diego (178)**.",
+              customersByCityCard: true
+            };
+          } else if (detectNewCustomersCount(question)) {
+            newMessages[1] = {
+              ...newMessages[1],
+              content: "You've added **142 new customers** in the last 3 months — up **18.4%** compared to the previous quarter.",
+              customerCountCard: true
             };
           } else if (metricsQueryData.isMetrics) {
             // For metrics/performance queries, show charts dashboard
@@ -1611,7 +1875,16 @@ Sarah`
             : 'flex-1'
         }`}>
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto bg-white scrollbar-auto-hide" ref={scrollRef}>
+        <div className="flex-1 overflow-y-auto bg-white scrollbar-auto-hide relative" ref={scrollRef}>
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="absolute top-4 right-6 z-10 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#E6E8EC] hover:bg-[#F8F9FB] hover:border-[#1C1E21]/20 transition shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              aria-label="Close"
+            >
+              <X className="w-[15px] h-[15px] text-[#6B7280]" />
+            </button>
+          )}
           <div className="flex h-full bg-white">
             {/* Main Conversation Area */}
             <div className="flex-1 py-8 px-8">
@@ -1632,9 +1905,9 @@ Sarah`
                       <div className="space-y-6">
                       {/* Research Display - show if this message has research */}
                       {msg.showResearch && index === 1 && (
-                        <div className="mb-6">
-                          <ResearchDisplay 
-                            topics={mockResearchTopics} 
+                        <div className="mb-2">
+                          <ResearchDisplay
+                            topics={mockResearchTopics}
                             isActive={true}
                             onComplete={handleResearchComplete}
                             forceCollapse={!!msg.content}
@@ -1666,7 +1939,13 @@ Sarah`
                               <p><TypewriterText text={msg.content} speed={18} /></p>
                             ) : (
                               msg.content.split('\n\n').map((paragraph, pIndex) => (
-                                <p key={pIndex}>{paragraph}</p>
+                                <p key={pIndex}>
+                                  {paragraph.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+                                    part.startsWith('**') && part.endsWith('**')
+                                      ? <strong key={i} className="font-semibold">{part.slice(2, -2)}</strong>
+                                      : <span key={i}>{part}</span>
+                                  )}
+                                </p>
                               ))
                             )}
                           </div>
@@ -1769,6 +2048,78 @@ Sarah`
                                 </div>
                               </div>
                               <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Generated Chart', preview: 'Chart built from uploaded image' })} />
+                            </>
+                          ) : msg.newUsersByMonthCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[720px] min-w-0">
+                                  <NewUsersByMonthCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'New Users by Month 2025', preview: 'Peaked at 19 in Jan, slowed to 2 in Sep' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.profitPerTechCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[720px] min-w-0">
+                                  <ProfitPerTechnicianCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Profit per Job by Technician', preview: 'Mike Johnson leads at $2,840/job, top 8 technicians' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.conversionRateCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[420px] min-w-0">
+                                  <EstimateConversionCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Estimate-to-Job Conversion 2025', preview: '82.87% conversion, +6.2% YTD' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.invoiceRevenueCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[720px] min-w-0">
+                                  <MonthlyInvoiceRevenueCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Monthly Invoice Revenue 2025', preview: 'May 2025 spike at $22.29M, sharp drop in Q4' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.unassignedJobsCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[720px] min-w-0">
+                                  <UnassignedJobsCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Unassigned Jobs (this week)', preview: '5 unassigned jobs, May 4–5, 2 urgent / 3 low' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.profitMarginCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[640px] min-w-0">
+                                  <QuarterlyProfitMarginCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Quarterly Job Profit Margin', preview: 'Q1–Q3 2025 at 0%, Q4 jumped to 71%' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.customersByCityCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[640px] min-w-0">
+                                  <CustomersByCityCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Customers by City (6 months)', preview: '2,847 customers across 12 cities — NYC, LA, Chicago lead' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.customerCountCard ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[420px] min-w-0">
+                                  <CustomerCountCard />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'New Customers (3 months)', preview: '142 new customers, up 18.4%' })} />
+                                </div>
+                              </div>
                             </>
                           ) : msg.dsoChart ? (
                             /* Show DSO Chart for overdue invoices */
@@ -1936,70 +2287,20 @@ Sarah`
                         </>
                       )}
 
-                      {/* Suggested follow-ups after last assistant message */}
-                      {msg.content && index === messages.length - 1 && (
-                        <SuggestedFollowups
-                          suggestions={getFollowupSuggestions(msg.content, {
-                            dsoChart: msg.dsoChart,
-                            confirmationCard: msg.confirmationCard,
-                            checklistCard: msg.checklistCard,
-                            actionConfirmationCard: msg.actionConfirmationCard,
-                            canvasWidgetId: msg.canvasWidgetId,
-                          })}
-                          onSelect={(text) => {
-                            setMessages(prev => [...prev, { role: 'user', content: text }]);
-                            setTimeout(() => {
-                              if (detectInvoicePageBuilder(text)) {
-                                setIsInvoicePageBuilderLoading(true);
-                                setTimeout(() => {
-                                  setIsInvoicePageBuilderLoading(false);
-                                  setIsInvoicePageBuilderOpen(true);
-                                  setInvoicePageBuilderWasOpened(true);
-                                }, 3000);
-                                setMessages(prev => [...prev, {
-                                  role: 'assistant',
-                                  content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
-                                }]);
-                              } else if (detectOverdueInvoices(text)) {
-                                setMessages(prev => [...prev, {
-                                  role: 'assistant',
-                                  content: "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
-                                  dsoChart: true
-                                }]);
-                              } else if (detectEmailMessage(text).isEmail || detectEmailMessage(text).isMessage) {
-                                const emailData = detectEmailMessage(text);
-                                setMessages(prev => [...prev, {
-                                  role: 'assistant',
-                                  content: emailData.isEmail
-                                    ? "I've drafted an email for you. Please review the content below before sending:"
-                                    : "I've drafted a message for you. Please review the content below before sending:",
-                                  emailCard: emailData.data
-                                }]);
-                              } else {
-                                const metricsResult = detectMetricsQuery(text);
-                                if (metricsResult.isMetrics) {
-                                  const variantMessages: Record<string, string> = {
-                                    'full': "Here's an updated overview of your business performance across all key areas:",
-                                    'team': "Here's your team performance breakdown with crew-level analytics:",
-                                    'revenue': "Here's your revenue analytics with trends and comparisons:",
-                                    'jobs': "Here's your job analytics dashboard with category breakdowns:",
-                                  };
-                                  setMessages(prev => [...prev, {
-                                    role: 'assistant',
-                                    content: variantMessages[metricsResult.variant] || variantMessages['full'],
-                                    metricsCharts: metricsResult.variant
-                                  }]);
-                                } else {
-                                  const response = generateFollowUpResponse(text);
-                                  setMessages(prev => [...prev, {
-                                    role: 'assistant',
-                                    content: response
-                                  }]);
-                                }
-                              }
-                            }, 1000);
-                          }}
-                        />
+                      {/* Suggested follow-ups at end of last assistant message */}
+                      {msg.role === 'assistant' && msg.content && index === messages.length - 1 && (
+                        <div className="mt-10">
+                          <SuggestedFollowups
+                            suggestions={getFollowupSuggestions(msg.content, {
+                              dsoChart: msg.dsoChart,
+                              confirmationCard: msg.confirmationCard,
+                              checklistCard: msg.checklistCard,
+                              actionConfirmationCard: msg.actionConfirmationCard,
+                              canvasWidgetId: msg.canvasWidgetId,
+                            })}
+                            onSelect={handleFollowupSelect}
+                          />
+                        </div>
                       )}
                     </div>
                     </>
@@ -2012,7 +2313,7 @@ Sarah`
         </div>
 
         {/* Minimal Input at Bottom - Fixed */}
-        <div className="bg-white px-8 py-4 flex-shrink-0 bg-white">
+        <div className="bg-white px-8 pt-2 pb-4 flex-shrink-0 bg-white">
           <div className="w-full max-w-[720px] mx-auto">
             {isVp && (
               <div className="flex items-center justify-between gap-3 px-4 py-3 mb-[8px] rounded-xl bg-[#F3F4F6]">
@@ -2072,7 +2373,7 @@ Sarah`
                       className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-[#F8F9FB] transition-all duration-200 flex-shrink-0"
                       aria-label="Upload image"
                     >
-                      <ImagePlus className="w-[18px] h-[18px] text-[#6B7280]" />
+                      <Plus className="w-[18px] h-[18px] text-[#6B7280]" strokeWidth={2.25} />
                     </button>
                     <button
                       className={`relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 flex-shrink-0 ${

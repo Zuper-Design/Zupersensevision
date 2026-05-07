@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -139,6 +139,8 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
   const listeningTimerRef = useRef<any>(null);
   const typewriterTimerRef = useRef<any>(null);
   const currentSegmentRef = useRef<number>(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [attachedFiles, setAttachedFiles] = useState<{ name: string; size: number; type: string; url?: string }[]>([]);
 
   // Mock dictation text - split into segments
   const mockDictationSegments = [
@@ -519,12 +521,12 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                       {/* Input Area */}
                       <div className={`flex items-center relative transition-all duration-500 ease-out ${ inputFocused ? 'pt-3 pb-2' : 'py-2.5' } px-[16px] py-[8px]`}>
                         {!inputFocused && (
-                          <Search className="w-[19px] h-[19px] mr-2.5 flex-shrink-0 transition-colors duration-500 ease-out text-[#6B7280]" />
+                          <Search className="w-[15px] h-[15px] mr-2.5 flex-shrink-0 transition-colors duration-500 ease-out text-[#6B7280]" />
                         )}
                         
                         {/* Custom placeholder with cursor */}
                         {!message && !inputFocused && (
-                          <div className="absolute left-[48px] pointer-events-none flex items-center text-[15px] text-[#9CA3AF]">
+                          <div className="absolute left-[44px] pointer-events-none flex items-center text-[15px] text-[#9CA3AF]">
                             <span className="font-light">{isListening ? "Listening..." : typedPlaceholder}</span>
                             {!isListening && typedPlaceholder && (
                               <span className="ml-[4px] inline-block w-[2px] h-[18px] bg-[#FF6B35]"></span>
@@ -557,23 +559,35 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                           style={{ lineHeight: '1.5' }}
                         />
                         
-                        {!inputFocused && !isListening && !message && (
+                        {!inputFocused && !isListening && (
                           <button
-                            onClick={startDictation}
-                            className="ml-3.5 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F8F9FB]"
-                            aria-label="Voice Dictation"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => fileInputRef.current?.click()}
+                            className="ml-2 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F8F9FB]"
+                            aria-label="Attach file or image"
+                            title="Attach file or image"
                           >
-                            <Mic className="w-[19px] h-[19px] transition-colors duration-300 text-[#6B7280]" />
+                            <Plus className="w-[16px] h-[16px] text-[#6B7280]" strokeWidth={2.25} />
                           </button>
                         )}
-                        
-                        {!inputFocused && !isListening && message && (
+
+                        {!inputFocused && !isListening && !(message && attachedFiles.length === 0) && (
                           <button
-                            onClick={() => handleMessageSubmit(message.trim())}
-                            className="ml-3.5 flex-shrink-0 p-2 rounded-lg transition-all duration-200 bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40]"
+                            onClick={startDictation}
+                            className="ml-1 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F8F9FB]"
+                            aria-label="Voice Dictation"
+                          >
+                            <Mic className="w-[15px] h-[15px] transition-colors duration-300 text-[#6B7280]" />
+                          </button>
+                        )}
+
+                        {!inputFocused && !isListening && (message || attachedFiles.length > 0) && (
+                          <button
+                            onClick={() => handleMessageSubmit(message.trim() || '[attachments]')}
+                            className="ml-1 flex-shrink-0 w-8 h-8 rounded-lg transition-all duration-200 bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] flex items-center justify-center shadow-[0_2px_6px_rgba(34,30,31,0.25)]"
                             aria-label="Generate"
                           >
-                            <ArrowUp className="w-[19px] h-[19px] text-white" />
+                            <ArrowUp className="w-[15px] h-[15px] text-white" strokeWidth={2.5} />
                           </button>
                         )}
                         
@@ -597,15 +611,90 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         )}
                       </div>
 
+                      {/* Attached files thumbnails */}
+                      {attachedFiles.length > 0 && (
+                        <div className="flex flex-wrap gap-3 px-4 pt-1 pb-3">
+                          {attachedFiles.map((f, i) => {
+                            const isImage = f.type.startsWith('image/');
+                            const isVideo = f.type.startsWith('video/');
+                            const ext = (f.name.split('.').pop() || '').toUpperCase();
+                            const fileMeta = (() => {
+                              if (/pdf/i.test(f.type) || ext === 'PDF') return { Icon: FileText, color: '#DC2626', bg: '#FEF2F2', label: 'PDF' };
+                              if (/word|document/i.test(f.type) || ['DOC', 'DOCX'].includes(ext)) return { Icon: FileText, color: '#2563EB', bg: '#EFF6FF', label: ext || 'DOC' };
+                              if (/sheet|excel|csv/i.test(f.type) || ['XLS', 'XLSX', 'CSV'].includes(ext)) return { Icon: FileSpreadsheet, color: '#16A34A', bg: '#F0FDF4', label: ext || 'XLS' };
+                              if (/presentation|powerpoint/i.test(f.type) || ['PPT', 'PPTX'].includes(ext)) return { Icon: FileText, color: '#EA580C', bg: '#FFF7ED', label: ext || 'PPT' };
+                              return { Icon: FileIcon, color: '#6B7280', bg: '#F8F9FB', label: ext || 'FILE' };
+                            })();
+                            const FileIconCmp = fileMeta.Icon;
+                            return (
+                              <div key={i} className="relative group mt-1.5">
+                                <div className="w-[60px] h-[60px] rounded-2xl overflow-hidden border border-[#E6E8EC] bg-[#F8F9FB]">
+                                  {isImage && f.url ? (
+                                    <img src={f.url} alt={f.name} className="w-full h-full object-cover" />
+                                  ) : isVideo && f.url ? (
+                                    <div className="relative w-full h-full">
+                                      <video src={f.url} className="w-full h-full object-cover" muted playsInline preload="metadata" />
+                                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                        <Film className="w-[20px] h-[20px] text-white drop-shadow" />
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-1" style={{ backgroundColor: fileMeta.bg }}>
+                                      <FileIconCmp className="w-[22px] h-[22px]" style={{ color: fileMeta.color }} />
+                                      <span className="text-[9px] font-semibold tracking-wide" style={{ color: fileMeta.color }}>{fileMeta.label}</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setAttachedFiles((prev) => {
+                                      const target = prev[i];
+                                      if (target?.url) URL.revokeObjectURL(target.url);
+                                      return prev.filter((_, idx) => idx !== i);
+                                    });
+                                  }}
+                                  className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#1C1E21] hover:bg-black flex items-center justify-center shadow-[0_2px_6px_rgba(0,0,0,0.25)] transition-colors"
+                                  aria-label="Remove attachment"
+                                >
+                                  <X className="w-[12px] h-[12px] text-white" strokeWidth={2.5} />
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Hidden file input */}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        accept="image/*,video/*,.pdf,.doc,.docx,.txt,.csv,.xlsx,.xls,.ppt,.pptx,.md"
+                        className="hidden"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          if (!files) return;
+                          const next = Array.from(files).map((f) => ({
+                            name: f.name,
+                            size: f.size,
+                            type: f.type,
+                            url: f.type.startsWith('image/') || f.type.startsWith('video/') ? URL.createObjectURL(f) : undefined,
+                          }));
+                          setAttachedFiles((prev) => [...prev, ...next]);
+                          e.target.value = '';
+                        }}
+                      />
+
                       {/* Action Buttons - Only visible when focused */}
                       {inputFocused && (
                         <div className="flex items-center justify-between px-4 pb-4 pt-1">
-                          <button 
+                          <button
                             onClick={() => {
                               setMessage('');
                               setInputFocused(false);
                               setIsListening(false);
                               setIsPaused(false);
+                              setAttachedFiles([]);
                               if (listeningTimerRef.current) {
                                 clearTimeout(listeningTimerRef.current);
                               }
@@ -613,7 +702,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                                 clearTimeout(typewriterTimerRef.current);
                               }
                             }}
-                            className="text-[13px] text-[#6B7280] hover:text-[#1C1E21] transition-colors duration-150 font-medium"
+                            className="px-3 h-8 inline-flex items-center text-[13px] text-[#6B7280] hover:text-[#1C1E21] rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150 font-medium"
                           >
                             Cancel
                           </button>
@@ -677,19 +766,28 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                               )}
                             </div>
                           ) : (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => fileInputRef.current?.click()}
+                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150"
+                                aria-label="Attach file or image"
+                                title="Attach file or image"
+                              >
+                                <Plus className="w-[16px] h-[16px] text-[#6B7280]" strokeWidth={2.25} />
+                              </button>
                               <button
                                 onClick={onToggleVoiceMode}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150"
+                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150"
                                 aria-label="Voice Mode"
+                                title="Voice Mode"
                               >
                                 <Mic className="w-[15px] h-[15px] text-[#6B7280]" />
-                                <span className="text-[13px] text-[#1C1E21] font-medium">Voice</span>
                               </button>
-                              
+
                               <button
                                 onClick={() => handleMessageSubmit(message.trim())}
-                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] text-white transition-all duration-150 shadow-[0_2px_8px_rgba(34,30,31,0.3)]"
+                                className="inline-flex items-center h-8 gap-1.5 px-4 rounded-lg bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] text-white transition-all duration-150 shadow-[0_2px_8px_rgba(34,30,31,0.3)]"
                               >
                                 <span className="text-[13px] font-medium">Generate</span>
                               </button>
