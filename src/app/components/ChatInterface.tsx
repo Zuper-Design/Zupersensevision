@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, Palette, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -23,6 +23,7 @@ interface ChatInterfaceProps {
   isVp?: boolean;
   onUpgrade?: () => void;
   onSettingsClick?: () => void;
+  onPersonalizationClick?: () => void;
 }
 
 const promptSuggestions = [
@@ -100,7 +101,7 @@ const placeholderTexts = [
   "Show me customer satisfaction scores...",
 ];
 
-export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick }: ChatInterfaceProps) {
+export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick, onPersonalizationClick }: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -486,6 +487,14 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
                       </button>
                     )}
+                    <button
+                      onClick={onPersonalizationClick}
+                      aria-label="Personalization"
+                      title="Personalization"
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
+                    >
+                      <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
+                    </button>
                   </div>
                 </div>
 
@@ -932,6 +941,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 isTrial={isTrial}
                 isVp={isVp}
                 onUpgrade={onUpgrade}
+                onPersonalizationClick={onPersonalizationClick}
               />
             )}
           </div>

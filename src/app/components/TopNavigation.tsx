@@ -1,4 +1,4 @@
-import { X, ChevronDown, HelpCircle, Search, Bell, Settings, Palette, CreditCard } from 'lucide-react';
+import { X, ChevronDown, HelpCircle, Search, Bell, Settings, CreditCard } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
 import { useState, useRef, useEffect } from 'react';
 
@@ -17,11 +17,10 @@ interface TopNavigationProps {
   onAskSense?: () => void;
   askSenseOpen?: boolean;
   onSettingsClick?: () => void;
-  onPersonalizationClick?: () => void;
   onManageSubscriptionClick?: () => void;
 }
 
-export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange, onAskSense, askSenseOpen = false, onSettingsClick, onPersonalizationClick, onManageSubscriptionClick }: TopNavigationProps) {
+export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange, onAskSense, askSenseOpen = false, onSettingsClick, onManageSubscriptionClick }: TopNavigationProps) {
   const [tabs, setTabs] = useState<Tab[]>([
     { id: '1', type: 'job', label: 'Job -#JN-245...', isActive: true },
     { id: '2', type: 'invoice', label: 'Invoice- #7712...', isActive: false },
@@ -181,13 +180,6 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
                   </button>
                 ))}
                 <div className="mx-2 my-1 h-px bg-[#F0F0F2]" />
-                <button
-                  className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#F8F9FB] transition-colors text-left"
-                  onClick={() => { setAvatarDropdownOpen(false); onPersonalizationClick?.(); }}
-                >
-                  <Palette className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
-                  <span className="text-[13px] text-[#1C1E21]" style={{ fontWeight: 500 }}>Personalization</span>
-                </button>
                 <button
                   className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#F8F9FB] transition-colors text-left"
                   onClick={() => { setAvatarDropdownOpen(false); onManageSubscriptionClick?.(); }}

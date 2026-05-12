@@ -1,4 +1,4 @@
-import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp, Settings } from 'lucide-react';
+import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp, Settings, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRadar, SavedCard } from './RadarContext';
@@ -25,6 +25,7 @@ interface RadarWorkspaceProps {
   onUpgrade?: () => void;
   themeName?: 'clean' | 'rams' | 'neon';
   onSettingsClick?: () => void;
+  onPersonalizationClick?: () => void;
 }
 
 // Mini chart helpers
@@ -301,7 +302,7 @@ const PINNED_DEFS: UnifiedCardItem[] = [
   { kind: 'pinned', id: 'revenueTable',    title: 'Monthly Job Revenue Table',     Component: RevenueTableCard, fullWidth: true },
 ];
 
-export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean', onSettingsClick }: RadarWorkspaceProps) {
+export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean', onSettingsClick, onPersonalizationClick }: RadarWorkspaceProps) {
   const { radars, activeRadarId, removeCardFromRadar } = useRadar();
   const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [selectedRadarId] = useState<string | null>(activeRadarId || (radars.length > 0 ? radars[0].id : null));
@@ -457,6 +458,14 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                     <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
                   </button>
                 )}
+                <button
+                  onClick={onPersonalizationClick}
+                  aria-label="Personalization"
+                  title="Personalization"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
+                >
+                  <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
+                </button>
               </div>
             </div>
 

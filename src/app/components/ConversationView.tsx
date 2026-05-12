@@ -1,4 +1,4 @@
-import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical, ImagePlus } from 'lucide-react';
+import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical, ImagePlus, Palette } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ResearchDisplay } from './ResearchDisplay';
 import { ConfirmationCard } from './ConfirmationCard';
@@ -129,6 +129,7 @@ interface ConversationViewProps {
   isTrial?: boolean;
   isVp?: boolean;
   onUpgrade?: () => void;
+  onPersonalizationClick?: () => void;
 }
 
 // Widget response text mapping
@@ -247,7 +248,7 @@ function GeneratedChartCard() {
   );
 }
 
-export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade }: ConversationViewProps) {
+export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onPersonalizationClick }: ConversationViewProps) {
   const { radars, activeRadarId, addCardToRadar } = useRadar();
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
@@ -1798,6 +1799,14 @@ Sarah`
               <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
             </button>
           )}
+          <button
+            onClick={onPersonalizationClick}
+            aria-label="Personalization"
+            title="Personalization"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
+          >
+            <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
+          </button>
         </div>
 
       </div>

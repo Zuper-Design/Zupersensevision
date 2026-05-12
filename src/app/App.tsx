@@ -185,7 +185,6 @@ function AppContent() {
         onAskSense={() => setAskSenseOpen((prev) => !prev)}
         askSenseOpen={askSenseOpen}
         onSettingsClick={() => setSettingsOpen(v => !v)}
-        onPersonalizationClick={() => setPersonalizationOpen(true)}
         onManageSubscriptionClick={() => setManageSubOpen(true)}
       />
 
@@ -469,6 +468,7 @@ function AppContent() {
                       isTrial={currentUser === 'RG'}
                       isVp={currentUser === 'VP'}
                       onUpgrade={openUpgrade}
+                      onPersonalizationClick={() => setPersonalizationOpen(true)}
                     />
                   </div>
                 ) : activeView === 'radar' ? (
@@ -486,6 +486,7 @@ function AppContent() {
                     isAU={currentUser === 'AU'}
                     onUpgrade={openUpgrade}
                     themeName={themeName}
+                    onPersonalizationClick={() => setPersonalizationOpen(true)}
                   />
                 ) : null}
               </>
