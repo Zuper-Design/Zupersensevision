@@ -397,7 +397,7 @@ function AppContent() {
                 }}
               />
             ) : agentBuilderOpen ? (
-              <AgentBuilderPage onClose={() => setAgentBuilderOpen(false)} />
+              <AgentBuilderPage onClose={() => setAgentBuilderOpen(false)} currentUser={currentUser} />
             ) : activeSubPage === 'Jobs' ? (
               <JobListingPage onBack={() => setActiveSubPage(null)} />
             ) : activePage ? (

@@ -35,8 +35,12 @@ const recentActivity = [
   { agent: 'QBO Support Agent', kind: 'SCHEDULE', when: '2 days ago', task: 'Scheduled run', tokens: '—', duration: '6574.4s', status: 'Failed' },
 ];
 
-export function AgentBuilderPage({ onClose }: { onClose?: () => void }) {
-  const [section, setSection] = useState<Section>('overview');
+export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => void; currentUser?: string }) {
+  const isVP = currentUser === 'VP';
+  const [section, setSection] = useState<Section>(isVP ? 'agents' : 'overview');
+  const visibleNavItems = isVP
+    ? navItems.filter((i) => i.key !== 'catalog').map((i) => (i.key === 'agents' ? { ...i, label: 'Agents' } : i))
+    : navItems;
 
   return (
     <div className="flex h-full w-full bg-white">
@@ -50,7 +54,7 @@ export function AgentBuilderPage({ onClose }: { onClose?: () => void }) {
         </div>
 
         <nav className="flex-1 p-3 space-y-0.5">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = section === item.key;
             return (
@@ -88,7 +92,7 @@ export function AgentBuilderPage({ onClose }: { onClose?: () => void }) {
       <main className="flex-1 overflow-y-auto">
         <div className="px-8 pt-8 pb-12">
           {section === 'agents' ? (
-            <MyAgentsView />
+            isVP ? <VPAgentsView /> : <MyAgentsView />
           ) : section === 'catalog' ? (
             <CatalogView />
           ) : section === 'skills' ? (
@@ -2499,6 +2503,211 @@ function CreateAgentCard({ layout }: { layout: 'grid' | 'list' }) {
       <h3 className="text-[15px] font-semibold text-[#1C1E21] mb-1.5">Create New Agent</h3>
       <p className="text-[12.5px] text-[#6B7280] leading-relaxed max-w-[220px]">Deploy a custom agent with specific tools and instructions.</p>
     </button>
+  );
+}
+
+const categoryTint: Record<string, { tint: string; accent: string }> = {
+  Sales: { tint: 'linear-gradient(180deg, #DBEAFE 0%, #EFF6FF 100%)', accent: '#3B82F6' },
+  Operations: { tint: 'linear-gradient(180deg, #FEF3C7 0%, #FFFBEB 100%)', accent: '#F59E0B' },
+  Support: { tint: 'linear-gradient(180deg, #D1FAE5 0%, #ECFDF5 100%)', accent: '#10B981' },
+  Finance: { tint: 'linear-gradient(180deg, #E9D5FF 0%, #F5F3FF 100%)', accent: '#8B5CF6' },
+  Compliance: { tint: 'linear-gradient(180deg, #FFE4E6 0%, #FFF1F2 100%)', accent: '#F43F5E' },
+};
+
+type VPCardData = {
+  title: string;
+  role: string;
+  desc: string;
+  saves: string;
+  rating: number;
+  hires: number;
+  featured?: boolean;
+  hired?: boolean;
+  tags: { icon: any; label: string }[];
+  img: string;
+  tint: string;
+  accent: string;
+};
+
+function VPAgentsView() {
+  const hiredCards: VPCardData[] = myAgents
+    .filter((a) => a.status === 'Active')
+    .map((a) => {
+      const t = categoryTint[a.category] || { tint: 'linear-gradient(180deg, #F3F4F6 0%, #FAFAFA 100%)', accent: '#9CA3AF' };
+      return {
+        title: a.name,
+        role: a.category,
+        desc: a.desc,
+        saves: `${a.runs.toLocaleString()} runs`,
+        rating: a.rating,
+        hires: a.users,
+        hired: true,
+        tags: [
+          { icon: Users, label: `${a.users} users` },
+          { icon: RefreshCw, label: a.lastRun || 'Idle' },
+        ],
+        img: a.img || agent1,
+        tint: t.tint,
+        accent: t.accent,
+      };
+    });
+
+  const catalogCards: VPCardData[] = catalogItems.map((c) => ({
+    title: c.title,
+    role: c.role,
+    desc: c.desc,
+    saves: c.saves,
+    rating: c.rating,
+    hires: c.hires,
+    featured: c.featured,
+    hired: false,
+    tags: c.tags,
+    img: c.img,
+    tint: c.tint,
+    accent: c.accent,
+  }));
+
+  const allCards: VPCardData[] = [...hiredCards, ...catalogCards];
+  const [activeIdx, setActiveIdx] = useState(Math.floor(allCards.length / 2));
+  const next = () => setActiveIdx((i) => Math.min(i + 1, allCards.length - 1));
+  const prev = () => setActiveIdx((i) => Math.max(i - 1, 0));
+
+  return (
+    <div className="w-full">
+      <div className="mb-10 text-center max-w-[640px] mx-auto">
+        <div className="inline-flex items-center gap-2.5 mb-2">
+          <Bot className="w-[20px] h-[20px] text-[#6B7280]" />
+          <h1 className="text-[32px] font-semibold text-[#1C1E21] tracking-tight">Agents</h1>
+          <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold">{allCards.length}</span>
+        </div>
+        <p className="text-[14px] text-[#6B7280] leading-relaxed">Your active teammates and the catalog of agents ready to hire. Browse, pick one, deploy in minutes.</p>
+      </div>
+
+      <div className="relative w-full overflow-hidden" style={{ height: 540 }}>
+        <div className="relative w-full h-full">
+          {allCards.map((card, i) => {
+            const offset = i - activeIdx;
+            const abs = Math.abs(offset);
+            if (abs > 2) return null;
+            const translateX = offset * 300;
+            const scale = offset === 0 ? 1 : abs === 1 ? 0.82 : 0.66;
+            const opacity = offset === 0 ? 1 : abs === 1 ? 0.55 : 0.18;
+            const zIndex = 10 - abs;
+            const focused = offset === 0;
+            return (
+              <div
+                key={card.title}
+                onClick={() => !focused && setActiveIdx(i)}
+                className="absolute top-1/2 left-1/2 transition-all duration-500 ease-out"
+                style={{
+                  transform: `translate(-50%, -50%) translateX(${translateX}px) scale(${scale})`,
+                  opacity,
+                  zIndex,
+                  pointerEvents: abs > 1 ? 'none' : 'auto',
+                  cursor: focused ? 'default' : 'pointer',
+                }}
+              >
+                <VPAgentCard card={card} focused={focused} />
+              </div>
+            );
+          })}
+        </div>
+
+        <button
+          onClick={prev}
+          disabled={activeIdx === 0}
+          aria-label="Previous agent"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        >
+          <ChevronLeft className="w-5 h-5 text-[#1C1E21]" />
+        </button>
+        <button
+          onClick={next}
+          disabled={activeIdx === allCards.length - 1}
+          aria-label="Next agent"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        >
+          <ChevronRight className="w-5 h-5 text-[#1C1E21]" />
+        </button>
+      </div>
+
+      <div className="flex items-center justify-center gap-1.5 mt-2">
+        {allCards.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setActiveIdx(i)}
+            aria-label={`Go to agent ${i + 1}`}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === activeIdx ? 'w-6 bg-[#1C1E21]' : 'w-1.5 bg-[#D1D5DB] hover:bg-[#9CA3AF]'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VPAgentCard({ card, focused = false }: { card: VPCardData; focused?: boolean }) {
+  return (
+    <div
+      className={`group rounded-2xl bg-white border overflow-hidden flex flex-col w-[360px] transition-all duration-500 ${
+        focused
+          ? 'border-[#1C1E21]/15 shadow-[0_24px_60px_rgba(0,0,0,0.14),0_8px_20px_rgba(0,0,0,0.06)]'
+          : 'border-[#E6E8EC] shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
+      }`}
+    >
+      <div className="relative h-[180px] overflow-hidden" style={{ background: card.tint }}>
+        <img
+          src={card.img}
+          alt={card.title}
+          className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[100%] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.04]"
+          draggable={false}
+        />
+        <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-30" style={{ background: `radial-gradient(circle, ${card.accent}40, transparent 70%)` }} />
+        {card.hired ? (
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#ECFDF5] text-[#15803D] text-[10.5px] font-semibold tracking-wide uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+            Active
+          </span>
+        ) : card.featured ? (
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FEF3C7] text-[#92400E] text-[10.5px] font-semibold tracking-wide uppercase">
+            <Star className="w-[10px] h-[10px] text-[#F59E0B] fill-[#F59E0B]" />
+            Featured
+          </span>
+        ) : null}
+        <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#ECFDF5] text-[#15803D] text-[10.5px] font-semibold tracking-wide uppercase">
+          <Zap className="w-[10px] h-[10px]" fill="currentColor" />
+          {card.saves}
+        </span>
+      </div>
+      <div className="px-4 pt-4 pb-3 flex-1 flex flex-col">
+        <div className="text-[10.5px] font-semibold tracking-[0.12em] uppercase text-[#9CA3AF] mb-1">{card.role}</div>
+        <h3 className="text-[16px] font-semibold text-[#1C1E21] mb-1.5 leading-snug">{card.title}</h3>
+        <p className="text-[12.5px] text-[#6B7280] leading-relaxed line-clamp-3 mb-3 flex-1">{card.desc}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {card.tags.map((t, i) => {
+            const Icon = t.icon;
+            return (
+              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F3F4F6] text-[11px] font-medium text-[#4B5563]">
+                <Icon className="w-[11px] h-[11px] text-[#9CA3AF]" />
+                {t.label}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+      <div className="border-t border-[#F0F1F3] px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-[12px]">
+          <Star className="w-[12px] h-[12px] text-[#F59E0B] fill-[#F59E0B]" />
+          <span className="font-semibold text-[#1C1E21]">{card.rating.toFixed(1)}</span>
+          <span className="text-[#9CA3AF]">· {card.hires.toLocaleString()} {card.hired ? 'users' : 'hires'}</span>
+        </div>
+        <button className="inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold shadow-[0_2px_6px_rgba(28,30,33,0.18)] transition-all">
+          {card.hired ? 'Open' : 'Hire'}
+          <ArrowRight className="w-[12px] h-[12px]" />
+        </button>
+      </div>
+    </div>
   );
 }
 
