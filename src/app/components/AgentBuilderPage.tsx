@@ -3,7 +3,7 @@ import {
   LayoutGrid, Bot, BookOpen, MessageSquare, Zap, Database, BarChart3, LifeBuoy, Plus,
   Search, MoreHorizontal, Play, Pencil, List, LayoutGrid as GridIcon, Star, Users,
   Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Trash2, ChevronDown, X, Upload,
-  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, Mic, ArrowUp, Sparkles,
+  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles,
 } from 'lucide-react';
 import avatarBg from '../../imports/agents/avatar-bg.png';
 import agent1 from '../../imports/agents/agent-1.png';
@@ -2515,6 +2515,8 @@ const categoryTint: Record<string, { tint: string; accent: string }> = {
 };
 
 type VPCardData = {
+  persona: string;
+  pronouns: string;
   title: string;
   role: string;
   desc: string;
@@ -2527,6 +2529,60 @@ type VPCardData = {
   img: string;
   tint: string;
   accent: string;
+  stats: { label: string; value: string }[];
+  highlights: string[];
+  quote: string;
+  isCreate?: boolean;
+};
+
+const hiredPersonas: Record<string, { name: string; pronouns: string }> = {
+  'Sales Coach Agent': { name: 'Marcus', pronouns: 'he/him' },
+  'Financial Agent': { name: 'Emma', pronouns: 'she/her' },
+  'QBO Support Agent': { name: 'Henry', pronouns: 'he/him' },
+  'Dispatch Optimizer Agent': { name: 'Olivia', pronouns: 'she/her' },
+  'Estimate Generator Agent': { name: 'Jacob', pronouns: 'he/him' },
+  'Quote Follow-up Agent': { name: 'Oliver', pronouns: 'he/him' },
+  'Safety Compliance Agent': { name: 'Sarah', pronouns: 'she/her' },
+  'Material Order Agent': { name: 'Ethan', pronouns: 'he/him' },
+  'Inside Sales Rep Agent': { name: 'Chloe', pronouns: 'she/her' },
+  'Customer Success Agent': { name: 'Grace', pronouns: 'she/her' },
+  'Lead Qualification Agent': { name: 'Logan', pronouns: 'he/him' },
+};
+
+const hiredQuotes: Record<string, string> = {
+  'Sales Coach Agent': 'Every rep wants to close. I show them which call they almost won — and what to say next.',
+  'QBO Support Agent': "Customers don't read docs. I read them so they don't have to.",
+  'Dispatch Optimizer Agent': 'I know which crew is closest, freest, and best for the job. Every minute saved is a margin point.',
+  'Quote Follow-up Agent': 'Open quotes go cold fast. I keep yours warm — and tell you which ones are ready to close.',
+  'Material Order Agent': "I watch your stock so you don't have to. When something's running low, I draft the PO and ping the vendor.",
+  'Inside Sales Rep Agent': 'Inbound leads need a fast hello. I greet, qualify, and route — before they bounce.',
+  'Lead Qualification Agent': "Not every lead is worth your time. I weigh budget, timeline, and fit, then hand off only the hot ones.",
+};
+
+const catalogQuotes: Record<string, string> = {
+  'Daily Weather Forecast': 'I wake up before your crews and email a multi-city forecast so jobs get rescheduled before rain hits.',
+  'Google Review Digest': 'I pull every new Google review, match it to a customer, and flag anything under 4 stars.',
+  'Lead Intake': 'I catch every web form and webhook. Tag, score, and turn each one into a Zuper job — automatically.',
+  'Quote Reminder': "Open quotes need a nudge. I send a polite follow-up, then tell you who's ready to sign.",
+  'Crew Daily Brief': 'Every crew gets their day on their phone — schedule, drive route, parts — before they roll out.',
+  'Invoice Aging Watcher': "Past due invoices add up fast. I find them, draft the email, and track who's paid.",
+};
+
+const highlightsByCategory: Record<string, string[]> = {
+  Sales: ['Qualifies leads in under 60 seconds', 'Hands off hot leads to closers', 'Logs every touchpoint in Zuper'],
+  Support: ['Answers FAQs from your docs', 'Escalates complex issues to humans', 'Available 24/7 across channels'],
+  Operations: ['Watches data in real-time', 'Sends actionable digests, not noise', 'Connects to your existing tools'],
+  Finance: ['Reads invoices + receipts on its own', 'Flags margin anomalies early', 'Exports clean to QuickBooks'],
+  Compliance: ['Checks every job-site sign-off', 'Logs evidence with timestamps', 'Flags missed steps before closeout'],
+};
+
+const catalogPersonas: Record<string, { name: string; pronouns: string }> = {
+  'Daily Weather Forecast': { name: 'Skyler', pronouns: 'she/her' },
+  'Google Review Digest': { name: 'Maya', pronouns: 'she/her' },
+  'Lead Intake': { name: 'Leo', pronouns: 'he/him' },
+  'Quote Reminder': { name: 'Quinn', pronouns: 'they/them' },
+  'Crew Daily Brief': { name: 'Claire', pronouns: 'she/her' },
+  'Invoice Aging Watcher': { name: 'Ivy', pronouns: 'she/her' },
 };
 
 function VPAgentsView() {
@@ -2534,7 +2590,10 @@ function VPAgentsView() {
     .filter((a) => a.status === 'Active')
     .map((a) => {
       const t = categoryTint[a.category] || { tint: 'linear-gradient(180deg, #F3F4F6 0%, #FAFAFA 100%)', accent: '#9CA3AF' };
+      const p = hiredPersonas[a.name] || { name: 'Sense Agent', pronouns: 'it/its' };
       return {
+        persona: p.name,
+        pronouns: p.pronouns,
         title: a.name,
         role: a.category,
         desc: a.desc,
@@ -2549,10 +2608,30 @@ function VPAgentsView() {
         img: a.img || agent1,
         tint: t.tint,
         accent: t.accent,
+        stats: [
+          { label: 'Skills', value: String(a.skills) },
+          { label: 'Tools', value: String(a.tools) },
+          { label: 'Runs', value: a.runs.toLocaleString() },
+        ],
+        highlights: highlightsByCategory[a.category] || ['Connected to your Zuper data', 'Runs on your schedule', 'Learns from every interaction'],
+        quote: hiredQuotes[a.name] || 'I plug into your Zuper workspace and quietly handle the work so your team can focus on customers.',
       };
     });
 
-  const catalogCards: VPCardData[] = catalogItems.map((c) => ({
+  const catalogHighlights: Record<string, string[]> = {
+    'Daily Weather Forecast': ['Pulls hourly multi-city forecasts', 'Auto-reschedules at-risk jobs', 'Morning digest before crews roll out'],
+    'Google Review Digest': ['Tracks every new Google review', 'Auto-matches reviews to customers', 'Flags ratings under 4★ for follow-up'],
+    'Lead Intake': ['Captures web + webhook leads', 'Auto-tags by source + service', 'Creates Zuper job with crew assigned'],
+    'Quote Reminder': ['Watches open quotes >3 days', 'Sends on-brand follow-up emails', 'Reports conversion lift weekly'],
+    'Crew Daily Brief': ['Personal SMS per crew member', 'Includes drive route + parts list', 'Sent 45m before shift start'],
+    'Invoice Aging Watcher': ['Scans invoices past 30/60/90 days', 'Drafts collection email per stage', 'Tracks who has + hasn\'t paid'],
+  };
+
+  const catalogCards: VPCardData[] = catalogItems.map((c) => {
+    const p = catalogPersonas[c.title] || { name: 'Sense Agent', pronouns: 'it/its' };
+    return ({
+    persona: p.name,
+    pronouns: p.pronouns,
     title: c.title,
     role: c.role,
     desc: c.desc,
@@ -2565,130 +2644,583 @@ function VPAgentsView() {
     img: c.img,
     tint: c.tint,
     accent: c.accent,
-  }));
+    stats: [
+      { label: 'Setup', value: '<5m' },
+      { label: 'Tools', value: String(c.tags.length + 2) },
+      { label: 'Hires', value: c.hires.toLocaleString() },
+    ],
+    highlights: catalogHighlights[c.title] || ['Plug-and-play setup', 'Customizable instructions', 'Free 7-day trial'],
+    quote: catalogQuotes[c.title] || 'I run inside Zuper and take a recurring chore off your plate.',
+  });
+  });
 
-  const allCards: VPCardData[] = [...hiredCards, ...catalogCards];
+  const createCard: VPCardData = {
+    persona: 'Build your own',
+    pronouns: 'custom',
+    title: 'Custom Agent',
+    role: 'Your design',
+    desc: 'Start from a blank slate or duplicate any agent above. Pick the tools, write the instructions, set the schedule.',
+    saves: 'Made by you',
+    rating: 0,
+    hires: 0,
+    hired: false,
+    tags: [{ icon: Wrench, label: 'Any tool' }, { icon: Sparkles, label: 'Any schedule' }],
+    img: agent1,
+    tint: 'linear-gradient(180deg, #F3F4F6 0%, #FAFAFA 100%)',
+    accent: '#1C1E21',
+    stats: [
+      { label: 'Templates', value: '6' },
+      { label: 'Tools', value: '20+' },
+      { label: 'Setup', value: '10m' },
+    ],
+    highlights: [
+      'Pick from 6 templates or start blank',
+      'Connect any tool in your stack',
+      'Test in a sandbox before going live',
+    ],
+    quote: "I don't exist yet — but I could. Tell me what you need automated and I'll show up tomorrow.",
+    isCreate: true,
+  };
+
+  const allCards: VPCardData[] = [...hiredCards, ...catalogCards, createCard];
   const [activeIdx, setActiveIdx] = useState(Math.floor(allCards.length / 2));
+  const [selectedAgent, setSelectedAgent] = useState<VPCardData | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'carousel' | 'catalog'>('carousel');
+  const [catalogCat, setCatalogCat] = useState('All');
+  const [catalogSearch, setCatalogSearch] = useState('');
+  const catalogCategories = ['All', 'Sales', 'Operations', 'Support', 'Customer', 'Finance', 'Field'];
+  const catalogGridCards = allCards.filter((c) => !c.isCreate).filter((c) => {
+    if (catalogCat !== 'All' && !c.role.toLowerCase().includes(catalogCat.toLowerCase())) return false;
+    if (catalogSearch && !`${c.persona} ${c.title} ${c.role}`.toLowerCase().includes(catalogSearch.toLowerCase())) return false;
+    return true;
+  });
   const next = () => setActiveIdx((i) => Math.min(i + 1, allCards.length - 1));
   const prev = () => setActiveIdx((i) => Math.max(i - 1, 0));
 
+  const panelOpen = !!selectedAgent;
+
+  if (createOpen) {
+    return <VPCreateAgentView onClose={() => setCreateOpen(false)} />;
+  }
+
   return (
-    <div className="w-full">
-      <div className="mb-10 text-center max-w-[640px] mx-auto">
-        <div className="inline-flex items-center gap-2.5 mb-2">
-          <Bot className="w-[20px] h-[20px] text-[#6B7280]" />
-          <h1 className="text-[32px] font-semibold text-[#1C1E21] tracking-tight">Agents</h1>
-          <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold">{allCards.length}</span>
-        </div>
-        <p className="text-[14px] text-[#6B7280] leading-relaxed">Your active teammates and the catalog of agents ready to hire. Browse, pick one, deploy in minutes.</p>
-      </div>
-
-      <div className="relative w-full overflow-hidden" style={{ height: 540 }}>
-        <div className="relative w-full h-full">
-          {allCards.map((card, i) => {
-            const offset = i - activeIdx;
-            const abs = Math.abs(offset);
-            if (abs > 2) return null;
-            const translateX = offset * 300;
-            const scale = offset === 0 ? 1 : abs === 1 ? 0.82 : 0.66;
-            const opacity = offset === 0 ? 1 : abs === 1 ? 0.55 : 0.18;
-            const zIndex = 10 - abs;
-            const focused = offset === 0;
-            return (
-              <div
-                key={card.title}
-                onClick={() => !focused && setActiveIdx(i)}
-                className="absolute top-1/2 left-1/2 transition-all duration-500 ease-out"
-                style={{
-                  transform: `translate(-50%, -50%) translateX(${translateX}px) scale(${scale})`,
-                  opacity,
-                  zIndex,
-                  pointerEvents: abs > 1 ? 'none' : 'auto',
-                  cursor: focused ? 'default' : 'pointer',
-                }}
+    <div
+      className="w-full flex gap-6 items-stretch transition-all duration-500"
+      style={{ height: viewMode === 'carousel' ? 'calc(100vh - 140px)' : 'auto', overflow: viewMode === 'carousel' ? 'hidden' : 'visible' }}
+    >
+      <div className="flex-1 min-w-0 flex flex-col">
+        <div className="relative mb-3">
+          <div className="text-center max-w-[640px] mx-auto">
+            <div className="inline-flex items-center gap-2.5 mb-2">
+              <Bot className="w-[20px] h-[20px] text-[#6B7280]" />
+              <h1 className="text-[32px] font-semibold text-[#1C1E21] tracking-tight">Agents</h1>
+              <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold">{allCards.length}</span>
+            </div>
+            <p className="text-[14px] text-[#6B7280] leading-relaxed">Your active teammates and the catalog of agents ready to hire. Browse, pick one, deploy in minutes.</p>
+          </div>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2">
+            <div className="inline-flex items-center bg-[#F3F4F6] rounded-lg p-0.5">
+              <button
+                onClick={() => setViewMode('carousel')}
+                aria-label="Carousel view"
+                title="Carousel view"
+                className={`p-1.5 rounded-md transition ${viewMode === 'carousel' ? 'bg-white shadow-sm text-[#1C1E21]' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
               >
-                <VPAgentCard card={card} focused={focused} />
-              </div>
-            );
-          })}
+                <Maximize2 className="w-[15px] h-[15px]" />
+              </button>
+              <button
+                onClick={() => setViewMode('catalog')}
+                aria-label="Catalog grid view"
+                title="Catalog grid view"
+                className={`p-1.5 rounded-md transition ${viewMode === 'catalog' ? 'bg-white shadow-sm text-[#1C1E21]' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
+              >
+                <GridIcon className="w-[15px] h-[15px]" />
+              </button>
+            </div>
+            <button
+              onClick={() => setCreateOpen(true)}
+              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold shadow-[0_2px_6px_rgba(28,30,33,0.18)] transition-all"
+            >
+              <Plus className="w-4 h-4" strokeWidth={2.5} />
+              Create Agent
+            </button>
+          </div>
         </div>
 
-        <button
-          onClick={prev}
-          disabled={activeIdx === 0}
-          aria-label="Previous agent"
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-40 disabled:cursor-not-allowed transition"
-        >
-          <ChevronLeft className="w-5 h-5 text-[#1C1E21]" />
-        </button>
-        <button
-          onClick={next}
-          disabled={activeIdx === allCards.length - 1}
-          aria-label="Next agent"
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-40 disabled:cursor-not-allowed transition"
-        >
-          <ChevronRight className="w-5 h-5 text-[#1C1E21]" />
-        </button>
+        {viewMode === 'carousel' ? (
+        <>
+        <div className="relative w-full flex-1 min-h-0">
+            <div className="relative w-full h-full overflow-x-clip">
+              {allCards.map((card, i) => {
+                const offset = i - activeIdx;
+                const abs = Math.abs(offset);
+                if (abs > 2) return null;
+                const translateX = offset * (panelOpen ? 300 : 380);
+                const scale = offset === 0 ? 1 : abs === 1 ? 0.78 : 0.6;
+                const opacity = offset === 0 ? 1 : abs === 1 ? 0.7 : 0.25;
+                const zIndex = 10 - abs;
+                const focused = offset === 0;
+                return (
+                  <div
+                    key={card.title}
+                    onClick={() => {
+                      if (!focused) setActiveIdx(i);
+                      else setSelectedAgent(card);
+                    }}
+                    className="absolute top-1/2 left-1/2 transition-all duration-500 ease-out"
+                    style={{
+                      transform: `translate(-50%, -50%) translateX(${translateX}px) scale(${scale})`,
+                      opacity,
+                      zIndex,
+                      pointerEvents: abs > 1 ? 'none' : 'auto',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <VPAgentCard card={card} focused={focused} selected={selectedAgent?.title === card.title} onSelect={() => card.isCreate ? setCreateOpen(true) : setSelectedAgent(card)} />
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={prev}
+              disabled={activeIdx === 0}
+              aria-label="Previous agent"
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <ChevronLeft className="w-5 h-5 text-[#1C1E21]" />
+            </button>
+            <button
+              onClick={next}
+              disabled={activeIdx === allCards.length - 1}
+              aria-label="Next agent"
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] flex items-center justify-center hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              <ChevronRight className="w-5 h-5 text-[#1C1E21]" />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-center gap-1.5 mt-3 mb-1">
+            {allCards.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveIdx(i)}
+                aria-label={`Go to agent ${i + 1}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === activeIdx ? 'w-6 bg-[#1C1E21]' : 'w-1.5 bg-[#D1D5DB] hover:bg-[#9CA3AF]'
+                }`}
+              />
+            ))}
+          </div>
+        </>
+        ) : (
+          /* CATALOG GRID VIEW */
+          <div className="flex flex-col gap-6">
+            {/* Hero banner */}
+            <div className="relative overflow-hidden rounded-2xl border border-[#FFE2D1]" style={{ background: 'linear-gradient(135deg, #FFF7ED 0%, #FFE9D6 50%, #FEF3C7 100%)' }}>
+              <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full opacity-50" style={{ background: 'radial-gradient(circle, rgba(253,80,0,0.25) 0%, transparent 70%)' }} />
+              <div className="absolute -bottom-24 -left-16 w-64 h-64 rounded-full opacity-40" style={{ background: 'radial-gradient(circle, rgba(252,211,77,0.30) 0%, transparent 70%)' }} />
+              <div className="relative px-7 py-7 flex items-start justify-between gap-8">
+                <div className="flex-1 max-w-[640px]">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/70 border border-[#FFD9C2] mb-4 backdrop-blur-sm">
+                    <Sparkles className="w-[12px] h-[12px] text-[#F59E0B]" fill="currentColor" />
+                    <span className="text-[11px] font-semibold tracking-wider uppercase text-[#C2410C]">Sense Agents Marketplace</span>
+                  </div>
+                  <h2 className="text-[26px] font-semibold text-[#1C1E21] tracking-tight leading-tight mb-2">
+                    Hire pre-built agents.<br />Ship in minutes, not weeks.
+                  </h2>
+                  <p className="text-[13px] text-[#6B7280] leading-relaxed mb-4 max-w-[560px]">
+                    <span className="font-semibold text-[#1C1E21]">Sense Agents</span> are autonomous teammates that run inside Zuper — they read your data, take action with tools, and learn over time. Pick one, customize it, deploy.
+                  </p>
+                  <div className="flex items-center gap-4 text-[12px] text-[#6B7280]">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      <span><span className="font-semibold text-[#1C1E21]">{catalogGridCards.length}+</span> agents available</span>
+                    </span>
+                    <span className="text-[#D1D5DB]">·</span>
+                    <span><span className="font-semibold text-[#1C1E21]">Free</span> starter agents</span>
+                    <span className="text-[#D1D5DB]">·</span>
+                    <span>Deploys in <span className="font-semibold text-[#1C1E21]">under 24h</span></span>
+                  </div>
+                </div>
+                <div className="hidden md:flex flex-col items-center gap-2 flex-shrink-0 pt-1">
+                  <div className="flex -space-x-3">
+                    {[agent1, agent2, agent3].map((src, i) => (
+                      <div key={i} className="w-12 h-12 rounded-2xl border-2 border-white overflow-hidden bg-[#F3F4F6] shadow-[0_4px_10px_rgba(0,0,0,0.06)]" style={{ zIndex: 3 - i }}>
+                        <img src={src} alt="" className="w-full h-full object-cover object-top" draggable={false} />
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-[10.5px] text-[#9CA3AF]">Featured agents</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Title + search */}
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <BookOpen className="w-[18px] h-[18px] text-[#6B7280]" />
+                  <h2 className="text-[20px] font-semibold text-[#1C1E21] tracking-tight">Browse Catalog</h2>
+                  <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold">{catalogGridCards.length}</span>
+                </div>
+                <p className="text-[13px] text-[#6B7280] mt-0.5">Pick one, customize it, deploy.</p>
+              </div>
+              <div className="relative w-[280px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-[#9CA3AF]" />
+                <input
+                  value={catalogSearch}
+                  onChange={(e) => setCatalogSearch(e.target.value)}
+                  placeholder="Search agents..."
+                  className="w-full pl-9 pr-3 h-9 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#1C1E21]/30 transition"
+                />
+              </div>
+            </div>
+
+            {/* Category chips */}
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-auto-hide -mt-2">
+              {catalogCategories.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCatalogCat(c)}
+                  className={`px-3.5 h-8 rounded-full text-[12.5px] font-medium transition border whitespace-nowrap ${
+                    catalogCat === c
+                      ? 'bg-[#1C1E21] border-[#1C1E21] text-white'
+                      : 'bg-white border-[#E6E8EC] text-[#4B5563] hover:border-[#1C1E21]/20'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+
+            {/* Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 pb-8">
+              {catalogGridCards.map((card) => (
+                <div key={card.title} className="w-full min-w-0">
+                  <VPAgentCard
+                    card={card}
+                    focused
+                    compact
+                    selected={selectedAgent?.title === card.title}
+                    onSelect={() => setSelectedAgent(card)}
+                  />
+                </div>
+              ))}
+              {catalogGridCards.length === 0 && (
+                <div className="col-span-full text-center py-12 text-[13px] text-[#9CA3AF]">No agents match your filters.</div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="flex items-center justify-center gap-1.5 mt-2">
-        {allCards.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setActiveIdx(i)}
-            aria-label={`Go to agent ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === activeIdx ? 'w-6 bg-[#1C1E21]' : 'w-1.5 bg-[#D1D5DB] hover:bg-[#9CA3AF]'
-            }`}
-          />
-        ))}
+      {selectedAgent && viewMode === 'carousel' && (
+        <VPAgentDetailPanel card={selectedAgent} onClose={() => setSelectedAgent(null)} />
+      )}
+    </div>
+  );
+}
+
+function VPAgentDetailPanel({ card, onClose }: { card: VPCardData; onClose: () => void }) {
+  const [chatInput, setChatInput] = useState('');
+  const [messages, setMessages] = useState<{ from: 'agent' | 'user'; text: string }[]>([
+    { from: 'agent', text: `Hi! I'm ${card.persona}. Ask me anything about what I can do for your team.` },
+  ]);
+
+  const send = () => {
+    const t = chatInput.trim();
+    if (!t) return;
+    setMessages((m) => [...m, { from: 'user', text: t }]);
+    setChatInput('');
+    setTimeout(() => {
+      setMessages((m) => [...m, { from: 'agent', text: `Great question — here's how I'd handle that: ${card.highlights[0].toLowerCase()}. I'd also keep a log so you stay in the loop.` }]);
+    }, 600);
+  };
+
+  const onboarding = [
+    { step: '01', title: 'Connect your data', desc: 'I plug into your Zuper workspace + the tools listed below. Takes under 5 minutes.' },
+    { step: '02', title: 'Tune my instructions', desc: 'Tweak how I write, who I escalate to, and when I should pause for human review.' },
+    { step: '03', title: 'I start working', desc: 'I run on the schedule you pick and report back. You can pause or change settings anytime.' },
+  ];
+
+  return (
+    <div className="w-[420px] flex-shrink-0 rounded-2xl bg-white border border-[#E6E8EC] shadow-[0_18px_40px_-18px_rgba(28,30,33,0.18),0_4px_12px_-8px_rgba(28,30,33,0.08)] overflow-hidden flex flex-col self-stretch">
+      {/* Hero */}
+      <div className="relative h-[140px] flex-shrink-0" style={{ background: card.tint }}>
+        <img src={card.img} alt={card.persona} className="absolute right-2 bottom-0 h-[100%] w-auto object-contain" draggable={false} />
+        <button
+          onClick={onClose}
+          aria-label="Close panel"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur border border-[#E6E8EC] flex items-center justify-center hover:bg-white transition z-10"
+        >
+          <X className="w-4 h-4 text-[#1C1E21]" />
+        </button>
+        <div className="absolute bottom-4 left-5 right-5">
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-[26px] font-semibold text-[#1C1E21] leading-none tracking-tight">{card.persona}</h2>
+            <span className="text-[11.5px] text-[#4B5563] font-medium">{card.pronouns}</span>
+          </div>
+          <div className="text-[12px] text-[#374151] mt-1">
+            <span className="font-medium">{card.title}</span>
+            <span className="text-[#9CA3AF]"> · {card.role}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto scrollbar-auto-hide min-h-0">
+        <div className="px-5 py-4 space-y-5">
+          {/* About */}
+          <section>
+            <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-2">About</div>
+            <p className="text-[13px] text-[#4B5563] leading-relaxed">{card.desc}</p>
+          </section>
+
+          {/* Stats */}
+          <section>
+            <div className="grid grid-cols-3 rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] overflow-hidden">
+              {card.stats.map((s, i) => (
+                <div key={i} className={`px-3 py-3 ${i < card.stats.length - 1 ? 'border-r border-[#F0F1F3]' : ''}`}>
+                  <div className="text-[18px] font-semibold text-[#1C1E21] leading-none tabular-nums">{s.value}</div>
+                  <div className="text-[10px] uppercase tracking-[0.1em] text-[#9CA3AF] mt-1.5 font-semibold">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Capabilities */}
+          <section>
+            <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-2.5">What {card.persona} can do</div>
+            <ul className="space-y-2">
+              {card.highlights.map((h, i) => (
+                <li key={i} className="flex items-start gap-2 text-[13px] text-[#374151] leading-snug">
+                  <CheckCircle2 className="w-[14px] h-[14px] text-[#10B981] flex-shrink-0 mt-0.5" strokeWidth={2.5} />
+                  <span>{h}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Onboarding */}
+          <section>
+            <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-2.5">When you hire {card.persona}</div>
+            <ol className="space-y-3">
+              {onboarding.map((o) => (
+                <li key={o.step} className="flex items-start gap-3">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-[#1C1E21] text-white text-[11px] font-semibold flex items-center justify-center tabular-nums">{o.step}</span>
+                  <div className="min-w-0">
+                    <div className="text-[13px] font-semibold text-[#1C1E21] leading-snug">{o.title}</div>
+                    <p className="text-[12px] text-[#6B7280] leading-relaxed mt-0.5">{o.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          {/* Tools */}
+          <section>
+            <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-2.5">Tools & triggers</div>
+            <div className="flex flex-wrap gap-1.5">
+              {card.tags.map((t, i) => {
+                const Icon = t.icon;
+                return (
+                  <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F3F4F6] text-[12px] font-medium text-[#4B5563]">
+                    <Icon className="w-[12px] h-[12px] text-[#9CA3AF]" />
+                    {t.label}
+                  </span>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Chat */}
+          <section>
+            <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-2.5">Chat with {card.persona}</div>
+            <div className="rounded-xl border border-[#E6E8EC] overflow-hidden bg-[#FAFAFB]">
+              <div className="p-3 space-y-2 max-h-[180px] overflow-y-auto scrollbar-auto-hide">
+                {messages.map((m, i) => (
+                  <div key={i} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div
+                      className={`max-w-[80%] px-3 py-1.5 rounded-2xl text-[12.5px] leading-snug ${
+                        m.from === 'user'
+                          ? 'bg-[#1C1E21] text-white'
+                          : 'bg-white border border-[#E6E8EC] text-[#1C1E21]'
+                      }`}
+                    >
+                      {m.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 px-2.5 py-2 border-t border-[#E6E8EC] bg-white">
+                <input
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && send()}
+                  placeholder={`Ask ${card.persona} anything...`}
+                  className="flex-1 bg-transparent text-[12.5px] text-[#1C1E21] placeholder:text-[#9CA3AF] outline-none px-1"
+                />
+                <button
+                  onClick={send}
+                  disabled={!chatInput.trim()}
+                  className="w-8 h-8 rounded-lg bg-[#1C1E21] hover:bg-black disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition"
+                  aria-label="Send"
+                >
+                  <ArrowUp className="w-[14px] h-[14px]" />
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Footer CTA */}
+      <div className="px-5 py-3.5 border-t border-[#F0F1F3] flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-1.5 text-[12.5px]">
+          <Star className="w-[13px] h-[13px] text-[#F59E0B] fill-[#F59E0B]" />
+          <span className="font-semibold text-[#1C1E21] tabular-nums">{card.rating.toFixed(1)}</span>
+          <span className="text-[#9CA3AF]">· {card.hires.toLocaleString()} {card.hired ? 'users' : 'hires'}</span>
+        </div>
+        <button className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold shadow-[0_2px_6px_rgba(28,30,33,0.18)] transition-all">
+          {card.hired ? `Open ${card.persona}` : `Hire ${card.persona}`}
+          <ArrowRight className="w-[13px] h-[13px]" />
+        </button>
       </div>
     </div>
   );
 }
 
-function VPAgentCard({ card, focused = false }: { card: VPCardData; focused?: boolean }) {
+function VPAgentCard({ card, focused = false, selected = false, onSelect, compact = false }: { card: VPCardData; focused?: boolean; selected?: boolean; onSelect?: () => void; compact?: boolean }) {
+  const widthCls = compact ? 'w-full' : 'w-[460px]';
+  if (card.isCreate) {
+    return (
+      <div
+        onClick={(e) => { e.stopPropagation(); onSelect?.(); }}
+        className={`group rounded-2xl bg-gradient-to-br from-[#FAFAFB] to-[#F3F4F6] overflow-hidden flex flex-col items-center justify-center ${widthCls} h-full transition-all duration-500 cursor-pointer ${
+          focused
+            ? 'border-2 border-dashed border-[#1C1E21]/40 shadow-[0_24px_48px_-20px_rgba(28,30,33,0.18)]'
+            : 'border-2 border-dashed border-[#D1D5DB] shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
+        }`}
+        style={{ minHeight: 540 }}
+      >
+        <div className="flex flex-col items-center text-center px-8 py-10">
+          <div className="w-20 h-20 rounded-2xl bg-white border border-[#E6E8EC] shadow-[0_6px_16px_rgba(0,0,0,0.06)] flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-105">
+            <Plus className="w-10 h-10 text-[#1C1E21]" strokeWidth={2} />
+          </div>
+          <h3 className="text-[22px] font-semibold text-[#1C1E21] mb-2 tracking-tight">Build your own</h3>
+          <p className="text-[13px] text-[#6B7280] leading-relaxed mb-6 max-w-[300px]">Start blank or remix any agent. Pick the tools, write the instructions, ship in under an hour.</p>
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-[#E6E8EC] text-[11.5px] font-medium text-[#4B5563]">
+              <Wrench className="w-[11px] h-[11px] text-[#9CA3AF]" />
+              Any tool
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-[#E6E8EC] text-[11.5px] font-medium text-[#4B5563]">
+              <Sparkles className="w-[11px] h-[11px] text-[#9CA3AF]" />
+              Any schedule
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white border border-[#E6E8EC] text-[11.5px] font-medium text-[#4B5563]">
+              <Layers className="w-[11px] h-[11px] text-[#9CA3AF]" />
+              6 templates
+            </span>
+          </div>
+          <button
+            className="inline-flex items-center gap-1.5 px-5 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold shadow-[0_2px_6px_rgba(28,30,33,0.18)] transition-all"
+          >
+            <Plus className="w-4 h-4" strokeWidth={2.5} />
+            Create Agent
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
-      className={`group rounded-2xl bg-white border overflow-hidden flex flex-col w-[360px] transition-all duration-500 ${
-        focused
-          ? 'border-[#1C1E21]/15 shadow-[0_24px_60px_rgba(0,0,0,0.14),0_8px_20px_rgba(0,0,0,0.06)]'
-          : 'border-[#E6E8EC] shadow-[0_2px_8px_rgba(0,0,0,0.04)]'
+      className={`group rounded-2xl bg-white overflow-hidden flex flex-col ${widthCls} transition-all duration-500 ${
+        selected
+          ? 'border-2 border-[#1C1E21] shadow-[0_24px_48px_-20px_rgba(28,30,33,0.28),0_0_0_4px_rgba(28,30,33,0.06)]'
+          : focused
+          ? 'border border-[#E6E8EC] shadow-[0_24px_48px_-20px_rgba(28,30,33,0.18),0_6px_16px_-8px_rgba(28,30,33,0.08)]'
+          : 'border border-[#E6E8EC] shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
       }`}
     >
-      <div className="relative h-[180px] overflow-hidden" style={{ background: card.tint }}>
+      <div className="relative h-[170px] overflow-hidden flex-shrink-0" style={{ background: card.tint }}>
         <img
           src={card.img}
           alt={card.title}
           className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[100%] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.04]"
           draggable={false}
         />
-        <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-30" style={{ background: `radial-gradient(circle, ${card.accent}40, transparent 70%)` }} />
+        <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full opacity-30" style={{ background: `radial-gradient(circle, ${card.accent}40, transparent 70%)` }} />
         {card.hired ? (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-[#ECFDF5] text-[#15803D] text-[10.5px] font-semibold tracking-wide uppercase">
+          <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#ECFDF5] text-[#15803D] text-[11px] font-semibold tracking-wide uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
             Active
           </span>
         ) : card.featured ? (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#FEF3C7] text-[#92400E] text-[10.5px] font-semibold tracking-wide uppercase">
-            <Star className="w-[10px] h-[10px] text-[#F59E0B] fill-[#F59E0B]" />
+          <span className="absolute top-4 left-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#FEF3C7] text-[#92400E] text-[11px] font-semibold tracking-wide uppercase">
+            <Star className="w-[11px] h-[11px] text-[#F59E0B] fill-[#F59E0B]" />
             Featured
           </span>
         ) : null}
-        <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#ECFDF5] text-[#15803D] text-[10.5px] font-semibold tracking-wide uppercase">
-          <Zap className="w-[10px] h-[10px]" fill="currentColor" />
+        <span className="absolute bottom-4 left-4 inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#ECFDF5] text-[#15803D] text-[11px] font-semibold tracking-wide uppercase">
+          <Zap className="w-[11px] h-[11px]" fill="currentColor" />
           {card.saves}
         </span>
       </div>
-      <div className="px-4 pt-4 pb-3 flex-1 flex flex-col">
-        <div className="text-[10.5px] font-semibold tracking-[0.12em] uppercase text-[#9CA3AF] mb-1">{card.role}</div>
-        <h3 className="text-[16px] font-semibold text-[#1C1E21] mb-1.5 leading-snug">{card.title}</h3>
-        <p className="text-[12.5px] text-[#6B7280] leading-relaxed line-clamp-3 mb-3 flex-1">{card.desc}</p>
-        <div className="flex flex-wrap gap-1.5">
+      <div className="px-5 pt-4 pb-3.5 flex-1 flex flex-col min-h-0">
+        {/* Name block */}
+        <div className="mb-3">
+          <div className="flex items-baseline gap-2 mb-1">
+            <h3 className="text-[20px] font-semibold text-[#1C1E21] leading-none tracking-tight">{card.persona}</h3>
+            <span className="text-[11px] text-[#9CA3AF] font-medium">{card.pronouns}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-[12px] text-[#6B7280]">
+            <span className="font-medium text-[#1C1E21]">{card.title}</span>
+            <span className="text-[#D1D5DB]">·</span>
+            <span className="uppercase tracking-[0.08em] text-[10px] font-semibold text-[#9CA3AF]">{card.role}</span>
+          </div>
+        </div>
+
+        {/* Quote */}
+        <div className="flex mb-3">
+          <div className="w-[2.5px] rounded-full self-stretch flex-shrink-0" style={{ background: card.accent }} />
+          <p className="pl-3 italic text-[12.5px] text-[#374151] leading-snug line-clamp-2">“{card.quote}”</p>
+        </div>
+
+        {/* Stats strip */}
+        <div className="grid grid-cols-3 mb-3 rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] overflow-hidden">
+          {card.stats.map((s, i) => (
+            <div
+              key={i}
+              className={`px-3 py-2.5 ${i < card.stats.length - 1 ? 'border-r border-[#F0F1F3]' : ''}`}
+            >
+              <div className="text-[16px] font-semibold text-[#1C1E21] leading-none tabular-nums">{s.value}</div>
+              <div className="text-[9.5px] uppercase tracking-[0.1em] text-[#9CA3AF] mt-1 font-semibold">{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Highlights */}
+        <div className="mb-3">
+          <div className="text-[9.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-1.5">What {card.persona} does</div>
+          <ul className="space-y-1">
+            {card.highlights.map((h, i) => (
+              <li key={i} className="flex items-start gap-1.5 text-[12px] text-[#374151] leading-snug">
+                <CheckCircle2 className="w-[12px] h-[12px] text-[#10B981] flex-shrink-0 mt-[1px]" strokeWidth={2.5} />
+                <span>{h}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1.5 mt-auto">
           {card.tags.map((t, i) => {
             const Icon = t.icon;
             return (
-              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F3F4F6] text-[11px] font-medium text-[#4B5563]">
+              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#F3F4F6] text-[11.5px] font-medium text-[#4B5563]">
                 <Icon className="w-[11px] h-[11px] text-[#9CA3AF]" />
                 {t.label}
               </span>
@@ -2696,16 +3228,702 @@ function VPAgentCard({ card, focused = false }: { card: VPCardData; focused?: bo
           })}
         </div>
       </div>
-      <div className="border-t border-[#F0F1F3] px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-[12px]">
-          <Star className="w-[12px] h-[12px] text-[#F59E0B] fill-[#F59E0B]" />
-          <span className="font-semibold text-[#1C1E21]">{card.rating.toFixed(1)}</span>
+      <div className="border-t border-[#F0F1F3] px-5 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-[12.5px]">
+          <Star className="w-[13px] h-[13px] text-[#F59E0B] fill-[#F59E0B]" />
+          <span className="font-semibold text-[#1C1E21] tabular-nums">{card.rating.toFixed(1)}</span>
           <span className="text-[#9CA3AF]">· {card.hires.toLocaleString()} {card.hired ? 'users' : 'hires'}</span>
         </div>
-        <button className="inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold shadow-[0_2px_6px_rgba(28,30,33,0.18)] transition-all">
-          {card.hired ? 'Open' : 'Hire'}
-          <ArrowRight className="w-[12px] h-[12px]" />
+        <button
+          onClick={(e) => { e.stopPropagation(); onSelect?.(); }}
+          className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold shadow-[0_2px_6px_rgba(28,30,33,0.18)] transition-all"
+        >
+          {card.hired ? 'Open' : `Hire ${card.persona}`}
+          <ArrowRight className="w-[13px] h-[13px]" />
         </button>
+      </div>
+    </div>
+  );
+}
+
+function VPCreateAgentView({ onClose }: { onClose: () => void }) {
+  const steps = [
+    { key: 'profile', label: 'Agent profile' },
+    { key: 'powers', label: 'Superpowers' },
+    { key: 'knowledge', label: 'Knowledge base' },
+    { key: 'route', label: 'Add to route' },
+    { key: 'advanced', label: 'Advanced' },
+  ] as const;
+  type StepKey = typeof steps[number]['key'];
+
+  const [step, setStep] = useState<StepKey>('profile');
+  const [name, setName] = useState('Nova');
+  const [desc, setDesc] = useState('Organized, focused, and task driven.');
+  const [tone, setTone] = useState('Friendly & Approachable');
+  const [voice, setVoice] = useState('Nova (Female)');
+  const [avatarIdx, setAvatarIdx] = useState(0);
+  const [skills, setSkills] = useState<Record<string, boolean>>({ createJob: true });
+  const [knowledge, setKnowledge] = useState<Record<string, boolean>>({ zuperDocs: true });
+  const [questions, setQuestions] = useState<Record<string, { on: boolean; required: boolean }>>({
+    q1: { on: true, required: true },
+    q2: { on: true, required: false },
+    q3: { on: false, required: false },
+  });
+  const [freq, setFreq] = useState<'hour' | 'day' | 'week' | 'month' | 'weekdays' | 'custom'>('week');
+  const [hour, setHour] = useState(9);
+  const [minute, setMinute] = useState(0);
+  const [trigState, setTrigState] = useState({ scheduled: true, mention: true, webhook: false });
+  const [mentionScope, setMentionScope] = useState({ chat: true, comments: true, dm: false });
+  const [standaloneTools, setStandaloneTools] = useState<Record<string, boolean>>({});
+  const [model, setModel] = useState<'lite' | 'pro'>('lite');
+  const [temperature, setTemperature] = useState(0.7);
+  const [memory, setMemory] = useState({ recent: true, working: true });
+
+  const avatars = [agent1, agent2, agent3];
+  const shuffleAvatar = () => setAvatarIdx((i) => (i + 1) % avatars.length);
+  const currentAvatar = avatars[avatarIdx];
+
+  const stepIdx = steps.findIndex((s) => s.key === step);
+  const goNext = () => {
+    if (stepIdx < steps.length - 1) setStep(steps[stepIdx + 1].key);
+    else onClose();
+  };
+  const goBack = () => {
+    if (stepIdx > 0) setStep(steps[stepIdx - 1].key);
+    else onClose();
+  };
+
+  const skillList = [
+    { key: 'createJob', name: 'Create Job', desc: 'Gather job details from conversation, validate required fields, and create a new job in Zuper.', Icon: Plus, predefined: true },
+    { key: 'createCustomer', name: 'Create Customer', desc: 'Collect customer information, validate, and create a new customer record in Zuper.', Icon: Users, predefined: true },
+    { key: 'addJobNote', name: 'Add Job Note', desc: 'Identify a job, compose a contextual note, and attach it to the job in Zuper.', Icon: Pencil, predefined: true },
+    { key: 'createInvoice', name: 'Create Invoice', desc: 'Gather invoice details from job and customer context, validate line items, and create in Zuper.', Icon: Mail, predefined: true },
+    { key: 'execSummary', name: 'Write Executive Summary', desc: 'Fetch job details and compose a structured professional executive summary.', Icon: Sparkles, predefined: true },
+    { key: 'findCustomer', name: 'Find Zuper Customer by Name', desc: 'Search Zuper customers by name keyword and classify the result as a single match, multiple ambiguous candidates, or none.', Icon: Search, predefined: true },
+  ];
+
+  const comingSoonSkills: { key: string; name: string; desc: string; Icon: any }[] = [];
+
+  const standaloneToolList = [
+    { key: 'sendEmail', name: 'Send Email', desc: 'Send an email to a specified recipient with subject and body.', Icon: Mail },
+    { key: 'sendSlack', name: 'Send Slack Message', desc: 'Send a message to a Slack channel via webhook.', Icon: MessageSquare },
+    { key: 'webSearch', name: 'Web Search', desc: 'Search the web and return relevant results with extracted content.', Icon: Search },
+    { key: 'getWeather', name: 'Get Weather', desc: 'Fetch a daily weather forecast for given lat/lon coordinates via Open-Meteo.', Icon: Wrench },
+  ];
+
+  const questionList = [
+    { key: 'q1', label: 'Can I get your name and the service address?' },
+    { key: 'q2', label: 'What issue are you facing today?' },
+    { key: 'q3', label: 'When is a convenient time to visit?' },
+  ];
+
+  const kbList = [
+    { key: 'zuperDocs', name: 'Zuper Documentation', url: 'https://docs.zuper.co', badges: ['PREDEFINED', 'MCP'], status: 'Connected' },
+    { key: 'qbo', name: 'Quickbooks API Error', url: 'https://developer.intuit.com/app/developer/qbo/docs/d...', badges: ['WEB'], status: 'Ready' },
+  ];
+
+  const frequencies: { key: typeof freq; label: string }[] = [
+    { key: 'hour', label: 'Every hour' },
+    { key: 'day', label: 'Every day' },
+    { key: 'week', label: 'Every week' },
+    { key: 'month', label: 'Every month' },
+    { key: 'weekdays', label: 'Weekdays' },
+    { key: 'custom', label: 'Custom' },
+  ];
+
+  const activeSkillKey = Object.keys(skills).find((k) => skills[k]) || skillList[0].key;
+  const activeSkill = skillList.find((s) => s.key === activeSkillKey) || skillList[0];
+  const selectAll = () => {
+    const all: Record<string, boolean> = {};
+    skillList.forEach((s) => (all[s.key] = true));
+    setSkills(all);
+  };
+
+  return (
+    <div className="w-full flex items-stretch overflow-hidden" style={{ height: 'calc(100vh - 140px)' }}>
+      {/* LEFT: form */}
+      <div className="flex-1 min-w-0 overflow-y-auto scrollbar-auto-hide pr-8">
+        <button
+          onClick={onClose}
+          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1C1E21] hover:text-[#000] transition mb-6"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Back to Agents
+        </button>
+
+        {/* Stepper */}
+        <nav className="flex items-center gap-3 mb-10 flex-wrap">
+          {steps.map((s, i) => {
+            const active = s.key === step;
+            const done = i < stepIdx;
+            return (
+              <div key={s.key} className="flex items-center gap-3">
+                <button
+                  onClick={() => setStep(s.key)}
+                  className="flex items-center gap-2 transition"
+                >
+                  <span
+                    className={`relative w-[16px] h-[16px] rounded-full flex items-center justify-center border-2 transition ${
+                      active
+                        ? 'border-[#1C1E21] bg-white'
+                        : done
+                        ? 'border-[#1C1E21] bg-[#1C1E21]'
+                        : 'border-[#D1D5DB] bg-white'
+                    }`}
+                  >
+                    {active && <span className="w-1.5 h-1.5 rounded-full bg-[#1C1E21]" />}
+                    {done && <Check className="w-[10px] h-[10px] text-white" strokeWidth={3} />}
+                  </span>
+                  <span
+                    className={`text-[15px] font-medium transition ${
+                      active ? 'text-[#1C1E21]' : 'text-[#9CA3AF] hover:text-[#6B7280]'
+                    }`}
+                  >
+                    {s.label}
+                  </span>
+                </button>
+                {i < steps.length - 1 && <span className="w-6 h-px bg-[#E6E8EC]" />}
+              </div>
+            );
+          })}
+        </nav>
+
+        {/* Step content */}
+        {step === 'profile' && (
+          <div className="max-w-[560px]">
+            <h2 className="text-[26px] font-semibold text-[#1C1E21] tracking-tight mb-1">About agent</h2>
+            <p className="text-[14px] text-[#6B7280] mb-7">Configure your agent's personality and voice</p>
+
+            {/* Avatar tile */}
+            <div className="relative w-[88px] h-[88px] rounded-xl overflow-hidden mb-6" style={{ background: 'linear-gradient(180deg, #DBEAFE 0%, #EFF6FF 100%)' }}>
+              <img src={currentAvatar} alt="Agent avatar" className="absolute inset-0 w-full h-full object-cover object-top" />
+              <div className="absolute top-1.5 right-1.5 flex flex-col gap-1">
+                <button className="w-7 h-7 rounded-md bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-[#F8F9FB] transition" aria-label="Edit avatar">
+                  <Pencil className="w-3 h-3 text-[#1C1E21]" />
+                </button>
+                <button onClick={shuffleAvatar} className="w-7 h-7 rounded-md bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1)] flex items-center justify-center hover:bg-[#F8F9FB] transition" aria-label="Shuffle avatar">
+                  <RefreshCw className="w-3 h-3 text-[#1C1E21]" />
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-[13px] font-medium text-[#4B5563] mb-1.5">Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]/30 focus:ring-2 focus:ring-[#1C1E21]/10 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-[#4B5563] mb-1.5">Description</label>
+                <input
+                  type="text"
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]/30 focus:ring-2 focus:ring-[#1C1E21]/10 transition"
+                />
+              </div>
+              <div className="grid grid-cols-[1fr_1fr_auto] gap-3 items-end">
+                <div>
+                  <label className="block text-[13px] font-medium text-[#4B5563] mb-1.5">Communication tone</label>
+                  <div className="relative">
+                    <select
+                      value={tone}
+                      onChange={(e) => setTone(e.target.value)}
+                      className="w-full appearance-none px-3.5 py-2.5 pr-8 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]/30 transition"
+                    >
+                      <option>Friendly & Approachable</option>
+                      <option>Professional</option>
+                      <option>Concise & Direct</option>
+                      <option>Warm & Empathetic</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-[#6B7280] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[13px] font-medium text-[#4B5563] mb-1.5">Voice</label>
+                  <div className="relative">
+                    <select
+                      value={voice}
+                      onChange={(e) => setVoice(e.target.value)}
+                      className="w-full appearance-none px-3.5 py-2.5 pr-8 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]/30 transition"
+                    >
+                      <option>Nova (Female)</option>
+                      <option>Atlas (Male)</option>
+                      <option>Sage (Neutral)</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-[#6B7280] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                </div>
+                <button className="w-10 h-10 rounded-full border-2 border-[#7C3AED] flex items-center justify-center hover:bg-[#F5F3FF] transition" aria-label="Play voice sample">
+                  <Play className="w-4 h-4 text-[#7C3AED] ml-0.5" fill="#7C3AED" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 'powers' && (
+          <div className="max-w-[640px]">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <h2 className="text-[26px] font-semibold text-[#1C1E21] tracking-tight mb-1">Superpowers</h2>
+                <p className="text-[14px] text-[#6B7280]">Configure your agent's skills and capabilities</p>
+              </div>
+              <button
+                onClick={selectAll}
+                className="px-4 h-9 rounded-lg border border-[#E6E8EC] bg-white text-[#1C1E21] text-[13px] font-medium hover:bg-[#F8F9FB] transition flex-shrink-0"
+              >
+                Select All
+              </button>
+            </div>
+
+            {/* Skills */}
+            <div className="mb-7">
+              <div className="flex items-center gap-2 mb-3">
+                <Zap className="w-[16px] h-[16px] text-[#2563EB]" />
+                <h3 className="text-[15px] font-semibold text-[#1C1E21]">Skills</h3>
+              </div>
+              <p className="text-[12.5px] text-[#6B7280] mb-3">Instruction sets with built-in tools that give your agent specific abilities.</p>
+              <div className="grid grid-cols-2 gap-3">
+                {skillList.map((s) => {
+                  const on = !!skills[s.key];
+                  return (
+                    <div
+                      key={s.key}
+                      onClick={() => setSkills((p) => ({ ...p, [s.key]: !on }))}
+                      className={`p-3.5 rounded-2xl border-2 transition cursor-pointer ${
+                        on ? 'border-[#10B981]/30 bg-[#ECFDF5]' : 'border-[#E6E8EC] bg-white hover:border-[#1C1E21]/15'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${on ? 'bg-[#10B981]' : 'bg-[#1C1E21]'}`}>
+                          <s.Icon className="w-[15px] h-[15px] text-white" strokeWidth={2.25} />
+                        </div>
+                        <span className={`relative inline-flex items-center w-[36px] h-[20px] rounded-full transition-colors flex-shrink-0 ${on ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}>
+                          <span className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${on ? 'left-[18px]' : 'left-[2px]'}`} />
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                        <span className="text-[14px] font-semibold text-[#1C1E21]">{s.name}</span>
+                        <span className="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-[#DBEAFE] text-[#2563EB]">PREDEFINED</span>
+                      </div>
+                      <div className="text-[12px] text-[#6B7280] leading-snug">{s.desc}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Standalone Tools */}
+            <div className="mb-7">
+              <div className="flex items-center gap-2 mb-3">
+                <Wrench className="w-[16px] h-[16px] text-[#2563EB]" />
+                <h3 className="text-[15px] font-semibold text-[#1C1E21]">Standalone Tools</h3>
+              </div>
+              <p className="text-[12.5px] text-[#6B7280] mb-3">General-purpose tools your agent can use independently.</p>
+              <div className="grid grid-cols-2 gap-3">
+                {standaloneToolList.map((t) => {
+                  const on = !!standaloneTools[t.key];
+                  return (
+                    <div
+                      key={t.key}
+                      onClick={() => setStandaloneTools((p) => ({ ...p, [t.key]: !on }))}
+                      className={`p-3.5 rounded-2xl border transition cursor-pointer ${
+                        on ? 'border-[#1C1E21]/20 bg-[#FAFAFB]' : 'border-[#E6E8EC] bg-white hover:border-[#1C1E21]/15'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-[#F3F4F6] flex items-center justify-center">
+                          <t.Icon className="w-[15px] h-[15px] text-[#6B7280]" />
+                        </div>
+                        <span className={`relative inline-flex items-center w-[36px] h-[20px] rounded-full transition-colors flex-shrink-0 ${on ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}>
+                          <span className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${on ? 'left-[18px]' : 'left-[2px]'}`} />
+                        </span>
+                      </div>
+                      <div className="text-[14px] font-semibold text-[#1C1E21] mb-0.5">{t.name}</div>
+                      <div className="text-[12px] text-[#6B7280] leading-snug">{t.desc}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Questions */}
+            <div>
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h3 className="text-[18px] font-semibold text-[#1C1E21] tracking-tight">What {name} should ask customer</h3>
+                  <p className="text-[13px] text-[#6B7280] mt-0.5">Add questions you would like {name} to get from customer</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-md bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold tabular-nums flex-shrink-0">{Object.values(questions).filter(q => q.on).length}/14</span>
+              </div>
+
+              <div className="mt-4">
+                <div className="flex items-center gap-2 text-[13px] text-[#1C1E21] font-medium mb-3">
+                  <Mail className="w-[14px] h-[14px] text-[#6B7280]" />
+                  Questions for "{activeSkill.name}" skill
+                </div>
+                <div className="space-y-2 pl-2 border-l-2 border-[#E6E8EC]">
+                  {questionList.map((q) => {
+                    const state = questions[q.key];
+                    return (
+                      <div key={q.key} className="ml-3 p-3 rounded-lg border border-[#E6E8EC] bg-white">
+                        <div className="flex items-start gap-2.5 mb-2">
+                          <div className="w-7 h-7 rounded-md bg-[#F3F4F6] flex items-center justify-center flex-shrink-0">
+                            <span className="text-[11px] font-bold text-[#6B7280]">Aa</span>
+                          </div>
+                          <div className="flex-1 text-[13px] text-[#1C1E21] leading-snug pt-1">{q.label}</div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-9">
+                          <span
+                            onClick={() => setQuestions((p) => ({ ...p, [q.key]: { ...p[q.key], required: !p[q.key].required } }))}
+                            className={`relative inline-flex items-center w-[32px] h-[18px] rounded-full transition-colors flex-shrink-0 cursor-pointer ${state.required ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}
+                          >
+                            <span className={`absolute top-1/2 -translate-y-1/2 w-[14px] h-[14px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${state.required ? 'left-[16px]' : 'left-[2px]'}`} />
+                          </span>
+                          <span className="text-[12px] text-[#6B7280]">Required</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 'knowledge' && (
+          <div className="max-w-[640px]">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <h2 className="text-[26px] font-semibold text-[#1C1E21] tracking-tight mb-1">Knowledge base</h2>
+                <p className="text-[14px] text-[#6B7280]">Connect data sources to give your agent domain knowledge.</p>
+              </div>
+              <button className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg border border-[#E6E8EC] bg-white text-[#1C1E21] text-[13px] font-medium hover:bg-[#F8F9FB] transition flex-shrink-0">
+                <Plus className="w-4 h-4" strokeWidth={2.5} />
+                Add Knowledge
+              </button>
+            </div>
+
+            <div className="rounded-xl border border-[#E6E8EC] bg-white overflow-hidden divide-y divide-[#F0F1F3]">
+              {kbList.map((k) => {
+                const on = !!knowledge[k.key];
+                return (
+                  <div key={k.key} className="flex items-center gap-3 px-4 py-3.5">
+                    <div className="w-10 h-10 rounded-lg bg-[#EFF6FF] flex items-center justify-center flex-shrink-0">
+                      <Globe className="w-[18px] h-[18px] text-[#2563EB]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="text-[14px] font-semibold text-[#1C1E21]">{k.name}</span>
+                        {k.badges.map((b) => (
+                          <span
+                            key={b}
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                              b === 'PREDEFINED' ? 'bg-[#DBEAFE] text-[#2563EB]' : b === 'MCP' ? 'bg-[#FEF3C7] text-[#92400E]' : 'bg-[#F3F4F6] text-[#4B5563]'
+                            }`}
+                          >
+                            {b}
+                          </span>
+                        ))}
+                        <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#15803D]">
+                          <CheckCircle2 className="w-[12px] h-[12px]" />
+                          {k.status}
+                        </span>
+                      </div>
+                      <div className="text-[12px] text-[#6B7280] truncate">{k.url}</div>
+                    </div>
+                    <span
+                      onClick={() => setKnowledge((p) => ({ ...p, [k.key]: !on }))}
+                      className={`relative inline-flex items-center w-[36px] h-[20px] rounded-full transition-colors flex-shrink-0 cursor-pointer ${on ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}
+                    >
+                      <span className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${on ? 'left-[18px]' : 'left-[2px]'}`} />
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {step === 'route' && (
+          <div className="max-w-[640px]">
+            <h2 className="text-[26px] font-semibold text-[#1C1E21] tracking-tight mb-1">Add to route</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">When should {name} jump in?</p>
+
+            {/* Scheduled */}
+            <div className="rounded-xl border border-[#E6E8EC] bg-white overflow-hidden mb-3">
+              <div className="flex items-center gap-3 px-4 py-3.5">
+                <div className="w-10 h-10 rounded-lg bg-[#EFF6FF] flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-[18px] h-[18px] text-[#2563EB]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[14px] font-semibold text-[#1C1E21]">Scheduled Execution</div>
+                  <div className="text-[12px] text-[#6B7280]">Run this agent on a recurring schedule.</div>
+                </div>
+                <span
+                  onClick={() => setTrigState((p) => ({ ...p, scheduled: !p.scheduled }))}
+                  className={`relative inline-flex items-center w-[36px] h-[20px] rounded-full transition-colors flex-shrink-0 cursor-pointer ${trigState.scheduled ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}
+                >
+                  <span className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${trigState.scheduled ? 'left-[18px]' : 'left-[2px]'}`} />
+                </span>
+              </div>
+              {trigState.scheduled && (
+                <div className="border-t border-[#F0F1F3] p-4 space-y-4">
+                  <div>
+                    <div className="text-[13px] font-medium text-[#1C1E21] mb-2">Frequency</div>
+                    <div className="flex flex-wrap gap-2">
+                      {frequencies.map((f) => (
+                        <button
+                          key={f.key}
+                          onClick={() => setFreq(f.key)}
+                          className={`px-3 h-8 rounded-full text-[12.5px] font-medium border transition ${
+                            freq === f.key ? 'bg-[#1C1E21] border-[#1C1E21] text-white' : 'bg-white border-[#E6E8EC] text-[#4B5563] hover:border-[#1C1E21]/30'
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-medium text-[#1C1E21] mb-2">Time</div>
+                    <div className="flex items-center gap-2">
+                      <select value={hour} onChange={(e) => setHour(Number(e.target.value))} className="px-3 py-1.5 rounded-lg border border-[#E6E8EC] bg-white text-[13px] text-[#1C1E21]">
+                        {Array.from({ length: 24 }, (_, i) => <option key={i} value={i}>{String(i).padStart(2, '0')}</option>)}
+                      </select>
+                      <span className="text-[#6B7280]">:</span>
+                      <select value={minute} onChange={(e) => setMinute(Number(e.target.value))} className="px-3 py-1.5 rounded-lg border border-[#E6E8EC] bg-white text-[13px] text-[#1C1E21]">
+                        {[0, 15, 30, 45].map((m) => <option key={m} value={m}>{String(m).padStart(2, '0')}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#F8F9FB] text-[12.5px] text-[#4B5563]">
+                    <Info className="w-[14px] h-[14px] text-[#9CA3AF]" />
+                    <span>Runs <span className="font-semibold text-[#1C1E21]">{freq === 'week' ? 'every Monday' : freq === 'day' ? 'every day' : freq === 'hour' ? 'every hour' : freq === 'month' ? 'on the 1st' : freq === 'weekdays' ? 'Mon-Fri' : 'on schedule'}</span> at <span className="font-semibold text-[#1C1E21] tabular-nums">{String(hour).padStart(2, '0')}:{String(minute).padStart(2, '0')}</span></span>
+                  </div>
+                  <div className="flex items-center justify-between text-[12.5px]">
+                    <div className="flex items-center gap-1.5 text-[#6B7280]"><Globe className="w-[13px] h-[13px]" /> Timezone: <span className="font-semibold text-[#1C1E21]">Asia/Calcutta</span></div>
+                    <button className="text-[#6B7280] hover:text-[#1C1E21] inline-flex items-center gap-1">Advanced cron expression <ChevronDown className="w-3 h-3" /></button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Mention */}
+            <div className="rounded-xl border border-[#E6E8EC] bg-white overflow-hidden mb-3">
+              <div className="flex items-center gap-3 px-4 py-3.5">
+                <div className="w-10 h-10 rounded-lg bg-[#ECFDF5] flex items-center justify-center flex-shrink-0">
+                  <AtSign className="w-[18px] h-[18px] text-[#15803D]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[14px] font-semibold text-[#1C1E21]">Mention</div>
+                  <div className="text-[12px] text-[#6B7280]">Trigger this agent when mentioned in a conversation.</div>
+                </div>
+                <span
+                  onClick={() => setTrigState((p) => ({ ...p, mention: !p.mention }))}
+                  className={`relative inline-flex items-center w-[36px] h-[20px] rounded-full transition-colors flex-shrink-0 cursor-pointer ${trigState.mention ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}
+                >
+                  <span className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${trigState.mention ? 'left-[18px]' : 'left-[2px]'}`} />
+                </span>
+              </div>
+              {trigState.mention && (
+                <div className="border-t border-[#F0F1F3] p-4">
+                  <div className="text-[13px] font-semibold text-[#1C1E21] mb-1">Where to listen</div>
+                  <p className="text-[12px] text-[#6B7280] mb-3">By default the agent responds to <code className="px-1 py-0.5 rounded bg-[#F3F4F6] text-[11px] text-[#1C1E21]">@agent</code> across these surfaces.</p>
+                  {[
+                    { key: 'chat', name: 'Chat threads', desc: 'In any chat where the agent is added' },
+                    { key: 'comments', name: 'Comments on jobs & tasks', desc: 'Mentions inside record comments' },
+                    { key: 'dm', name: 'Direct messages', desc: 'When users DM the agent directly' },
+                  ].map((s) => {
+                    const on = mentionScope[s.key as keyof typeof mentionScope];
+                    return (
+                      <div key={s.key} className="flex items-center justify-between py-2 border-t border-[#F0F1F3] first:border-t-0">
+                        <div>
+                          <div className="text-[13px] font-medium text-[#1C1E21]">{s.name}</div>
+                          <div className="text-[12px] text-[#6B7280]">{s.desc}</div>
+                        </div>
+                        <span
+                          onClick={() => setMentionScope((p) => ({ ...p, [s.key]: !on }))}
+                          className={`relative inline-flex items-center w-[36px] h-[20px] rounded-full transition-colors flex-shrink-0 cursor-pointer ${on ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}
+                        >
+                          <span className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${on ? 'left-[18px]' : 'left-[2px]'}`} />
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Webhook */}
+            <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-[#E6E8EC] bg-white">
+              <div className="w-10 h-10 rounded-lg bg-[#FEF3C7] flex items-center justify-center flex-shrink-0">
+                <Webhook className="w-[18px] h-[18px] text-[#92400E]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-semibold text-[#1C1E21]">Webhook</div>
+                <div className="text-[12px] text-[#6B7280]">Trigger this agent from any external tool via a signed HTTPS POST.</div>
+              </div>
+              <span
+                onClick={() => setTrigState((p) => ({ ...p, webhook: !p.webhook }))}
+                className={`relative inline-flex items-center w-[36px] h-[20px] rounded-full transition-colors flex-shrink-0 cursor-pointer ${trigState.webhook ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}
+              >
+                <span className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${trigState.webhook ? 'left-[18px]' : 'left-[2px]'}`} />
+              </span>
+            </div>
+          </div>
+        )}
+
+        {step === 'advanced' && (
+          <div className="max-w-[720px]">
+            <h2 className="text-[26px] font-semibold text-[#1C1E21] tracking-tight mb-1">Advanced</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">Fine-tune the model, behavior, and memory for {name}.</p>
+
+            {/* Model & Behavior */}
+            <div className="mb-7">
+              <div className="flex items-center gap-2 mb-4">
+                <Bot className="w-[16px] h-[16px] text-[#6B7280]" />
+                <h3 className="text-[15px] font-semibold text-[#1C1E21]">Model & Behavior</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-5">
+                <div>
+                  <div className="text-[10.5px] font-bold tracking-[0.14em] uppercase text-[#9CA3AF] mb-2">Model</div>
+                  <div className="relative">
+                    <select
+                      value={model}
+                      onChange={(e) => setModel(e.target.value as 'lite' | 'pro')}
+                      className="w-full appearance-none px-3.5 py-2.5 pr-8 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]/30 transition"
+                    >
+                      <option value="lite">Zuper Lite</option>
+                      <option value="pro">Zuper Pro</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-[#6B7280] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                  <p className="text-[11.5px] text-[#9CA3AF] mt-1.5">Larger models reason better but cost more per run.</p>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10.5px] font-bold tracking-[0.14em] uppercase text-[#9CA3AF]">Temperature</span>
+                    <span className="text-[14px] font-semibold text-[#1C1E21] tabular-nums">{temperature.toFixed(2)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={temperature}
+                    onChange={(e) => setTemperature(Number(e.target.value))}
+                    className="w-full accent-[#1C1E21]"
+                  />
+                  <div className="flex items-center justify-between text-[11px] text-[#9CA3AF] mt-1">
+                    <span>0.0 · precise</span>
+                    <span>creative · 1.0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Memory */}
+            <div>
+              <h3 className="text-[15px] font-semibold text-[#1C1E21] mb-3">Memory</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div
+                  onClick={() => setMemory((p) => ({ ...p, recent: !p.recent }))}
+                  className={`p-4 rounded-2xl border-2 transition cursor-pointer ${
+                    memory.recent ? 'border-[#10B981]/30 bg-white' : 'border-[#E6E8EC] bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <MessageSquare className="w-[15px] h-[15px] text-[#1C1E21]" />
+                      <span className="text-[14px] font-semibold text-[#1C1E21]">Recent Messages</span>
+                    </div>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase ${memory.recent ? 'bg-[#ECFDF5] text-[#15803D]' : 'bg-[#F3F4F6] text-[#6B7280]'}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${memory.recent ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'}`} />
+                      {memory.recent ? 'Enabled' : 'Disabled'}
+                    </span>
+                  </div>
+                  <p className="text-[12px] text-[#6B7280] leading-relaxed">Last 20 messages per thread, used as conversational context.</p>
+                </div>
+                <div
+                  onClick={() => setMemory((p) => ({ ...p, working: !p.working }))}
+                  className={`p-4 rounded-2xl border-2 transition cursor-pointer ${
+                    memory.working ? 'border-[#10B981]/30 bg-white' : 'border-[#E6E8EC] bg-white'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Database className="w-[15px] h-[15px] text-[#1C1E21]" />
+                      <span className="text-[14px] font-semibold text-[#1C1E21]">Working Memory</span>
+                    </div>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase ${memory.working ? 'bg-[#ECFDF5] text-[#15803D]' : 'bg-[#F3F4F6] text-[#6B7280]'}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${memory.working ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'}`} />
+                      {memory.working ? 'Enabled' : 'Disabled'}
+                    </span>
+                  </div>
+                  <p className="text-[12px] text-[#6B7280] leading-relaxed">User preferences and session context the agent learns over time.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Footer actions */}
+        <div className="flex items-center gap-3 mt-10 max-w-[560px]">
+          <button
+            onClick={goBack}
+            className="px-6 h-11 rounded-lg border border-[#E6E8EC] bg-white text-[#1C1E21] text-[13.5px] font-medium hover:bg-[#F8F9FB] transition flex-1"
+          >
+            Go back
+          </button>
+          <button
+            onClick={goNext}
+            className="px-6 h-11 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold shadow-[0_2px_6px_rgba(28,30,33,0.18)] transition flex-1"
+          >
+            {stepIdx === steps.length - 1 ? 'Create agent' : 'Continue'}
+          </button>
+        </div>
+      </div>
+
+      {/* RIGHT: live preview */}
+      <div
+        className="w-[520px] flex-shrink-0 flex flex-col items-center justify-center gap-3 relative overflow-hidden"
+        style={{ background: 'radial-gradient(circle at 62% 35%, #FFC7D9 0%, #FFD9C4 35%, #FBE9D4 65%, #FCF1E6 100%)' }}
+      >
+        {/* Grain overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-multiply"
+          style={{
+            backgroundImage:
+              'url("data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22240%22 height=%22240%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>")',
+          }}
+        />
+        <div className="relative w-[320px] rounded-2xl bg-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] overflow-hidden">
+          <div className="relative h-[300px] m-3 rounded-xl overflow-hidden" style={{ background: 'linear-gradient(180deg, #DBEAFE 0%, #EFF6FF 100%)' }}>
+            <img src={currentAvatar} alt={name} className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[100%] w-auto object-contain" draggable={false} />
+          </div>
+          <div className="px-4 pb-4 pt-1">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">{name || 'Your agent'}</h3>
+              <span className="px-2 py-0.5 rounded-md bg-[#D1FAE5] text-[#15803D] text-[10.5px] font-semibold">Z-{134 + avatarIdx}</span>
+            </div>
+            <p className="text-[12.5px] text-[#6B7280] leading-relaxed">{desc || 'Describe your agent.'}</p>
+          </div>
+        </div>
+
+        {step === 'powers' && (
+          <div className="relative w-[320px] rounded-2xl bg-white shadow-[0_12px_30px_-15px_rgba(0,0,0,0.15)] px-4 py-3 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-[#7C3AED] flex items-center justify-center flex-shrink-0">
+              <activeSkill.Icon className="w-[15px] h-[15px] text-white" strokeWidth={2.25} />
+            </div>
+            <span className="text-[14px] font-semibold text-[#1C1E21]">{activeSkill.name}</span>
+          </div>
+        )}
       </div>
     </div>
   );
