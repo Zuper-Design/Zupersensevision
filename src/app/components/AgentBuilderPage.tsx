@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import {
   LayoutGrid, Bot, BookOpen, MessageSquare, Zap, Database, BarChart3, LifeBuoy, Plus,
-  Search, MoreHorizontal, Play, Pencil, List, LayoutGrid as GridIcon, Star, Users,
+  Search, MoreHorizontal, Play, Pencil, List, LayoutGrid as GridIcon, Star, Users, Check,
   Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Trash2, ChevronDown, X, Upload,
   AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles,
 } from 'lucide-react';
