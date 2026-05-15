@@ -8,6 +8,10 @@ import { ModernPDFPreview } from './ModernPDFPreview';
 import { ActionConfirmationCard } from './ActionConfirmationCard';
 import { DSOChartCard } from './DSOChartCard';
 import { AgingBucketChartCard } from './AgingBucketChartCard';
+import { CustomerFeedbackChartCard } from './CustomerFeedbackChartCard';
+import { RevenueTrendChartCard } from './RevenueTrendChartCard';
+import { CategoryRevenueChartCard } from './CategoryRevenueChartCard';
+import { GrowthTrendsChartCard } from './GrowthTrendsChartCard';
 import { CustomerCountCard } from './cards/CustomerCountCard';
 import { CustomersByCityCard } from './cards/CustomersByCityCard';
 import { QuarterlyProfitMarginCard } from './cards/QuarterlyProfitMarginCard';
@@ -81,6 +85,10 @@ interface Message {
   };
   dsoChart?: boolean;
   agingBucketChart?: boolean;
+  customerFeedbackChart?: boolean;
+  revenueTrendChart?: boolean;
+  categoryRevenueChart?: boolean;
+  growthTrendsChart?: boolean;
   metricsCharts?: 'full' | 'team' | 'revenue' | 'jobs';
   radarCardView?: SavedCard;
   typewriter?: boolean;
@@ -483,6 +491,41 @@ Sarah`
   const detectAgingBucket = (text: string): boolean => {
     const t = text.toLowerCase();
     return t.includes('aging bucket') || (t.includes('invoice') && t.includes('aging'));
+  };
+  const detectCustomerFeedback = (text: string): boolean => {
+    const t = text.toLowerCase();
+    return t.includes('customer feedback');
+  };
+  const detectRevenueTrend = (text: string): boolean => {
+    const t = text.toLowerCase();
+    return t.includes('month-on-month') || t.includes('month on month') || (t.includes('revenue') && t.includes('trend'));
+  };
+  const detectCategoryRevenue = (text: string): boolean => {
+    const t = text.toLowerCase();
+    return (t.includes('revenue') && t.includes('category')) || t.includes('revenue analysis') || t.includes('job revenue by category');
+  };
+  const detectGrowthTrends = (text: string): boolean => {
+    const t = text.toLowerCase();
+    return t.includes('growth trend') || t.includes('growth analysis') || (t === 'growth trends');
+  };
+  const detectDemoChart = (text: string): null | 'feedback' | 'revenue-trend' | 'category-revenue' | 'growth' => {
+    if (detectCustomerFeedback(text)) return 'feedback';
+    if (detectRevenueTrend(text)) return 'revenue-trend';
+    if (detectCategoryRevenue(text)) return 'category-revenue';
+    if (detectGrowthTrends(text)) return 'growth';
+    return null;
+  };
+  const demoChartCopy = (kind: 'feedback' | 'revenue-trend' | 'category-revenue' | 'growth'): string => {
+    switch (kind) {
+      case 'feedback':
+        return "Over the last 6 months, feedback is overwhelmingly positive: **26 of 30 jobs** are marked **HAPPY**, while **NEUTRAL** and **UNHAPPY** are just **2 each**. That puts happy jobs at roughly **87%** of the visible feedback, so the main signal is strong satisfaction with only a small pocket of negative outcomes to inspect. **Only 2 unhappy jobs — could be worth looking at what they have in common.**";
+      case 'revenue-trend':
+        return "Over the last 6 months, revenue has been highly volatile rather than steadily trending. **December peaked at $1.81M**, then revenue fell to **$274.9K in January**, recovered to **$676.8K in February**, collapsed to just **$126 in March**, and only rebounded to **$119.6K in April** — so the standout signal is a sharp break after December with no stable recovery yet. **Worth breaking this down by customer or job category to see what disappeared after December.**";
+      case 'category-revenue':
+        return "Over the last 6 months, revenue is being driven by a few sharp category spikes rather than a broad, steady mix. **Plumbing in November alone brought in $1.25M**, while **Proper Category in December added $612.1K** and **Cleaning in December added $536.3K** — those surges stand out as the main drivers in the visible data. Showing **100 of 109** rows, so this is a wide category mix and the chart gets crowded fast. **Breaking this into top categories or a month-on-month view would make the revenue shifts much easier to act on.**";
+      case 'growth':
+        return "Over the last 6 months, growth has been unstable across jobs, revenue, and completions rather than moving together. **January and February are the clearest warning stretch** — job count fell **24.57%** and then **57.77%**, while completed jobs dropped **55.56%** and then **87.5%**; revenue briefly bounced **146.23%** in February, but that rebound did not carry through to job volume or completions. **March is the sharpest contraction point**, with revenue down **99.98%** and completed jobs down **100%**, so the operating slowdown looks broader than just billing timing. **Breaking this by category would show whether one service line is driving the swings.**";
+    }
   };
   const detectOverdueInvoices = (text: string): boolean => {
     const lowerText = text.toLowerCase();
@@ -1303,6 +1346,16 @@ Sarah`
           role: 'assistant',
           content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
         }]);
+      } else if (detectDemoChart(userMessage)) {
+        const kind = detectDemoChart(userMessage)!;
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: demoChartCopy(kind),
+          customerFeedbackChart: kind === 'feedback',
+          revenueTrendChart: kind === 'revenue-trend',
+          categoryRevenueChart: kind === 'category-revenue',
+          growthTrendsChart: kind === 'growth',
+        }]);
       } else if (detectOverdueInvoices(userMessage)) {
         const aging = detectAgingBucket(userMessage);
         setMessages(prev => [...prev, {
@@ -1486,6 +1539,16 @@ Sarah`
           role: 'assistant',
           content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
         }]);
+      } else if (detectDemoChart(text)) {
+        const kind = detectDemoChart(text)!;
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: demoChartCopy(kind),
+          customerFeedbackChart: kind === 'feedback',
+          revenueTrendChart: kind === 'revenue-trend',
+          categoryRevenueChart: kind === 'category-revenue',
+          growthTrendsChart: kind === 'growth',
+        }]);
       } else if (detectOverdueInvoices(text)) {
         const aging = detectAgingBucket(text);
         setMessages(prev => [...prev, {
@@ -1610,6 +1673,16 @@ Sarah`
             newMessages[1] = {
               ...newMessages[1],
               content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
+            };
+          } else if (detectDemoChart(question)) {
+            const kind = detectDemoChart(question)!;
+            newMessages[1] = {
+              ...newMessages[1],
+              content: demoChartCopy(kind),
+              customerFeedbackChart: kind === 'feedback',
+              revenueTrendChart: kind === 'revenue-trend',
+              categoryRevenueChart: kind === 'category-revenue',
+              growthTrendsChart: kind === 'growth',
             };
           } else if (isOverdueInvoices) {
             // For overdue invoices — aging bucket vs DSO trend
@@ -2146,6 +2219,42 @@ Sarah`
                                 <div className="w-full max-w-[420px] min-w-0">
                                   <CustomerCountCard />
                                   <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'New Customers (3 months)', preview: '142 new customers, up 18.4%' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.customerFeedbackChart ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[640px] min-w-0">
+                                  <CustomerFeedbackChartCard />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Customer Feedback Breakdown', preview: '26 Happy · 2 Neutral · 2 Unhappy (87% positive)' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.revenueTrendChart ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[680px] min-w-0">
+                                  <RevenueTrendChartCard />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Monthly Revenue Trend', preview: 'Dec peaked at $1.81M, dropped to $126 in March' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.categoryRevenueChart ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[700px] min-w-0">
+                                  <CategoryRevenueChartCard />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Monthly Job Revenue by Category', preview: 'Plumbing Nov $1.25M · Proper Category Dec $612K' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.growthTrendsChart ? (
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[680px] min-w-0">
+                                  <GrowthTrendsChartCard />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Monthly Growth Trends', preview: 'Jan–Feb warning stretch · Mar sharpest contraction' })} />
                                 </div>
                               </div>
                             </>
