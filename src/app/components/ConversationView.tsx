@@ -2486,7 +2486,13 @@ Sarah`
               </div>
             )}
             <div
-              style={isVp ? { opacity: 0.35, filter: 'grayscale(1)', pointerEvents: 'none', cursor: 'not-allowed' } : undefined}
+              style={
+                isVp
+                  ? { opacity: 0.35, filter: 'grayscale(1)', pointerEvents: 'none', cursor: 'not-allowed' }
+                  : demoMode
+                    ? { opacity: 0.55, pointerEvents: 'none', cursor: 'not-allowed' }
+                    : undefined
+              }
               className={`w-full bg-white rounded-[20px] border transition-all duration-200 shadow-sm ${
               isListening ? 'border-[#FF6B35]/40 shadow-[0_0_0_3px_rgba(255,107,53,0.1)]' : 'border-[#E6E8EC] hover:border-[#FF6B35]/40 hover:shadow-[0_0_0_3px_rgba(255,107,53,0.1)] focus-within:border-[#FF6B35]/40 focus-within:shadow-[0_0_0_3px_rgba(255,107,53,0.1)]'
             }`}>

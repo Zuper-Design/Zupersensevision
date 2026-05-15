@@ -523,7 +523,13 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                   {/* Chat Input - Hero Element */}
                   <div className="w-full max-w-[680px]">
                     <div
-                      style={isVp ? { opacity: 0.35, filter: 'grayscale(1)', pointerEvents: 'none', cursor: 'not-allowed' } : undefined}
+                      style={
+                        isVp
+                          ? { opacity: 0.35, filter: 'grayscale(1)', pointerEvents: 'none', cursor: 'not-allowed' }
+                          : demoMode
+                            ? { opacity: 0.55, cursor: 'not-allowed' }
+                            : undefined
+                      }
                       className={`relative w-full bg-white rounded-[16px] transition-all duration-300 ${
                         inputFocused && !voiceMode
                           ? 'border border-[#FF6B35]/30 shadow-[0_0_0_3px_rgba(255,107,53,0.12),0_8px_24px_rgba(255,107,53,0.15)]'

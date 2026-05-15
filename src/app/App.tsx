@@ -265,6 +265,7 @@ function AppContent() {
               <div className="flex-1 overflow-y-auto scrollbar-auto-hide px-2 pb-2">
                 {threadHistory
                   .filter((t) => !sidebarSearch || t.title.toLowerCase().includes(sidebarSearch.toLowerCase()))
+                  .slice(0, demoMode ? 3 : undefined)
                   .map((thread) => (
                   <button
                     key={thread.id}
