@@ -128,6 +128,7 @@ function getRadarCardMessages(card: SavedCard): { responseText: string; extras: 
 interface ConversationViewProps {
   question: string;
   onBack?: () => void;
+  demoMode?: boolean;
   activeView?: 'chat' | 'radar';
   onViewChange?: (view: 'chat' | 'radar') => void;
   fromCanvas?: boolean;
@@ -258,7 +259,7 @@ function GeneratedChartCard() {
   );
 }
 
-export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onPersonalizationClick }: ConversationViewProps) {
+export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onPersonalizationClick, demoMode = false }: ConversationViewProps) {
   const { radars, activeRadarId, addCardToRadar } = useRadar();
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
@@ -1818,8 +1819,19 @@ Sarah`
       {/* Top Header - Full Width */}
       <div className="h-[56px] border-b border-[#E6E8EC] flex items-center justify-between px-6 flex-shrink-0 bg-white relative z-10">
         <div className="flex items-center gap-3">
+          {/* Demo back button — replaces the corner close X */}
+          {demoMode && onBack && (
+            <button
+              onClick={onBack}
+              aria-label="Back"
+              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              className="w-8 h-8 -ml-2 rounded-lg hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#4B5563]"
+            >
+              <ChevronLeft className="w-[18px] h-[18px]" />
+            </button>
+          )}
           {/* Sidebar toggle */}
-          {!sidebarOpen && onToggleSidebar && (
+          {!demoMode && !sidebarOpen && onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
               className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
@@ -1977,7 +1989,7 @@ Sarah`
         }`}>
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto bg-white scrollbar-auto-hide relative" ref={scrollRef}>
-          {onBack && (
+          {onBack && !demoMode && (
             <button
               onClick={onBack}
               className="absolute top-4 right-6 z-10 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#E6E8EC] hover:bg-[#F8F9FB] hover:border-[#1C1E21]/20 transition shadow-[0_1px_2px_rgba(0,0,0,0.04)]"

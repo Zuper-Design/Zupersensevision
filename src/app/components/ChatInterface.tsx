@@ -892,6 +892,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 isVp={isVp}
                 onUpgrade={onUpgrade}
                 onPersonalizationClick={onPersonalizationClick}
+                demoMode={demoMode}
               />
             )}
           </div>
