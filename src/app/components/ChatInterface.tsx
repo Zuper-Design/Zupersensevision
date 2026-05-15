@@ -537,8 +537,8 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         {/* Custom placeholder with cursor */}
                         {!message && !inputFocused && (
                           <div className="absolute left-[44px] pointer-events-none flex items-center text-[15px] text-[#9CA3AF]">
-                            <span className="font-light">{isListening ? "Listening..." : typedPlaceholder}</span>
-                            {!isListening && typedPlaceholder && (
+                            <span className="font-light">{demoMode ? 'Pick a suggested prompt above to explore Sense' : isListening ? "Listening..." : typedPlaceholder}</span>
+                            {!demoMode && !isListening && typedPlaceholder && (
                               <span className="ml-[4px] inline-block w-[2px] h-[18px] bg-[#FF6B35]"></span>
                             )}
                           </div>

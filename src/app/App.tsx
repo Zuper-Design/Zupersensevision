@@ -336,7 +336,7 @@ function AppContent() {
                     )}
                   </AnimatePresence>
                 </div>
-                {isSubscribed && currentUser === 'RG' ? (
+                {demoMode ? null : isSubscribed && currentUser === 'RG' ? (
                   <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
                     <div className="flex items-center gap-2.5">
                       <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
