@@ -490,6 +490,7 @@ function AppContent() {
                     isAU={currentUser === 'AU'}
                     onUpgrade={openUpgrade}
                     themeName={themeName}
+                    demoMode={demoMode}
                     onPersonalizationClick={() => setPersonalizationOpen(true)}
                   />
                 ) : null}

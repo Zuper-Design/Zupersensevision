@@ -102,10 +102,15 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
         {/* Ask Sense — animated logo on hover */}
         <button
           className="flex items-center h-[30px] px-2 rounded-lg transition-colors duration-150"
-          style={{ background: askSenseOpen || askSenseHovered ? '#E8E3DC' : 'transparent' }}
-          onMouseEnter={() => setAskSenseHovered(true)}
-          onMouseLeave={() => setAskSenseHovered(false)}
-          onClick={onAskSense}
+          style={{
+            background: askSenseOpen || askSenseHovered ? '#E8E3DC' : 'transparent',
+            opacity: demoMode ? 0.5 : 1,
+            cursor: demoMode ? 'not-allowed' : 'pointer',
+          }}
+          onMouseEnter={() => !demoMode && setAskSenseHovered(true)}
+          onMouseLeave={() => !demoMode && setAskSenseHovered(false)}
+          onClick={demoMode ? undefined : onAskSense}
+          disabled={demoMode}
         >
           <span className="mr-1.5 flex items-center">
             <SenseLogo size={13} animated={askSenseHovered} />

@@ -30,6 +30,7 @@ interface RadarWorkspaceProps {
   onUpgrade?: () => void;
   themeName?: 'clean' | 'rams' | 'neon';
   onSettingsClick?: () => void;
+  demoMode?: boolean;
   onPersonalizationClick?: () => void;
 }
 
@@ -317,7 +318,13 @@ const PINNED_DEFS: UnifiedCardItem[] = [
   { kind: 'pinned', id: 'revenueTable',    title: 'Monthly Job Revenue Table',     Component: RevenueTableCard, fullWidth: true },
 ];
 
-export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean', onSettingsClick, onPersonalizationClick }: RadarWorkspaceProps) {
+export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean', onSettingsClick, onPersonalizationClick, demoMode = false }: RadarWorkspaceProps) {
+  const [demoToast, setDemoToast] = useState<string | null>(null);
+  const showDemoToast = (msg = 'Sense is running a demo version') => {
+    if (!demoMode) return;
+    setDemoToast(msg);
+    window.setTimeout(() => setDemoToast(null), 2400);
+  };
   const { radars, activeRadarId, removeCardFromRadar } = useRadar();
   const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [selectedRadarId] = useState<string | null>(activeRadarId || (radars.length > 0 ? radars[0].id : null));
@@ -344,9 +351,12 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
   const t = RADAR_THEMES[themeName];
 
   // Build unified card list: saved cards first, then pinned
+  const pinnedForUser = demoMode
+    ? PINNED_DEFS.filter((p) => p.kind !== 'pinned' || (p.id !== 'jobsTable' && p.id !== 'revenueTable'))
+    : PINNED_DEFS;
   const [cardOrder, setCardOrder] = useState<UnifiedCardItem[]>(() => {
     const saved = (selectedRadar?.cards || []).map(data => ({ kind: 'saved' as const, data }));
-    return [...saved, ...PINNED_DEFS];
+    return [...saved, ...pinnedForUser];
   });
 
   // Sync new saved cards into the unified list
@@ -487,7 +497,16 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
             {/* Row 2: toolbar — no border below, line above comes from Row 1's border-b */}
             <div className="max-w-[1400px] mx-auto w-full flex items-center justify-between px-8 pt-3 pb-3 gap-1.5">
               <div className="flex items-center gap-1.5">
-                {!isAU && <DateFilter />}
+                {!isAU && (
+                  demoMode ? (
+                    <button
+                      onClick={() => showDemoToast()}
+                      className="inline-flex items-center gap-1.5 px-3 h-8 rounded-lg bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:border-[#1C1E21]/30 transition"
+                    >
+                      Last 30 days
+                    </button>
+                  ) : <DateFilter />
+                )}
                 {isVp && (
                   <button onClick={onUpgrade} className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#F3F4F6] hover:bg-[#E5E7EB] transition-colors">
                     <span className="text-[13px] font-medium text-[#1C1E21]">Your trial has ended.</span>
@@ -641,7 +660,10 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                         onDragOver={e => handleDragOver(e, idx)}
                         onDrop={() => handleDrop(idx)}
                         onDragEnd={() => { setDraggedIdx(null); setDragOverIdx(null); }}
-                        onClick={() => { setChatCardTitle(cardTitle); onOpenCardChat?.(cardTitle); }}
+                        onClick={() => {
+                          if (demoMode) { showDemoToast(); return; }
+                          setChatCardTitle(cardTitle); onOpenCardChat?.(cardTitle);
+                        }}
                         style={{
                           opacity: isDragging ? 0.35 : 1,
                           outline: isDragTarget ? `2px solid ${t.accentColor}` : isActiveInChat ? '2px solid #6D5F63' : 'none',
@@ -683,7 +705,10 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                           <>
                             {true && (
                               <CardHoverActions
-                                onOpenInChat={() => { const ttl = item.data.title || 'this card'; setChatCardTitle(ttl); onOpenCardChat?.(ttl); }}
+                                onOpenInChat={() => {
+                                  if (demoMode) { showDemoToast(); return; }
+                                  const ttl = item.data.title || 'this card'; setChatCardTitle(ttl); onOpenCardChat?.(ttl);
+                                }}
                                 onEdit={() => onOpenCard?.(item.data)}
                                 onUnpin={() => removeCardFromRadar(selectedRadarId!, item.data.id)}
                                 onResize={() => toggleCardWidth(item)}
@@ -785,7 +810,10 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                           <>
                             {true && (
                               <CardHoverActions
-                                onOpenInChat={() => { setChatCardTitle(item.title); onOpenCardChat?.(item.title); }}
+                                onOpenInChat={() => {
+                                  if (demoMode) { showDemoToast(); return; }
+                                  setChatCardTitle(item.title); onOpenCardChat?.(item.title);
+                                }}
                                 onEdit={() => onOpenCard?.({ id: item.id, type: 'card', content: {}, timestamp: new Date(), title: item.title })}
                                 onUnpin={() => removePinnedCard(item.id)}
                                 onResize={() => toggleCardWidth(item)}
@@ -1109,6 +1137,20 @@ function RadarEmptyState({ onCTA, accentColor = '#FD5000', theme }: { onCTA?: ()
       >
         Ask Sense to build your Radar
       </button>
+
+      {/* Demo toast */}
+      {demoToast && (
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] px-4 py-2.5 rounded-xl bg-[#1C1E21] text-white text-[13px] font-medium"
+          style={{
+            boxShadow: '0 12px 32px -8px rgba(0,0,0,0.30), 0 4px 12px -4px rgba(0,0,0,0.18)',
+            animation: 'demoToastIn 220ms cubic-bezier(0.23,1,0.32,1) both',
+          }}
+        >
+          {demoToast}
+          <style>{`@keyframes demoToastIn { from { opacity: 0; transform: translate(-50%, 8px) } to { opacity: 1; transform: translate(-50%, 0) } }`}</style>
+        </div>
+      )}
     </div>
   );
 }
