@@ -3,6 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRadar, SavedCard } from './RadarContext';
 import { DSOChartCard } from './DSOChartCard';
+import { AgingBucketChartCard } from './AgingBucketChartCard';
+import { CustomerFeedbackChartCard } from './CustomerFeedbackChartCard';
+import { RevenueTrendChartCard } from './RevenueTrendChartCard';
+import { CategoryRevenueChartCard } from './CategoryRevenueChartCard';
+import { GrowthTrendsChartCard } from './GrowthTrendsChartCard';
 import { RevenueMTDCard, OverdueInvoicesCard, QuoteConversionCard, CrewUtilisationCard, JobsCompletedCard, JobsByPriorityCard, JobsByStatusCard, CompletedJobsByTechCard, MonthlyJobRevenueOrangeCard, MonthlyJobRevenueRedCard, RevenueVsCostCard, JobsTableCard, CustomerGrowthCard, RevenueMoMCard, RevenueTableCard, RenameProps, DateFilter } from './RadarCards';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { RadarThemeContext, RADAR_THEMES, useRadarTheme, RadarThemeConfig } from './RadarThemeContext';
@@ -93,7 +98,17 @@ function getCardChart(card: SavedCard, accent: string) {
 }
 
 function isDSOChart(card: SavedCard) {
-  return card.title?.toLowerCase().includes('dso') || card.title?.toLowerCase().includes('days sales outstanding');
+  const t = card.title?.toLowerCase() || '';
+  return t.includes('dso') || t.includes('days sales outstanding');
+}
+function getDemoChartKind(card: SavedCard): null | 'aging' | 'feedback' | 'revenue-trend' | 'category' | 'growth' {
+  const t = card.title?.toLowerCase() || '';
+  if (t.includes('aging bucket') || (t.includes('overdue') && t.includes('aging'))) return 'aging';
+  if (t.includes('customer feedback')) return 'feedback';
+  if (t.includes('revenue trend') || t.includes('monthly revenue trend')) return 'revenue-trend';
+  if (t.includes('job revenue by category') || t.includes('revenue by category') || t.includes('monthly job revenue')) return 'category';
+  if (t.includes('growth trend')) return 'growth';
+  return null;
 }
 
 // Sense Alert Card — KPI metric tile
@@ -410,7 +425,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
   const isFullWidth = (item: UnifiedCardItem) => {
     const id = getCardId(item);
     if (id in cardWidths) return cardWidths[id];
-    if (item.kind === 'saved') return isDSOChart(item.data);
+    if (item.kind === 'saved') return isDSOChart(item.data) || !!getDemoChartKind(item.data);
     return !!item.fullWidth;
   };
 
@@ -675,30 +690,40 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                                 isFullWidth={isFullWidth(item)}
                               />
                             )}
-                            {isDSOChart(item.data) ? (
-                              <DSOChartCard
-                                footer={
-                                  <span style={{ fontSize: 11, color: t.subtitleColor }}>
-                                    {(() => {
-                                      const end = new Date(item.data.timestamp);
-                                      const start = new Date(end);
-                                      start.setMonth(start.getMonth() - 3);
-                                      const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                                      return `${fmt(start)} – ${fmt(end)}`;
-                                    })()}
-                                  </span>
-                                }
-                                renameProps={{
-                                  customTitle: cardNames[getCardId(item)] || undefined,
-                                  isRenaming: renamingCardId === getCardId(item),
-                                  renameValue: renameInputValue,
-                                  onRenameStart: () => startRename(item),
-                                  onRenameChange: setRenameInputValue,
-                                  onRenameSubmit: () => submitRename(item),
-                                  onRenameCancel: cancelRename,
-                                }}
-                              />
-                            ) : (
+                            {(() => {
+                              const demoKind = getDemoChartKind(item.data);
+                              const renameProps = {
+                                customTitle: cardNames[getCardId(item)] || undefined,
+                                isRenaming: renamingCardId === getCardId(item),
+                                renameValue: renameInputValue,
+                                onRenameStart: () => startRename(item),
+                                onRenameChange: setRenameInputValue,
+                                onRenameSubmit: () => submitRename(item),
+                                onRenameCancel: cancelRename,
+                              };
+                              if (demoKind === 'aging') return <AgingBucketChartCard renameProps={renameProps as any} />;
+                              if (demoKind === 'feedback') return <CustomerFeedbackChartCard renameProps={renameProps as any} />;
+                              if (demoKind === 'revenue-trend') return <RevenueTrendChartCard renameProps={renameProps as any} />;
+                              if (demoKind === 'category') return <CategoryRevenueChartCard renameProps={renameProps as any} />;
+                              if (demoKind === 'growth') return <GrowthTrendsChartCard renameProps={renameProps as any} />;
+                              if (isDSOChart(item.data)) return (
+                                <DSOChartCard
+                                  footer={
+                                    <span style={{ fontSize: 11, color: t.subtitleColor }}>
+                                      {(() => {
+                                        const end = new Date(item.data.timestamp);
+                                        const start = new Date(end);
+                                        start.setMonth(start.getMonth() - 3);
+                                        const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                        return `${fmt(start)} – ${fmt(end)}`;
+                                      })()}
+                                    </span>
+                                  }
+                                  renameProps={renameProps as any}
+                                />
+                              );
+                              return null;
+                            })() || (
                               <div className="group/card" style={{ background: t.cardBg, border: t.cardBorder, borderRadius: t.cardRadius, boxShadow: t.cardShadow, padding: 16 }}>
                                 {(item.data.type === 'chart' || item.data.type === 'widget') && item.data.content?.chartType && (
                                   <div className="mb-3 rounded-lg overflow-hidden" style={{ background: t.pageBg }}>
