@@ -40,6 +40,7 @@ function AppContent() {
   const [pendingRadarCard, setPendingRadarCard] = useState<SavedCard | null>(null);
   const { activePage, setActivePage } = usePublishedPages();
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
+  const demoMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === '1';
   const [currentUser, setCurrentUser] = useState('RG');
   const [showBetaBanner, setShowBetaBanner] = useState(true);
   const [askSenseOpen, setAskSenseOpen] = useState(false);
@@ -181,17 +182,18 @@ function AppContent() {
         activeView={activeView}
         onViewChange={setActiveView}
         currentUser={currentUser}
-        onUserChange={handleUserChange}
+        onUserChange={demoMode ? () => {} : handleUserChange}
         onAskSense={() => setAskSenseOpen((prev) => !prev)}
         askSenseOpen={askSenseOpen}
-        onSettingsClick={() => setSettingsOpen(v => !v)}
-        onManageSubscriptionClick={() => setManageSubOpen(true)}
+        onSettingsClick={demoMode ? () => {} : () => setSettingsOpen(v => !v)}
+        onManageSubscriptionClick={demoMode ? () => {} : () => setManageSubOpen(true)}
+        demoMode={demoMode}
       />
 
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Far Left: Compact App Navigation */}
-        <AppNavigation
+        {!demoMode && <AppNavigation
           onSubItemNavigate={(label) => {
             setActiveSubPage(label);
             setActivePage(null);
@@ -205,7 +207,7 @@ function AppContent() {
             setActiveSubPage(null);
             setActivePage(null);
           }}
-        />
+        />}
 
         {/* Content + Ask Sense Panel */}
         <div className="flex-1 flex overflow-hidden pb-2 pr-2 gap-2">
@@ -465,10 +467,11 @@ function AppContent() {
                       onRadarCardConsumed={handleRadarCardConsumed}
                       sidebarOpen={sidebarOpen}
                       onToggleSidebar={() => setSidebarOpen(o => !o)}
-                      isTrial={currentUser === 'RG'}
+                      isTrial={!demoMode && currentUser === 'RG'}
                       isVp={currentUser === 'VP'}
                       onUpgrade={openUpgrade}
                       onPersonalizationClick={() => setPersonalizationOpen(true)}
+                      demoMode={demoMode}
                     />
                   </div>
                 ) : activeView === 'radar' ? (
@@ -481,7 +484,7 @@ function AppContent() {
                     showBetaBanner={showBetaBanner}
                     onCloseBetaBanner={() => setShowBetaBanner(false)}
                     onOpenCardChat={(title) => setRadarCardChatTitle(title)}
-                    isTrial={currentUser === 'RG'}
+                    isTrial={!demoMode && currentUser === 'RG'}
                     isVp={currentUser === 'VP'}
                     isAU={currentUser === 'AU'}
                     onUpgrade={openUpgrade}
@@ -550,7 +553,7 @@ function AppContent() {
         isOpen={upgradeModalOpen}
         onClose={() => setUpgradeModalOpen(false)}
         isVp={currentUser === 'VP'}
-        isTrial={currentUser === 'RG'}
+        isTrial={!demoMode && currentUser === 'RG'}
         onSubscribe={() => { setUpgradeModalOpen(false); setCheckoutPageOpen(true); }}
       />
       <PersonalizationModal isOpen={personalizationOpen} onClose={() => setPersonalizationOpen(false)} />

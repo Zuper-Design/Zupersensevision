@@ -18,15 +18,12 @@ interface TopNavigationProps {
   askSenseOpen?: boolean;
   onSettingsClick?: () => void;
   onManageSubscriptionClick?: () => void;
+  demoMode?: boolean;
 }
 
-export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange, onAskSense, askSenseOpen = false, onSettingsClick, onManageSubscriptionClick }: TopNavigationProps) {
+export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', onUserChange, onAskSense, askSenseOpen = false, onSettingsClick, onManageSubscriptionClick, demoMode = false }: TopNavigationProps) {
   const [tabs, setTabs] = useState<Tab[]>([
     { id: '1', type: 'job', label: 'Job -#JN-245...', isActive: true },
-    { id: '2', type: 'invoice', label: 'Invoice- #7712...', isActive: false },
-    { id: '3', type: 'invoice', label: 'Invoice- #7712...', isActive: false },
-    { id: '4', type: 'invoice', label: 'Invoice- #7712...', isActive: false },
-    { id: '5', type: 'invoice', label: 'Invoice- #7712...', isActive: false },
   ]);
 
   const handleTabClick = (tabId: string) => {
@@ -116,31 +113,35 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
           <span className="text-[12px] transition-colors duration-150" style={{ fontWeight: 500, color: askSenseOpen || askSenseHovered ? '#1C1E21' : '#374151' }}>Ask Sense</span>
         </button>
 
-        <div className="w-px h-4 bg-[#E6E8EC] mx-0.5" />
+        {!demoMode && <div className="w-px h-4 bg-[#E6E8EC] mx-0.5" />}
 
-        <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
-          <HelpCircle className="w-4.5 h-4.5 text-[#6B7280]" />
-        </button>
-        <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
-          <Search className="w-4.5 h-4.5 text-[#6B7280]" />
-        </button>
-        <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
-          <Bell className="w-4.5 h-4.5 text-[#6B7280]" />
-        </button>
+        {!demoMode && (
+          <>
+            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
+              <HelpCircle className="w-4.5 h-4.5 text-[#6B7280]" />
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
+              <Search className="w-4.5 h-4.5 text-[#6B7280]" />
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
+              <Bell className="w-4.5 h-4.5 text-[#6B7280]" />
+            </button>
 
-        <button
-          onClick={onSettingsClick}
-          className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors"
-        >
-          <Settings className="w-4.5 h-4.5 text-[#6B7280]" />
-        </button>
+            <button
+              onClick={onSettingsClick}
+              className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors"
+            >
+              <Settings className="w-4.5 h-4.5 text-[#6B7280]" />
+            </button>
+          </>
+        )}
 
         {/* User Avatar */}
         <div ref={avatarDropdownRef} className="relative">
           <button
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-white text-[11px] transition-colors ml-2"
+            className={`w-8 h-8 flex items-center justify-center rounded-lg text-white text-[11px] transition-colors ml-2 ${demoMode ? 'cursor-default' : ''}`}
             style={{ background: activeUserData.color, fontWeight: 600 }}
-            onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
+            onClick={() => { if (!demoMode) setAvatarDropdownOpen(!avatarDropdownOpen); }}
           >
             {activeUserData.initials}
           </button>

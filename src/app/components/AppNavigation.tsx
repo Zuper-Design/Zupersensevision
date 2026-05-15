@@ -10,7 +10,7 @@ import {
   FileText, Receipt, DollarSign, CreditCard,
   PieChart, LayoutGrid,
   Workflow, Settings,
-  Globe, Radar, Bot,
+  Globe, Radar, Bot, Wand2,
   type LucideIcon
 } from 'lucide-react';
 import { usePublishedPages } from './PublishedPagesContext';
@@ -32,7 +32,7 @@ interface NavigationItem {
 
 const baseNavigationItems: NavigationItem[] = [
   { icon: null, label: 'Sense', active: true },
-  { icon: Bot, label: 'Agent Builder', active: false },
+  { icon: Wand2, label: 'AI Studio', active: false },
   {
     icon: Briefcase, label: 'Work', active: false,
     subItems: [
@@ -276,7 +276,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
         {navigationItems.map((rawItem, index) => {
           // Override active state for Agent Builder vs Sense based on prop
           const item = (() => {
-            if (agentBuilderActive && rawItem.label === 'Agent Builder') return { ...rawItem, active: true };
+            if (agentBuilderActive && rawItem.label === 'AI Studio') return { ...rawItem, active: true };
             if (agentBuilderActive && rawItem.label === 'Sense') return { ...rawItem, active: false };
             return rawItem;
           })();
@@ -299,7 +299,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
                   if (item.label === 'Sense') {
                     setActivePage(null);
                     onSenseClick?.();
-                  } else if (item.label === 'Agent Builder') {
+                  } else if (item.label === 'AI Studio') {
                     setActivePage(null);
                     onAgentBuilderClick?.();
                   }

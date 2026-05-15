@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, Palette, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, Palette, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon, PieChart } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -24,6 +24,7 @@ interface ChatInterfaceProps {
   onUpgrade?: () => void;
   onSettingsClick?: () => void;
   onPersonalizationClick?: () => void;
+  demoMode?: boolean;
 }
 
 const promptSuggestions = [
@@ -101,7 +102,7 @@ const placeholderTexts = [
   "Show me customer satisfaction scores...",
 ];
 
-export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick, onPersonalizationClick }: ChatInterfaceProps) {
+export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick, onPersonalizationClick, demoMode = false }: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -545,8 +546,8 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         
                         <textarea
                           value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          onFocus={() => setInputFocused(true)}
+                          onChange={(e) => { if (!demoMode) setMessage(e.target.value); }}
+                          onFocus={() => { if (!demoMode) setInputFocused(true); }}
                           onBlur={(e) => {
                             // Only blur if clicking outside the container
                             const currentTarget = e.currentTarget;
@@ -557,14 +558,16 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                             }, 0);
                           }}
                           onKeyDown={(e) => {
+                            if (demoMode) { e.preventDefault(); return; }
                             if (e.key === 'Enter' && !e.shiftKey && message.trim()) {
                               e.preventDefault();
                               handleMessageSubmit(message.trim());
                             }
                           }}
-                          placeholder={isListening ? "Listening..." : ""}
+                          placeholder={demoMode ? "Pick a suggested prompt above" : (isListening ? "Listening..." : "")}
+                          readOnly={demoMode}
                           rows={inputFocused ? 4 : 1}
-                          className="flex-1 bg-transparent text-[#1C1E21] focus:outline-none text-[15px] transition-all duration-500 ease-out resize-none overflow-hidden placeholder:text-[#9CA3AF]"
+                          className={`flex-1 bg-transparent text-[#1C1E21] focus:outline-none text-[15px] transition-all duration-500 ease-out resize-none overflow-hidden placeholder:text-[#9CA3AF] ${demoMode ? 'cursor-not-allowed' : ''}`}
                           style={{ lineHeight: '1.5' }}
                         />
                         
@@ -825,95 +828,40 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                     <div className="flex flex-col items-center">
                       <h2 className="text-base font-medium text-[#1C1E21] mb-3">Suggested prompts</h2>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
-                        <button 
-                          onClick={() => handlePromptClick('Team Performance')}
-                          className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">Team Performance</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">Operations</p>
+                        {(demoMode
+                          ? [
+                              { label: 'Invoices by aging bucket', sub: 'Finance', icon: PieChart },
+                              { label: 'Customer feedback', sub: 'Service', icon: BarChart3 },
+                              { label: 'Month-on-Month revenue trend', sub: 'Finance', icon: TrendingUp },
+                              { label: 'Monthly job revenue by category', sub: 'Operations', icon: BarChart3 },
+                              { label: 'Revenue Analysis', sub: 'Finance', icon: DollarSign },
+                              { label: 'Growth trends', sub: 'Analytics', icon: TrendingUp },
+                            ]
+                          : [
+                              { label: 'Team Performance', sub: 'Operations', icon: Users },
+                              { label: 'Revenue Analysis', sub: 'Finance', icon: DollarSign },
+                              { label: 'Efficiency Metrics', sub: 'Performance', icon: Clock },
+                              { label: 'Growth trends', sub: 'Analytics', icon: TrendingUp },
+                              { label: 'Customer Feedback', sub: 'Service', icon: BarChart3 },
+                              { label: 'Resource Utilization', sub: 'Operations', icon: BarChart3 },
+                            ]
+                        ).map((p) => (
+                          <button
+                            key={p.label}
+                            onClick={() => handlePromptClick(p.label)}
+                            className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1">
+                                <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{p.label}</h3>
+                                <p className="text-[12px] text-[#9CA3AF] font-medium">{p.sub}</p>
+                              </div>
+                              <div className="flex-shrink-0">
+                                <p.icon className="w-[18px] h-[18px] text-[#FF6B35]" />
+                              </div>
                             </div>
-                            <div className="flex-shrink-0">
-                              <Users className="w-[18px] h-[18px] text-[#FF6B35]" />
-                            </div>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          onClick={() => handlePromptClick('Revenue Analysis')}
-                          className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">Revenue Analysis</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">Finance</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <DollarSign className="w-[18px] h-[18px] text-[#FF6B35]" />
-                            </div>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          onClick={() => handlePromptClick('Efficiency Metrics')}
-                          className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">Efficiency Metrics</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">Performance</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <Clock className="w-[18px] h-[18px] text-[#FF6B35]" />
-                            </div>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          onClick={() => handlePromptClick('Growth trends')}
-                          className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">Growth trends</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">Analytics</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <TrendingUp className="w-[18px] h-[18px] text-[#FF6B35]" />
-                            </div>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          onClick={() => handlePromptClick('Customer Feedback')}
-                          className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">Customer Feedback</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">Service</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <BarChart3 className="w-[18px] h-[18px] text-[#FF6B35]" />
-                            </div>
-                          </div>
-                        </button>
-                        
-                        <button 
-                          onClick={() => handlePromptClick('Resource Utilization')}
-                          className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1">
-                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">Resource Utilization</h3>
-                              <p className="text-[12px] text-[#9CA3AF] font-medium">Operations</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <BarChart3 className="w-[18px] h-[18px] text-[#FF6B35]" />
-                            </div>
-                          </div>
-                        </button>
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
