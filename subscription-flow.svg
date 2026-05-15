@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 920" width="1280" height="920" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6B7280"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10B981"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#EF4444"/>
+    </marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="920" fill="#FAFAFB"/>
+
+  <!-- Title -->
+  <text x="40" y="48" font-size="22" font-weight="700" fill="#1C1E21">Sense Subscription Flow</text>
+  <text x="40" y="74" font-size="13" fill="#6B7280">User states, transitions, and valid combinations</text>
+
+  <!-- Legend -->
+  <g transform="translate(900, 32)">
+    <rect x="0" y="0" width="340" height="58" rx="10" fill="#FFFFFF" stroke="#E6E8EC"/>
+    <circle cx="18" cy="22" r="5" fill="#10B981"/>
+    <text x="30" y="26" font-size="11" fill="#1C1E21">Happy path</text>
+    <circle cx="120" cy="22" r="5" fill="#F59E0B"/>
+    <text x="132" y="26" font-size="11" fill="#1C1E21">Warning</text>
+    <circle cx="200" cy="22" r="5" fill="#EF4444"/>
+    <text x="212" y="26" font-size="11" fill="#1C1E21">Error / blocked</text>
+    <circle cx="18" cy="44" r="5" fill="#6B7280"/>
+    <text x="30" y="48" font-size="11" fill="#1C1E21">Neutral transition</text>
+  </g>
+
+  <!-- START -->
+  <g>
+    <circle cx="120" cy="160" r="34" fill="#1C1E21"/>
+    <text x="120" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">SIGN</text>
+    <text x="120" y="172" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">UP</text>
+  </g>
+
+  <!-- TRIAL ACTIVE -->
+  <g>
+    <rect x="240" y="120" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+    <text x="340" y="148" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Trial Active</text>
+    <text x="340" y="168" text-anchor="middle" font-size="11" fill="#6B7280">14 days free · full access</text>
+    <text x="340" y="186" text-anchor="middle" font-size="10" fill="#10B981" font-weight="600">isTrial=true · user=RG</text>
+  </g>
+
+  <!-- TRIAL WARNING -->
+  <g>
+    <rect x="500" y="120" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#F59E0B" stroke-width="2"/>
+    <text x="600" y="148" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Trial Ending Soon</text>
+    <text x="600" y="168" text-anchor="middle" font-size="11" fill="#6B7280">≤10 days left · upgrade prompt</text>
+    <text x="600" y="186" text-anchor="middle" font-size="10" fill="#F59E0B" font-weight="600">isTrial=true · user=AU</text>
+  </g>
+
+  <!-- TRIAL ENDED -->
+  <g>
+    <rect x="760" y="120" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#EF4444" stroke-width="2"/>
+    <text x="860" y="148" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Trial Ended</text>
+    <text x="860" y="168" text-anchor="middle" font-size="11" fill="#6B7280">Read-only · upgrade required</text>
+    <text x="860" y="186" text-anchor="middle" font-size="10" fill="#EF4444" font-weight="600">isVp=true · user=VP</text>
+  </g>
+
+  <!-- CHECKOUT -->
+  <g>
+    <rect x="500" y="320" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#1C1E21" stroke-width="2"/>
+    <text x="600" y="348" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Checkout</text>
+    <text x="600" y="368" text-anchor="middle" font-size="11" fill="#6B7280">Plan + payment entry</text>
+    <text x="600" y="386" text-anchor="middle" font-size="10" fill="#1C1E21" font-weight="600">checkoutPageOpen=true</text>
+  </g>
+
+  <!-- PAYMENT FAILED (during checkout) -->
+  <g>
+    <rect x="240" y="450" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#EF4444" stroke-width="2"/>
+    <text x="340" y="478" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Payment Failed</text>
+    <text x="340" y="498" text-anchor="middle" font-size="11" fill="#6B7280">Card declined · retry / update</text>
+    <text x="340" y="516" text-anchor="middle" font-size="10" fill="#EF4444" font-weight="600">paymentFailed=true</text>
+  </g>
+
+  <!-- PURCHASE SUCCESS -->
+  <g>
+    <rect x="760" y="450" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+    <text x="860" y="478" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Purchase Success</text>
+    <text x="860" y="498" text-anchor="middle" font-size="11" fill="#6B7280">Confirmation screen (transient)</text>
+    <text x="860" y="516" text-anchor="middle" font-size="10" fill="#10B981" font-weight="600">purchaseSuccess=true</text>
+  </g>
+
+  <!-- SUBSCRIBED ACTIVE -->
+  <g>
+    <rect x="500" y="600" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#10B981" stroke-width="2"/>
+    <text x="600" y="628" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Subscribed (Active)</text>
+    <text x="600" y="648" text-anchor="middle" font-size="11" fill="#6B7280">Paid · auto-renews monthly</text>
+    <text x="600" y="666" text-anchor="middle" font-size="10" fill="#10B981" font-weight="600">isSubscribed=true</text>
+  </g>
+
+  <!-- RENEWAL FAILED -->
+  <g>
+    <rect x="240" y="730" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#EF4444" stroke-width="2"/>
+    <text x="340" y="758" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Renewal Failed</text>
+    <text x="340" y="778" text-anchor="middle" font-size="11" fill="#6B7280">Update card · 7-day grace</text>
+    <text x="340" y="796" text-anchor="middle" font-size="10" fill="#EF4444" font-weight="600">isSubscribed + paymentFailed</text>
+  </g>
+
+  <!-- CANCELLED -->
+  <g>
+    <rect x="760" y="730" width="200" height="80" rx="14" fill="#FFFFFF" stroke="#9CA3AF" stroke-width="2"/>
+    <text x="860" y="758" text-anchor="middle" font-size="14" font-weight="700" fill="#1C1E21">Cancelled</text>
+    <text x="860" y="778" text-anchor="middle" font-size="11" fill="#6B7280">Access until period end</text>
+    <text x="860" y="796" text-anchor="middle" font-size="10" fill="#6B7280" font-weight="600">cancelled=true</text>
+  </g>
+
+  <!-- ARROWS -->
+  <!-- Sign up → Trial Active -->
+  <path d="M 154 160 L 240 160" stroke="#6B7280" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="180" y="152" font-size="10" fill="#6B7280">create account</text>
+
+  <!-- Trial Active → Trial Warning -->
+  <path d="M 440 160 L 500 160" stroke="#F59E0B" stroke-width="2" fill="none" marker-end="url(#arrowOrange)"/>
+  <text x="442" y="152" font-size="10" fill="#F59E0B">≤10 days</text>
+
+  <!-- Trial Warning → Trial Ended -->
+  <path d="M 700 160 L 760 160" stroke="#EF4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
+  <text x="704" y="152" font-size="10" fill="#EF4444">expires</text>
+
+  <!-- Trial Active → Checkout -->
+  <path d="M 340 200 L 340 280 L 500 320" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="354" y="262" font-size="10" fill="#10B981">click upgrade</text>
+
+  <!-- Trial Warning → Checkout -->
+  <path d="M 600 200 L 600 320" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="608" y="262" font-size="10" fill="#10B981">click upgrade</text>
+
+  <!-- Trial Ended → Checkout -->
+  <path d="M 860 200 L 860 280 L 700 320" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="780" y="262" font-size="10" fill="#10B981">forced upgrade</text>
+
+  <!-- Checkout → Payment Failed -->
+  <path d="M 500 380 L 440 460" stroke="#EF4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
+  <text x="420" y="430" font-size="10" fill="#EF4444">card declined</text>
+
+  <!-- Checkout → Purchase Success -->
+  <path d="M 700 380 L 760 460" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="708" y="430" font-size="10" fill="#10B981">payment ok</text>
+
+  <!-- Payment Failed → Checkout (retry) -->
+  <path d="M 380 450 Q 460 410 500 380" stroke="#6B7280" stroke-width="2" fill="none" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text x="412" y="404" font-size="10" fill="#6B7280">retry</text>
+
+  <!-- Purchase Success → Subscribed -->
+  <path d="M 800 530 Q 700 580 660 600" stroke="#10B981" stroke-width="2" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="700" y="560" font-size="10" fill="#10B981">activate</text>
+
+  <!-- Subscribed → Renewal Failed -->
+  <path d="M 540 680 Q 460 700 420 730" stroke="#EF4444" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
+  <text x="430" y="708" font-size="10" fill="#EF4444">renewal fails</text>
+
+  <!-- Renewal Failed → Subscribed (recover) -->
+  <path d="M 380 730 Q 470 705 540 680" stroke="#10B981" stroke-width="2" fill="none" stroke-dasharray="4 3" marker-end="url(#arrowGreen)"/>
+  <text x="464" y="688" font-size="10" fill="#10B981">card updated</text>
+
+  <!-- Renewal Failed → Cancelled (grace expired) -->
+  <path d="M 440 770 L 760 770" stroke="#9CA3AF" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="546" y="762" font-size="10" fill="#6B7280">7d grace expires</text>
+
+  <!-- Subscribed → Cancelled -->
+  <path d="M 660 680 Q 740 700 800 730" stroke="#6B7280" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <text x="710" y="710" font-size="10" fill="#6B7280">user cancels</text>
+
+  <!-- Cancelled → Checkout (resubscribe) -->
+  <path d="M 800 730 Q 700 600 660 400" stroke="#6B7280" stroke-width="2" fill="none" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <text x="744" y="555" font-size="10" fill="#6B7280">resubscribe</text>
+
+  <!-- Combinations table -->
+  <g transform="translate(40, 850)">
+    <text x="0" y="0" font-size="13" font-weight="700" fill="#1C1E21">Valid state combinations · only one column is true at a time:</text>
+    <text x="0" y="22" font-size="11" fill="#6B7280">
+      <tspan font-weight="700" fill="#1C1E21">Trial Active (RG)</tspan> isTrial ·
+      <tspan font-weight="700" fill="#1C1E21">Trial Ending (AU)</tspan> isTrial+AU ·
+      <tspan font-weight="700" fill="#1C1E21">Trial Ended (VP)</tspan> isVp ·
+      <tspan font-weight="700" fill="#1C1E21">Subscribed</tspan> isSubscribed ·
+      <tspan font-weight="700" fill="#1C1E21">Past Due</tspan> isSubscribed+paymentFailed ·
+      <tspan font-weight="700" fill="#1C1E21">Cancelled</tspan> cancelled
+    </text>
+  </g>
+</svg>

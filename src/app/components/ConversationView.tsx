@@ -7,6 +7,7 @@ import { ChecklistCard } from './ChecklistCard';
 import { ModernPDFPreview } from './ModernPDFPreview';
 import { ActionConfirmationCard } from './ActionConfirmationCard';
 import { DSOChartCard } from './DSOChartCard';
+import { AgingBucketChartCard } from './AgingBucketChartCard';
 import { CustomerCountCard } from './cards/CustomerCountCard';
 import { CustomersByCityCard } from './cards/CustomersByCityCard';
 import { QuarterlyProfitMarginCard } from './cards/QuarterlyProfitMarginCard';
@@ -79,6 +80,7 @@ interface Message {
     details?: string;
   };
   dsoChart?: boolean;
+  agingBucketChart?: boolean;
   metricsCharts?: 'full' | 'team' | 'revenue' | 'jobs';
   radarCardView?: SavedCard;
   typewriter?: boolean;
@@ -478,12 +480,17 @@ Sarah`
   };
 
   // Detect if the question is about overdue invoices / DSO
+  const detectAgingBucket = (text: string): boolean => {
+    const t = text.toLowerCase();
+    return t.includes('aging bucket') || (t.includes('invoice') && t.includes('aging'));
+  };
   const detectOverdueInvoices = (text: string): boolean => {
     const lowerText = text.toLowerCase();
     return (lowerText.includes('overdue') && lowerText.includes('invoice')) ||
            (lowerText.includes('dso')) ||
            (lowerText.includes('days sales outstanding')) ||
-           (lowerText.includes('overdue') && lowerText.includes('payment'));
+           (lowerText.includes('overdue') && lowerText.includes('payment')) ||
+           detectAgingBucket(lowerText);
   };
 
   // Detect if the question is about building an overdue invoices page
@@ -1297,10 +1304,14 @@ Sarah`
           content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
         }]);
       } else if (detectOverdueInvoices(userMessage)) {
+        const aging = detectAgingBucket(userMessage);
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
-          dsoChart: true
+          content: aging
+            ? "The overdue balance is concentrated in the newer buckets, not the oldest ones. From February through May, **1–30 Days holds $2.01M** and **31–60 Days holds $1.61M**, while **61–90 Days drops to $308K** — so most of the exposure is still relatively fresh and more recoverable if collections move quickly. **Worth checking which customers are driving the 1–60 day balance before it rolls deeper overdue.**"
+            : "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
+          dsoChart: !aging,
+          agingBucketChart: aging,
         }]);
       } else if (detectEmailMessage(userMessage).isEmail || detectEmailMessage(userMessage).isMessage) {
         const emailData = detectEmailMessage(userMessage);
@@ -1476,10 +1487,14 @@ Sarah`
           content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
         }]);
       } else if (detectOverdueInvoices(text)) {
+        const aging = detectAgingBucket(text);
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
-          dsoChart: true
+          content: aging
+            ? "The overdue balance is concentrated in the newer buckets, not the oldest ones. From February through May, **1–30 Days holds $2.01M** and **31–60 Days holds $1.61M**, while **61–90 Days drops to $308K** — so most of the exposure is still relatively fresh and more recoverable if collections move quickly. **Worth checking which customers are driving the 1–60 day balance before it rolls deeper overdue.**"
+            : "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
+          dsoChart: !aging,
+          agingBucketChart: aging,
         }]);
       } else if (detectEmailMessage(text).isEmail || detectEmailMessage(text).isMessage) {
         const emailData = detectEmailMessage(text);
@@ -1597,11 +1612,15 @@ Sarah`
               content: "I've built your overdue invoices page with a list of all past-due invoices on the left and a detailed invoice view on the right. You can click any invoice to see its full details, and use the **Send Email** button to follow up with customers directly."
             };
           } else if (isOverdueInvoices) {
-            // For overdue invoices, show DSO chart
+            // For overdue invoices — aging bucket vs DSO trend
+            const aging = detectAgingBucket(question);
             newMessages[1] = {
               ...newMessages[1],
-              content: "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
-              dsoChart: true
+              content: aging
+                ? "The overdue balance is concentrated in the newer buckets, not the oldest ones. From February through May, **1–30 Days holds $2.01M** and **31–60 Days holds $1.61M**, while **61–90 Days drops to $308K** — so most of the exposure is still relatively fresh and more recoverable if collections move quickly. **Worth checking which customers are driving the 1–60 day balance before it rolls deeper overdue.**"
+                : "I've analyzed your invoice collection data. Your Days Sales Outstanding (DSO) has been trending upward over the past 8 months, now sitting at **72 days** — well above the industry average of 45 days. You currently have **14 overdue invoices** totaling **$127,400** in outstanding receivables.\n\nHere's the DSO trend breakdown:",
+              dsoChart: !aging,
+              agingBucketChart: aging,
             };
           } else if (creationData.isCreation && creationData.moduleType) {
             // For module creation, show confirmation card
@@ -2127,6 +2146,16 @@ Sarah`
                                 <div className="w-full max-w-[420px] min-w-0">
                                   <CustomerCountCard />
                                   <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'New Customers (3 months)', preview: '142 new customers, up 18.4%' })} />
+                                </div>
+                              </div>
+                            </>
+                          ) : msg.agingBucketChart ? (
+                            /* Show Aging Bucket bar chart */
+                            <>
+                              <div className="flex justify-start min-w-0 overflow-hidden">
+                                <div className="w-full max-w-[640px] min-w-0">
+                                  <AgingBucketChartCard />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Overdue Invoices by Aging Bucket', preview: '1–30 Days $2.01M · 31–60 Days $1.61M · 61–90 Days $308K' })} />
                                 </div>
                               </div>
                             </>
