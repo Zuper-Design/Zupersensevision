@@ -564,7 +564,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                               handleMessageSubmit(message.trim());
                             }
                           }}
-                          placeholder={demoMode ? "Pick a suggested prompt above" : (isListening ? "Listening..." : "")}
+                          placeholder={demoMode ? "" : (isListening ? "Listening..." : "")}
                           readOnly={demoMode}
                           rows={inputFocused ? 4 : 1}
                           className={`flex-1 bg-transparent text-[#1C1E21] focus:outline-none text-[15px] transition-all duration-500 ease-out resize-none overflow-hidden placeholder:text-[#9CA3AF] ${demoMode ? 'cursor-not-allowed' : ''}`}
