@@ -488,14 +488,16 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         <span className="text-[12px] font-medium text-[#44403C]">Trial ends in 10 days</span>
                       </button>
                     )}
-                    <button
-                      onClick={onPersonalizationClick}
-                      aria-label="Personalization"
-                      title="Personalization"
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
-                    >
-                      <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
-                    </button>
+                    {!demoMode && (
+                      <button
+                        onClick={onPersonalizationClick}
+                        aria-label="Personalization"
+                        title="Personalization"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
+                      >
+                        <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
+                      </button>
+                    )}
                   </div>
                 </div>
 
