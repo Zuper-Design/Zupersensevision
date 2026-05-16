@@ -118,6 +118,30 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
           <span className="text-[12px] transition-colors duration-150" style={{ fontWeight: 500, color: askSenseOpen || askSenseHovered ? '#1C1E21' : '#374151' }}>Ask Sense</span>
         </button>
 
+        {demoMode && (
+          <>
+            <div className="w-px h-4 bg-[#E6E8EC] mx-1" />
+            <a
+              href="https://www.zuper.co/contact-us"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              className="inline-flex items-center h-8 px-3 rounded-lg text-[12.5px] font-medium text-[#1C1E21] hover:bg-[#F3F4F6] active:scale-[0.97]"
+            >
+              Sign in
+            </a>
+            <a
+              href="https://www.zuper.co/book-a-demo"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold active:scale-[0.97] hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+            >
+              Schedule a demo
+            </a>
+          </>
+        )}
+
         {!demoMode && <div className="w-px h-4 bg-[#E6E8EC] mx-0.5" />}
 
         {!demoMode && (
