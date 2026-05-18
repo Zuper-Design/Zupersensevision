@@ -315,7 +315,7 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
           {/* RIGHT — animated stage */}
           <div
             className="relative overflow-hidden"
-            style={{ background: '#FFFFFF', minHeight: 560 }}
+            style={{ background: '#FFFFFF', minHeight: 680 }}
           >
             <img
               src="/out/MyComp.gif"
