@@ -861,14 +861,8 @@ function AUCreateAgentForm({
     : ['Switch to @mention', 'Run daily at 7am', "I'm good to deploy"];
 
   return (
-    <div
-      className="-mx-8 -mt-8 -mb-12 min-h-[calc(100vh-32px)] p-6 relative overflow-hidden"
-      style={{ background: 'radial-gradient(120% 80% at 0% 0%, #FFF1E5 0%, transparent 55%), radial-gradient(120% 80% at 100% 100%, #EDE9FE 0%, transparent 50%), #FAFAFB' }}
-    >
-      <div
-        className="relative grid grid-cols-1 lg:grid-cols-2 bg-white border border-[#E6E8EC] rounded-2xl overflow-hidden h-[calc(100vh-80px)]"
-        style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px -12px rgba(0,0,0,0.06)' }}
-      >
+    <div className="-mx-8 -mt-8 -mb-12 min-h-[calc(100vh-32px)] bg-white">
+      <div className="relative grid grid-cols-1 lg:grid-cols-2 bg-white h-[calc(100vh-32px)]">
       {/* MIDDLE — chat (Sense-style, no bubbles for AI) */}
       <div className="flex flex-col bg-white border-r border-[#F0F1F3] min-h-0">
         <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0">
