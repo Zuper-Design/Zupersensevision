@@ -45,7 +45,7 @@ function AppContent() {
   const [currentUser, setCurrentUser] = useState('RG');
   const [announcementOpen, setAnnouncementOpen] = useState(() => {
     if (typeof window === 'undefined') return false;
-    if (new URLSearchParams(window.location.search).get('demo') !== '1') return false;
+    if (new URLSearchParams(window.location.search).get('demo') === '1') return false;
     return sessionStorage.getItem('zsv_announce_seen') !== '1';
   });
   const closeAnnouncement = () => {
