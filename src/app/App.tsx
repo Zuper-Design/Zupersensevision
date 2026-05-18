@@ -6,6 +6,7 @@ import { CheckoutModal } from './components/CheckoutModal';
 import { motion, AnimatePresence } from 'motion/react';
 import { AppNavigation } from './components/AppNavigation';
 import { ChatInterface } from './components/ChatInterface';
+import { FeatureAnnouncementModal } from './components/FeatureAnnouncementModal';
 import { VoiceListeningIndicator } from './components/VoiceListeningIndicator';
 import { ExpandedChatView } from './components/ExpandedChatView';
 import { ReportBugModal } from './components/ReportBugModal';
@@ -42,6 +43,15 @@ function AppContent() {
   const [activeSubPage, setActiveSubPage] = useState<string | null>(null);
   const demoMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === '1';
   const [currentUser, setCurrentUser] = useState('RG');
+  const [announcementOpen, setAnnouncementOpen] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (new URLSearchParams(window.location.search).get('demo') !== '1') return false;
+    return sessionStorage.getItem('zsv_announce_seen') !== '1';
+  });
+  const closeAnnouncement = () => {
+    setAnnouncementOpen(false);
+    try { sessionStorage.setItem('zsv_announce_seen', '1'); } catch {}
+  };
   const [showBetaBanner, setShowBetaBanner] = useState(true);
   const [askSenseOpen, setAskSenseOpen] = useState(false);
   const [radarCardChatTitle, setRadarCardChatTitle] = useState<string | null>(null);
@@ -177,6 +187,12 @@ function AppContent() {
 
   return (
     <div className="w-full h-screen flex flex-col bg-[#F8F2EC] relative">
+      <FeatureAnnouncementModal
+        open={announcementOpen}
+        onClose={closeAnnouncement}
+        onTrySense={closeAnnouncement}
+        onExploreMore={() => window.open('https://www.zuper.co/book-a-demo', '_blank', 'noopener,noreferrer')}
+      />
 {/* Top Navigation with Canvas/Chat Options */}
       <TopNavigation
         activeView={activeView}
