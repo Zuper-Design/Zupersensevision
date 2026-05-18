@@ -140,7 +140,7 @@ function GridCard({
 }) {
   return (
     <div
-      className="relative bg-white rounded-2xl border border-[#EDE5DA] p-4 aspect-square flex flex-col"
+      className="relative bg-white rounded-2xl border border-[#EBECEF] p-4 aspect-square flex flex-col"
       style={{
         boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20)',
         ...(ringAnim ? { animation: `${ringAnim} 10000ms cubic-bezier(0.23,1,0.32,1) infinite` } : {}),
@@ -154,7 +154,7 @@ function GridCard({
           {icon}
         </div>
         <button
-          className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#F8F4EE] text-[#9C5340]"
+          className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#F3F4F6] text-[#4B5563]"
           style={addBtnAnim ? { animation: `${addBtnAnim} 10000ms cubic-bezier(0.23,1,0.32,1) infinite` } : undefined}
           aria-label="Add to Radar"
         >
@@ -200,12 +200,12 @@ function GridCard({
 
 function EmptySlot() {
   return (
-    <div className="aspect-square rounded-2xl border border-dashed border-[#E6CDB1] bg-[#FFF8EF]/60 flex items-center justify-center">
+    <div className="aspect-square rounded-2xl border border-dashed border-[#E5E7EB] bg-white/50 flex items-center justify-center">
       <div className="text-center">
-        <div className="w-7 h-7 rounded-lg border border-dashed border-[#E6CDB1] flex items-center justify-center mx-auto mb-1.5 bg-white/40">
-          <Plus className="w-3.5 h-3.5 text-[#C9A37D]" />
+        <div className="w-7 h-7 rounded-lg border border-dashed border-[#E5E7EB] flex items-center justify-center mx-auto mb-1.5 bg-white/60">
+          <Plus className="w-3.5 h-3.5 text-[#9CA3AF]" />
         </div>
-        <span className="text-[9.5px] font-semibold tracking-[0.06em] text-[#C9A37D]">Pin insight</span>
+        <span className="text-[9.5px] font-semibold tracking-[0.06em] text-[#9CA3AF]">Pin insight</span>
       </div>
     </div>
   );
@@ -313,15 +313,53 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
           {/* RIGHT — animated stage */}
           <div
             className="relative overflow-hidden"
-            style={{ background: '#FFF1E5', minHeight: 620 }}
+            style={{ background: '#FFFFFF', minHeight: 620 }}
           >
+            {/* Subtle accent gradient blobs */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: -120,
+                right: -80,
+                width: 380,
+                height: 380,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(253,80,0,0.14) 0%, rgba(253,80,0,0) 65%)',
+                filter: 'blur(20px)',
+              }}
+            />
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                bottom: -140,
+                left: -100,
+                width: 420,
+                height: 420,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(255,128,67,0.10) 0%, rgba(255,128,67,0) 65%)',
+                filter: 'blur(24px)',
+              }}
+            />
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: '38%',
+                left: '52%',
+                width: 260,
+                height: 260,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(16,185,129,0.06) 0%, rgba(16,185,129,0) 70%)',
+                filter: 'blur(28px)',
+              }}
+            />
+
             <div className="relative w-full h-[620px]">
               {/* ============ SCENE 1: Prompt ============ */}
               <div
                 className="absolute inset-0 px-8 py-10 flex flex-col justify-center"
                 style={{ animation: 'fa_scene1 10000ms cubic-bezier(0.23,1,0.32,1) infinite' }}
               >
-                <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9C5340] mb-4 block">
+                <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9CA3AF] mb-4 block">
                   Try a prompt
                 </span>
 
@@ -336,7 +374,7 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
                       <SenseLogo size={11} animated={false} />
                     </div>
                     <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#1C1E21]">Sense</span>
-                    <span className="ml-auto inline-flex items-center gap-1.5 text-[10.5px] font-medium text-[#9C5340]">
+                    <span className="ml-auto inline-flex items-center gap-1.5 text-[10.5px] font-medium text-[#6B7280]">
                       <span className="relative flex w-1.5 h-1.5">
                         <span className="absolute inset-0 rounded-full bg-[#10B981] opacity-60" style={{ animation: 'fa_ping 1.8s cubic-bezier(0,0,0.2,1) infinite' }} />
                         <span className="relative w-1.5 h-1.5 rounded-full bg-[#10B981]" />
@@ -381,7 +419,7 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
                     </div>
                     <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#1C1E21]">Sense</span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-[#9C5340]">
+                  <div className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-[#6B7280]">
                     <span style={{ animation: 'fa_thinking 1.4s cubic-bezier(0.4,0,0.6,1) infinite' }}>•</span>
                     <span style={{ animation: 'fa_thinking 1.4s cubic-bezier(0.4,0,0.6,1) infinite 0.2s' }}>•</span>
                     <span style={{ animation: 'fa_thinking 1.4s cubic-bezier(0.4,0,0.6,1) infinite 0.4s' }}>•</span>
@@ -446,7 +484,7 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
                 style={{ animation: 'fa_scene3 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9C5340]">
+                  <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9CA3AF]">
                     Radar dashboard
                   </span>
                   <span className="inline-flex items-center gap-1 text-[10.5px] font-medium text-[#10B981]">
@@ -489,9 +527,9 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
 
               {/* ============ Scene progress dots ============ */}
               <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#9C5340]" style={{ animation: 'fa_dot1 10000ms linear infinite', opacity: 0.25 }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#9C5340]" style={{ animation: 'fa_dot2 10000ms linear infinite', opacity: 0.25 }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#9C5340]" style={{ animation: 'fa_dot3 10000ms linear infinite', opacity: 0.25 }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1C1E21]" style={{ animation: 'fa_dot1 10000ms linear infinite', opacity: 0.25 }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1C1E21]" style={{ animation: 'fa_dot2 10000ms linear infinite', opacity: 0.25 }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1C1E21]" style={{ animation: 'fa_dot3 10000ms linear infinite', opacity: 0.25 }} />
               </div>
             </div>
           </div>
@@ -596,18 +634,18 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
 
           /* Card 1 ring highlight on pin */
           @keyframes fa_cardRing {
-            0%, 56%  { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20); border-color: #EDE5DA; }
+            0%, 56%  { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20); border-color: #EBECEF; }
             60%      { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20), 0 0 0 3px rgba(16,185,129,0.20); border-color: #10B981; }
             66%      { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20), 0 0 0 0 rgba(16,185,129,0); border-color: #10B981; }
-            70%      { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20); border-color: #EDE5DA; }
-            100%     { border-color: #EDE5DA; }
+            70%      { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20); border-color: #EBECEF; }
+            100%     { border-color: #EBECEF; }
           }
           @keyframes fa_addBtnPress {
-            0%, 56% { transform: scale(1); background: #F8F4EE; color: #9C5340; }
-            58%     { transform: scale(0.88); background: #FFE0CC; }
+            0%, 56% { transform: scale(1); background: #F3F4F6; color: #4B5563; }
+            58%     { transform: scale(0.88); background: #E5E7EB; }
             61%     { transform: scale(1); background: #10B981; color: #fff; }
             66%     { transform: scale(1); background: #10B981; color: #fff; }
-            100%    { transform: scale(1); background: #F8F4EE; color: #9C5340; }
+            100%    { transform: scale(1); background: #F3F4F6; color: #4B5563; }
           }
           @keyframes fa_pinnedBadge {
             0%, 60%  { opacity: 0; transform: translateY(4px) scale(0.92); }
