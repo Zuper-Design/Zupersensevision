@@ -253,23 +253,23 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
           {/* LEFT */}
-          <div className="px-12 py-14 flex flex-col justify-center">
-            <div className="inline-flex items-center gap-2 mb-8 self-start">
+          <div className="px-12 py-12 flex flex-col justify-center">
+            <div className="inline-flex items-center gap-2 mb-6 self-start">
               <SenseLogo size={16} animated={false} />
               <span className="text-[11px] font-semibold tracking-[0.20em] uppercase text-[#9CA3AF]">
                 Introducing Zuper Sense
               </span>
             </div>
 
-            <h2 className="text-[40px] font-semibold tracking-[-0.012em] leading-[1.05] text-[#1C1E21] mb-6">
+            <h2 className="text-[36px] font-semibold tracking-[-0.012em] leading-[1.05] text-[#1C1E21] mb-5">
               The intelligent command center for your roofing business.
             </h2>
 
-            <p className="text-[15.5px] text-[#6B7280] leading-[1.55] mb-8 max-w-[480px]">
+            <p className="text-[15px] text-[#6B7280] leading-[1.55] mb-7 max-w-[480px]">
               Sense watches your business so you don't have to, catches what's about to break, and tells you what to do next.
             </p>
 
-            <div className="flex flex-col gap-4 mb-10 max-w-[460px]">
+            <div className="flex flex-col gap-3.5 mb-8 max-w-[460px]">
               {FEATURES.map((f) => {
                 const Icon = f.icon;
                 return (
@@ -315,7 +315,7 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
           {/* RIGHT — animated stage */}
           <div
             className="relative overflow-hidden"
-            style={{ background: '#FFFFFF', minHeight: 620 }}
+            style={{ background: '#FFFFFF', minHeight: 560 }}
           >
             {/* Subtle accent gradient blobs */}
             <div
@@ -355,14 +355,14 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
               }}
             />
 
-            <div className="relative w-full h-[620px]">
+            <div className="relative w-full h-[560px]">
               <img
                 src="/out/MyComp.gif"
                 alt="Sense in action"
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{
                   animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both',
-                  objectPosition: 'center',
+                  objectPosition: 'center top',
                 }}
               />
             </div>
