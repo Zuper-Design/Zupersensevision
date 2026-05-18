@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Users, Check, Bell, Target } from 'lucide-react';
+import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Users, Check, MessageCircle, BarChart3, Activity } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
 
 interface FeatureAnnouncementModalProps {
@@ -11,19 +11,19 @@ interface FeatureAnnouncementModalProps {
 
 const FEATURES = [
   {
-    icon: Bell,
-    title: 'Catches what’s about to break',
-    desc: 'Sense watches your data and flags problems early—before they become incidents.',
+    icon: MessageCircle,
+    title: 'Ask',
+    desc: 'Type a question in plain English. Sense maps it to your data and returns a chart in seconds.',
   },
   {
-    icon: Sparkles,
-    title: 'Answers in plain English',
-    desc: 'Ask anything. Get a chart back in seconds, not a 30-minute spreadsheet detour.',
+    icon: BarChart3,
+    title: 'Analyze',
+    desc: 'Sense slices revenue, jobs, crews, and customers to surface the patterns that move the business.',
   },
   {
-    icon: Target,
-    title: 'Your insights, on demand',
-    desc: 'Pin any answer to Radar and check the numbers at a glance, anytime.',
+    icon: Activity,
+    title: 'Monitor',
+    desc: 'Pin insights to Radar and Sense keeps watch—pinging you the moment the numbers shift.',
   },
 ];
 
