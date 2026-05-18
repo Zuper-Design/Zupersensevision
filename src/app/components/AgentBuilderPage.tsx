@@ -3022,10 +3022,11 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 }).length;
                 if (len > 0) setCatalogIdx((i) => (i - 1 + len) % len);
               }}
-              className="w-9 h-9 rounded-lg bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/30 flex items-center justify-center text-[#1C1E21] transition"
+              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              className="w-11 h-11 rounded-full bg-[#1C1E21] hover:bg-black text-white flex items-center justify-center active:scale-[0.96] hover:shadow-[0_8px_22px_-6px_rgba(0,0,0,0.30)]"
               aria-label="Previous"
             >
-              <ChevronLeft className="w-[15px] h-[15px]" />
+              <ChevronLeft className="w-[18px] h-[18px]" strokeWidth={2.2} />
             </button>
             <button
               onClick={() => {
@@ -3040,10 +3041,11 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 }).length;
                 if (len > 0) setCatalogIdx((i) => (i + 1) % len);
               }}
-              className="w-9 h-9 rounded-lg bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/30 flex items-center justify-center text-[#1C1E21] transition"
+              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              className="w-11 h-11 rounded-full bg-[#1C1E21] hover:bg-black text-white flex items-center justify-center active:scale-[0.96] hover:shadow-[0_8px_22px_-6px_rgba(0,0,0,0.30)]"
               aria-label="Next"
             >
-              <ChevronRight className="w-[15px] h-[15px]" />
+              <ChevronRight className="w-[18px] h-[18px]" strokeWidth={2.2} />
             </button>
           </div>
         </div>
