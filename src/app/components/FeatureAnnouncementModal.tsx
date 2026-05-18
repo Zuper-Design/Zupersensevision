@@ -355,12 +355,15 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
               }}
             />
 
-            <div className="relative w-full h-[620px] flex items-center justify-center p-6">
+            <div className="relative w-full h-[620px]">
               <img
                 src="/out/MyComp.gif"
                 alt="Sense in action"
-                className="relative z-10 max-w-full max-h-full object-contain"
-                style={{ animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both' }}
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{
+                  animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both',
+                  objectPosition: 'center',
+                }}
               />
             </div>
           </div>
