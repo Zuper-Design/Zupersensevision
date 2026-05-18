@@ -23,7 +23,7 @@ const FEATURES = [
   {
     icon: Activity,
     title: 'Monitor',
-    desc: 'Pin insights to Radar and Sense keeps watch—pinging you the moment the numbers shift.',
+    desc: 'Sense keeps a steady eye on your business and surfaces the moves that make it better.',
   },
 ];
 
