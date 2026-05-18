@@ -317,55 +317,15 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
             className="relative overflow-hidden"
             style={{ background: '#FFFFFF', minHeight: 560 }}
           >
-            {/* Subtle accent gradient blobs */}
-            <div
-              className="absolute pointer-events-none"
+            <img
+              src="/out/MyComp.gif"
+              alt="Sense in action"
+              className="absolute inset-0 w-full h-full object-cover"
               style={{
-                top: -120,
-                right: -80,
-                width: 380,
-                height: 380,
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(253,80,0,0.14) 0%, rgba(253,80,0,0) 65%)',
-                filter: 'blur(20px)',
+                animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both',
+                objectPosition: 'center top',
               }}
             />
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                bottom: -140,
-                left: -100,
-                width: 420,
-                height: 420,
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(255,128,67,0.10) 0%, rgba(255,128,67,0) 65%)',
-                filter: 'blur(24px)',
-              }}
-            />
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                top: '38%',
-                left: '52%',
-                width: 260,
-                height: 260,
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(16,185,129,0.06) 0%, rgba(16,185,129,0) 70%)',
-                filter: 'blur(28px)',
-              }}
-            />
-
-            <div className="relative w-full h-[560px]">
-              <img
-                src="/out/MyComp.gif"
-                alt="Sense in action"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{
-                  animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both',
-                  objectPosition: 'center top',
-                }}
-              />
-            </div>
           </div>
         </div>
 
