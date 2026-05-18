@@ -861,8 +861,8 @@ function AUCreateAgentForm({
     : ['Switch to @mention', 'Run daily at 7am', "I'm good to deploy"];
 
   return (
-    <div className="-mx-8 -mt-8 -mb-12 min-h-[calc(100vh-32px)] bg-white">
-      <div className="relative grid grid-cols-1 lg:grid-cols-2 bg-white h-[calc(100vh-32px)]">
+    <div className="-mx-8 -mt-8 -mb-12 h-[calc(100vh-32px)] bg-white overflow-hidden">
+      <div className="relative grid grid-cols-1 lg:grid-cols-2 bg-white h-full">
       {/* MIDDLE — chat (Sense-style, no bubbles for AI) */}
       <div className="flex flex-col bg-white border-r border-[#F0F1F3] min-h-0">
         <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0">
@@ -880,7 +880,7 @@ function AUCreateAgentForm({
           <span className="text-[12px] text-[#9CA3AF]">{isLive ? 'Tweak anything on the right' : `Step ${Math.min(completed + 1, steps.length)} of ${steps.length}`}</span>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-8 py-8">
+        <div className="flex-1 min-h-0 px-8 py-8 flex flex-col">
           <div className="max-w-[720px] mx-auto space-y-7">
             {messages.map((m, i) => (
               m.from === 'agent' ? (
