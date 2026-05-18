@@ -355,190 +355,23 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
               }}
             />
 
-            <div className="relative w-full h-[620px]">
-              {/* ============ SCENE 1: Prompt ============ */}
-              <div
-                className="absolute inset-0 px-8 py-10 flex flex-col justify-center"
-                style={{ animation: 'fa_scene1 10000ms cubic-bezier(0.23,1,0.32,1) infinite' }}
-              >
-                <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9CA3AF] mb-4 block">
-                  Try a prompt
-                </span>
-
-                <div
-                  className="relative bg-white rounded-2xl border border-white px-5 py-5"
-                  style={{
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 14px 32px -18px rgba(253,80,0,0.30)',
-                  }}
-                >
-                  <div className="flex items-center gap-2 mb-3.5">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}>
-                      <SenseLogo size={11} animated={false} />
-                    </div>
-                    <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#1C1E21]">Sense</span>
-                    <span className="ml-auto inline-flex items-center gap-1.5 text-[10.5px] font-medium text-[#6B7280]">
-                      <span className="relative flex w-1.5 h-1.5">
-                        <span className="absolute inset-0 rounded-full bg-[#10B981] opacity-60" style={{ animation: 'fa_ping 1.8s cubic-bezier(0,0,0.2,1) infinite' }} />
-                        <span className="relative w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                      </span>
-                      Live
-                    </span>
-                  </div>
-                  <p className="text-[15px] text-[#1C1E21] leading-relaxed mb-6">
-                    How much cash is stuck in unpaid invoices?
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <button className="text-[12.5px] font-medium text-[#9CA3AF]">Cancel</button>
-                    <div className="flex items-center gap-2">
-                      <button className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-[#E6E8EC] text-[#4B5563]">
-                        <Mic className="w-[12px] h-[12px]" />
-                      </button>
-                      <button
-                        className="inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12.5px] font-semibold"
-                        style={{
-                          background: 'linear-gradient(135deg, #FF8043 0%, #FD5000 100%)',
-                          animation: 'fa_generatePress 10000ms cubic-bezier(0.23,1,0.32,1) infinite',
-                          transformOrigin: 'center',
-                        }}
-                      >
-                        Generate
-                        <ArrowRight className="w-[12px] h-[12px]" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* ============ SCENE 2: Generating (2×2 grid) ============ */}
-              <div
-                className="absolute inset-0 px-8 py-10"
-                style={{ animation: 'fa_scene2 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}>
-                      <SenseLogo size={11} animated={false} />
-                    </div>
-                    <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#1C1E21]">Sense</span>
-                  </div>
-                  <div className="inline-flex items-center gap-1.5 text-[10.5px] font-medium text-[#6B7280]">
-                    <span style={{ animation: 'fa_thinking 1.4s cubic-bezier(0.4,0,0.6,1) infinite' }}>•</span>
-                    <span style={{ animation: 'fa_thinking 1.4s cubic-bezier(0.4,0,0.6,1) infinite 0.2s' }}>•</span>
-                    <span style={{ animation: 'fa_thinking 1.4s cubic-bezier(0.4,0,0.6,1) infinite 0.4s' }}>•</span>
-                    <span className="ml-1">Generating</span>
-                  </div>
-                </div>
-
-                <p className="text-[12.5px] text-[#6B7280] leading-relaxed mb-4">
-                  Here are 4 insights based on your data.
-                </p>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div style={{ animation: 'fa_streamCard1 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
-                    <GridCard
-                      icon={<TrendingUp className="w-3.5 h-3.5" strokeWidth={2.4} />}
-                      label="Unpaid invoices"
-                      value="$24.5K"
-                      delta="+8%"
-                      deltaDir="up"
-                      chart={<ChartBars />}
-                      addBtnAnim="fa_addBtnPress"
-                      ringAnim="fa_cardRing"
-                      pinnedBadgeAnim="fa_pinnedBadge"
-                    />
-                  </div>
-                  <div style={{ animation: 'fa_streamCard2 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
-                    <GridCard
-                      icon={<Star className="w-3.5 h-3.5" fill="currentColor" />}
-                      label="Customer feedback"
-                      value="86%"
-                      delta="+4pp"
-                      deltaDir="up"
-                      chart={<ChartSentiment />}
-                    />
-                  </div>
-                  <div style={{ animation: 'fa_streamCard3 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
-                    <GridCard
-                      icon={<Sparkles className="w-3.5 h-3.5" />}
-                      label="Revenue MoM"
-                      value="$148K"
-                      delta="+12%"
-                      deltaDir="up"
-                      chart={<ChartLine />}
-                    />
-                  </div>
-                  <div style={{ animation: 'fa_streamCard4 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
-                    <GridCard
-                      icon={<Users className="w-3.5 h-3.5" strokeWidth={2.4} />}
-                      label="Crew utilization"
-                      value="92%"
-                      delta="+3pp"
-                      deltaDir="up"
-                      chart={<ChartProgress value={92} />}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* ============ SCENE 3: Pinned dashboard (2×2 grid) ============ */}
-              <div
-                className="absolute inset-0 px-8 py-10"
-                style={{ animation: 'fa_scene3 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9CA3AF]">
-                    Radar dashboard
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[10.5px] font-medium text-[#10B981]">
-                    <Check className="w-3 h-3" strokeWidth={3} />
-                    Pinned
-                  </span>
-                </div>
-
-                <p className="text-[12.5px] text-[#6B7280] leading-relaxed mb-4">
-                  Insights you pin show up here automatically.
-                </p>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div style={{ animation: 'fa_pinnedLand 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0, transformOrigin: 'center top' }}>
-                    <GridCard
-                      icon={<TrendingUp className="w-3.5 h-3.5" strokeWidth={2.4} />}
-                      label="Unpaid invoices"
-                      value="$24.5K"
-                      delta="+8%"
-                      deltaDir="up"
-                      chart={<ChartBars />}
-                    />
-                  </div>
-                  <EmptySlot />
-                  <EmptySlot />
-                  <EmptySlot />
-                </div>
-              </div>
-
-              {/* ============ Cursor ============ */}
-              <div
-                className="absolute z-30 pointer-events-none top-0 left-0"
-                style={{
-                  animation: 'fa_cursor 10000ms cubic-bezier(0.5,0.05,0.2,1) infinite',
-                  opacity: 0,
-                }}
-              >
-                <CursorIcon />
-              </div>
-
-              {/* ============ Scene progress dots ============ */}
-              <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1C1E21]" style={{ animation: 'fa_dot1 10000ms linear infinite', opacity: 0.25 }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1C1E21]" style={{ animation: 'fa_dot2 10000ms linear infinite', opacity: 0.25 }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1C1E21]" style={{ animation: 'fa_dot3 10000ms linear infinite', opacity: 0.25 }} />
-              </div>
+            <div className="relative w-full h-[620px] flex items-center justify-center p-6">
+              <img
+                src="/out/MyComp.gif"
+                alt="Sense in action"
+                className="relative z-10 max-w-full max-h-full object-contain"
+                style={{ animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both' }}
+              />
             </div>
           </div>
         </div>
 
         <style>{`
           @keyframes fa_backdrop { from { opacity: 0 } to { opacity: 1 } }
+          @keyframes fa_gifIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to   { opacity: 1; transform: scale(1); }
+          }
           @keyframes fa_modalIn {
             from { opacity: 0; transform: scale(0.96) translateY(8px) }
             to   { opacity: 1; transform: scale(1) translateY(0) }
