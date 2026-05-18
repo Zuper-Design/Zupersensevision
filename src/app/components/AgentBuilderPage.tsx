@@ -243,7 +243,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
           />
         </motion.main>
       ) : (
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto relative">
         <div className="px-8 pt-8 pb-12">
           {section === 'agents' ? (
             isVP ? <VPAgentsView onOpenCreate={() => setVpCreateOpen(true)} /> : isAU ? <AUMyAgentsView onEnterMarketplace={() => setSection('catalog')} onOpenAgent={openAgent} customAgents={customAgents} onAddCustomAgent={addCustomAgent} /> : <MyAgentsView />
@@ -861,7 +861,7 @@ function AUCreateAgentForm({
     : ['Switch to @mention', 'Run daily at 7am', "I'm good to deploy"];
 
   return (
-    <div className="-mx-8 -mt-8 -mb-12 h-[calc(100vh-32px)] bg-white overflow-hidden">
+    <div className="absolute inset-0 bg-white overflow-hidden">
       <div className="relative grid grid-cols-1 lg:grid-cols-2 bg-white h-full">
       {/* MIDDLE — chat (Sense-style, no bubbles for AI) */}
       <div className="flex flex-col bg-white border-r border-[#F0F1F3] min-h-0">
