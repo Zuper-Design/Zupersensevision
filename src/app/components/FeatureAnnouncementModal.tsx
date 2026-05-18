@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Check } from 'lucide-react';
+import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Users, Check } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
 
 interface FeatureAnnouncementModalProps {
@@ -25,17 +25,19 @@ function CursorIcon() {
   );
 }
 
-function MiniBars({ accent = '#FD5000' }: { accent?: string }) {
-  const bars = [40, 70, 92, 55];
+/* ====== Mini charts (sized for square cards) ====== */
+
+function ChartBars() {
+  const bars = [40, 65, 88, 52, 78];
   return (
-    <div className="flex items-end gap-[3px] h-[28px] w-[58px]">
+    <div className="flex items-end gap-[3px] h-[34px] w-full">
       {bars.map((h, i) => (
         <div
           key={i}
-          className="flex-1 rounded-sm"
+          className="flex-1 rounded-[2px]"
           style={{
             height: `${h}%`,
-            background: i === 2 ? accent : '#FFD9C2',
+            background: i === 2 ? 'linear-gradient(180deg,#FF8043,#FD5000)' : '#FFD9C2',
           }}
         />
       ))}
@@ -43,82 +45,152 @@ function MiniBars({ accent = '#FD5000' }: { accent?: string }) {
   );
 }
 
-function MiniDonut() {
+function ChartSentiment() {
   return (
-    <div className="relative w-[30px] h-[30px]">
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{ background: 'conic-gradient(#FD5000 0% 86%, #FFE0CC 86% 100%)' }}
-      />
-      <div className="absolute inset-[5px] rounded-full bg-white" />
+    <div className="w-full">
+      <div className="flex h-[6px] rounded-full overflow-hidden">
+        <div className="h-full" style={{ width: '86%', background: 'linear-gradient(90deg,#FF8043,#FD5000)' }} />
+        <div className="h-full" style={{ width: '10%', background: '#FFD9C2' }} />
+        <div className="h-full" style={{ width: '4%', background: '#FFE9D6' }} />
+      </div>
+      <div className="flex items-center gap-3 mt-2">
+        <span className="inline-flex items-center gap-1 text-[9.5px] text-[#6B7280]">
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#FD5000' }} />Positive
+        </span>
+        <span className="inline-flex items-center gap-1 text-[9.5px] text-[#9CA3AF]">
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#FFD9C2' }} />Neutral
+        </span>
+      </div>
     </div>
   );
 }
 
-function MiniLine() {
+function ChartLine() {
   return (
-    <svg viewBox="0 0 100 32" className="w-[58px] h-[28px]">
+    <svg viewBox="0 0 100 34" preserveAspectRatio="none" className="w-full h-[34px]">
       <defs>
-        <linearGradient id="ml_g2" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="ch_line_g" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#FD5000" stopOpacity="0.22" />
           <stop offset="100%" stopColor="#FD5000" stopOpacity="0" />
         </linearGradient>
       </defs>
-      <path d="M0 26 L18 22 L34 18 L50 20 L66 10 L82 12 L100 4" fill="none" stroke="#FD5000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M0 26 L18 22 L34 18 L50 20 L66 10 L82 12 L100 4 L100 32 L0 32 Z" fill="url(#ml_g2)" />
+      <path d="M0 28 L14 24 L28 18 L42 22 L56 12 L70 16 L84 8 L100 4" fill="none" stroke="#FD5000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      <path d="M0 28 L14 24 L28 18 L42 22 L56 12 L70 16 L84 8 L100 4 L100 34 L0 34 Z" fill="url(#ch_line_g)" />
+      <circle cx="100" cy="4" r="2.4" fill="#FD5000" stroke="#fff" strokeWidth="1.2" />
     </svg>
   );
 }
 
-function StreamCard({
+function ChartProgress({ value = 92 }: { value?: number }) {
+  return (
+    <div className="w-full">
+      <div className="relative h-1.5 w-full rounded-full bg-[#FFE9D6] overflow-hidden">
+        <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${value}%`, background: 'linear-gradient(90deg,#FF8043,#FD5000)' }} />
+      </div>
+      <div className="flex items-center justify-between mt-2 text-[9.5px] text-[#6B7280]">
+        <span>14 crews active</span>
+        <span className="text-[#1C1E21] font-semibold">{value}%</span>
+      </div>
+    </div>
+  );
+}
+
+/* ====== Grid Card ====== */
+
+function GridCard({
   icon,
-  title,
-  meta,
+  label,
+  value,
   chart,
+  delta,
+  deltaDir = 'up',
   addBtnAnim,
-  showPinned,
+  ringAnim,
+  pinnedBadgeAnim,
+  iconBg = '#FFF1E5',
+  iconColor = '#FD5000',
 }: {
   icon: React.ReactNode;
-  title: string;
-  meta: string;
+  label: string;
+  value: string;
   chart: React.ReactNode;
+  delta?: string;
+  deltaDir?: 'up' | 'down';
   addBtnAnim?: string;
-  showPinned?: string;
+  ringAnim?: string;
+  pinnedBadgeAnim?: string;
+  iconBg?: string;
+  iconColor?: string;
 }) {
   return (
     <div
-      className="relative bg-white rounded-xl border border-[#F0E4D8] px-3.5 py-3 flex items-center gap-3"
+      className="relative bg-white rounded-2xl border border-[#EDE5DA] p-4 aspect-square flex flex-col"
       style={{
-        boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 8px 20px -14px rgba(253,80,0,0.20)',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20)',
+        ...(ringAnim ? { animation: `${ringAnim} 10000ms cubic-bezier(0.23,1,0.32,1) infinite` } : {}),
       }}
     >
-      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#FFF1E5', color: '#FD5000' }}>
-        {icon}
+      <div className="flex items-start justify-between">
+        <div
+          className="w-7 h-7 rounded-lg flex items-center justify-center"
+          style={{ background: iconBg, color: iconColor }}
+        >
+          {icon}
+        </div>
+        <button
+          className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#F8F4EE] text-[#9C5340]"
+          style={addBtnAnim ? { animation: `${addBtnAnim} 10000ms cubic-bezier(0.23,1,0.32,1) infinite` } : undefined}
+          aria-label="Add to Radar"
+        >
+          <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+        </button>
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[12px] font-semibold text-[#1C1E21] leading-tight">{title}</div>
-        <div className="text-[10.5px] text-[#6B7280] mt-0.5">{meta}</div>
+
+      <div className="mt-auto">
+        <div className="text-[9.5px] font-semibold tracking-[0.12em] uppercase text-[#9CA3AF] mb-1">
+          {label}
+        </div>
+        <div className="flex items-end gap-2 mb-2">
+          <span className="text-[22px] font-semibold text-[#1C1E21] leading-none tracking-[-0.01em]">{value}</span>
+          {delta && (
+            <span
+              className="inline-flex items-center gap-0.5 text-[10px] font-semibold leading-none pb-[3px]"
+              style={{ color: deltaDir === 'up' ? '#10B981' : '#EF4444' }}
+            >
+              <TrendingUp className="w-2.5 h-2.5" style={deltaDir === 'down' ? { transform: 'rotate(180deg)' } : undefined} />
+              {delta}
+            </span>
+          )}
+        </div>
+        {chart}
       </div>
-      <div className="flex-shrink-0">{chart}</div>
-      <button
-        className="flex-shrink-0 inline-flex items-center justify-center gap-1 h-7 px-2 rounded-md bg-[#FFF1E5] text-[#9C5340] text-[10.5px] font-semibold border border-[#F5DCC4]"
-        style={addBtnAnim ? { animation: `${addBtnAnim} 10000ms cubic-bezier(0.23,1,0.32,1) infinite` } : undefined}
-      >
-        <Plus className="w-[10px] h-[10px]" />
-        Add
-      </button>
-      {showPinned && (
+
+      {pinnedBadgeAnim && (
         <span
-          className="absolute -top-1.5 right-3 inline-flex items-center gap-0.5 h-4 px-1.5 rounded-full bg-[#10B981] text-white text-[8.5px] font-semibold"
+          className="absolute -top-2 right-3 inline-flex items-center gap-1 h-5 px-2 rounded-full bg-[#10B981] text-white text-[9.5px] font-semibold z-10"
           style={{
-            animation: `${showPinned} 10000ms cubic-bezier(0.23,1,0.32,1) infinite`,
+            animation: `${pinnedBadgeAnim} 10000ms cubic-bezier(0.23,1,0.32,1) infinite`,
             opacity: 0,
+            boxShadow: '0 4px 10px -4px rgba(16,185,129,0.45)',
           }}
         >
-          <Check className="w-[8px] h-[8px]" strokeWidth={3} />
+          <Check className="w-[10px] h-[10px]" strokeWidth={3} />
           Pinned
         </span>
       )}
+    </div>
+  );
+}
+
+function EmptySlot() {
+  return (
+    <div className="aspect-square rounded-2xl border border-dashed border-[#E6CDB1] bg-[#FFF8EF]/60 flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-7 h-7 rounded-lg border border-dashed border-[#E6CDB1] flex items-center justify-center mx-auto mb-1.5 bg-white/40">
+          <Plus className="w-3.5 h-3.5 text-[#C9A37D]" />
+        </div>
+        <span className="text-[9.5px] font-semibold tracking-[0.06em] text-[#C9A37D]">Pin insight</span>
+      </div>
     </div>
   );
 }
@@ -164,7 +236,7 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
-          {/* LEFT — copy */}
+          {/* LEFT */}
           <div className="px-12 py-14 flex flex-col justify-center">
             <div className="inline-flex items-center gap-2 mb-8 self-start">
               <SenseLogo size={16} animated={false} />
@@ -210,12 +282,12 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
             </div>
           </div>
 
-          {/* RIGHT — multi-scene animated stage */}
+          {/* RIGHT — animated stage */}
           <div
             className="relative overflow-hidden"
-            style={{ background: '#FFF1E5', minHeight: 580 }}
+            style={{ background: '#FFF1E5', minHeight: 620 }}
           >
-            <div className="relative w-full h-[580px]">
+            <div className="relative w-full h-[620px]">
               {/* ============ SCENE 1: Prompt ============ */}
               <div
                 className="absolute inset-0 px-8 py-10 flex flex-col justify-center"
@@ -232,15 +304,10 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
                   }}
                 >
                   <div className="flex items-center gap-2 mb-3.5">
-                    <div
-                      className="w-5 h-5 rounded-full flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}
-                    >
+                    <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}>
                       <SenseLogo size={11} animated={false} />
                     </div>
-                    <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#1C1E21]">
-                      Sense
-                    </span>
+                    <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[#1C1E21]">Sense</span>
                     <span className="ml-auto inline-flex items-center gap-1.5 text-[10.5px] font-medium text-[#9C5340]">
                       <span className="relative flex w-1.5 h-1.5">
                         <span className="absolute inset-0 rounded-full bg-[#10B981] opacity-60" style={{ animation: 'fa_ping 1.8s cubic-bezier(0,0,0.2,1) infinite' }} />
@@ -274,12 +341,12 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
                 </div>
               </div>
 
-              {/* ============ SCENE 2: Generating (cards stream) ============ */}
+              {/* ============ SCENE 2: Generating (2×2 grid) ============ */}
               <div
                 className="absolute inset-0 px-8 py-10"
                 style={{ animation: 'fa_scene2 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}
               >
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}>
                       <SenseLogo size={11} animated={false} />
@@ -295,45 +362,62 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
                 </div>
 
                 <p className="text-[12.5px] text-[#6B7280] leading-relaxed mb-4">
-                  Here are 3 insights for unpaid invoices.
+                  Here are 4 insights based on your data.
                 </p>
 
-                <div className="space-y-2.5">
+                <div className="grid grid-cols-2 gap-3">
                   <div style={{ animation: 'fa_streamCard1 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
-                    <StreamCard
-                      icon={<TrendingUp className="w-3.5 h-3.5" />}
-                      title="Unpaid invoices"
-                      meta="$24.5K stuck across 18 customers"
-                      chart={<MiniBars />}
+                    <GridCard
+                      icon={<TrendingUp className="w-3.5 h-3.5" strokeWidth={2.4} />}
+                      label="Unpaid invoices"
+                      value="$24.5K"
+                      delta="+8%"
+                      deltaDir="up"
+                      chart={<ChartBars />}
                       addBtnAnim="fa_addBtnPress"
-                      showPinned="fa_pinnedBadge"
+                      ringAnim="fa_cardRing"
+                      pinnedBadgeAnim="fa_pinnedBadge"
                     />
                   </div>
                   <div style={{ animation: 'fa_streamCard2 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
-                    <StreamCard
+                    <GridCard
                       icon={<Star className="w-3.5 h-3.5" fill="currentColor" />}
-                      title="Customer feedback"
-                      meta="86% positive sentiment this month"
-                      chart={<MiniDonut />}
+                      label="Customer feedback"
+                      value="86%"
+                      delta="+4pp"
+                      deltaDir="up"
+                      chart={<ChartSentiment />}
                     />
                   </div>
                   <div style={{ animation: 'fa_streamCard3 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
-                    <StreamCard
+                    <GridCard
                       icon={<Sparkles className="w-3.5 h-3.5" />}
-                      title="Revenue trend"
-                      meta="+12% month-over-month"
-                      chart={<MiniLine />}
+                      label="Revenue MoM"
+                      value="$148K"
+                      delta="+12%"
+                      deltaDir="up"
+                      chart={<ChartLine />}
+                    />
+                  </div>
+                  <div style={{ animation: 'fa_streamCard4 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}>
+                    <GridCard
+                      icon={<Users className="w-3.5 h-3.5" strokeWidth={2.4} />}
+                      label="Crew utilization"
+                      value="92%"
+                      delta="+3pp"
+                      deltaDir="up"
+                      chart={<ChartProgress value={92} />}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* ============ SCENE 3: Pinned Dashboard ============ */}
+              {/* ============ SCENE 3: Pinned dashboard (2×2 grid) ============ */}
               <div
                 className="absolute inset-0 px-8 py-10"
                 style={{ animation: 'fa_scene3 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0 }}
               >
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3">
                   <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9C5340]">
                     Radar dashboard
                   </span>
@@ -343,65 +427,28 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
                   </span>
                 </div>
 
-                {/* Hero pinned widget */}
-                <div
-                  className="relative bg-white rounded-xl border border-[#F0E4D8] p-4 mb-3"
-                  style={{
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 16px 36px -22px rgba(253,80,0,0.32)',
-                    animation: 'fa_pinnedLand 10000ms cubic-bezier(0.23,1,0.32,1) infinite',
-                    transformOrigin: 'center top',
-                  }}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <div className="text-[10.5px] font-semibold tracking-[0.10em] uppercase text-[#9CA3AF] mb-1">Unpaid invoices</div>
-                      <div className="text-[20px] font-semibold text-[#1C1E21] leading-none">$24.5K</div>
-                      <div className="text-[10.5px] text-[#6B7280] mt-1">18 customers · 7 day delta</div>
-                    </div>
-                    <div className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-[#FD5000] bg-[#FFF1E5] px-2 h-5 rounded-md">
-                      <TrendingUp className="w-3 h-3" />
-                      +8%
-                    </div>
-                  </div>
-                  <div className="flex items-end gap-1.5 h-[42px]">
-                    {[35, 52, 68, 48, 80, 92, 70].map((h, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 rounded-sm"
-                        style={{
-                          height: `${h}%`,
-                          background: i === 5 ? 'linear-gradient(180deg,#FF8043,#FD5000)' : '#FFD9C2',
-                          animation: `fa_barGrow 10000ms cubic-bezier(0.23,1,0.32,1) infinite`,
-                          animationDelay: `${i * 30}ms`,
-                          transformOrigin: 'bottom',
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
+                <p className="text-[12.5px] text-[#6B7280] leading-relaxed mb-4">
+                  Insights you pin show up here automatically.
+                </p>
 
-                {/* Secondary slots */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="h-[78px] rounded-xl border border-dashed border-[#E6CDB1] bg-[#FFF8EF] flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-6 h-6 rounded-md border border-dashed border-[#E6CDB1] flex items-center justify-center mx-auto mb-1">
-                        <Plus className="w-3 h-3 text-[#C9A37D]" />
-                      </div>
-                      <span className="text-[9.5px] font-medium text-[#C9A37D]">Pin next</span>
-                    </div>
+                  <div style={{ animation: 'fa_pinnedLand 10000ms cubic-bezier(0.23,1,0.32,1) infinite', opacity: 0, transformOrigin: 'center top' }}>
+                    <GridCard
+                      icon={<TrendingUp className="w-3.5 h-3.5" strokeWidth={2.4} />}
+                      label="Unpaid invoices"
+                      value="$24.5K"
+                      delta="+8%"
+                      deltaDir="up"
+                      chart={<ChartBars />}
+                    />
                   </div>
-                  <div className="h-[78px] rounded-xl border border-dashed border-[#E6CDB1] bg-[#FFF8EF] flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-6 h-6 rounded-md border border-dashed border-[#E6CDB1] flex items-center justify-center mx-auto mb-1">
-                        <Plus className="w-3 h-3 text-[#C9A37D]" />
-                      </div>
-                      <span className="text-[9.5px] font-medium text-[#C9A37D]">Pin next</span>
-                    </div>
-                  </div>
+                  <EmptySlot />
+                  <EmptySlot />
+                  <EmptySlot />
                 </div>
               </div>
 
-              {/* ============ Cursor (above all scenes) ============ */}
+              {/* ============ Cursor ============ */}
               <div
                 className="absolute z-30 pointer-events-none top-0 left-0"
                 style={{
@@ -423,13 +470,10 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
         </div>
 
         <style>{`
-          @keyframes fa_backdrop {
-            from { opacity: 0 }
-            to { opacity: 1 }
-          }
+          @keyframes fa_backdrop { from { opacity: 0 } to { opacity: 1 } }
           @keyframes fa_modalIn {
             from { opacity: 0; transform: scale(0.96) translateY(8px) }
-            to { opacity: 1; transform: scale(1) translateY(0) }
+            to   { opacity: 1; transform: scale(1) translateY(0) }
           }
           @keyframes fa_ping {
             0% { transform: scale(1); opacity: 0.6 }
@@ -441,53 +485,50 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
             50%      { opacity: 1 }
           }
 
-          /* ============ SCENE CROSSFADES (10s loop) ============ */
-          /* Scene 1: 0–22% live, 22–28% out, 94–100% back in */
+          /* ===== Scenes (10s loop) ===== */
           @keyframes fa_scene1 {
-            0%      { opacity: 1; transform: translateY(0); }
-            20%     { opacity: 1; transform: translateY(0); }
-            26%     { opacity: 0; transform: translateY(-8px); }
-            93%     { opacity: 0; transform: translateY(8px); }
-            100%    { opacity: 1; transform: translateY(0); }
+            0%   { opacity: 1; transform: translateY(0); }
+            20%  { opacity: 1; transform: translateY(0); }
+            26%  { opacity: 0; transform: translateY(-8px); }
+            93%  { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
           }
-          /* Scene 2: 22% start in, 28% live, 66% out */
           @keyframes fa_scene2 {
-            0%      { opacity: 0; transform: translateY(8px); }
-            22%     { opacity: 0; transform: translateY(8px); }
-            28%     { opacity: 1; transform: translateY(0); }
-            64%     { opacity: 1; transform: translateY(0); }
-            70%     { opacity: 0; transform: translateY(-8px); }
-            100%    { opacity: 0; transform: translateY(8px); }
+            0%   { opacity: 0; transform: translateY(8px); }
+            22%  { opacity: 0; transform: translateY(8px); }
+            28%  { opacity: 1; transform: translateY(0); }
+            64%  { opacity: 1; transform: translateY(0); }
+            70%  { opacity: 0; transform: translateY(-8px); }
+            100% { opacity: 0; transform: translateY(8px); }
           }
-          /* Scene 3: 66% start in, 72% live, 92% out */
           @keyframes fa_scene3 {
-            0%      { opacity: 0; transform: translateY(8px); }
-            66%     { opacity: 0; transform: translateY(8px); }
-            72%     { opacity: 1; transform: translateY(0); }
-            90%     { opacity: 1; transform: translateY(0); }
-            96%     { opacity: 0; transform: translateY(-8px); }
-            100%    { opacity: 0; transform: translateY(8px); }
+            0%   { opacity: 0; transform: translateY(8px); }
+            66%  { opacity: 0; transform: translateY(8px); }
+            72%  { opacity: 1; transform: translateY(0); }
+            90%  { opacity: 1; transform: translateY(0); }
+            96%  { opacity: 0; transform: translateY(-8px); }
+            100% { opacity: 0; transform: translateY(8px); }
           }
 
-          /* ============ CURSOR PATH ============ */
-          /* Scene 1 Generate target ≈ (412, 320). Scene 2 Card A Add target ≈ (412, 230). */
+          /* ===== Cursor path =====
+             Scene 1 Generate ≈ (412, 340).
+             Scene 2 Card A "+" ≈ (218, 280). */
           @keyframes fa_cursor {
-            0%      { opacity: 0; transform: translate(520px, 600px) scale(1); }
-            8%      { opacity: 0; transform: translate(520px, 600px); }
-            13%     { opacity: 1; transform: translate(412px, 320px) scale(1); }
-            17%     { opacity: 1; transform: translate(412px, 320px) scale(0.85); }
-            20%     { opacity: 1; transform: translate(412px, 320px) scale(1); }
-            22%     { opacity: 0; transform: translate(412px, 320px); }
-            /* hidden during card streaming */
-            48%     { opacity: 0; transform: translate(520px, 600px); }
-            55%     { opacity: 1; transform: translate(412px, 230px) scale(1); }
-            58%     { opacity: 1; transform: translate(412px, 230px) scale(0.85); }
-            61%     { opacity: 1; transform: translate(412px, 230px) scale(1); }
-            64%     { opacity: 0; transform: translate(412px, 230px); }
-            100%    { opacity: 0; transform: translate(520px, 600px); }
+            0%   { opacity: 0; transform: translate(520px, 640px); }
+            8%   { opacity: 0; transform: translate(520px, 640px); }
+            13%  { opacity: 1; transform: translate(412px, 340px) scale(1); }
+            17%  { opacity: 1; transform: translate(412px, 340px) scale(0.85); }
+            20%  { opacity: 1; transform: translate(412px, 340px) scale(1); }
+            22%  { opacity: 0; transform: translate(412px, 340px); }
+            48%  { opacity: 0; transform: translate(520px, 640px); }
+            55%  { opacity: 1; transform: translate(218px, 280px) scale(1); }
+            58%  { opacity: 1; transform: translate(218px, 280px) scale(0.85); }
+            61%  { opacity: 1; transform: translate(218px, 280px) scale(1); }
+            64%  { opacity: 0; transform: translate(218px, 280px); }
+            100% { opacity: 0; transform: translate(520px, 640px); }
           }
 
-          /* ============ SCENE 1 — Generate press ============ */
+          /* ===== Scene 1 Generate press ===== */
           @keyframes fa_generatePress {
             0%, 15% { transform: scale(1); box-shadow: 0 0 0 0 rgba(253,80,0,0); }
             17%     { transform: scale(0.94); box-shadow: 0 0 0 6px rgba(253,80,0,0.18); }
@@ -495,37 +536,50 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
             100%    { transform: scale(1); }
           }
 
-          /* ============ SCENE 2 — Card stream (stagger) ============ */
-          /* Card 1: enters at 32%, gets pinned at 58–62%, fades at 66% */
+          /* ===== Scene 2 card stagger (top-left, top-right, bottom-left, bottom-right) ===== */
           @keyframes fa_streamCard1 {
             0%, 30%  { opacity: 0; transform: translateY(8px) scale(0.97); }
             34%      { opacity: 1; transform: translateY(0) scale(1); }
-            56%      { opacity: 1; transform: translateY(0) scale(1); }
-            60%      { opacity: 1; transform: translateY(0) scale(1.02); }
-            64%      { opacity: 1; transform: translateY(0) scale(1); }
-            68%      { opacity: 0; transform: translateY(-8px) scale(0.98); }
+            66%      { opacity: 1; transform: translateY(0) scale(1); }
+            70%      { opacity: 0; transform: translateY(-8px) scale(0.98); }
             100%     { opacity: 0; transform: translateY(8px) scale(0.97); }
           }
           @keyframes fa_streamCard2 {
-            0%, 36%  { opacity: 0; transform: translateY(8px) scale(0.97); }
-            40%      { opacity: 1; transform: translateY(0) scale(1); }
+            0%, 33%  { opacity: 0; transform: translateY(8px) scale(0.97); }
+            37%      { opacity: 1; transform: translateY(0) scale(1); }
             66%      { opacity: 1; transform: translateY(0) scale(1); }
             70%      { opacity: 0; transform: translateY(-4px) scale(0.98); }
             100%     { opacity: 0; transform: translateY(8px) scale(0.97); }
           }
           @keyframes fa_streamCard3 {
-            0%, 42%  { opacity: 0; transform: translateY(8px) scale(0.97); }
-            46%      { opacity: 1; transform: translateY(0) scale(1); }
+            0%, 37%  { opacity: 0; transform: translateY(8px) scale(0.97); }
+            41%      { opacity: 1; transform: translateY(0) scale(1); }
             66%      { opacity: 1; transform: translateY(0) scale(1); }
             70%      { opacity: 0; transform: translateY(-4px) scale(0.98); }
             100%     { opacity: 0; transform: translateY(8px) scale(0.97); }
           }
+          @keyframes fa_streamCard4 {
+            0%, 41%  { opacity: 0; transform: translateY(8px) scale(0.97); }
+            45%      { opacity: 1; transform: translateY(0) scale(1); }
+            66%      { opacity: 1; transform: translateY(0) scale(1); }
+            70%      { opacity: 0; transform: translateY(-4px) scale(0.98); }
+            100%     { opacity: 0; transform: translateY(8px) scale(0.97); }
+          }
+
+          /* Card 1 ring highlight on pin */
+          @keyframes fa_cardRing {
+            0%, 56%  { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20); border-color: #EDE5DA; }
+            60%      { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20), 0 0 0 3px rgba(16,185,129,0.20); border-color: #10B981; }
+            66%      { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20), 0 0 0 0 rgba(16,185,129,0); border-color: #10B981; }
+            70%      { box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.20); border-color: #EDE5DA; }
+            100%     { border-color: #EDE5DA; }
+          }
           @keyframes fa_addBtnPress {
-            0%, 56% { transform: scale(1); background: #FFF1E5; color: #9C5340; }
-            58%     { transform: scale(0.9); background: #FFE0CC; }
+            0%, 56% { transform: scale(1); background: #F8F4EE; color: #9C5340; }
+            58%     { transform: scale(0.88); background: #FFE0CC; }
             61%     { transform: scale(1); background: #10B981; color: #fff; }
             66%     { transform: scale(1); background: #10B981; color: #fff; }
-            100%    { transform: scale(1); background: #FFF1E5; color: #9C5340; }
+            100%    { transform: scale(1); background: #F8F4EE; color: #9C5340; }
           }
           @keyframes fa_pinnedBadge {
             0%, 60%  { opacity: 0; transform: translateY(4px) scale(0.92); }
@@ -534,21 +588,15 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
             100%     { opacity: 0; transform: translateY(-4px) scale(0.96); }
           }
 
-          /* ============ SCENE 3 — Pinned dashboard ============ */
+          /* ===== Scene 3 pinned card land ===== */
           @keyframes fa_pinnedLand {
             0%, 70% { opacity: 0; transform: scale(0.94) translateY(8px); }
             76%     { opacity: 1; transform: scale(1) translateY(0); }
             92%     { opacity: 1; transform: scale(1) translateY(0); }
             100%    { opacity: 0; transform: scale(0.96) translateY(-4px); }
           }
-          @keyframes fa_barGrow {
-            0%, 72% { transform: scaleY(0.2); opacity: 0.3; }
-            80%     { transform: scaleY(1); opacity: 1; }
-            92%     { transform: scaleY(1); opacity: 1; }
-            100%    { transform: scaleY(0.2); opacity: 0.3; }
-          }
 
-          /* ============ Progress dots ============ */
+          /* ===== Progress dots ===== */
           @keyframes fa_dot1 {
             0%, 22%, 94%, 100% { opacity: 1; transform: scale(1.15); }
             28%, 92%           { opacity: 0.25; transform: scale(1); }
@@ -559,21 +607,21 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
             70%, 100% { opacity: 0.25; transform: scale(1); }
           }
           @keyframes fa_dot3 {
-            0%, 66%    { opacity: 0.25; transform: scale(1); }
-            72%, 92%   { opacity: 1; transform: scale(1.15); }
-            96%, 100%  { opacity: 0.25; transform: scale(1); }
+            0%, 66%   { opacity: 0.25; transform: scale(1); }
+            72%, 92%  { opacity: 1; transform: scale(1.15); }
+            96%, 100% { opacity: 0.25; transform: scale(1); }
           }
 
           @media (prefers-reduced-motion: reduce) {
             [style*="fa_scene1"], [style*="fa_scene2"], [style*="fa_scene3"],
             [style*="fa_cursor"], [style*="fa_streamCard"], [style*="fa_addBtnPress"],
-            [style*="fa_pinnedBadge"], [style*="fa_pinnedLand"], [style*="fa_barGrow"],
+            [style*="fa_pinnedBadge"], [style*="fa_pinnedLand"], [style*="fa_cardRing"],
             [style*="fa_generatePress"], [style*="fa_ping"], [style*="fa_thinking"],
             [style*="fa_dot1"], [style*="fa_dot2"], [style*="fa_dot3"] {
               animation: none !important;
             }
             [style*="fa_scene2"], [style*="fa_scene3"], [style*="fa_streamCard"],
-            [style*="fa_pinnedBadge"], [style*="fa_cursor"] {
+            [style*="fa_pinnedBadge"], [style*="fa_pinnedLand"], [style*="fa_cursor"] {
               opacity: 0 !important;
             }
           }
