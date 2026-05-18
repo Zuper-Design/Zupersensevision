@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Users, Check, MessageCircle, BarChart3, Activity } from 'lucide-react';
+import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Users, Check, MessageCircle, BarChart3, Activity, Play } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
 
 interface FeatureAnnouncementModalProps {
@@ -301,11 +301,13 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
               </button>
               <button
                 onClick={onExploreMore}
-                style={{ transition: 'color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                className="inline-flex items-center gap-1 text-[14px] font-medium text-[#6B7280] hover:text-[#1C1E21]"
+                style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                className="inline-flex items-center gap-2 px-5 h-12 rounded-xl border border-[#E6E8EC] bg-white hover:bg-[#FAFAFA] hover:border-[#D1D5DB] text-[14px] font-semibold text-[#1C1E21] active:scale-[0.97]"
               >
-                Explore more
-                <ArrowRight className="w-[14px] h-[14px]" />
+                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#1C1E21] text-white">
+                  <Play className="w-[10px] h-[10px]" fill="currentColor" strokeWidth={0} />
+                </span>
+                Watch demo video
               </button>
             </div>
           </div>
