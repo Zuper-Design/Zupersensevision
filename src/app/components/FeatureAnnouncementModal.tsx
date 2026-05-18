@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Users, Check } from 'lucide-react';
+import { X, ArrowRight, Mic, Plus, TrendingUp, Star, Sparkles, Users, Check, Bell, Target } from 'lucide-react';
 import { SenseLogo } from './SenseLogo';
 
 interface FeatureAnnouncementModalProps {
@@ -9,7 +9,23 @@ interface FeatureAnnouncementModalProps {
   onExploreMore?: () => void;
 }
 
-const CAPABILITIES = ['Monitor', 'Analyze', 'Predict', 'Recommend', 'Act'];
+const FEATURES = [
+  {
+    icon: Bell,
+    title: 'Catches what’s about to break',
+    desc: 'Sense watches your data and flags problems early—before they become incidents.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Answers in plain English',
+    desc: 'Ask anything. Get a chart back in seconds, not a 30-minute spreadsheet detour.',
+  },
+  {
+    icon: Target,
+    title: 'Your insights, on demand',
+    desc: 'Pin any answer to Radar and check the numbers at a glance, anytime.',
+  },
+];
 
 function CursorIcon() {
   return (
@@ -253,13 +269,25 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
               Sense watches your business so you don't have to, catches what's about to break, and tells you what to do next.
             </p>
 
-            <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5 mb-10">
-              {CAPABILITIES.map((c, i) => (
-                <span key={c} className="inline-flex items-center gap-3 text-[12.5px] font-medium text-[#4B5563]">
-                  {c}
-                  {i < CAPABILITIES.length - 1 && <span className="w-1 h-1 rounded-full bg-[#D1D5DB]" />}
-                </span>
-              ))}
+            <div className="flex flex-col gap-4 mb-10 max-w-[460px]">
+              {FEATURES.map((f) => {
+                const Icon = f.icon;
+                return (
+                  <div key={f.title} className="flex items-start gap-3.5">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FFF1E5', color: '#FD5000' }}>
+                      <Icon className="w-[16px] h-[16px]" strokeWidth={2.2} />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[14.5px] font-semibold text-[#1C1E21] tracking-[-0.005em] leading-snug mb-0.5">
+                        {f.title}
+                      </div>
+                      <div className="text-[13.5px] text-[#6B7280] leading-[1.5]">
+                        {f.desc}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             <div className="flex items-center gap-4">
