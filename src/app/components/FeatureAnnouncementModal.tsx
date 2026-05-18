@@ -317,15 +317,22 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
             className="relative overflow-hidden"
             style={{ background: '#FFFFFF', minHeight: 680 }}
           >
-            <img
-              src="/out/MyComp.gif"
-              alt="Sense in action"
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              poster="/out/MyComp.gif"
               className="absolute inset-0 w-full h-full object-cover"
               style={{
                 animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both',
                 objectPosition: 'center top',
               }}
-            />
+            >
+              <source src="/out/MyComp.webm" type="video/webm" />
+              <source src="/out/MyComp.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
 
