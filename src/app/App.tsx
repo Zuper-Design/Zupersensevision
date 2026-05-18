@@ -46,11 +46,10 @@ function AppContent() {
   const [announcementOpen, setAnnouncementOpen] = useState(() => {
     if (typeof window === 'undefined') return false;
     if (new URLSearchParams(window.location.search).get('demo') === '1') return false;
-    return sessionStorage.getItem('zsv_announce_seen') !== '1';
+    return true;
   });
   const closeAnnouncement = () => {
     setAnnouncementOpen(false);
-    try { sessionStorage.setItem('zsv_announce_seen', '1'); } catch {}
   };
   const [showBetaBanner, setShowBetaBanner] = useState(true);
   const [askSenseOpen, setAskSenseOpen] = useState(false);
