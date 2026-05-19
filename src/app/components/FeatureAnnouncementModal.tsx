@@ -324,9 +324,10 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
               playsInline
               preload="auto"
               poster="/Modal.gif"
-              className="absolute inset-0 w-full h-full object-contain"
+              className="absolute inset-0 w-full h-full object-cover"
               style={{
                 animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both',
+                objectPosition: 'center',
               }}
             >
               <source src="/Modal.webm" type="video/webm" />
