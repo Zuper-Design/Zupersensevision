@@ -323,15 +323,14 @@ export function FeatureAnnouncementModal({ open, onClose, onTrySense, onExploreM
               muted
               playsInline
               preload="auto"
-              poster="/out/MyComp.gif"
-              className="absolute inset-0 w-full h-full object-cover"
+              poster="/Modal.gif"
+              className="absolute inset-0 w-full h-full object-contain"
               style={{
                 animation: 'fa_gifIn 480ms cubic-bezier(0.23,1,0.32,1) both',
-                objectPosition: 'center top',
               }}
             >
-              <source src="/out/MyComp.webm" type="video/webm" />
-              <source src="/out/MyComp.mp4" type="video/mp4" />
+              <source src="/Modal.webm" type="video/webm" />
+              <source src="/Modal.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
