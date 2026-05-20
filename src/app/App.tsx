@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle } from 'lucide-react';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -352,42 +352,47 @@ function AppContent() {
                   </AnimatePresence>
                 </div>
                 {demoMode ? null : currentUser === 'RG' ? (
-                  <button
-                    onClick={openUpgrade}
-                    className="group w-full block text-left overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985] relative border border-[#F0DCC4] hover:border-[#E8C9A6]"
-                    style={{
-                      background:
-                        'linear-gradient(135deg, #FFFFFF 0%, #FFF6EC 55%, #FFE7D2 100%)',
-                      transition:
-                        'border-radius 260ms cubic-bezier(0.23,1,0.32,1), border-color 200ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
-                    }}
-                  >
-                    {/* Eyebrow row */}
-                    <div className="relative flex items-center gap-2 px-3 py-[7px]">
-                      <span className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9C5340] flex-1 truncate">
-                        What's new
-                      </span>
-                      <ArrowRight
-                        className="w-3.5 h-3.5 text-[#9C5340] flex-shrink-0 group-hover:text-[#1C1E21] group-hover:translate-x-0.5"
-                        style={{ transition: 'color 200ms cubic-bezier(0.23,1,0.32,1), transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
-                      />
+                  <div className="group rounded-xl p-3 bg-white border border-[#E6E8EC]">
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FFF1E5' }}>
+                        <HelpCircle className="w-3.5 h-3.5" style={{ color: '#FD5000' }} strokeWidth={2.2} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-tight">What's new</p>
+
+                        {/* Expanding subtitle on hover */}
+                        <div
+                          className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
+                          style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
+                        >
+                          <div className="overflow-hidden">
+                            <p
+                              className="text-[11px] text-[#6B7280] leading-tight mt-0.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                              style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                            >
+                              Sense is now available with smarter answers and pinned insights.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Expanding heading on hover */}
+                    {/* Expanding View Update button */}
                     <div
-                      className="relative grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
+                      className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
                       style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
                     >
                       <div className="overflow-hidden">
-                        <p
-                          className="text-[12.5px] font-semibold text-[#1C1E21] leading-snug px-3 pb-2.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
-                          style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                        <button
+                          onClick={() => setAnnouncementOpen(true)}
+                          className="w-full py-1.5 rounded-lg text-[12px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-3 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                          style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                         >
-                          Sense is now available
-                        </p>
+                          View update
+                        </button>
                       </div>
                     </div>
-                  </button>
+                  </div>
                 ) : currentUser === 'AU' ? (
                   <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
                     <div className="flex items-start gap-2.5">
