@@ -366,7 +366,7 @@ function AppContent() {
                     <div className="relative h-[56px]">
                       <div
                         className="absolute pointer-events-none"
-                        style={{ top: -28, left: -28 }}
+                        style={{ top: -14, left: -14, opacity: 0.5 }}
                       >
                         <SenseLogo size={72} animated={false} />
                       </div>
