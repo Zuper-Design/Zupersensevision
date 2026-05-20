@@ -354,32 +354,59 @@ function AppContent() {
                 {demoMode ? null : (
                   <button
                     onClick={openUpgrade}
-                    className="group w-full block text-left bg-white overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985]"
+                    className="group w-full block text-left overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985] relative"
                     style={{
+                      background:
+                        'linear-gradient(135deg, #FFFFFF 0%, #FFF6EC 60%, #FFE6D2 100%)',
                       boxShadow:
-                        '0 1px 2px rgba(0,0,0,0.04), 0 6px 14px -8px rgba(28,30,33,0.08), 0 18px 32px -20px rgba(253,80,0,0.22)',
+                        '0 1px 2px rgba(0,0,0,0.04), 0 6px 14px -8px rgba(28,30,33,0.08), 0 18px 32px -20px rgba(253,80,0,0.28)',
                       transition:
                         'border-radius 260ms cubic-bezier(0.23,1,0.32,1), box-shadow 260ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
                     }}
                   >
+                    {/* Soft highlight in upper-left */}
+                    <span
+                      className="absolute pointer-events-none"
+                      style={{
+                        top: -28,
+                        left: -28,
+                        width: 120,
+                        height: 80,
+                        borderRadius: '50%',
+                        background:
+                          'radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 70%)',
+                        filter: 'blur(6px)',
+                      }}
+                    />
+                    {/* Brand glow in bottom-right */}
+                    <span
+                      className="absolute pointer-events-none"
+                      style={{
+                        bottom: -34,
+                        right: -28,
+                        width: 140,
+                        height: 90,
+                        borderRadius: '50%',
+                        background:
+                          'radial-gradient(ellipse, rgba(253,80,0,0.18) 0%, rgba(253,80,0,0) 65%)',
+                        filter: 'blur(10px)',
+                      }}
+                    />
+
                     {/* Eyebrow row */}
-                    <div className="flex items-center gap-2 px-3 py-2">
-                      <span className="relative flex w-1.5 h-1.5 flex-shrink-0">
-                        <span className="absolute inset-0 rounded-full bg-[#FD5000] opacity-60 animate-ping" />
-                        <span className="relative w-1.5 h-1.5 rounded-full bg-[#FD5000]" />
-                      </span>
-                      <span className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] flex-1 truncate">
+                    <div className="relative flex items-center gap-2 px-3 py-2">
+                      <span className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9C5340] flex-1 truncate">
                         What's new
                       </span>
                       <ArrowRight
-                        className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0 group-hover:text-[#1C1E21] group-hover:translate-x-0.5"
+                        className="w-3.5 h-3.5 text-[#9C5340] flex-shrink-0 group-hover:text-[#1C1E21] group-hover:translate-x-0.5"
                         style={{ transition: 'color 200ms cubic-bezier(0.23,1,0.32,1), transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
                       />
                     </div>
 
                     {/* Expanding heading on hover */}
                     <div
-                      className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
+                      className="relative grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
                       style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
                     >
                       <div className="overflow-hidden">
