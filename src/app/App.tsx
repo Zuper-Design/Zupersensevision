@@ -352,40 +352,28 @@ function AppContent() {
                   </AnimatePresence>
                 </div>
                 {demoMode ? null : currentUser === 'RG' ? (
-                  <div className="group rounded-xl p-3 bg-white border border-[#E6E8EC]">
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FFF1E5' }}>
-                        <HelpCircle className="w-3.5 h-3.5" style={{ color: '#FD5000' }} strokeWidth={2.2} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-tight">What's new</p>
-
-                        {/* Expanding subtitle on hover */}
-                        <div
-                          className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
-                          style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
-                        >
-                          <div className="overflow-hidden">
-                            <p
-                              className="text-[11px] text-[#6B7280] leading-tight mt-0.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
-                              style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
-                            >
-                              Sense is now available with smarter answers and pinned insights.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                  <div className="group rounded-xl px-2.5 py-2 bg-white border border-[#E6E8EC]">
+                    {/* Inline icon + title */}
+                    <div className="flex items-center gap-1.5">
+                      <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.4} />
+                      <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-none">What's new</p>
                     </div>
 
-                    {/* Expanding View Update button */}
+                    {/* Expanding subtitle + button on hover */}
                     <div
                       className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
                       style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
                     >
                       <div className="overflow-hidden">
+                        <p
+                          className="text-[10.5px] text-[#6B7280] leading-tight mt-1.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                          style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                        >
+                          Sense is now available with smarter answers and pinned insights.
+                        </p>
                         <button
                           onClick={() => setAnnouncementOpen(true)}
-                          className="w-full py-1.5 rounded-lg text-[12px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-3 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                          className="w-full py-1 rounded-md text-[11px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
                           style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                         >
                           View update
