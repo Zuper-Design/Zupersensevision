@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight } from 'lucide-react';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -355,28 +355,39 @@ function AppContent() {
                 {demoMode ? null : (
                   <button
                     onClick={openUpgrade}
-                    className="w-full text-left rounded-xl overflow-hidden border border-[#F0E4D8] relative active:scale-[0.985]"
+                    className="group w-full block text-left bg-white border border-[#F0E4D8] overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985]"
                     style={{
-                      background: 'linear-gradient(180deg, #FFEAD8 0%, #FFF6EC 50%, #FFFFFF 100%)',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.025), 0 6px 14px -10px rgba(253,80,0,0.20)',
-                      transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.025), 0 4px 14px -10px rgba(253,80,0,0.22)',
+                      transition: 'border-radius 260ms cubic-bezier(0.23,1,0.32,1), box-shadow 260ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
                     }}
                   >
-                    {/* Illustration area — Sense logo clips off the top-left corner */}
-                    <div className="relative h-[56px]">
-                      <div
-                        className="absolute pointer-events-none"
-                        style={{ top: -14, left: -14, opacity: 0.5 }}
-                      >
-                        <SenseLogo size={72} animated={false} />
-                      </div>
+                    {/* Always-visible row */}
+                    <div className="flex items-center gap-2 px-3 py-2">
+                      <span className="flex-shrink-0 flex items-center">
+                        <SenseLogo size={16} animated={false} />
+                      </span>
+                      <span className="text-[12px] font-semibold text-[#1C1E21] flex-1 truncate">
+                        Try Sense for free
+                      </span>
+                      <ArrowRight
+                        className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0 group-hover:text-[#1C1E21] group-hover:translate-x-0.5"
+                        style={{ transition: 'color 200ms cubic-bezier(0.23,1,0.32,1), transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
+                      />
                     </div>
 
-                    {/* Copy */}
-                    <div className="px-2.5 pt-0.5 pb-2.5 text-center">
-                      <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-snug">
-                        Try Sense to improve your business
-                      </p>
+                    {/* Expanding subtitle on hover */}
+                    <div
+                      className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
+                      style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
+                    >
+                      <div className="overflow-hidden">
+                        <p
+                          className="text-[11px] text-[#6B7280] leading-snug px-3 pb-2.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                          style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                        >
+                          See what Sense can do for your business — free for 14 days.
+                        </p>
+                      </div>
                     </div>
                   </button>
                 )}
