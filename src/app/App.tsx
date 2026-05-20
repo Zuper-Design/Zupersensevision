@@ -18,7 +18,6 @@ import { ViewToggle } from './components/ViewToggle';
 import { CanvasView } from './components/CanvasView';
 import { TopNavigation } from './components/TopNavigation';
 import { RADAR_THEMES } from './components/RadarThemeContext';
-import { SenseLogo } from './components/SenseLogo';
 import { PublishedPagesProvider, usePublishedPages } from './components/PublishedPagesContext';
 import { RadarProvider } from './components/RadarContext';
 import { SavedCard } from './components/RadarContext';
@@ -355,19 +354,22 @@ function AppContent() {
                 {demoMode ? null : (
                   <button
                     onClick={openUpgrade}
-                    className="group w-full block text-left bg-white border border-[#F0E4D8] overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985]"
+                    className="group w-full block text-left bg-white overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985]"
                     style={{
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.025), 0 4px 14px -10px rgba(253,80,0,0.22)',
-                      transition: 'border-radius 260ms cubic-bezier(0.23,1,0.32,1), box-shadow 260ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                      boxShadow:
+                        '0 1px 2px rgba(0,0,0,0.04), 0 6px 14px -8px rgba(28,30,33,0.08), 0 18px 32px -20px rgba(253,80,0,0.22)',
+                      transition:
+                        'border-radius 260ms cubic-bezier(0.23,1,0.32,1), box-shadow 260ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
                     }}
                   >
-                    {/* Always-visible row */}
+                    {/* Eyebrow row */}
                     <div className="flex items-center gap-2 px-3 py-2">
-                      <span className="flex-shrink-0 flex items-center">
-                        <SenseLogo size={16} animated={false} />
+                      <span className="relative flex w-1.5 h-1.5 flex-shrink-0">
+                        <span className="absolute inset-0 rounded-full bg-[#FD5000] opacity-60 animate-ping" />
+                        <span className="relative w-1.5 h-1.5 rounded-full bg-[#FD5000]" />
                       </span>
-                      <span className="text-[12px] font-semibold text-[#1C1E21] flex-1 truncate">
-                        Try Sense for free
+                      <span className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] flex-1 truncate">
+                        What's new
                       </span>
                       <ArrowRight
                         className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0 group-hover:text-[#1C1E21] group-hover:translate-x-0.5"
@@ -375,17 +377,17 @@ function AppContent() {
                       />
                     </div>
 
-                    {/* Expanding subtitle on hover */}
+                    {/* Expanding heading on hover */}
                     <div
                       className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
                       style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
                     >
                       <div className="overflow-hidden">
                         <p
-                          className="text-[11px] text-[#6B7280] leading-snug px-3 pb-2.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                          className="text-[12.5px] font-semibold text-[#1C1E21] leading-snug px-3 pb-2.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
                           style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
                         >
-                          See what Sense can do for your business — free for 14 days.
+                          Sense is now available
                         </p>
                       </div>
                     </div>
