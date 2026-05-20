@@ -353,32 +353,76 @@ function AppContent() {
                   </AnimatePresence>
                 </div>
                 {demoMode ? null : currentUser === 'RG' ? (
-                  <div className="group rounded-xl px-2.5 py-2 bg-white border border-[#E6E8EC]">
-                    {/* Inline icon + title */}
-                    <div className="flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.4} />
-                      <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-none">What's new</p>
-                    </div>
-
-                    {/* Expanding subtitle + button on hover */}
+                  <div className="group rounded-xl bg-white border border-[#E6E8EC] overflow-hidden">
+                    {/* Hover-revealed gradient announcement header */}
                     <div
                       className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
-                      style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
+                      style={{ transition: 'grid-template-rows 300ms cubic-bezier(0.23,1,0.32,1)' }}
                     >
                       <div className="overflow-hidden">
-                        <p
-                          className="text-[10.5px] text-[#6B7280] leading-tight mt-1.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
-                          style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                        <div
+                          className="relative h-[80px]"
+                          style={{ background: 'linear-gradient(180deg, #FF8B5A 0%, #FFB48A 40%, #FFE0CC 75%, #FFFFFF 100%)' }}
                         >
-                          Sense is now available with smarter answers and pinned insights.
-                        </p>
-                        <button
-                          onClick={() => setAnnouncementOpen(true)}
-                          className="w-full py-1 rounded-md text-[11px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
-                          style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                        >
-                          View update
-                        </button>
+                          {/* Floating sparkle emoji */}
+                          <span
+                            className="absolute top-2.5 right-3 text-[14px] opacity-0 group-hover:opacity-100"
+                            style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 140ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 140ms', transform: 'rotate(8deg) translateY(0)' }}
+                          >
+                            ✨
+                          </span>
+                          <span
+                            className="absolute top-3 left-3 text-[12px] opacity-0 group-hover:opacity-100"
+                            style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 180ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 180ms', transform: 'rotate(-6deg)' }}
+                          >
+                            🎉
+                          </span>
+
+                          {/* Sense logo orb */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div
+                              className="w-8 h-8 rounded-xl bg-white flex items-center justify-center opacity-0 group-hover:opacity-100"
+                              style={{
+                                boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 8px 18px -8px rgba(253,80,0,0.45)',
+                                transition: 'opacity 240ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 240ms cubic-bezier(0.23,1,0.32,1) 100ms',
+                                transform: 'scale(1)',
+                              }}
+                            >
+                              <SenseLogo size={16} animated={false} />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Body */}
+                    <div className="px-2.5 py-2">
+                      {/* Inline icon + title */}
+                      <div className="flex items-center gap-1.5">
+                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.4} />
+                        <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-none">What's new</p>
+                      </div>
+
+                      {/* Expanding subtitle + button on hover */}
+                      <div
+                        className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
+                        style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
+                      >
+                        <div className="overflow-hidden">
+                          <p
+                            className="text-[10.5px] text-[#6B7280] leading-tight mt-1.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                            style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                          >
+                            Sense is now available with smarter answers and pinned insights.
+                          </p>
+                          <button
+                            onClick={() => setAnnouncementOpen(true)}
+                            className="w-full py-1 rounded-md text-[11px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                            style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            View update
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
