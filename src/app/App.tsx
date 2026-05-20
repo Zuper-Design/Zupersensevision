@@ -354,47 +354,16 @@ function AppContent() {
                 {demoMode ? null : (
                   <button
                     onClick={openUpgrade}
-                    className="group w-full block text-left overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985] relative"
+                    className="group w-full block text-left overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985] relative border border-[#F0DCC4] hover:border-[#E8C9A6]"
                     style={{
                       background:
-                        'linear-gradient(135deg, #FFFFFF 0%, #FFF6EC 60%, #FFE6D2 100%)',
-                      boxShadow:
-                        '0 1px 2px rgba(0,0,0,0.04), 0 6px 14px -8px rgba(28,30,33,0.08), 0 18px 32px -20px rgba(253,80,0,0.28)',
+                        'linear-gradient(135deg, #FFFFFF 0%, #FFF6EC 55%, #FFE7D2 100%)',
                       transition:
-                        'border-radius 260ms cubic-bezier(0.23,1,0.32,1), box-shadow 260ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                        'border-radius 260ms cubic-bezier(0.23,1,0.32,1), border-color 200ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
                     }}
                   >
-                    {/* Soft highlight in upper-left */}
-                    <span
-                      className="absolute pointer-events-none"
-                      style={{
-                        top: -28,
-                        left: -28,
-                        width: 120,
-                        height: 80,
-                        borderRadius: '50%',
-                        background:
-                          'radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 70%)',
-                        filter: 'blur(6px)',
-                      }}
-                    />
-                    {/* Brand glow in bottom-right */}
-                    <span
-                      className="absolute pointer-events-none"
-                      style={{
-                        bottom: -34,
-                        right: -28,
-                        width: 140,
-                        height: 90,
-                        borderRadius: '50%',
-                        background:
-                          'radial-gradient(ellipse, rgba(253,80,0,0.18) 0%, rgba(253,80,0,0) 65%)',
-                        filter: 'blur(10px)',
-                      }}
-                    />
-
                     {/* Eyebrow row */}
-                    <div className="relative flex items-center gap-2 px-3 py-2">
+                    <div className="relative flex items-center gap-2 px-3 py-[7px]">
                       <span className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9C5340] flex-1 truncate">
                         What's new
                       </span>
