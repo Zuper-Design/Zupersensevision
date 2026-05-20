@@ -361,66 +361,69 @@ function AppContent() {
                     >
                       <div className="overflow-hidden">
                         <div
-                          className="relative h-[100px]"
-                          style={{ background: 'linear-gradient(180deg, #FFD2B3 0%, #FFE7D2 55%, #FFFFFF 100%)' }}
+                          className="relative h-[116px]"
+                          style={{ background: 'linear-gradient(180deg, #FFD0AE 0%, #FFE5CF 48%, #FFF3E5 78%, #FFFFFF 100%)' }}
                         >
-                          {/* Top chat bubble — from Sense */}
+                          {/* Sense bubble — top, tail toward bottom-left (avatar side) */}
                           <div
-                            className="absolute top-[10px] left-[40px] right-2 rounded-[14px] bg-white px-2.5 py-[9px] opacity-0 group-hover:opacity-100"
+                            className="absolute top-[12px] left-[48px] right-[12px] bg-white px-3 py-[9px] opacity-0 group-hover:opacity-100"
                             style={{
-                              boxShadow: '0 1px 1px rgba(28,30,33,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)',
-                              transition: 'opacity 240ms cubic-bezier(0.23,1,0.32,1) 80ms',
+                              borderRadius: '14px 14px 14px 4px',
+                              boxShadow: '0 1px 1px rgba(28,30,33,0.025), 0 6px 18px -10px rgba(28,30,33,0.10)',
+                              transition: 'opacity 260ms cubic-bezier(0.23,1,0.32,1) 70ms, transform 260ms cubic-bezier(0.23,1,0.32,1) 70ms',
                             }}
                           >
-                            <div className="h-[5px] w-[78%] rounded-full bg-[#F0E2D2] mb-[4px]" />
-                            <div className="h-[5px] w-[48%] rounded-full bg-[#F4E8DA]" />
+                            <div className="h-[5px] w-[80%] rounded-full bg-[#EBDDC9] mb-[5px]" />
+                            <div className="h-[5px] w-[46%] rounded-full bg-[#F2E6D4]" />
                           </div>
 
-                          {/* Bottom chat bubble — to memoji */}
+                          {/* User bubble — bottom, peach-tinted, tail toward bottom-right (avatar side) */}
                           <div
-                            className="absolute bottom-[10px] left-2 right-[40px] rounded-[14px] bg-white px-2.5 py-[9px] opacity-0 group-hover:opacity-100"
+                            className="absolute bottom-[12px] left-[12px] right-[48px] px-3 py-[9px] opacity-0 group-hover:opacity-100"
                             style={{
-                              boxShadow: '0 1px 1px rgba(28,30,33,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)',
-                              transition: 'opacity 240ms cubic-bezier(0.23,1,0.32,1) 160ms',
+                              background: 'linear-gradient(180deg, #FFF1E0 0%, #FFE6D2 100%)',
+                              borderRadius: '14px 14px 4px 14px',
+                              boxShadow: '0 1px 1px rgba(28,30,33,0.025), 0 6px 18px -10px rgba(28,30,33,0.10)',
+                              transition: 'opacity 260ms cubic-bezier(0.23,1,0.32,1) 190ms, transform 260ms cubic-bezier(0.23,1,0.32,1) 190ms',
                             }}
                           >
-                            <div className="h-[5px] w-[70%] rounded-full bg-[#F0E2D2] mb-[4px]" />
-                            <div className="h-[5px] w-[42%] rounded-full bg-[#F4E8DA]" />
+                            <div className="h-[5px] w-[72%] rounded-full bg-[#E5C9A8] mb-[5px]" />
+                            <div className="h-[5px] w-[40%] rounded-full bg-[#EBD3B4]" />
                           </div>
 
-                          {/* Left avatar — Sense logo (peach ring) */}
+                          {/* Sense avatar — top-left */}
                           <div
-                            className="absolute top-[6px] left-[6px] w-[28px] h-[28px] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100"
+                            className="absolute top-[8px] left-[8px] w-[34px] h-[34px] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100"
                             style={{
-                              background: 'linear-gradient(135deg, #FFFFFF 0%, #FFF1E5 100%)',
+                              background: 'radial-gradient(circle at 30% 25%, #FFFFFF 0%, #FFF1E5 100%)',
                               boxShadow:
-                                '0 0 0 1px rgba(255,217,194,0.95), 0 1px 2px rgba(0,0,0,0.04), 0 6px 14px -6px rgba(253,80,0,0.35)',
-                              transition: 'opacity 240ms cubic-bezier(0.23,1,0.32,1) 120ms',
+                                '0 0 0 1.5px rgba(255,196,160,0.85), inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(0,0,0,0.04), 0 8px 16px -8px rgba(253,80,0,0.42)',
+                              transition: 'opacity 260ms cubic-bezier(0.23,1,0.32,1) 130ms, transform 260ms cubic-bezier(0.23,1,0.32,1) 130ms',
                             }}
                           >
-                            <SenseLogo size={15} animated={false} />
+                            <SenseLogo size={17} animated={false} />
                           </div>
 
-                          {/* Right avatar — Apple memoji on peach circle */}
+                          {/* Memoji avatar — bottom-right */}
                           <div
-                            className="absolute bottom-[6px] right-[6px] w-[32px] h-[32px] rounded-full overflow-hidden flex items-center justify-center opacity-0 group-hover:opacity-100"
+                            className="absolute bottom-[8px] right-[8px] w-[34px] h-[34px] rounded-full overflow-hidden flex items-center justify-center opacity-0 group-hover:opacity-100"
                             style={{
-                              background: 'linear-gradient(135deg, #FFE0CC 0%, #FFC4A0 100%)',
-                              boxShadow: '0 0 0 1px rgba(255,196,160,0.95), 0 1px 2px rgba(0,0,0,0.05), 0 6px 14px -6px rgba(28,30,33,0.12)',
-                              transition: 'opacity 240ms cubic-bezier(0.23,1,0.32,1) 200ms',
+                              background: 'linear-gradient(135deg, #FFD9C0 0%, #FFB991 100%)',
+                              boxShadow:
+                                '0 0 0 1.5px rgba(255,185,145,0.85), inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.05), 0 8px 16px -8px rgba(28,30,33,0.18)',
+                              transition: 'opacity 260ms cubic-bezier(0.23,1,0.32,1) 250ms, transform 260ms cubic-bezier(0.23,1,0.32,1) 250ms',
                             }}
                           >
                             <img
                               src="/memoji.png"
                               alt="Memoji"
-                              width={64}
-                              height={64}
+                              width={68}
+                              height={68}
                               className="block object-cover"
                               style={{
                                 width: '128%',
                                 height: '128%',
-                                objectPosition: 'center 28%',
-                                imageRendering: 'auto',
+                                objectPosition: 'center 26%',
                               }}
                             />
                           </div>
