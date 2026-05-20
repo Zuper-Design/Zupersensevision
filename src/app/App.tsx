@@ -399,7 +399,7 @@ function AppContent() {
                     <div className="px-2.5 py-2">
                       {/* Inline icon + title */}
                       <div className="flex items-center gap-1.5">
-                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.4} />
+                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#C97A4D' }} strokeWidth={2.2} />
                         <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-none">What's new</p>
                       </div>
 
