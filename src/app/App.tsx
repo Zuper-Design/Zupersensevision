@@ -351,7 +351,7 @@ function AppContent() {
                     )}
                   </AnimatePresence>
                 </div>
-                {demoMode ? null : (
+                {demoMode ? null : currentUser === 'RG' ? (
                   <button
                     onClick={openUpgrade}
                     className="group w-full block text-left overflow-hidden rounded-full hover:rounded-2xl active:scale-[0.985] relative border border-[#F0DCC4] hover:border-[#E8C9A6]"
@@ -388,6 +388,37 @@ function AppContent() {
                       </div>
                     </div>
                   </button>
+                ) : currentUser === 'AU' ? (
+                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FEF3C7' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                          <line x1="12" y1="9" x2="12" y2="13" />
+                          <line x1="12" y1="17" x2="12.01" y2="17" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-snug">Subscription ends<br />May 17, 2026</p>
+                        <p className="text-[11px] text-[#6B7280] leading-snug mt-1">Activate to continue using Sense</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#FEE2E2' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-tight">Your trial has ended</p>
+                        <p className="text-[11px] text-[#6B7280] leading-tight mt-0.5">Upgrade to keep your insights flowing</p>
+                      </div>
+                    </div>
+                    <button onClick={openUpgrade} className="w-full py-1.5 rounded-lg text-[12px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
+                      Upgrade Sense
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
