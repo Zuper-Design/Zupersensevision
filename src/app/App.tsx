@@ -352,49 +352,76 @@ function AppContent() {
                     )}
                   </AnimatePresence>
                 </div>
-                {demoMode ? null : isSubscribed && currentUser === 'RG' ? (
-                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.12)' }}>
-                        <Check className="w-3.5 h-3.5" style={{ color: '#10B981' }} strokeWidth={3} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-tight">Sense is active</p>
-                        <p className="text-[11px] text-[#6B7280] leading-tight mt-0.5">Renews May 21, 2026</p>
+                {demoMode ? null : (
+                  <button
+                    onClick={openUpgrade}
+                    className="w-full text-left rounded-xl overflow-hidden border border-[#F0E4D8] relative active:scale-[0.985]"
+                    style={{
+                      background: 'linear-gradient(180deg, #FFD2B3 0%, #FFE7D2 38%, #FFFFFF 78%)',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 12px 28px -18px rgba(253,80,0,0.30)',
+                      transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                  >
+                    {/* Illustration area */}
+                    <div className="relative h-[108px]">
+                      {/* Decorative soft glow */}
+                      <span
+                        className="absolute pointer-events-none"
+                        style={{
+                          top: -20,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: 140,
+                          height: 80,
+                          borderRadius: '50%',
+                          background: 'radial-gradient(ellipse, rgba(253,80,0,0.18) 0%, rgba(253,80,0,0) 70%)',
+                          filter: 'blur(10px)',
+                        }}
+                      />
+
+                      {/* Floating face emojis in white discs */}
+                      <span
+                        className="absolute top-2 left-2.5 w-7 h-7 rounded-full bg-white flex items-center justify-center text-[15px]"
+                        style={{ boxShadow: '0 4px 10px -4px rgba(28,30,33,0.18), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(-8deg)' }}
+                      >
+                        😊
+                      </span>
+                      <span
+                        className="absolute top-4 right-3 w-7 h-7 rounded-full bg-white flex items-center justify-center text-[15px]"
+                        style={{ boxShadow: '0 4px 10px -4px rgba(28,30,33,0.18), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(10deg)' }}
+                      >
+                        🤩
+                      </span>
+                      <span
+                        className="absolute bottom-1 left-7 w-7 h-7 rounded-full bg-white flex items-center justify-center text-[15px]"
+                        style={{ boxShadow: '0 4px 10px -4px rgba(28,30,33,0.18), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(6deg)' }}
+                      >
+                        🥳
+                      </span>
+
+                      {/* Sense logo hero tile */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div
+                          className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center"
+                          style={{
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 10px 22px -10px rgba(253,80,0,0.45)',
+                          }}
+                        >
+                          <SenseLogo size={26} animated={false} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ) : currentUser === 'RG' || currentUser === 'AU' ? (
-                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
-                    <div className="flex items-start gap-2.5">
-                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FEF3C7' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                          <line x1="12" y1="9" x2="12" y2="13" />
-                          <line x1="12" y1="17" x2="12.01" y2="17" />
-                        </svg>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-snug">Subscription ends<br />May 17, 2026</p>
-                        <p className="text-[11px] text-[#6B7280] leading-snug mt-1">Activate to continue using Sense</p>
-                      </div>
+
+                    {/* Copy */}
+                    <div className="px-3 pt-1 pb-3 text-center">
+                      <p className="text-[12.5px] font-semibold text-[#1C1E21] leading-snug">
+                        Try Sense to improve your business
+                      </p>
+                      <p className="text-[10.5px] text-[#6B7280] leading-snug mt-1">
+                        See what Sense can do for your roofing ops
+                      </p>
                     </div>
-                  </div>
-                ) : (
-                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
-                    <div className="flex items-center gap-2.5 mb-3">
-                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#FEE2E2' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-tight">Your trial has ended</p>
-                        <p className="text-[11px] text-[#6B7280] leading-tight mt-0.5">Upgrade to keep your insights flowing</p>
-                      </div>
-                    </div>
-                    <button onClick={openUpgrade} className="w-full py-1.5 rounded-lg text-[12px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
-                      Upgrade Sense
-                    </button>
-                  </div>
+                  </button>
                 )}
               </div>
             </div>
