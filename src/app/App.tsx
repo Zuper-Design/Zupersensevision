@@ -357,68 +357,44 @@ function AppContent() {
                     onClick={openUpgrade}
                     className="w-full text-left rounded-xl overflow-hidden border border-[#F0E4D8] relative active:scale-[0.985]"
                     style={{
-                      background: 'linear-gradient(180deg, #FFD2B3 0%, #FFE7D2 38%, #FFFFFF 78%)',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 12px 28px -18px rgba(253,80,0,0.30)',
+                      background: 'linear-gradient(180deg, #FFEAD8 0%, #FFF6EC 50%, #FFFFFF 100%)',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.025), 0 6px 14px -10px rgba(253,80,0,0.20)',
                       transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)',
                     }}
                   >
                     {/* Illustration area */}
-                    <div className="relative h-[108px]">
-                      {/* Decorative soft glow */}
-                      <span
-                        className="absolute pointer-events-none"
-                        style={{
-                          top: -20,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: 140,
-                          height: 80,
-                          borderRadius: '50%',
-                          background: 'radial-gradient(ellipse, rgba(253,80,0,0.18) 0%, rgba(253,80,0,0) 70%)',
-                          filter: 'blur(10px)',
-                        }}
-                      />
-
+                    <div className="relative h-[64px]">
                       {/* Floating face emojis in white discs */}
                       <span
-                        className="absolute top-2 left-2.5 w-7 h-7 rounded-full bg-white flex items-center justify-center text-[15px]"
-                        style={{ boxShadow: '0 4px 10px -4px rgba(28,30,33,0.18), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(-8deg)' }}
+                        className="absolute top-1.5 left-2 w-[22px] h-[22px] rounded-full bg-white flex items-center justify-center text-[12px]"
+                        style={{ boxShadow: '0 2px 6px -2px rgba(28,30,33,0.14), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(-8deg)' }}
                       >
                         😊
                       </span>
                       <span
-                        className="absolute top-4 right-3 w-7 h-7 rounded-full bg-white flex items-center justify-center text-[15px]"
-                        style={{ boxShadow: '0 4px 10px -4px rgba(28,30,33,0.18), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(10deg)' }}
+                        className="absolute top-2.5 right-2.5 w-[22px] h-[22px] rounded-full bg-white flex items-center justify-center text-[12px]"
+                        style={{ boxShadow: '0 2px 6px -2px rgba(28,30,33,0.14), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(10deg)' }}
                       >
                         🤩
                       </span>
-                      <span
-                        className="absolute bottom-1 left-7 w-7 h-7 rounded-full bg-white flex items-center justify-center text-[15px]"
-                        style={{ boxShadow: '0 4px 10px -4px rgba(28,30,33,0.18), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(6deg)' }}
-                      >
-                        🥳
-                      </span>
 
-                      {/* Sense logo hero tile */}
+                      {/* Sense logo tile */}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div
-                          className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center"
+                          className="w-8 h-8 rounded-xl bg-white flex items-center justify-center"
                           style={{
-                            boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 10px 22px -10px rgba(253,80,0,0.45)',
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 14px -8px rgba(253,80,0,0.32)',
                           }}
                         >
-                          <SenseLogo size={26} animated={false} />
+                          <SenseLogo size={16} animated={false} />
                         </div>
                       </div>
                     </div>
 
                     {/* Copy */}
-                    <div className="px-3 pt-1 pb-3 text-center">
-                      <p className="text-[12.5px] font-semibold text-[#1C1E21] leading-snug">
+                    <div className="px-2.5 pt-0.5 pb-2.5 text-center">
+                      <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-snug">
                         Try Sense to improve your business
-                      </p>
-                      <p className="text-[10.5px] text-[#6B7280] leading-snug mt-1">
-                        See what Sense can do for your roofing ops
                       </p>
                     </div>
                   </button>
