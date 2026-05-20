@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle } from 'lucide-react';
+import { SenseLogo } from './components/SenseLogo';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -352,32 +353,55 @@ function AppContent() {
                   </AnimatePresence>
                 </div>
                 {demoMode ? null : currentUser === 'RG' ? (
-                  <div className="group rounded-xl px-2.5 py-2 bg-white border border-[#E6E8EC]">
-                    {/* Inline icon + title */}
-                    <div className="flex items-center gap-1.5">
-                      <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.4} />
-                      <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-none">What's new</p>
-                    </div>
-
-                    {/* Expanding subtitle + button on hover */}
+                  <div className="group relative rounded-xl px-2.5 py-2 bg-white border border-[#E6E8EC] overflow-hidden">
+                    {/* Hover gradient — peach at top fading to white */}
                     <div
-                      className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
-                      style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
-                    >
-                      <div className="overflow-hidden">
-                        <p
-                          className="text-[10.5px] text-[#6B7280] leading-tight mt-1.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
-                          style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none"
+                      style={{
+                        background: 'linear-gradient(180deg, #FFF1E5 0%, #FFFFFF 65%)',
+                        transition: 'opacity 280ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                    />
+
+                    <div className="relative">
+                      {/* Inline icon + title + decorative chips on hover */}
+                      <div className="flex items-center gap-1.5">
+                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.4} />
+                        <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-none flex-1">What's new</p>
+                        <span
+                          className="flex items-center gap-1 opacity-0 group-hover:opacity-100"
+                          style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 80ms' }}
                         >
-                          Sense is now available with smarter answers and pinned insights.
-                        </p>
-                        <button
-                          onClick={() => setAnnouncementOpen(true)}
-                          className="w-full py-1 rounded-md text-[11px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
-                          style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                        >
-                          View update
-                        </button>
+                          <span
+                            className="inline-flex items-center justify-center w-[14px] h-[14px] rounded-md"
+                            style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}
+                          >
+                            <SenseLogo size={9} animated={false} />
+                          </span>
+                          <span className="text-[11px] leading-none">✨</span>
+                        </span>
+                      </div>
+
+                      {/* Expanding subtitle + button on hover */}
+                      <div
+                        className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
+                        style={{ transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)' }}
+                      >
+                        <div className="overflow-hidden">
+                          <p
+                            className="text-[10.5px] text-[#6B7280] leading-tight mt-1.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                            style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
+                          >
+                            Sense is now available with smarter answers and pinned insights.
+                          </p>
+                          <button
+                            onClick={() => setAnnouncementOpen(true)}
+                            className="w-full py-1 rounded-md text-[11px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                            style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            View update
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
