@@ -362,32 +362,13 @@ function AppContent() {
                       transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)',
                     }}
                   >
-                    {/* Illustration area */}
-                    <div className="relative h-[64px]">
-                      {/* Floating face emojis in white discs */}
-                      <span
-                        className="absolute top-1.5 left-2 w-[22px] h-[22px] rounded-full bg-white flex items-center justify-center text-[12px]"
-                        style={{ boxShadow: '0 2px 6px -2px rgba(28,30,33,0.14), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(-8deg)' }}
+                    {/* Illustration area — Sense logo clips off the top-left corner */}
+                    <div className="relative h-[56px]">
+                      <div
+                        className="absolute pointer-events-none"
+                        style={{ top: -28, left: -28 }}
                       >
-                        😊
-                      </span>
-                      <span
-                        className="absolute top-2.5 right-2.5 w-[22px] h-[22px] rounded-full bg-white flex items-center justify-center text-[12px]"
-                        style={{ boxShadow: '0 2px 6px -2px rgba(28,30,33,0.14), 0 0 0 1px rgba(255,255,255,0.6)', transform: 'rotate(10deg)' }}
-                      >
-                        🤩
-                      </span>
-
-                      {/* Sense logo tile */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div
-                          className="w-8 h-8 rounded-xl bg-white flex items-center justify-center"
-                          style={{
-                            boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 6px 14px -8px rgba(253,80,0,0.32)',
-                          }}
-                        >
-                          <SenseLogo size={16} animated={false} />
-                        </div>
+                        <SenseLogo size={72} animated={false} />
                       </div>
                     </div>
 
