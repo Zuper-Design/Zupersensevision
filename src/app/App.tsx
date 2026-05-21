@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle } from 'lucide-react';
 import { SenseLogo } from './components/SenseLogo';
 import { ReleasesModal } from './components/ReleasesModal';
+import { WhatsNewFloater } from './components/WhatsNewFloater';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -195,6 +196,12 @@ function AppContent() {
         onExploreMore={() => window.open('https://www.zuper.co/book-a-demo', '_blank', 'noopener,noreferrer')}
       />
       <ReleasesModal open={releasesOpen} onClose={() => setReleasesOpen(false)} />
+      {!demoMode && currentUser === 'RG' && !sidebarOpen && (
+        <WhatsNewFloater
+          onOpenAnnouncement={() => setAnnouncementOpen(true)}
+          onOpenReleases={() => setReleasesOpen(true)}
+        />
+      )}
 {/* Top Navigation with Canvas/Chat Options */}
       <TopNavigation
         activeView={activeView}
