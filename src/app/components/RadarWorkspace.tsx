@@ -469,7 +469,8 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                 <div className="inline-flex items-center bg-[#F8F9FB] rounded-lg p-1">
                   <button
                     onClick={() => onViewChange?.('chat')}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'chat' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
+                    style={{ width: 116 }}
+                    className={`inline-flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'chat' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
                   >
                     <MessageSquare className="w-[14px] h-[14px]" strokeWidth={2} />
                     Chat
@@ -477,7 +478,8 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   <span className="w-px h-4 bg-[#E6E8EC] mx-0.5" aria-hidden />
                   <button
                     onClick={() => onViewChange?.('radar')}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'radar' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
+                    style={{ width: 116 }}
+                    className={`inline-flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'radar' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
                   >
                     <RadarIcon className="w-[14px] h-[14px]" strokeWidth={2} />
                     Radar
@@ -487,7 +489,8 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                       <span className="w-px h-4 bg-[#E6E8EC] mx-0.5" aria-hidden />
                       <button
                         onClick={onOpenAgentBuilder}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
+                        style={{ width: 116 }}
+                        className="inline-flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
                       >
                         <Sparkles className="w-[14px] h-[14px]" strokeWidth={2} />
                         AI Studio
