@@ -32,16 +32,16 @@ const navItems: { key: Section; label: string; icon: any; soon?: boolean }[] = [
 ];
 
 const recentAgents = [
-  { name: 'Spark', desc: '# Inside Sales Rep Agent The Inside Sales Rep Age...', status: 'Active', updated: '17 days ago', img: agentMarketer },
-  { name: 'Care', desc: '# Customer Success Agent The Customer Success Age...', status: 'Active', updated: '17 days ago', img: agentSupport },
-  { name: 'Sift', desc: '# Lead Qualification Agent The Lead Qualification...', status: 'Active', updated: '17 days ago', img: agentDetective },
-  { name: 'Coach', desc: '# Sales Coach Agent The Sales Coach Agent support...', status: 'Active', updated: '17 days ago', img: agentCreator },
+  { name: 'Sales Agent', desc: '# Inside Sales Rep Agent The Inside Sales Rep Age...', status: 'Active', updated: '17 days ago', img: agentMarketer },
+  { name: 'Success Agent', desc: '# Customer Success Agent The Customer Success Age...', status: 'Active', updated: '17 days ago', img: agentSupport },
+  { name: 'Lead Agent', desc: '# Lead Qualification Agent The Lead Qualification...', status: 'Active', updated: '17 days ago', img: agentDetective },
+  { name: 'Sales Coach Agent', desc: '# Sales Coach Agent The Sales Coach Agent support...', status: 'Active', updated: '17 days ago', img: agentCreator },
 ];
 
 const recentActivity = [
-  { agent: 'Sage', kind: 'SCHEDULE', when: '3 minutes ago', task: 'Scheduled run', tokens: '21,769', duration: '22.7s', status: 'Completed' },
-  { agent: 'Sage', kind: 'SCHEDULE', when: 'about 22 hours ago', task: 'Scheduled run', tokens: '25,811', duration: '3579.2s', status: 'Failed' },
-  { agent: 'Sage', kind: 'SCHEDULE', when: '2 days ago', task: 'Scheduled run', tokens: '—', duration: '6574.4s', status: 'Failed' },
+  { agent: 'Support Agent', kind: 'SCHEDULE', when: '3 minutes ago', task: 'Scheduled run', tokens: '21,769', duration: '22.7s', status: 'Completed' },
+  { agent: 'Support Agent', kind: 'SCHEDULE', when: 'about 22 hours ago', task: 'Scheduled run', tokens: '25,811', duration: '3579.2s', status: 'Failed' },
+  { agent: 'Support Agent', kind: 'SCHEDULE', when: '2 days ago', task: 'Scheduled run', tokens: '—', duration: '6574.4s', status: 'Failed' },
 ];
 
 export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => void; currentUser?: string }) {
@@ -322,17 +322,17 @@ const statusStyles: Record<AgentStatus, { bg: string; border: string; color: str
 };
 
 const myAgents: Array<{ name: string; desc: string; runs: number; lastRun: string; users: number; rating: number; reviews: number; price: string; skills: number; tools: number; status: AgentStatus; category: AgentCategory; img?: string }> = [
-  { name: 'Coach', desc: 'Reviews call transcripts and interaction logs, surfacing coaching moments.', runs: 412, lastRun: '1d ago', users: 7, rating: 4.4, reviews: 4, price: 'Free', skills: 3, tools: 2, status: 'Active', category: 'Sales', img: agentCreator },
-  { name: 'Ledger', desc: 'Tracks job costs, generates invoices, and surfaces margin anomalies.', runs: 0, lastRun: '', users: 3, rating: 5.0, reviews: 1, price: '$25/mo', skills: 0, tools: 1, status: 'Draft', category: 'Finance', img: agentReviews },
-  { name: 'Sage', desc: 'Answers user questions by searching and scraping Zuper documentation.', runs: 1872, lastRun: '8m ago', users: 32, rating: 4.7, reviews: 17, price: 'Free', skills: 4, tools: 3, status: 'Active', category: 'Support', img: agentSupport },
-  { name: 'Compass', desc: 'Optimizes daily routes and crew assignments to reduce drive time and overlaps.', runs: 564, lastRun: '40m ago', users: 14, rating: 4.7, reviews: 8, price: '$15/mo', skills: 5, tools: 4, status: 'Active', category: 'Operations', img: agentDetective },
-  { name: 'Pitch', desc: 'Drafts roofing estimates from intake notes and pulls in pricing automatically.', runs: 1024, lastRun: '3h ago', users: 22, rating: 4.5, reviews: 11, price: 'Free', skills: 3, tools: 2, status: 'Paused', category: 'Sales', img: agentCreator },
-  { name: 'Nudge', desc: 'Sends polite, on-brand follow-ups to stalled quotes and tracks response rate.', runs: 740, lastRun: '6h ago', users: 19, rating: 4.6, reviews: 10, price: '$9/mo', skills: 2, tools: 3, status: 'Active', category: 'Sales', img: agentSupport },
-  { name: 'Guard', desc: 'Reviews job-site checklists and flags missed safety steps before crew sign-off.', runs: 318, lastRun: '4h ago', users: 11, rating: 4.5, reviews: 6, price: 'Free', skills: 2, tools: 1, status: 'Error', category: 'Compliance', img: agentReviews },
-  { name: 'Stock', desc: 'Watches stock levels, drafts purchase orders, and pings vendors when supplies run low.', runs: 892, lastRun: '1h ago', users: 16, rating: 4.7, reviews: 9, price: '$14/mo', skills: 4, tools: 3, status: 'Active', category: 'Operations', img: agentCreator },
-  { name: 'Spark', desc: 'Handles inbound inquiries from homeowners and businesses interested in roofing services.', runs: 1248, lastRun: '2h ago', users: 24, rating: 4.8, reviews: 12, price: 'Free', skills: 6, tools: 4, status: 'Active', category: 'Sales', img: agentMarketer },
-  { name: 'Care', desc: 'Supports existing customers throughout their roofing project lifecycle and follow-ups.', runs: 832, lastRun: '5h ago', users: 18, rating: 4.6, reviews: 9, price: '$12/mo', skills: 5, tools: 3, status: 'Paused', category: 'Support', img: agentDetective },
-  { name: 'Sift', desc: 'Evaluates inbound leads to determine readiness, budget fit, and timeline.', runs: 2104, lastRun: '12m ago', users: 41, rating: 4.9, reviews: 23, price: '$19/mo', skills: 7, tools: 5, status: 'Active', category: 'Sales', img: agentSupport },
+  { name: 'Sales Coach Agent', desc: 'Reviews call transcripts and interaction logs, surfacing coaching moments.', runs: 412, lastRun: '1d ago', users: 7, rating: 4.4, reviews: 4, price: 'Free', skills: 3, tools: 2, status: 'Active', category: 'Sales', img: agentCreator },
+  { name: 'Finance Agent', desc: 'Tracks job costs, generates invoices, and surfaces margin anomalies.', runs: 0, lastRun: '', users: 3, rating: 5.0, reviews: 1, price: '$25/mo', skills: 0, tools: 1, status: 'Draft', category: 'Finance', img: agentReviews },
+  { name: 'Support Agent', desc: 'Answers user questions by searching and scraping Zuper documentation.', runs: 1872, lastRun: '8m ago', users: 32, rating: 4.7, reviews: 17, price: 'Free', skills: 4, tools: 3, status: 'Active', category: 'Support', img: agentSupport },
+  { name: 'Routing Agent', desc: 'Optimizes daily routes and crew assignments to reduce drive time and overlaps.', runs: 564, lastRun: '40m ago', users: 14, rating: 4.7, reviews: 8, price: '$15/mo', skills: 5, tools: 4, status: 'Active', category: 'Operations', img: agentDetective },
+  { name: 'Estimate Agent', desc: 'Drafts roofing estimates from intake notes and pulls in pricing automatically.', runs: 1024, lastRun: '3h ago', users: 22, rating: 4.5, reviews: 11, price: 'Free', skills: 3, tools: 2, status: 'Paused', category: 'Sales', img: agentCreator },
+  { name: 'Quote Agent', desc: 'Sends polite, on-brand follow-ups to stalled quotes and tracks response rate.', runs: 740, lastRun: '6h ago', users: 19, rating: 4.6, reviews: 10, price: '$9/mo', skills: 2, tools: 3, status: 'Active', category: 'Sales', img: agentSupport },
+  { name: 'Compliance Agent', desc: 'Reviews job-site checklists and flags missed safety steps before crew sign-off.', runs: 318, lastRun: '4h ago', users: 11, rating: 4.5, reviews: 6, price: 'Free', skills: 2, tools: 1, status: 'Error', category: 'Compliance', img: agentReviews },
+  { name: 'Order Agent', desc: 'Watches stock levels, drafts purchase orders, and pings vendors when supplies run low.', runs: 892, lastRun: '1h ago', users: 16, rating: 4.7, reviews: 9, price: '$14/mo', skills: 4, tools: 3, status: 'Active', category: 'Operations', img: agentCreator },
+  { name: 'Sales Agent', desc: 'Handles inbound inquiries from homeowners and businesses interested in roofing services.', runs: 1248, lastRun: '2h ago', users: 24, rating: 4.8, reviews: 12, price: 'Free', skills: 6, tools: 4, status: 'Active', category: 'Sales', img: agentMarketer },
+  { name: 'Success Agent', desc: 'Supports existing customers throughout their roofing project lifecycle and follow-ups.', runs: 832, lastRun: '5h ago', users: 18, rating: 4.6, reviews: 9, price: '$12/mo', skills: 5, tools: 3, status: 'Paused', category: 'Support', img: agentDetective },
+  { name: 'Lead Agent', desc: 'Evaluates inbound leads to determine readiness, budget fit, and timeline.', runs: 2104, lastRun: '12m ago', users: 41, rating: 4.9, reviews: 23, price: '$19/mo', skills: 7, tools: 5, status: 'Active', category: 'Sales', img: agentSupport },
 ];
 
 function MyAgentsView() {
@@ -906,7 +906,7 @@ function AUCreateAgentForm({
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <div className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.10em] mb-1">{isLive ? (name || 'Agent') : 'Coach'}</div>
+                    <div className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.10em] mb-1">{isLive ? (name || 'Agent') : 'Sales Coach Agent'}</div>
                     <p className="text-[14.5px] text-[#1C1E21] leading-[1.65] whitespace-pre-line">{m.text}</p>
                     {m.summary && (
                       <div
@@ -5113,7 +5113,7 @@ function Field({ label, required, children }: { label: string; required?: boolea
 const catalogItems = [
   // ── Operations (5) ──
   {
-    title: 'Skyline',
+    title: 'Weather Agent',
     role: 'Operations Assistant',
     desc: 'Wakes up before your crews and emails a multi-city forecast so jobs get rescheduled before rain hits.',
     saves: 'Saves 3h/week',
@@ -5126,7 +5126,7 @@ const catalogItems = [
     accent: '#E89F5C',
   },
   {
-    title: 'Atlas',
+    title: 'Dispatch Agent',
     role: 'Operations Assistant',
     desc: 'Rebuilds tomorrow\'s routes overnight to cut drive time and balance crew workload across the day.',
     saves: 'Saves 6h/week',
@@ -5138,7 +5138,7 @@ const catalogItems = [
     accent: '#E89F5C',
   },
   {
-    title: 'Watch',
+    title: 'SLA Agent',
     role: 'Operations Assistant',
     desc: 'Monitors active jobs for missed response or arrival windows and pings the right manager early.',
     saves: 'Saves 4h/week',
@@ -5150,7 +5150,7 @@ const catalogItems = [
     accent: '#E89F5C',
   },
   {
-    title: 'Stockpile',
+    title: 'Stock Agent',
     role: 'Operations Assistant',
     desc: 'Tracks consumable usage per job and drafts purchase orders before crews hit empty shelves.',
     saves: 'Saves 5h/week',
@@ -5162,7 +5162,7 @@ const catalogItems = [
     accent: '#E89F5C',
   },
   {
-    title: 'Tag',
+    title: 'Tagging Agent',
     role: 'Operations Assistant',
     desc: 'Reads new jobs, applies the right service codes and crew tags so dispatchers don\'t have to.',
     saves: 'Saves 3h/week',
@@ -5176,7 +5176,7 @@ const catalogItems = [
 
   // ── Customer (5) ──
   {
-    title: 'Echo',
+    title: 'Review Agent',
     role: 'Customer Insights',
     desc: 'Pulls fresh Google reviews, matches them to customers, and flags anything below 4 stars for follow-up.',
     saves: 'Saves 2h/week',
@@ -5189,7 +5189,7 @@ const catalogItems = [
     accent: '#E48A98',
   },
   {
-    title: 'Pulse',
+    title: 'NPS Agent',
     role: 'Customer Insights',
     desc: 'Sends a 1-question NPS after each completed job and clusters responses into recurring themes.',
     saves: 'Saves 3h/week',
@@ -5201,7 +5201,7 @@ const catalogItems = [
     accent: '#E48A98',
   },
   {
-    title: 'Loyal',
+    title: 'Churn Agent',
     role: 'Customer Insights',
     desc: 'Watches contract renewals, complaints and ticket volume to flag accounts likely to churn.',
     saves: 'Saves 5h/week',
@@ -5213,7 +5213,7 @@ const catalogItems = [
     accent: '#E48A98',
   },
   {
-    title: 'Wave',
+    title: 'Follow-up Agent',
     role: 'Customer Insights',
     desc: 'Sends a personal thank-you SMS 24h after job completion and asks for a Google review when timing is right.',
     saves: 'Saves 4h/week',
@@ -5225,13 +5225,13 @@ const catalogItems = [
     accent: '#E48A98',
   },
   {
-    title: 'Triage',
+    title: 'CSR Agent',
     role: 'Customer Insights',
     desc: 'Reads inbound complaint emails, classifies severity, and routes the urgent ones to a human first.',
     saves: 'Saves 6h/week',
     rating: 4.7,
     hires: 156,
-    tags: [{ icon: Mail, label: 'Inbox' }, { icon: AlertTriangle, label: 'Triage' }],
+    tags: [{ icon: Mail, label: 'Inbox' }, { icon: AlertTriangle, label: 'CSR Agent' }],
     img: agentSupport,
     tint: 'linear-gradient(180deg, #FDDFE2 0%, #FEEEEF 100%)',
     accent: '#E48A98',
@@ -5239,7 +5239,7 @@ const catalogItems = [
 
   // ── Sales (5) ──
   {
-    title: 'Catch',
+    title: 'Intake Agent',
     role: 'Sales Assistant',
     desc: 'Captures inbound leads via webhook and turns them into Zuper jobs with the right tags and crew assigned.',
     saves: 'Saves 6h/week',
@@ -5251,7 +5251,7 @@ const catalogItems = [
     accent: '#CFA64D',
   },
   {
-    title: 'Remind',
+    title: 'Reminder Agent',
     role: 'Sales Closer',
     desc: 'Politely nudges customers with open quotes so they don\'t go cold — and tells you which ones converted.',
     saves: 'Saves 4h/week',
@@ -5263,7 +5263,7 @@ const catalogItems = [
     accent: '#7DA1C9',
   },
   {
-    title: 'Scout',
+    title: 'Qualification Agent',
     role: 'Sales Assistant',
     desc: 'Scores every inbound lead by budget, timeline and fit so closers only see the hot ones.',
     saves: 'Saves 7h/week',
@@ -5276,7 +5276,7 @@ const catalogItems = [
     accent: '#CFA64D',
   },
   {
-    title: 'Brief',
+    title: 'Pipeline Agent',
     role: 'Sales Assistant',
     desc: 'Compiles a weekly pipeline summary by stage and rep, sent to managers every Monday at 8am.',
     saves: 'Saves 3h/week',
@@ -5288,7 +5288,7 @@ const catalogItems = [
     accent: '#CFA64D',
   },
   {
-    title: 'Revive',
+    title: 'Reactivation Agent',
     role: 'Sales Closer',
     desc: 'Re-engages dormant leads with personalized check-ins and a fresh offer based on past interest.',
     saves: 'Saves 5h/week',
@@ -5302,7 +5302,7 @@ const catalogItems = [
 
   // ── Finance (5) ──
   {
-    title: 'Collect',
+    title: 'Collection Agent',
     role: 'Collections Assistant',
     desc: 'Spots invoices past 30 days, drafts a friendly collection email, and tracks who has and hasn\'t paid.',
     saves: 'Saves 7h/week',
@@ -5315,7 +5315,7 @@ const catalogItems = [
     accent: '#A788CC',
   },
   {
-    title: 'Margin',
+    title: 'Margin Agent',
     role: 'Finance Assistant',
     desc: 'Flags jobs running below target margin in realtime and shows where the cost crept in.',
     saves: 'Saves 4h/week',
@@ -5327,7 +5327,7 @@ const catalogItems = [
     accent: '#A788CC',
   },
   {
-    title: 'Sort',
+    title: 'Expense Agent',
     role: 'Finance Assistant',
     desc: 'Reads card transactions and receipts, applies your chart of accounts, and pushes to QuickBooks.',
     saves: 'Saves 6h/week',
@@ -5339,19 +5339,19 @@ const catalogItems = [
     accent: '#A788CC',
   },
   {
-    title: 'Forecast',
+    title: 'Cash Flow Agent',
     role: 'Finance Assistant',
     desc: 'Projects 30 / 60 / 90-day cash position from open quotes, jobs and aged receivables.',
     saves: 'Saves 5h/week',
     rating: 4.8,
     hires: 145,
-    tags: [{ icon: Clock, label: 'Daily' }, { icon: BarChart3, label: 'Forecast' }],
+    tags: [{ icon: Clock, label: 'Daily' }, { icon: BarChart3, label: 'Cash Flow Agent' }],
     img: agentSupport,
     tint: 'linear-gradient(180deg, #DCCBEF 0%, #ECE0F5 100%)',
     accent: '#A788CC',
   },
   {
-    title: 'Chase',
+    title: 'Late Pay Agent',
     role: 'Collections Assistant',
     desc: 'Auto-sends friendly reminders at 7, 14 and 30 days past due — escalates if still unpaid.',
     saves: 'Saves 4h/week',
@@ -5365,7 +5365,7 @@ const catalogItems = [
 
   // ── Field (5) ──
   {
-    title: 'Roster',
+    title: 'Crew Brief Agent',
     role: 'Field Coordinator',
     desc: 'Texts each crew their full schedule, drive routes, and parts list every morning before they roll out.',
     saves: 'Saves 5h/week',
@@ -5377,7 +5377,7 @@ const catalogItems = [
     accent: '#7DB48E',
   },
   {
-    title: 'Inspect',
+    title: 'Safety Check Agent',
     role: 'Field Coordinator',
     desc: 'Reviews job-site checklists and flags missed safety steps before crew sign-off.',
     saves: 'Saves 3h/week',
@@ -5389,7 +5389,7 @@ const catalogItems = [
     accent: '#7DB48E',
   },
   {
-    title: 'Audit',
+    title: 'Photo Audit Agent',
     role: 'Field Coordinator',
     desc: 'Checks crew-uploaded job photos for required angles, lighting and brand-mark presence.',
     saves: 'Saves 4h/week',
@@ -5401,7 +5401,7 @@ const catalogItems = [
     accent: '#7DB48E',
   },
   {
-    title: 'Recoup',
+    title: 'No-show Agent',
     role: 'Field Coordinator',
     desc: 'Detects unconfirmed appointments, texts the customer 1h before, and reschedules if needed.',
     saves: 'Saves 6h/week',
@@ -5413,7 +5413,7 @@ const catalogItems = [
     accent: '#7DB48E',
   },
   {
-    title: 'Sync',
+    title: 'Field Agent',
     role: 'Field Coordinator',
     desc: 'Updates dispatchers when crews finish early or run late, so the next job slot fills automatically.',
     saves: 'Saves 5h/week',
@@ -5673,74 +5673,74 @@ type VPCardData = {
 };
 
 const hiredPersonas: Record<string, { name: string; pronouns: string }> = {
-  'Coach': { name: 'Marcus', pronouns: 'he/him' },
-  'Ledger': { name: 'Emma', pronouns: 'she/her' },
-  'Sage': { name: 'Henry', pronouns: 'he/him' },
-  'Compass': { name: 'Olivia', pronouns: 'she/her' },
-  'Pitch': { name: 'Jacob', pronouns: 'he/him' },
-  'Nudge': { name: 'Oliver', pronouns: 'he/him' },
-  'Guard': { name: 'Sarah', pronouns: 'she/her' },
-  'Stock': { name: 'Ethan', pronouns: 'he/him' },
-  'Spark': { name: 'Chloe', pronouns: 'she/her' },
-  'Care': { name: 'Grace', pronouns: 'she/her' },
-  'Sift': { name: 'Logan', pronouns: 'he/him' },
+  'Sales Coach Agent': { name: 'Marcus', pronouns: 'he/him' },
+  'Finance Agent': { name: 'Emma', pronouns: 'she/her' },
+  'Support Agent': { name: 'Henry', pronouns: 'he/him' },
+  'Routing Agent': { name: 'Olivia', pronouns: 'she/her' },
+  'Estimate Agent': { name: 'Jacob', pronouns: 'he/him' },
+  'Quote Agent': { name: 'Oliver', pronouns: 'he/him' },
+  'Compliance Agent': { name: 'Sarah', pronouns: 'she/her' },
+  'Order Agent': { name: 'Ethan', pronouns: 'he/him' },
+  'Sales Agent': { name: 'Chloe', pronouns: 'she/her' },
+  'Success Agent': { name: 'Grace', pronouns: 'she/her' },
+  'Lead Agent': { name: 'Logan', pronouns: 'he/him' },
 };
 
 const hiredOutcomes: Record<string, string> = {
-  'Coach': "Win rate climbs back within two weeks. I review every call and surface what to fix — without slowing your team down.",
-  'Sage': "Customer questions get answered in seconds, 24/7. I escalate to your team only when it's actually needed.",
-  'Compass': "Crews finish four hours earlier and drive less. I rebuild the day's routes overnight.",
-  'Nudge': "Stalled quotes warm back up within 24h. I draft on-brand follow-ups and tell you who's ready to sign.",
-  'Stock': "No more empty trucks. I draft POs the moment stock dips and ping the right vendor.",
-  'Spark': "Every inbound lead gets a personal hello in under a minute. I qualify, route, and log it all in Zuper.",
-  'Sift': "Closers stop sifting through cold leads. I score every inbound and only the hot ones hit their queue.",
+  'Sales Coach Agent': "Win rate climbs back within two weeks. I review every call and surface what to fix — without slowing your team down.",
+  'Support Agent': "Customer questions get answered in seconds, 24/7. I escalate to your team only when it's actually needed.",
+  'Routing Agent': "Crews finish four hours earlier and drive less. I rebuild the day's routes overnight.",
+  'Quote Agent': "Stalled quotes warm back up within 24h. I draft on-brand follow-ups and tell you who's ready to sign.",
+  'Order Agent': "No more empty trucks. I draft POs the moment stock dips and ping the right vendor.",
+  'Sales Agent': "Every inbound lead gets a personal hello in under a minute. I qualify, route, and log it all in Zuper.",
+  'Lead Agent': "Closers stop sifting through cold leads. I score every inbound and only the hot ones hit their queue.",
 };
 
 const catalogOutcomes: Record<string, string> = {
-  'Skyline': "No more jobs lost to surprise rain. I read the forecast, find the at-risk jobs, and reschedule them before 7am.",
-  'Echo': "Unhappy customers get caught before they post. Your rating starts climbing again within the month.",
-  'Catch': "Every inbound lead becomes a Zuper job in under a minute — auto-tagged, auto-assigned, and ready for crew.",
-  'Remind': "Open quotes never go cold again. Conversion lifts ~15% in the first 30 days.",
-  'Roster': "Crews start the day knowing exactly what's ahead. No more 7am scrambles or wrong-address visits.",
-  'Collect': "Cash flow improves in week one. Past-due invoices get chased on day 30, 60, and 90 — automatically.",
+  'Weather Agent': "No more jobs lost to surprise rain. I read the forecast, find the at-risk jobs, and reschedule them before 7am.",
+  'Review Agent': "Unhappy customers get caught before they post. Your rating starts climbing again within the month.",
+  'Intake Agent': "Every inbound lead becomes a Zuper job in under a minute — auto-tagged, auto-assigned, and ready for crew.",
+  'Reminder Agent': "Open quotes never go cold again. Conversion lifts ~15% in the first 30 days.",
+  'Crew Brief Agent': "Crews start the day knowing exactly what's ahead. No more 7am scrambles or wrong-address visits.",
+  'Collection Agent': "Cash flow improves in week one. Past-due invoices get chased on day 30, 60, and 90 — automatically.",
 };
 
 const hiredPitches: Record<string, { metric: string; body: string }> = {
-  'Coach': { metric: 'Win rate dipped 12% this quarter', body: "if the slide continues, you'll miss target by Q-end — Marcus has already flagged 7 coachable calls." },
-  'Sage': { metric: 'Support tickets up 28% this month', body: 'volume is outpacing your team — Henry quietly resolved 142 of them without an escalation.' },
-  'Compass': { metric: 'Drive time crept up 18 min per job', body: 'crews are burning daylight — Olivia trimmed 4 hours off yesterday\'s routes.' },
-  'Nudge': { metric: 'Quote follow-up gap widened to 4.2 days', body: 'open quotes go cold fast past 72h — Oliver is pulling it back toward 14 hours.' },
-  'Stock': { metric: 'Stock-outs hit 6 SKUs this week', body: "crews keep arriving empty-handed — Ethan caught 14 low-stock items before they ran out." },
-  'Spark': { metric: 'Inbound response slipped to 22 min', body: "industry hot-lead window is 5 min — Chloe is greeting in 38 seconds on average." },
-  'Sift': { metric: 'Lead-to-quote time jumped 32%', body: 'closers are buried in noise — Logan filters fast so only the hot ones reach them.' },
+  'Sales Coach Agent': { metric: 'Win rate dipped 12% this quarter', body: "if the slide continues, you'll miss target by Q-end — Marcus has already flagged 7 coachable calls." },
+  'Support Agent': { metric: 'Support tickets up 28% this month', body: 'volume is outpacing your team — Henry quietly resolved 142 of them without an escalation.' },
+  'Routing Agent': { metric: 'Drive time crept up 18 min per job', body: 'crews are burning daylight — Olivia trimmed 4 hours off yesterday\'s routes.' },
+  'Quote Agent': { metric: 'Quote follow-up gap widened to 4.2 days', body: 'open quotes go cold fast past 72h — Oliver is pulling it back toward 14 hours.' },
+  'Order Agent': { metric: 'Stock-outs hit 6 SKUs this week', body: "crews keep arriving empty-handed — Ethan caught 14 low-stock items before they ran out." },
+  'Sales Agent': { metric: 'Inbound response slipped to 22 min', body: "industry hot-lead window is 5 min — Chloe is greeting in 38 seconds on average." },
+  'Lead Agent': { metric: 'Lead-to-quote time jumped 32%', body: 'closers are buried in noise — Logan filters fast so only the hot ones reach them.' },
 };
 
 const catalogPitches: Record<string, { metric: string; body: string }> = {
-  'Skyline': { metric: '3 jobs got rained out this month', body: "weather is costing you $4.2K per cancelled day — Skyler would have rescheduled them at 6am." },
-  'Echo': { metric: 'Rating dropped 0.3★ in 30 days', body: "every 0.1★ costs you ~2 inbound leads/week — Maya would catch unhappy customers before they post." },
-  'Catch': { metric: 'Inbound leads sit 2.4 days before assignment', body: 'every hour past hour 1 cuts conversion ~7% — Leo creates the Zuper job in 60 seconds.' },
-  'Remind': { metric: '$48K in open quotes are 3+ days cold', body: 'past 72h quotes convert at half the rate — Quinn warms them up before they go ice.' },
-  'Roster': { metric: 'Crews miss 12% of route changes', body: 'last-minute swaps cost an avg 38 min/crew/day — Claire SMS each one before sunrise.' },
-  'Collect': { metric: 'Overdue invoices crossed $24K this week', body: "if this trend continues, collections may fall 2–3 months behind — Ivy chases what's slipped past 30 days." },
+  'Weather Agent': { metric: '3 jobs got rained out this month', body: "weather is costing you $4.2K per cancelled day — Skyler would have rescheduled them at 6am." },
+  'Review Agent': { metric: 'Rating dropped 0.3★ in 30 days', body: "every 0.1★ costs you ~2 inbound leads/week — Maya would catch unhappy customers before they post." },
+  'Intake Agent': { metric: 'Inbound leads sit 2.4 days before assignment', body: 'every hour past hour 1 cuts conversion ~7% — Leo creates the Zuper job in 60 seconds.' },
+  'Reminder Agent': { metric: '$48K in open quotes are 3+ days cold', body: 'past 72h quotes convert at half the rate — Quinn warms them up before they go ice.' },
+  'Crew Brief Agent': { metric: 'Crews miss 12% of route changes', body: 'last-minute swaps cost an avg 38 min/crew/day — Claire SMS each one before sunrise.' },
+  'Collection Agent': { metric: 'Overdue invoices crossed $24K this week', body: "if this trend continues, collections may fall 2–3 months behind — Ivy chases what's slipped past 30 days." },
 };
 
 const hiredQuotes: Record<string, string> = {
-  'Coach': 'Every rep wants to close. I show them which call they almost won — and what to say next.',
-  'Sage': "Customers don't read docs. I read them so they don't have to.",
-  'Compass': 'I know which crew is closest, freest, and best for the job. Every minute saved is a margin point.',
-  'Nudge': 'Open quotes go cold fast. I keep yours warm — and tell you which ones are ready to close.',
-  'Stock': "I watch your stock so you don't have to. When something's running low, I draft the PO and ping the vendor.",
-  'Spark': 'Inbound leads need a fast hello. I greet, qualify, and route — before they bounce.',
-  'Sift': "Not every lead is worth your time. I weigh budget, timeline, and fit, then hand off only the hot ones.",
+  'Sales Coach Agent': 'Every rep wants to close. I show them which call they almost won — and what to say next.',
+  'Support Agent': "Customers don't read docs. I read them so they don't have to.",
+  'Routing Agent': 'I know which crew is closest, freest, and best for the job. Every minute saved is a margin point.',
+  'Quote Agent': 'Open quotes go cold fast. I keep yours warm — and tell you which ones are ready to close.',
+  'Order Agent': "I watch your stock so you don't have to. When something's running low, I draft the PO and ping the vendor.",
+  'Sales Agent': 'Inbound leads need a fast hello. I greet, qualify, and route — before they bounce.',
+  'Lead Agent': "Not every lead is worth your time. I weigh budget, timeline, and fit, then hand off only the hot ones.",
 };
 
 const catalogQuotes: Record<string, string> = {
-  'Skyline': 'I wake up before your crews and email a multi-city forecast so jobs get rescheduled before rain hits.',
-  'Echo': 'I pull every new Google review, match it to a customer, and flag anything under 4 stars.',
-  'Catch': 'I catch every web form and webhook. Tag, score, and turn each one into a Zuper job — automatically.',
-  'Remind': "Open quotes need a nudge. I send a polite follow-up, then tell you who's ready to sign.",
-  'Roster': 'Every crew gets their day on their phone — schedule, drive route, parts — before they roll out.',
-  'Collect': "Past due invoices add up fast. I find them, draft the email, and track who's paid.",
+  'Weather Agent': 'I wake up before your crews and email a multi-city forecast so jobs get rescheduled before rain hits.',
+  'Review Agent': 'I pull every new Google review, match it to a customer, and flag anything under 4 stars.',
+  'Intake Agent': 'I catch every web form and webhook. Tag, score, and turn each one into a Zuper job — automatically.',
+  'Reminder Agent': "Open quotes need a nudge. I send a polite follow-up, then tell you who's ready to sign.",
+  'Crew Brief Agent': 'Every crew gets their day on their phone — schedule, drive route, parts — before they roll out.',
+  'Collection Agent': "Past due invoices add up fast. I find them, draft the email, and track who's paid.",
 };
 
 const highlightsByCategory: Record<string, string[]> = {
@@ -5752,12 +5752,12 @@ const highlightsByCategory: Record<string, string[]> = {
 };
 
 const catalogPersonas: Record<string, { name: string; pronouns: string }> = {
-  'Skyline': { name: 'Skyler', pronouns: 'she/her' },
-  'Echo': { name: 'Maya', pronouns: 'she/her' },
-  'Catch': { name: 'Leo', pronouns: 'he/him' },
-  'Remind': { name: 'Quinn', pronouns: 'they/them' },
-  'Roster': { name: 'Claire', pronouns: 'she/her' },
-  'Collect': { name: 'Ivy', pronouns: 'she/her' },
+  'Weather Agent': { name: 'Skyler', pronouns: 'she/her' },
+  'Review Agent': { name: 'Maya', pronouns: 'she/her' },
+  'Intake Agent': { name: 'Leo', pronouns: 'he/him' },
+  'Reminder Agent': { name: 'Quinn', pronouns: 'they/them' },
+  'Crew Brief Agent': { name: 'Claire', pronouns: 'she/her' },
+  'Collection Agent': { name: 'Ivy', pronouns: 'she/her' },
 };
 
 function VPAgentsView({ onOpenCreate }: { onOpenCreate?: () => void }) {
@@ -5796,12 +5796,12 @@ function VPAgentsView({ onOpenCreate }: { onOpenCreate?: () => void }) {
     });
 
   const catalogHighlights: Record<string, string[]> = {
-    'Skyline': ['Pulls hourly multi-city forecasts', 'Auto-reschedules at-risk jobs', 'Morning digest before crews roll out'],
-    'Echo': ['Tracks every new Google review', 'Auto-matches reviews to customers', 'Flags ratings under 4★ for follow-up'],
-    'Catch': ['Captures web + webhook leads', 'Auto-tags by source + service', 'Creates Zuper job with crew assigned'],
-    'Remind': ['Watches open quotes >3 days', 'Sends on-brand follow-up emails', 'Reports conversion lift weekly'],
-    'Roster': ['Personal SMS per crew member', 'Includes drive route + parts list', 'Sent 45m before shift start'],
-    'Collect': ['Scans invoices past 30/60/90 days', 'Drafts collection email per stage', 'Tracks who has + hasn\'t paid'],
+    'Weather Agent': ['Pulls hourly multi-city forecasts', 'Auto-reschedules at-risk jobs', 'Morning digest before crews roll out'],
+    'Review Agent': ['Tracks every new Google review', 'Auto-matches reviews to customers', 'Flags ratings under 4★ for follow-up'],
+    'Intake Agent': ['Captures web + webhook leads', 'Auto-tags by source + service', 'Creates Zuper job with crew assigned'],
+    'Reminder Agent': ['Watches open quotes >3 days', 'Sends on-brand follow-up emails', 'Reports conversion lift weekly'],
+    'Crew Brief Agent': ['Personal SMS per crew member', 'Includes drive route + parts list', 'Sent 45m before shift start'],
+    'Collection Agent': ['Scans invoices past 30/60/90 days', 'Drafts collection email per stage', 'Tracks who has + hasn\'t paid'],
   };
 
   const catalogCards: VPCardData[] = catalogItems.map((c) => {
@@ -5864,7 +5864,7 @@ function VPAgentsView({ onOpenCreate }: { onOpenCreate?: () => void }) {
   };
 
   const allCards: VPCardData[] = [...hiredCards, ...catalogCards, createCard];
-  const recommendedTitles = ['Coach', 'Compass', 'Echo', 'Skyline'];
+  const recommendedTitles = ['Sales Coach Agent', 'Routing Agent', 'Review Agent', 'Weather Agent'];
   const recommendedCards: VPCardData[] = recommendedTitles
     .map((t) => allCards.find((c) => c.title === t))
     .filter((c): c is VPCardData => !!c);
@@ -6949,7 +6949,7 @@ function VPCreateAgentView({ onClose }: { onClose: () => void }) {
 
   const stageSuggestions: Record<ChatStage, string[]> = {
     task: taskSuggestions,
-    name: ['Nova', 'Atlas', 'Sage', 'Ivy'],
+    name: ['Nova', 'Dispatch Agent', 'Support Agent', 'Ivy'],
     desc: [],
     tone: toneOptions,
     voice: voiceOptions,
