@@ -1,4 +1,4 @@
-import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp, Settings, Palette } from 'lucide-react';
+import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp, Settings, Palette, MessageSquare, Radar as RadarIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRadar, SavedCard } from './RadarContext';
@@ -466,20 +466,33 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
             <div className="h-[56px] flex items-center justify-between px-6 flex-shrink-0 border-b border-[#E6E8EC] relative">
               <div className="w-[120px]" />
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="inline-flex items-center bg-[#F8F9FB] rounded-lg p-1 gap-1">
+                <div className="inline-flex items-center bg-[#F8F9FB] rounded-lg p-1">
                   <button
                     onClick={() => onViewChange?.('chat')}
-                    className={`px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'chat' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
-                  >Chat</button>
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'chat' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
+                  >
+                    <MessageSquare className="w-[14px] h-[14px]" strokeWidth={2} />
+                    Chat
+                  </button>
+                  <span className="w-px h-4 bg-[#E6E8EC] mx-0.5" aria-hidden />
                   <button
                     onClick={() => onViewChange?.('radar')}
-                    className={`px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'radar' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
-                  >Radar</button>
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'radar' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
+                  >
+                    <RadarIcon className="w-[14px] h-[14px]" strokeWidth={2} />
+                    Radar
+                  </button>
                   {isVp && (
-                    <button
-                      onClick={onOpenAgentBuilder}
-                      className="px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
-                    >AI Studio</button>
+                    <>
+                      <span className="w-px h-4 bg-[#E6E8EC] mx-0.5" aria-hidden />
+                      <button
+                        onClick={onOpenAgentBuilder}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
+                      >
+                        <Sparkles className="w-[14px] h-[14px]" strokeWidth={2} />
+                        AI Studio
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
