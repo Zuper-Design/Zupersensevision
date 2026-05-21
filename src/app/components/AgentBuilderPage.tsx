@@ -662,6 +662,355 @@ function AgentReadyModal({
   );
 }
 
+function MJCreateAgentForm({
+  onCancel,
+  onDeploy,
+}: {
+  onCancel: () => void;
+  onDeploy: (record?: typeof myAgents[number], openChat?: boolean) => void;
+}) {
+  const [name, setName] = useState('');
+  const [instructions, setInstructions] = useState('');
+  const [trigger, setTrigger] = useState<'manual' | 'mention' | 'schedule'>('manual');
+  const [tab, setTab] = useState<'identity' | 'skills' | 'knowledge'>('identity');
+  const [avatarIdx, setAvatarIdx] = useState(0);
+  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
+  const avatarTints = [
+    'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)',
+    'linear-gradient(180deg, #FFE7C8 0%, #FFF3E2 100%)',
+    'linear-gradient(180deg, #DCEFE2 0%, #ECF5EF 100%)',
+    'linear-gradient(180deg, #DCE9F5 0%, #EAF1F8 100%)',
+    'linear-gradient(180deg, #FFE0EA 0%, #FFEBF1 100%)',
+  ];
+  const avatar = avatars[avatarIdx % avatars.length];
+  const avatarTint = avatarTints[avatarIdx % avatarTints.length];
+
+  const skillCatalog: { key: string; label: string; desc: string; icon: any; tint: string }[] = [
+    { key: 'Read Zuper data', label: 'Read Zuper data', desc: 'Jobs, contacts, schedules', icon: Database, tint: '#EFF6FF' },
+    { key: 'Send emails', label: 'Send emails', desc: 'Drafts on-brand, sends on approval', icon: Mail, tint: '#FFF1E5' },
+    { key: 'Send SMS', label: 'Send SMS', desc: 'Text customers with templates', icon: MessageSquare, tint: '#FFF1E5' },
+    { key: 'Trigger workflows', label: 'Trigger workflows', desc: 'Kick off Zuper automations', icon: Zap, tint: '#FEF3C7' },
+    { key: 'Schedule jobs', label: 'Schedule jobs', desc: 'Auto-create or reschedule', icon: Clock, tint: '#FEF3C7' },
+    { key: 'Web search', label: 'Web search', desc: 'Look up & enrich records', icon: Globe, tint: '#ECFDF5' },
+    { key: 'Summarize threads', label: 'Summarize threads', desc: 'Roll up long convos', icon: BookOpen, tint: '#ECFDF5' },
+    { key: 'Analyze metrics', label: 'Analyze metrics', desc: 'Spot anomalies & trends', icon: BarChart3, tint: '#EFF6FF' },
+  ];
+  const kbCatalog: { key: string; label: string; desc: string; icon: any; tint: string }[] = [
+    { key: 'Help Center', label: 'Help Center', desc: 'Public docs & guides', icon: BookOpen, tint: '#EFF6FF' },
+    { key: 'Internal SOPs', label: 'Internal SOPs', desc: 'Your private playbooks', icon: FileText, tint: '#FFF1E5' },
+    { key: 'Customer history', label: 'Customer history', desc: 'Past tickets & calls', icon: History, tint: '#ECFDF5' },
+    { key: 'Pricing book', label: 'Pricing book', desc: 'Quotes & rate cards', icon: FileText, tint: '#FFF1E5' },
+    { key: 'Safety policies', label: 'Safety policies', desc: 'Crew & site checklists', icon: FileText, tint: '#FFF1E5' },
+  ];
+  const [skills, setSkills] = useState<Record<string, boolean>>({ 'Read Zuper data': true });
+  const [kb, setKb] = useState<Record<string, boolean>>({ 'Help Center': true });
+
+  const enabledSkills = skillCatalog.filter((s) => skills[s.key]);
+  const enabledKb = kbCatalog.filter((k) => kb[k.key]);
+  const canDeploy = name.trim().length > 1 && enabledSkills.length > 0;
+
+  const triggers: { key: 'manual' | 'mention' | 'schedule'; label: string; desc: string; icon: any; tint: string }[] = [
+    { key: 'manual', label: 'On demand', desc: 'You ask, it runs', icon: Play, tint: '#EFF6FF' },
+    { key: 'mention', label: '@mention', desc: 'Pings the agent in Zuper', icon: AtSign, tint: '#FFF1E5' },
+    { key: 'schedule', label: 'Scheduled', desc: 'Daily at a set time', icon: Clock, tint: '#ECFDF5' },
+  ];
+
+  const tabs: { key: typeof tab; label: string }[] = [
+    { key: 'identity', label: 'Identity' },
+    { key: 'skills', label: 'Skills & Tools' },
+    { key: 'knowledge', label: 'Knowledge' },
+  ];
+
+  const deploy = () => {
+    if (!canDeploy) return;
+    const record: typeof myAgents[number] = {
+      name: name.trim(),
+      desc: instructions.trim().split('.')[0] || 'Custom agent.',
+      runs: 0,
+      lastRun: '',
+      users: 1,
+      rating: 5.0,
+      reviews: 0,
+      price: 'Free',
+      skills: enabledSkills.length,
+      tools: enabledKb.length,
+      status: 'Active',
+      category: 'Operations',
+      img: avatar,
+    };
+    onDeploy(record, false);
+  };
+
+  return (
+    <div className="absolute inset-0 bg-white overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onCancel}
+            className="w-8 h-8 -ml-2 rounded-lg hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#6B7280]"
+            style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+            aria-label="Back"
+          >
+            <ChevronLeft className="w-[16px] h-[16px]" />
+          </button>
+          <h1 className="text-[14px] font-medium text-[#1C1E21] tracking-tight">Create agent</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-[#FFF4ED] text-[#C2410C] text-[10px] font-bold uppercase tracking-wide">Draft</span>
+          <span className="text-[12px] text-[#9CA3AF]">Building…</span>
+          <button
+            onClick={deploy}
+            disabled={!canDeploy}
+            className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+          >
+            <Play className="w-[11px] h-[11px]" fill="currentColor" />
+            Deploy
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex items-center gap-1 px-8 h-12 border-b border-[#F0F1F3] flex-shrink-0">
+        {tabs.map((t) => {
+          const active = t.key === tab;
+          return (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className="relative inline-flex items-center h-12 px-3 text-[13px] font-medium"
+              style={{ color: active ? '#1C1E21' : '#6B7280', transition: 'color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+            >
+              {t.label}
+              {active && <span className="absolute left-3 right-3 bottom-0 h-[2px] bg-[#1C1E21] rounded-full" />}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 min-h-0 grid grid-cols-[1fr_400px]">
+        {/* LEFT — form */}
+        <div className="overflow-y-auto px-8 py-7">
+          {tab === 'identity' && (
+            <div className="max-w-[640px] space-y-7">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-3">Identity</div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Mia, Lead Concierge"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] mb-5"
+                />
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
+                <textarea
+                  value={instructions}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  rows={6}
+                  placeholder="What should this agent do? Tone, constraints, anything else worth knowing."
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Triggers</div>
+                  <span className="text-[11px] text-[#9CA3AF]">choose 1</span>
+                </div>
+                <div className="space-y-2">
+                  {triggers.map((t) => {
+                    const Icon = t.icon;
+                    const selected = trigger === t.key;
+                    return (
+                      <button
+                        key={t.key}
+                        onClick={() => setTrigger(t.key)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left active:scale-[0.99]"
+                        style={{
+                          borderColor: selected ? '#1C1E21' : '#EDEFF2',
+                          background: selected ? '#FAFAFB' : '#FFFFFF',
+                          transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                        }}
+                      >
+                        <span className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
+                          <Icon className="w-[15px] h-[15px] text-[#4B5563]" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{t.label}</div>
+                          <div className="text-[11.5px] text-[#6B7280] leading-tight mt-0.5">{t.desc}</div>
+                        </div>
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: selected ? '#1C1E21' : 'transparent', border: selected ? 'none' : '1.5px solid #D1D5DB' }}>
+                          {selected && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {tab === 'skills' && (
+            <div className="max-w-[640px]">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Skills & Tools</div>
+                <span className="text-[11px] text-[#9CA3AF]">{enabledSkills.length}/{skillCatalog.length}</span>
+              </div>
+              <div className="space-y-2">
+                {skillCatalog.map((s) => {
+                  const Icon = s.icon;
+                  const on = !!skills[s.key];
+                  return (
+                    <button
+                      key={s.key}
+                      onClick={() => setSkills((p) => ({ ...p, [s.key]: !p[s.key] }))}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left active:scale-[0.99]"
+                      style={{
+                        borderColor: on ? '#1C1E21' : '#EDEFF2',
+                        background: on ? '#FAFAFB' : '#FFFFFF',
+                        transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                    >
+                      <span className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: s.tint }}>
+                        <Icon className="w-[15px] h-[15px] text-[#4B5563]" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{s.label}</div>
+                        <div className="text-[11.5px] text-[#6B7280] leading-tight mt-0.5">{s.desc}</div>
+                      </div>
+                      <span className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: on ? '#1C1E21' : 'transparent', border: on ? 'none' : '1.5px solid #D1D5DB' }}>
+                        {on && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {tab === 'knowledge' && (
+            <div className="max-w-[640px]">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Knowledge</div>
+                <span className="text-[11px] text-[#9CA3AF]">{enabledKb.length}/{kbCatalog.length}</span>
+              </div>
+              <div className="space-y-2">
+                {kbCatalog.map((k) => {
+                  const Icon = k.icon;
+                  const on = !!kb[k.key];
+                  return (
+                    <button
+                      key={k.key}
+                      onClick={() => setKb((p) => ({ ...p, [k.key]: !p[k.key] }))}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left active:scale-[0.99]"
+                      style={{
+                        borderColor: on ? '#1C1E21' : '#EDEFF2',
+                        background: on ? '#FAFAFB' : '#FFFFFF',
+                        transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                    >
+                      <span className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: k.tint }}>
+                        <Icon className="w-[15px] h-[15px] text-[#4B5563]" />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{k.label}</div>
+                        <div className="text-[11.5px] text-[#6B7280] leading-tight mt-0.5">{k.desc}</div>
+                      </div>
+                      <span className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: on ? '#1C1E21' : 'transparent', border: on ? 'none' : '1.5px solid #D1D5DB' }}>
+                        {on && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT — live agent card preview */}
+        <aside className="border-l border-[#F0F1F3] bg-[#FAFAFB] overflow-y-auto">
+          <div className="px-6 pt-8 pb-6">
+            <div className="relative rounded-2xl bg-white border border-[#EDEFF2] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.18)' }}>
+              <div className="relative pt-6 pb-4 px-5" style={{ background: avatarTint }}>
+                <div className="flex flex-col items-center text-center">
+                  <button
+                    onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
+                    className="relative w-[88px] h-[88px] rounded-full overflow-hidden bg-white active:scale-[0.96]"
+                    style={{ boxShadow: '0 0 0 1px rgba(0,0,0,0.06)' }}
+                    aria-label="Change avatar"
+                  >
+                    <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-1 h-[100px] w-auto object-contain" draggable={false} />
+                    <span className="absolute bottom-0.5 right-0.5 w-6 h-6 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center" style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
+                      <Pencil className="w-[11px] h-[11px] text-[#1C1E21]" />
+                    </span>
+                  </button>
+                  <h2 className="text-[18px] font-semibold text-[#1C1E21] mt-3 tracking-tight">{name.trim() || 'New Agent'}</h2>
+                  <p className="text-[12.5px] text-[#6B7280] mt-1 leading-snug line-clamp-3 max-w-[280px]">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
+                </div>
+              </div>
+
+              {/* Trigger badge */}
+              <div className="px-5 py-3.5 border-t border-[#F0F1F3] flex items-center justify-between text-[12px]">
+                <span className="font-medium text-[#6B7280]">Trigger</span>
+                <span className="font-semibold text-[#1C1E21]">{triggers.find((t) => t.key === trigger)?.label}</span>
+              </div>
+
+              {/* Skills */}
+              <div className="px-5 py-4 border-t border-[#F0F1F3]">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Skills</span>
+                  <span className="text-[10.5px] text-[#9CA3AF] font-medium">{enabledSkills.length}</span>
+                </div>
+                {enabledSkills.length === 0 ? (
+                  <p className="text-[12px] text-[#9CA3AF] italic">No skills added yet</p>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {enabledSkills.map((s) => {
+                      const Icon = s.icon;
+                      return (
+                        <span key={s.key} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#F3F4F6] text-[11.5px] font-medium text-[#1C1E21]">
+                          <Icon className="w-[11px] h-[11px] text-[#6B7280]" />
+                          {s.label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Knowledge */}
+              <div className="px-5 py-4 border-t border-[#F0F1F3]">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Knowledge</span>
+                  <span className="text-[10.5px] text-[#9CA3AF] font-medium">{enabledKb.length}</span>
+                </div>
+                {enabledKb.length === 0 ? (
+                  <p className="text-[12px] text-[#9CA3AF] italic">No knowledge sources added yet</p>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {enabledKb.map((k) => {
+                      const Icon = k.icon;
+                      return (
+                        <span key={k.key} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#F3F4F6] text-[11.5px] font-medium text-[#1C1E21]">
+                          <Icon className="w-[11px] h-[11px] text-[#6B7280]" />
+                          {k.label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  );
+}
+
 function AUCreateAgentForm({
   onCancel,
   onDeploy,
@@ -1518,22 +1867,32 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
   if (creating) {
     return (
       <>
-        <AUCreateAgentForm
-          chatHidden={isMJ}
-          onCancel={() => setCreating(false)}
-          onDeploy={(record, openChat) => {
-            setCreating(false);
-            setFirstTime(false);
-            if (record) {
-              onAddCustomAgent?.(record);
-              if (openChat) {
-                // Defer to next tick so the parent has the agent in state before opening
-                setTimeout(() => onOpenAgent?.(record.name), 0);
+        {isMJ ? (
+          <MJCreateAgentForm
+            onCancel={() => setCreating(false)}
+            onDeploy={(record) => {
+              setCreating(false);
+              setFirstTime(false);
+              if (record) onAddCustomAgent?.(record);
+              showToast('Agent deployed successfully');
+            }}
+          />
+        ) : (
+          <AUCreateAgentForm
+            onCancel={() => setCreating(false)}
+            onDeploy={(record, openChat) => {
+              setCreating(false);
+              setFirstTime(false);
+              if (record) {
+                onAddCustomAgent?.(record);
+                if (openChat) {
+                  setTimeout(() => onOpenAgent?.(record.name), 0);
+                }
               }
-            }
-            showToast('Agent deployed successfully');
-          }}
-        />
+              showToast('Agent deployed successfully');
+            }}
+          />
+        )}
         <Toast message={toast} />
       </>
     );
