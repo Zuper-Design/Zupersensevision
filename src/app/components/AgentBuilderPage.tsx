@@ -1600,18 +1600,25 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
-          <div className="hidden md:flex items-end -space-x-20 flex-shrink-0 self-end" style={{ height: 150 }}>
+          <div className="hidden md:flex items-end -space-x-16 flex-shrink-0 self-end" style={{ height: 150 }}>
             <img
-              src={agentDetective}
+              src={agentMarketer}
               alt=""
-              className="relative h-[180px] w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
+              className="relative h-[170px] w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
               style={{ marginBottom: -20, zIndex: 11 }}
               draggable={false}
             />
             <img
-              src={agentCreator}
+              src={agentSupport}
               alt=""
               className="relative h-[200px] w-auto object-contain drop-shadow-[0_16px_24px_rgba(0,0,0,0.18)]"
+              style={{ marginBottom: -20, zIndex: 13 }}
+              draggable={false}
+            />
+            <img
+              src={agentReviews}
+              alt=""
+              className="relative h-[180px] w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
               style={{ marginBottom: -20, zIndex: 12 }}
               draggable={false}
             />
