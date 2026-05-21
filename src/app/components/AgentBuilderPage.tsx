@@ -3116,11 +3116,10 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 onMouseLeave={onMouseUp}
               >
                 <div
-                  className="flex transition-transform duration-[1000ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  className="flex transition-transform duration-[520ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
                   style={{
                     gap: `${GAP}px`,
                     transform: `translateX(calc(50% - ${idx * STEP + CARD_W / 2}px))`,
-                    transformStyle: 'preserve-3d',
                   }}
                 >
                   {filteredCatalog.map((c, i) => {
@@ -3130,10 +3129,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                     const lastRun = ['2m ago', '8m ago', '24m ago', '1h ago', '3h ago'][i % 5];
                     const offset = i - idx;
                     const dist = Math.abs(offset);
-                    const arcY = 22 * Math.pow(dist, 1.5);
-                    const rotZ = -offset * 6;
-                    const tz = -dist * 80;
-                    const sc = isActive ? 1 : 0.92;
+                    const sc = isActive ? 1 : 0.96;
                     const isAdded = i % 3 === 0;
                     const rL = c.role.toLowerCase();
                     const catKey: keyof typeof categoryTint =
@@ -3148,14 +3144,17 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                       <article
                         key={c.title}
                         onClick={() => setCatalogIdx(i)}
-                        className="rounded-2xl bg-white border border-[#E6E8EC] cursor-pointer overflow-hidden flex flex-col flex-shrink-0 transition-all duration-[1000ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                        className="rounded-2xl bg-white border border-[#E6E8EC] cursor-pointer overflow-hidden flex flex-col flex-shrink-0"
                         style={{
                           width: CARD_W,
-                          transform: `translateY(${arcY}px) translateZ(${tz}px) rotate(${rotZ}deg) scale(${sc})`,
+                          transform: `scale(${sc})`,
                           transformOrigin: '50% 50%',
-                          opacity: dist > 3 ? 0 : isActive ? 1 : 0.55,
-                          boxShadow: isActive ? '0 22px 48px -18px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.04)' : 'none',
-                          filter: isActive ? 'none' : 'saturate(0.85)',
+                          opacity: dist > 3 ? 0 : isActive ? 1 : 0.7,
+                          boxShadow: isActive
+                            ? '0 22px 48px -18px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.04)'
+                            : '0 8px 22px -16px rgba(0,0,0,0.10)',
+                          transition:
+                            'transform 520ms cubic-bezier(0.23,1,0.32,1), opacity 360ms cubic-bezier(0.23,1,0.32,1), box-shadow 360ms cubic-bezier(0.23,1,0.32,1)',
                         }}
                       >
                         {/* Hero with avatar — pure pastel, no overlays */}
