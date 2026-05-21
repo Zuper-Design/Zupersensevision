@@ -461,7 +461,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                       <button
                         onClick={() => onViewChange('chat')}
                         style={{ width: 84 }}
-                        className={`inline-flex items-center justify-center py-1 rounded-md text-[13px] font-medium transition-all duration-200 ${
+                        className={`inline-flex items-center justify-center py-1.5 rounded-md text-[13px] font-medium transition-all duration-200 ${
                           activeView === 'chat'
                             ? 'bg-white text-[#1C1E21] shadow-sm'
                             : 'text-[#6B7280] hover:text-[#1C1E21]'
@@ -473,7 +473,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                       <button
                         onClick={() => onViewChange('radar')}
                         style={{ width: 84 }}
-                        className={`inline-flex items-center justify-center py-1 rounded-md text-[13px] font-medium transition-all duration-200 ${
+                        className={`inline-flex items-center justify-center py-1.5 rounded-md text-[13px] font-medium transition-all duration-200 ${
                           activeView === 'radar'
                             ? 'bg-white text-[#1C1E21] shadow-sm'
                             : 'text-[#6B7280] hover:text-[#1C1E21]'
@@ -487,10 +487,10 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                           <button
                             onClick={onOpenAgentBuilder}
                             style={{ width: 84 }}
-                            className="inline-flex items-center justify-center gap-1 py-1 rounded-md text-[13px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
+                            className="inline-flex items-center justify-center gap-1 py-1.5 rounded-md text-[13px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
                           >
                             <Sparkles className="w-[12px] h-[12px]" strokeWidth={2} />
-                            AI Studio
+                            Studio
                           </button>
                         </>
                       )}
