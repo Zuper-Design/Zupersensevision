@@ -24,6 +24,7 @@ interface ChatInterfaceProps {
   onUpgrade?: () => void;
   onSettingsClick?: () => void;
   onPersonalizationClick?: () => void;
+  onOpenAgentBuilder?: () => void;
   demoMode?: boolean;
 }
 
@@ -102,7 +103,7 @@ const placeholderTexts = [
   "Show me customer satisfaction scores...",
 ];
 
-export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick, onPersonalizationClick, demoMode = false }: ChatInterfaceProps) {
+export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick, onPersonalizationClick, onOpenAgentBuilder, demoMode = false }: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -477,6 +478,14 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                       >
                         Radar
                       </button>
+                      {isVp && (
+                        <button
+                          onClick={onOpenAgentBuilder}
+                          className="px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
+                        >
+                          AI Studio
+                        </button>
+                      )}
                     </div>
                   </div>
                   

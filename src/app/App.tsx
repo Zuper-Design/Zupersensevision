@@ -602,6 +602,7 @@ function AppContent() {
                       isTrial={!demoMode && currentUser === 'RG'}
                       isVp={currentUser === 'VP'}
                       onUpgrade={openUpgrade}
+                      onOpenAgentBuilder={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
                       onPersonalizationClick={() => setPersonalizationOpen(true)}
                       demoMode={demoMode}
                     />
@@ -620,6 +621,7 @@ function AppContent() {
                     isVp={currentUser === 'VP'}
                     isAU={currentUser === 'AU'}
                     onUpgrade={openUpgrade}
+                    onOpenAgentBuilder={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
                     themeName={themeName}
                     demoMode={demoMode}
                     onPersonalizationClick={() => setPersonalizationOpen(true)}

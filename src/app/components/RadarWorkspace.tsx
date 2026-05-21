@@ -26,6 +26,7 @@ interface RadarWorkspaceProps {
   onOpenCardChat?: (title: string) => void;
   isTrial?: boolean;
   isVp?: boolean;
+  onOpenAgentBuilder?: () => void;
   isAU?: boolean;
   onUpgrade?: () => void;
   themeName?: 'clean' | 'rams' | 'neon';
@@ -318,7 +319,7 @@ const PINNED_DEFS: UnifiedCardItem[] = [
   { kind: 'pinned', id: 'revenueTable',    title: 'Monthly Job Revenue Table',     Component: RevenueTableCard, fullWidth: true },
 ];
 
-export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, themeName: themeNameProp = 'clean', onSettingsClick, onPersonalizationClick, demoMode = false }: RadarWorkspaceProps) {
+export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewChange, onOpenCard, showBetaBanner, onCloseBetaBanner, onOpenCardChat, isTrial, isVp, isAU, onUpgrade, onOpenAgentBuilder, themeName: themeNameProp = 'clean', onSettingsClick, onPersonalizationClick, demoMode = false }: RadarWorkspaceProps) {
   const [demoToast, setDemoToast] = useState<string | null>(null);
   const showDemoToast = (msg = 'Sense is running a demo version') => {
     if (!demoMode) return;
@@ -474,6 +475,12 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                     onClick={() => onViewChange?.('radar')}
                     className={`px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 ${activeView === 'radar' ? 'bg-white text-[#1C1E21] shadow-sm' : 'text-[#6B7280] hover:text-[#1C1E21]'}`}
                   >Radar</button>
+                  {isVp && (
+                    <button
+                      onClick={onOpenAgentBuilder}
+                      className="px-4 py-1.5 rounded-md text-[14px] font-medium transition-all duration-200 text-[#6B7280] hover:text-[#1C1E21]"
+                    >AI Studio</button>
+                  )}
                 </div>
               </div>
               <div className="w-auto flex items-center justify-end gap-2">
