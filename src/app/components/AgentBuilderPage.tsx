@@ -1719,24 +1719,6 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
         )}
       </div>
 
-      {/* Filters + view toggle */}
-      {!isEmpty && (
-        <div className="flex items-center justify-between mb-5 gap-2 flex-wrap">
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterGroup label="Status" value={statusFilter} options={['All', 'Active', 'Draft', 'Paused', 'Error']} onChange={(v) => setStatusFilter(v as any)} />
-            <FilterGroup label="Category" value={categoryFilter} options={['All', 'Sales', 'Support', 'Operations', 'Finance', 'Compliance']} onChange={(v) => setCategoryFilter(v as any)} />
-            {(statusFilter !== 'All' || categoryFilter !== 'All' || search) && (
-              <button
-                onClick={() => { setStatusFilter('All'); setCategoryFilter('All'); setSearch(''); }}
-                className="text-[12px] font-medium text-[#6B7280] hover:text-[#1C1E21] underline ml-2 transition"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-          <span className="text-[12px] text-[#9CA3AF]">{visibleCount} of {visibleCount} agents</span>
-        </div>
-      )}
 
       {isEmpty ? (
         <div className="relative flex flex-col items-center text-center pt-16 pb-16">
@@ -1794,7 +1776,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             const gridAgents = [...customAgents, ...seedAgents].slice(0, 6);
             return (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pt-3">
+                <div className="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 pt-3">
                   {gridAgents.map((a) => (
                     <AUAgentCardCompact key={a.name} agent={a} onOpen={() => onOpenAgent?.(a.name)} />
                   ))}
@@ -1820,12 +1802,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 }
 
 function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number]; onOpen?: () => void }) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const persona = hiredPersonas[agent.name]?.name || agent.name.replace(' Agent', '');
   const status = agent.status;
   const statusStyle = statusStyles[status];
-  const hiredAgo = agent.runs > 2000 ? 'Hired 6mo ago' : agent.runs > 1000 ? 'Hired 3mo ago' : agent.runs > 500 ? 'Hired 1mo ago' : agent.runs > 100 ? 'Hired 2wks ago' : 'Hired this week';
-  const hiredDate = agent.runs > 2000 ? '11/12/25' : agent.runs > 1000 ? '2/04/26' : agent.runs > 500 ? '4/02/26' : agent.runs > 100 ? '4/24/26' : '5/05/26';
   const tint = categoryTint[agent.category] || { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' };
 
   return (
@@ -1845,96 +1823,25 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
       }}
     >
       {/* Tinted top area with avatar */}
-      <div className="relative flex items-end justify-center overflow-hidden pt-6" style={{ background: tint.tint, height: 180 }}>
-        {/* Top-right action group: chat + dots — hover only */}
-        <div className={`absolute top-2.5 right-2.5 z-10 inline-flex items-center bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.10)] transition-opacity duration-200 ${menuOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-          <button
-            onClick={(e) => { e.stopPropagation(); onOpen?.(); }}
-            aria-label="Chat with agent"
-            className="w-8 h-7 rounded-l-lg hover:bg-[#F3F4F6] flex items-center justify-center text-[#1C1E21] transition"
-          >
-            <MessageSquare className="w-[14px] h-[14px]" />
-          </button>
-          <div className="w-px h-4 bg-[#E6E8EC]" />
-          <div className="relative">
-            <button
-              onClick={(e) => { e.stopPropagation(); setMenuOpen((v) => !v); }}
-              aria-label="Agent menu"
-              className="w-8 h-7 rounded-r-lg hover:bg-[#F3F4F6] flex items-center justify-center text-[#1C1E21] transition"
-            >
-              <MoreHorizontal className="w-[15px] h-[15px]" />
-            </button>
-            {menuOpen && (
-              <>
-                <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-[34px] z-40 w-[160px] rounded-lg bg-white border border-[#E6E8EC] shadow-[0_8px_24px_rgba(0,0,0,0.08)] py-1">
-                  <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#1C1E21] hover:bg-[#F8F9FB] transition text-left">
-                    <Pencil className="w-[13px] h-[13px] text-[#6B7280]" />
-                    Edit agent
-                  </button>
-                  <button onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }} className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-[#B91C1C] hover:bg-[#FEF2F2] transition text-left">
-                    <X className="w-[13px] h-[13px]" />
-                    Deactivate
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
+      <div className="relative flex items-end justify-center overflow-hidden pt-5" style={{ background: tint.tint, height: 130 }}>
         <img
           src={agent.img || agentDetective}
           alt={agent.name}
-          className="h-[150px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-2 group-hover:scale-[1.06]"
+          className="h-[110px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-1 group-hover:scale-[1.06]"
           draggable={false}
         />
       </div>
 
-      {/* Bottom info block */}
-      <div className="bg-white px-3.5 pt-3 pb-3 flex flex-col gap-0.5">
-        <div className="flex items-center justify-between gap-2 mb-1">
-          <h3 className="text-[14.5px] font-semibold text-[#1C1E21] leading-tight truncate flex-1">{agent.name}</h3>
-          <span
-            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9.5px] font-bold tracking-wide uppercase flex-shrink-0"
-            style={{ background: statusStyle.bg, color: statusStyle.color }}
-          >
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusStyle.dot }} />
-            {status}
-          </span>
-        </div>
-        <div className="flex items-center gap-1.5 text-[11.5px]">
-          <span className="font-semibold" style={{ color: tint.accent }}>{persona}</span>
-          <span className="text-[#D1D5DB]">·</span>
-          <span className="inline-flex items-center gap-0.5 text-[#4B5563]">
-            <Star className="w-[10px] h-[10px] text-[#F59E0B] fill-[#F59E0B]" />
-            <span className="font-medium">{agent.rating.toFixed(1)}</span>
-          </span>
-        </div>
-
-        {/* Metrics chips */}
-        <div className="flex items-center gap-1.5 mt-2.5">
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-[#1C1E21]" style={{ background: `${tint.accent}1A` }}>
-            <Zap className="w-[10px] h-[10px]" style={{ color: tint.accent }} fill="currentColor" />
-            <span className="tabular-nums">{agent.runs}</span>
-            <span className="text-[#6B7280] font-normal">runs</span>
-          </span>
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#F3F4F6] text-[11px] font-medium text-[#1C1E21]">
-            <Users className="w-[10px] h-[10px] text-[#6B7280]" />
-            <span className="tabular-nums">{agent.users}</span>
-            <span className="text-[#6B7280] font-normal">users</span>
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between gap-1.5 text-[11px] text-[#9CA3AF] mt-2.5">
-          <span className="inline-flex items-center gap-1.5">
-            <Clock className="w-[11px] h-[11px]" />
-            Hired {hiredAgo.replace('Hired ', '')}
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <RefreshCw className="w-[10px] h-[10px]" />
-            {agent.lastRun || 'idle'}
-          </span>
-        </div>
+      {/* Bottom info block — name + status only */}
+      <div className="bg-white px-3 py-2.5 flex items-center justify-between gap-2">
+        <h3 className="text-[13.5px] font-semibold text-[#1C1E21] leading-none truncate flex-1">{agent.name}</h3>
+        <span
+          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9.5px] font-bold tracking-wide uppercase flex-shrink-0"
+          style={{ background: statusStyle.bg, color: statusStyle.color }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusStyle.dot }} />
+          {status}
+        </span>
       </div>
     </div>
   );
