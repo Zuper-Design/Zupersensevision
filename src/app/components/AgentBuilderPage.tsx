@@ -789,7 +789,7 @@ function MJCreateAgentForm({
       </div>
 
       {/* Body */}
-      <div className="flex-1 min-h-0 grid grid-cols-[1fr_400px]">
+      <div className="flex-1 min-h-0 grid grid-cols-[1fr_540px]">
         {/* LEFT — form */}
         <div className="overflow-y-auto px-8 py-7">
           {tab === 'identity' && (
@@ -936,7 +936,7 @@ function MJCreateAgentForm({
           style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE0CC 60%, #FFCFA8 100%)' }}
         >
           <div
-            className="relative w-full max-w-[320px] rounded-[24px] bg-white p-3.5"
+            className="relative w-full max-w-[420px] rounded-[24px] bg-white p-3.5"
             style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 18px 44px -16px rgba(28,30,33,0.18)' }}
           >
             {/* Hero — avatar in pastel rounded block */}
