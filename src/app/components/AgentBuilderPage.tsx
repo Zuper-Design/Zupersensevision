@@ -226,6 +226,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
         >
           <AUCreateAgentForm
             mode="live"
+            chatHidden={currentUser === 'MJ'}
             seedAgent={[...customAgents, ...myAgents].find((a) => a.name === auActiveAgent)!}
             visitCount={agentVisits[auActiveAgent] || 0}
             onCancel={() => setAuActiveAgent(null)}
@@ -251,7 +252,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
       <main className="flex-1 overflow-y-auto relative">
         <div className="px-8 pt-8 pb-12">
           {section === 'agents' ? (
-            isVP ? <VPAgentsView onOpenCreate={() => setVpCreateOpen(true)} /> : isAU ? <AUMyAgentsView onEnterMarketplace={() => setSection('catalog')} onOpenAgent={openAgent} customAgents={customAgents} onAddCustomAgent={addCustomAgent} /> : <MyAgentsView />
+            isVP ? <VPAgentsView onOpenCreate={() => setVpCreateOpen(true)} /> : isAU ? <AUMyAgentsView isMJ={currentUser === 'MJ'} onEnterMarketplace={() => setSection('catalog')} onOpenAgent={openAgent} customAgents={customAgents} onAddCustomAgent={addCustomAgent} /> : <MyAgentsView />
           ) : section === 'catalog' ? (
             <CatalogView />
           ) : section === 'skills' ? (
@@ -668,6 +669,7 @@ function AUCreateAgentForm({
   mode = 'create',
   visitCount = 0,
   onForkAgent,
+  chatHidden = false,
 }: {
   onCancel: () => void;
   onDeploy: (record?: typeof myAgents[number], openChat?: boolean) => void;
@@ -675,6 +677,7 @@ function AUCreateAgentForm({
   mode?: 'create' | 'live';
   visitCount?: number;
   onForkAgent?: (name: string, fork: typeof myAgents[number]) => void;
+  chatHidden?: boolean;
 }) {
   const isLive = mode === 'live';
   const seedName = seedAgent?.name || '';
@@ -867,8 +870,9 @@ function AUCreateAgentForm({
 
   return (
     <div className="absolute inset-0 bg-white overflow-hidden">
-      <div className="relative grid grid-cols-1 lg:grid-cols-2 bg-white h-full">
+      <div className={`relative grid bg-white h-full ${chatHidden ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
       {/* MIDDLE — chat (Sense-style, no bubbles for AI) */}
+      {!chatHidden && (
       <div className="flex flex-col bg-white border-r border-[#F0F1F3] min-h-0">
         <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0">
           <div className="flex items-center gap-3">
@@ -1026,6 +1030,7 @@ function AUCreateAgentForm({
           </div>
         </div>
       </div>
+      )}
 
       {/* RIGHT — agent card (avatar + identity + skills + KB) */}
       <aside className="relative bg-white flex flex-col overflow-y-auto min-h-0">
@@ -1492,7 +1497,7 @@ function SelectedListSection({
   );
 }
 
-function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], onAddCustomAgent }: { onEnterMarketplace?: () => void; onOpenAgent?: (name: string) => void; customAgents?: typeof myAgents; onAddCustomAgent?: (a: typeof myAgents[number]) => void }) {
+function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], onAddCustomAgent, isMJ = false }: { onEnterMarketplace?: () => void; onOpenAgent?: (name: string) => void; customAgents?: typeof myAgents; onAddCustomAgent?: (a: typeof myAgents[number]) => void; isMJ?: boolean }) {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [statusFilter, setStatusFilter] = useState<'All' | AgentStatus>('All');
   const [pricingFilter, setPricingFilter] = useState<'All' | 'Free' | 'Paid'>('All');
@@ -1514,6 +1519,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
     return (
       <>
         <AUCreateAgentForm
+          chatHidden={isMJ}
           onCancel={() => setCreating(false)}
           onDeploy={(record, openChat) => {
             setCreating(false);
