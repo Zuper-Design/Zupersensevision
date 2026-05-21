@@ -8,9 +8,10 @@ import {
   AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText,
 } from 'lucide-react';
 import avatarBg from '../../imports/agents/avatar-bg.png';
-import agent1 from '../../imports/agents/agent-1.png';
-import agent2 from '../../imports/agents/agent-2.png';
-import agent3 from '../../imports/agents/agent-3.png';
+const agentDetective = '/agent-detective.png';
+const agentCreator = '/agent-creator.png';
+const agentMarketer = '/agent-marketer.png';
+const agentSupport = '/agent-support.png';
 import emptyToolkit from '../../imports/agents/empty-toolkit.png';
 import CircularGallery from './CircularGallery';
 
@@ -27,10 +28,10 @@ const navItems: { key: Section; label: string; icon: any; soon?: boolean }[] = [
 ];
 
 const recentAgents = [
-  { name: 'Inside Sales Rep Agent', desc: '# Inside Sales Rep Agent The Inside Sales Rep Age...', status: 'Active', updated: '17 days ago', img: agent1 },
-  { name: 'Customer Success Agent', desc: '# Customer Success Agent The Customer Success Age...', status: 'Active', updated: '17 days ago', img: agent2 },
-  { name: 'Lead Qualification Agent', desc: '# Lead Qualification Agent The Lead Qualification...', status: 'Active', updated: '17 days ago', img: agent3 },
-  { name: 'Sales Coach Agent', desc: '# Sales Coach Agent The Sales Coach Agent support...', status: 'Active', updated: '17 days ago', img: agent1 },
+  { name: 'Inside Sales Rep Agent', desc: '# Inside Sales Rep Agent The Inside Sales Rep Age...', status: 'Active', updated: '17 days ago', img: agentMarketer },
+  { name: 'Customer Success Agent', desc: '# Customer Success Agent The Customer Success Age...', status: 'Active', updated: '17 days ago', img: agentSupport },
+  { name: 'Lead Qualification Agent', desc: '# Lead Qualification Agent The Lead Qualification...', status: 'Active', updated: '17 days ago', img: agentDetective },
+  { name: 'Sales Coach Agent', desc: '# Sales Coach Agent The Sales Coach Agent support...', status: 'Active', updated: '17 days ago', img: agentCreator },
 ];
 
 const recentActivity = [
@@ -317,17 +318,17 @@ const statusStyles: Record<AgentStatus, { bg: string; border: string; color: str
 };
 
 const myAgents: Array<{ name: string; desc: string; runs: number; lastRun: string; users: number; rating: number; reviews: number; price: string; skills: number; tools: number; status: AgentStatus; category: AgentCategory; img?: string }> = [
-  { name: 'Sales Coach Agent', desc: 'Reviews call transcripts and interaction logs, surfacing coaching moments.', runs: 412, lastRun: '1d ago', users: 7, rating: 4.4, reviews: 4, price: 'Free', skills: 3, tools: 2, status: 'Active', category: 'Sales', img: agent3 },
-  { name: 'Financial Agent', desc: 'Tracks job costs, generates invoices, and surfaces margin anomalies.', runs: 0, lastRun: '', users: 3, rating: 5.0, reviews: 1, price: '$25/mo', skills: 0, tools: 1, status: 'Draft', category: 'Finance', img: agent2 },
-  { name: 'QBO Support Agent', desc: 'Answers user questions by searching and scraping Zuper documentation.', runs: 1872, lastRun: '8m ago', users: 32, rating: 4.7, reviews: 17, price: 'Free', skills: 4, tools: 3, status: 'Active', category: 'Support', img: agent3 },
-  { name: 'Dispatch Optimizer Agent', desc: 'Optimizes daily routes and crew assignments to reduce drive time and overlaps.', runs: 564, lastRun: '40m ago', users: 14, rating: 4.7, reviews: 8, price: '$15/mo', skills: 5, tools: 4, status: 'Active', category: 'Operations', img: agent1 },
-  { name: 'Estimate Generator Agent', desc: 'Drafts roofing estimates from intake notes and pulls in pricing automatically.', runs: 1024, lastRun: '3h ago', users: 22, rating: 4.5, reviews: 11, price: 'Free', skills: 3, tools: 2, status: 'Paused', category: 'Sales', img: agent3 },
-  { name: 'Quote Follow-up Agent', desc: 'Sends polite, on-brand follow-ups to stalled quotes and tracks response rate.', runs: 740, lastRun: '6h ago', users: 19, rating: 4.6, reviews: 10, price: '$9/mo', skills: 2, tools: 3, status: 'Active', category: 'Sales', img: agent3 },
-  { name: 'Safety Compliance Agent', desc: 'Reviews job-site checklists and flags missed safety steps before crew sign-off.', runs: 318, lastRun: '4h ago', users: 11, rating: 4.5, reviews: 6, price: 'Free', skills: 2, tools: 1, status: 'Error', category: 'Compliance', img: agent2 },
-  { name: 'Material Order Agent', desc: 'Watches stock levels, drafts purchase orders, and pings vendors when supplies run low.', runs: 892, lastRun: '1h ago', users: 16, rating: 4.7, reviews: 9, price: '$14/mo', skills: 4, tools: 3, status: 'Active', category: 'Operations', img: agent3 },
-  { name: 'Inside Sales Rep Agent', desc: 'Handles inbound inquiries from homeowners and businesses interested in roofing services.', runs: 1248, lastRun: '2h ago', users: 24, rating: 4.8, reviews: 12, price: 'Free', skills: 6, tools: 4, status: 'Active', category: 'Sales', img: agent1 },
-  { name: 'Customer Success Agent', desc: 'Supports existing customers throughout their roofing project lifecycle and follow-ups.', runs: 832, lastRun: '5h ago', users: 18, rating: 4.6, reviews: 9, price: '$12/mo', skills: 5, tools: 3, status: 'Paused', category: 'Support', img: agent2 },
-  { name: 'Lead Qualification Agent', desc: 'Evaluates inbound leads to determine readiness, budget fit, and timeline.', runs: 2104, lastRun: '12m ago', users: 41, rating: 4.9, reviews: 23, price: '$19/mo', skills: 7, tools: 5, status: 'Active', category: 'Sales', img: agent3 },
+  { name: 'Sales Coach Agent', desc: 'Reviews call transcripts and interaction logs, surfacing coaching moments.', runs: 412, lastRun: '1d ago', users: 7, rating: 4.4, reviews: 4, price: 'Free', skills: 3, tools: 2, status: 'Active', category: 'Sales', img: agentCreator },
+  { name: 'Financial Agent', desc: 'Tracks job costs, generates invoices, and surfaces margin anomalies.', runs: 0, lastRun: '', users: 3, rating: 5.0, reviews: 1, price: '$25/mo', skills: 0, tools: 1, status: 'Draft', category: 'Finance', img: agentMarketer },
+  { name: 'QBO Support Agent', desc: 'Answers user questions by searching and scraping Zuper documentation.', runs: 1872, lastRun: '8m ago', users: 32, rating: 4.7, reviews: 17, price: 'Free', skills: 4, tools: 3, status: 'Active', category: 'Support', img: agentSupport },
+  { name: 'Dispatch Optimizer Agent', desc: 'Optimizes daily routes and crew assignments to reduce drive time and overlaps.', runs: 564, lastRun: '40m ago', users: 14, rating: 4.7, reviews: 8, price: '$15/mo', skills: 5, tools: 4, status: 'Active', category: 'Operations', img: agentDetective },
+  { name: 'Estimate Generator Agent', desc: 'Drafts roofing estimates from intake notes and pulls in pricing automatically.', runs: 1024, lastRun: '3h ago', users: 22, rating: 4.5, reviews: 11, price: 'Free', skills: 3, tools: 2, status: 'Paused', category: 'Sales', img: agentCreator },
+  { name: 'Quote Follow-up Agent', desc: 'Sends polite, on-brand follow-ups to stalled quotes and tracks response rate.', runs: 740, lastRun: '6h ago', users: 19, rating: 4.6, reviews: 10, price: '$9/mo', skills: 2, tools: 3, status: 'Active', category: 'Sales', img: agentMarketer },
+  { name: 'Safety Compliance Agent', desc: 'Reviews job-site checklists and flags missed safety steps before crew sign-off.', runs: 318, lastRun: '4h ago', users: 11, rating: 4.5, reviews: 6, price: 'Free', skills: 2, tools: 1, status: 'Error', category: 'Compliance', img: agentDetective },
+  { name: 'Material Order Agent', desc: 'Watches stock levels, drafts purchase orders, and pings vendors when supplies run low.', runs: 892, lastRun: '1h ago', users: 16, rating: 4.7, reviews: 9, price: '$14/mo', skills: 4, tools: 3, status: 'Active', category: 'Operations', img: agentCreator },
+  { name: 'Inside Sales Rep Agent', desc: 'Handles inbound inquiries from homeowners and businesses interested in roofing services.', runs: 1248, lastRun: '2h ago', users: 24, rating: 4.8, reviews: 12, price: 'Free', skills: 6, tools: 4, status: 'Active', category: 'Sales', img: agentMarketer },
+  { name: 'Customer Success Agent', desc: 'Supports existing customers throughout their roofing project lifecycle and follow-ups.', runs: 832, lastRun: '5h ago', users: 18, rating: 4.6, reviews: 9, price: '$12/mo', skills: 5, tools: 3, status: 'Paused', category: 'Support', img: agentSupport },
+  { name: 'Lead Qualification Agent', desc: 'Evaluates inbound leads to determine readiness, budget fit, and timeline.', runs: 2104, lastRun: '12m ago', users: 41, rating: 4.9, reviews: 23, price: '$19/mo', skills: 7, tools: 5, status: 'Active', category: 'Sales', img: agentDetective },
 ];
 
 function MyAgentsView() {
@@ -735,7 +736,7 @@ function AUCreateAgentForm({
   const [readyOpen, setReadyOpen] = useState(false);
   const canDeploy = name.trim().length > 0 && instructions.trim().length > 0;
 
-  const avatars = [agent1, agent2, agent3];
+  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport];
   const avatarTints: { tint: string; accent: string }[] = [
     { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' },
     { tint: 'linear-gradient(180deg, #E3D6F1 0%, #EFE5F7 100%)', accent: '#A788CC' },
@@ -7530,7 +7531,7 @@ function VPCreateAgentView({ onClose }: { onClose: () => void }) {
 
   const chatSuggestions = stageSuggestions[chatStage] || [];
 
-  const avatars = [agent1, agent2, agent3];
+  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport];
   const shuffleAvatar = () => setAvatarIdx((i) => (i + 1) % avatars.length);
   const currentAvatar = avatars[avatarIdx];
 
