@@ -1653,23 +1653,11 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
           >
             <Sparkles className="w-[18px] h-[18px] text-white" fill="currentColor" />
           </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <h3 className="text-[14.5px] font-semibold tracking-tight text-[#1C1E21] leading-none">
-                Sense Agents Marketplace
-              </h3>
-              <span className="px-1.5 py-0.5 rounded bg-white/70 text-[#B8410E] text-[9.5px] font-bold tracking-wide uppercase">New</span>
-            </div>
-            <div className="flex items-center gap-2 text-[11.5px] text-[#6B5141] leading-snug">
-              <span className="inline-flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
-                <span><span className="font-semibold text-[#1C1E21]">13+ agents</span> available</span>
-              </span>
-              <span className="text-[#D8B79E]">·</span>
-              <span><span className="font-semibold text-[#1C1E21]">Free</span> starter pack</span>
-              <span className="text-[#D8B79E]">·</span>
-              <span>Deploys in <span className="font-semibold text-[#1C1E21]">under 24h</span></span>
-            </div>
+          <div className="min-w-0 flex items-center gap-2">
+            <h3 className="text-[14.5px] font-semibold tracking-tight text-[#1C1E21] leading-none">
+              Sense Agents Marketplace
+            </h3>
+            <span className="px-1.5 py-0.5 rounded bg-white/70 text-[#B8410E] text-[9.5px] font-bold tracking-wide uppercase">New</span>
           </div>
         </div>
         <button
