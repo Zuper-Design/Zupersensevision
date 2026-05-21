@@ -8,12 +8,15 @@ import {
   AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText,
 } from 'lucide-react';
 import avatarBg from '../../imports/agents/avatar-bg.png';
+import agentClassic1 from '../../imports/agents/agent-1.png';
+import agentClassic2 from '../../imports/agents/agent-2.png';
+import agentClassic3 from '../../imports/agents/agent-3.png';
+import emptyToolkit from '../../imports/agents/empty-toolkit.png';
 const agentDetective = '/agent-detective.png';
 const agentCreator = '/agent-creator.png';
 const agentMarketer = '/agent-marketer.png';
 const agentSupport = '/agent-support.png';
 const agentReviews = '/agent-reviews.png';
-import emptyToolkit from '../../imports/agents/empty-toolkit.png';
 import CircularGallery from './CircularGallery';
 
 type Section = 'overview' | 'agents' | 'catalog' | 'chat' | 'skills' | 'knowledge' | 'usage';
@@ -737,7 +740,7 @@ function AUCreateAgentForm({
   const [readyOpen, setReadyOpen] = useState(false);
   const canDeploy = name.trim().length > 0 && instructions.trim().length > 0;
 
-  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
+  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews, agentClassic1, agentClassic2, agentClassic3];
   const avatarTints: { tint: string; accent: string }[] = [
     { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' },
     { tint: 'linear-gradient(180deg, #E3D6F1 0%, #EFE5F7 100%)', accent: '#A788CC' },
@@ -5642,7 +5645,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 121,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: MessageSquare, label: 'Slack' }],
-    img: agentReviews,
+    img: agentClassic1,
     tint: 'linear-gradient(180deg, #FFEAD5 0%, #FFF3E5 100%)',
     accent: '#E89F5C',
   },
@@ -5693,7 +5696,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 144,
     tags: [{ icon: Mail, label: 'Email' }, { icon: BarChart3, label: 'Cluster' }],
-    img: agentDetective,
+    img: agentClassic2,
     tint: 'linear-gradient(180deg, #FBD9DD 0%, #FDE9EC 100%)',
     accent: '#E48A98',
   },
@@ -5780,7 +5783,7 @@ const catalogItems = [
     rating: 4.5,
     hires: 78,
     tags: [{ icon: Clock, label: 'Weekly' }, { icon: BarChart3, label: 'Report' }],
-    img: agentMarketer,
+    img: agentClassic3,
     tint: 'linear-gradient(180deg, #FEF5C7 0%, #FFFAE0 100%)',
     accent: '#CFA64D',
   },
@@ -5819,7 +5822,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 162,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: AlertTriangle, label: 'Alert' }],
-    img: agentCreator,
+    img: agentClassic1,
     tint: 'linear-gradient(180deg, #DDD0EE 0%, #EBE0F4 100%)',
     accent: '#A788CC',
   },
@@ -5869,7 +5872,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 174,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: MessageSquare, label: 'SMS' }],
-    img: agentReviews,
+    img: agentClassic2,
     tint: 'linear-gradient(180deg, #DCEFE2 0%, #ECF5EF 100%)',
     accent: '#7DB48E',
   },
@@ -5917,7 +5920,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 134,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: Webhook, label: 'Auto-fill' }],
-    img: agentDetective,
+    img: agentClassic3,
     tint: 'linear-gradient(180deg, #DEEEE3 0%, #EDF4EF 100%)',
     accent: '#7DB48E',
   },
@@ -7531,7 +7534,7 @@ function VPCreateAgentView({ onClose }: { onClose: () => void }) {
 
   const chatSuggestions = stageSuggestions[chatStage] || [];
 
-  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
+  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews, agentClassic1, agentClassic2, agentClassic3];
   const shuffleAvatar = () => setAvatarIdx((i) => (i + 1) % avatars.length);
   const currentAvatar = avatars[avatarIdx];
 
