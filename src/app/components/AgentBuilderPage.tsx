@@ -2883,89 +2883,6 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
           </div>
         </div>
 
-        {/* Category chips */}
-        {(() => {
-          const _matchesFilter = (c: typeof catalogItems[number]) => {
-            if (search && !`${c.title} ${c.role}`.toLowerCase().includes(search.toLowerCase())) return false;
-            if (activeCat === 'All') return true;
-            const r = c.role.toLowerCase();
-            const cat = activeCat.toLowerCase();
-            if (cat === 'field') return r.includes('field') || r.includes('coordinator');
-            if (cat === 'finance') return r.includes('collection') || r.includes('finance');
-            return r.includes(cat);
-          };
-          const _filtered = catalogItems.filter(_matchesFilter);
-          const _center = _filtered[Math.min(catalogIdx, _filtered.length - 1)];
-          const _roleToCat = (role: string) => {
-            const r = role.toLowerCase();
-            if (/sales|closer/.test(r)) return 'Sales';
-            if (/operations/.test(r)) return 'Operations';
-            if (/customer|support/.test(r)) return 'Customer';
-            if (/finance|collection/.test(r)) return 'Finance';
-            if (/field|coordinator/.test(r)) return 'Field';
-            return 'All';
-          };
-          const highlightedChip = _center ? _roleToCat(_center.role) : 'All';
-          return (
-        <div className="flex items-center justify-between gap-3 mb-6">
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-auto-hide">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => { setActiveCat(c); setCatalogIdx(0); }}
-                className={`px-3.5 h-9 rounded-full text-[13px] font-medium transition border whitespace-nowrap flex-shrink-0 ${
-                  highlightedChip === c
-                    ? 'bg-[#1C1E21] border-[#1C1E21] text-white'
-                    : 'bg-white border-[#E6E8EC] text-[#4B5563] hover:border-[#1C1E21]/20'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button
-              onClick={() => {
-                const len = catalogItems.filter((c) => {
-                  if (search && !`${c.title} ${c.role}`.toLowerCase().includes(search.toLowerCase())) return false;
-                  if (activeCat === 'All') return true;
-                  const r = c.role.toLowerCase();
-                  const cat = activeCat.toLowerCase();
-                  if (cat === 'field') return r.includes('field') || r.includes('coordinator');
-                  if (cat === 'finance') return r.includes('collection') || r.includes('finance');
-                  return r.includes(cat);
-                }).length;
-                if (len > 0) setCatalogIdx((i) => (i - 1 + len) % len);
-              }}
-              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="w-11 h-11 rounded-full bg-[#1C1E21] hover:bg-black text-white flex items-center justify-center active:scale-[0.96] hover:shadow-[0_8px_22px_-6px_rgba(0,0,0,0.30)]"
-              aria-label="Previous"
-            >
-              <ChevronLeft className="w-[18px] h-[18px]" strokeWidth={2.2} />
-            </button>
-            <button
-              onClick={() => {
-                const len = catalogItems.filter((c) => {
-                  if (search && !`${c.title} ${c.role}`.toLowerCase().includes(search.toLowerCase())) return false;
-                  if (activeCat === 'All') return true;
-                  const r = c.role.toLowerCase();
-                  const cat = activeCat.toLowerCase();
-                  if (cat === 'field') return r.includes('field') || r.includes('coordinator');
-                  if (cat === 'finance') return r.includes('collection') || r.includes('finance');
-                  return r.includes(cat);
-                }).length;
-                if (len > 0) setCatalogIdx((i) => (i + 1) % len);
-              }}
-              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="w-11 h-11 rounded-full bg-[#1C1E21] hover:bg-black text-white flex items-center justify-center active:scale-[0.96] hover:shadow-[0_8px_22px_-6px_rgba(0,0,0,0.30)]"
-              aria-label="Next"
-            >
-              <ChevronRight className="w-[18px] h-[18px]" strokeWidth={2.2} />
-            </button>
-          </div>
-        </div>
-          );
-        })()}
 
         {/* Peek carousel — rich agent cards */}
         {(() => {
@@ -2986,12 +2903,14 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
               </div>
             );
           }
-          const idx = Math.min(catalogIdx, filteredCatalog.length - 1);
-          const prev = () => setCatalogIdx((i) => (i - 1 + filteredCatalog.length) % filteredCatalog.length);
-          const next = () => setCatalogIdx((i) => (i + 1) % filteredCatalog.length);
+          const VISIBLE = 6;
+          const maxIdx = Math.max(0, filteredCatalog.length - VISIBLE);
+          const idx = Math.min(catalogIdx, maxIdx);
+          const prev = () => setCatalogIdx((i) => Math.max(0, i - 1));
+          const next = () => setCatalogIdx((i) => Math.min(maxIdx, i + 1));
 
-          const CARD_W = 380;
-          const GAP = 28;
+          const CARD_W = 184;
+          const GAP = 16;
           const STEP = CARD_W + GAP;
 
           const handleWheel = (e: React.WheelEvent) => {
@@ -3020,9 +2939,29 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
           const onMouseUp = () => { dragRef.current.dragging = false; };
           return (
             <div className="relative">
+              {/* Left arrow */}
+              <button
+                onClick={prev}
+                disabled={idx === 0}
+                aria-label="Previous"
+                style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-[#1C1E21] active:scale-[0.96]"
+              >
+                <ChevronLeft className="w-[18px] h-[18px]" strokeWidth={2.2} />
+              </button>
+              {/* Right arrow */}
+              <button
+                onClick={next}
+                disabled={idx >= maxIdx}
+                aria-label="Next"
+                style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-[#1C1E21] active:scale-[0.96]"
+              >
+                <ChevronRight className="w-[18px] h-[18px]" strokeWidth={2.2} />
+              </button>
+
               <div
-                className="relative overflow-hidden pt-6 pb-16 select-none cursor-grab active:cursor-grabbing"
-                style={{ perspective: '1600px' }}
+                className="relative overflow-hidden pt-6 pb-8 select-none cursor-grab active:cursor-grabbing px-14"
                 onWheel={handleWheel}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
@@ -3033,7 +2972,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                   className="flex transition-transform duration-[520ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
                   style={{
                     gap: `${GAP}px`,
-                    transform: `translateX(calc(50% - ${idx * STEP + CARD_W / 2}px))`,
+                    transform: `translateX(-${idx * STEP}px)`,
                   }}
                 >
                   {filteredCatalog.map((c, i) => {
@@ -3152,327 +3091,6 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
           );
         })()}
 
-        {/* Recommended for you */}
-        <section className="mt-16">
-          <div className="flex items-end justify-between gap-4 mb-5 flex-wrap">
-            <div>
-              <div className="flex items-center gap-2.5">
-                <Sparkles className="w-[18px] h-[18px] text-[#E66B52]" fill="currentColor" />
-                <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight">Recommended for you</h2>
-              </div>
-              <p className="text-[13px] text-[#6B7280] mt-1">
-                Because you're <span className="font-semibold text-[#1C1E21]">running a 5-crew roofing operation</span> with rising inbound — these handle what's slipping.
-              </p>
-            </div>
-            <button className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[#1C1E21] hover:text-black">
-              See all
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {catalogItems.slice(0, 5).map((c, i) => {
-              const reasons = [
-                'Stops weather-driven cancellations',
-                'Recovers cold quotes before they die',
-                'Greets inbound before they bounce',
-                'Catches stock-outs before crews arrive empty',
-                'Triages complaints before they escalate',
-              ];
-              const rL = c.role.toLowerCase();
-              const recCatKey: keyof typeof categoryTint =
-                /sales|closer/.test(rL) ? 'Sales' :
-                /operations/.test(rL) ? 'Operations' :
-                /customer|support/.test(rL) ? 'Support' :
-                /finance|collection/.test(rL) ? 'Finance' :
-                /field|coordinator/.test(rL) ? 'Compliance' :
-                'Sales';
-              const recTint = categoryTint[recCatKey];
-              const isHero = i === 0;
-              if (isHero) {
-                return (
-                  <article
-                    key={`rec-${c.title}`}
-                    className="group md:col-span-2 relative rounded-2xl overflow-hidden cursor-pointer transition-all hover:shadow-[0_18px_36px_-14px_rgba(0,0,0,0.16)]"
-                    style={{ background: recTint.tint, minHeight: 260 }}
-                  >
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                      <div
-                        className="absolute"
-                        style={{
-                          top: -80,
-                          left: -60,
-                          width: 320,
-                          height: 320,
-                          borderRadius: '50%',
-                          background: `radial-gradient(circle, ${recTint.accent}55, transparent 70%)`,
-                          filter: 'blur(40px)',
-                        }}
-                      />
-                      <div
-                        className="absolute"
-                        style={{
-                          bottom: -100,
-                          left: '30%',
-                          width: 340,
-                          height: 280,
-                          borderRadius: '50%',
-                          background: `radial-gradient(circle, ${recTint.accent}33, transparent 70%)`,
-                          filter: 'blur(48px)',
-                        }}
-                      />
-                      <div
-                        className="absolute"
-                        style={{
-                          top: -60,
-                          right: -80,
-                          width: 280,
-                          height: 280,
-                          borderRadius: '50%',
-                          background: `radial-gradient(circle, ${recTint.accent}40, transparent 72%)`,
-                          filter: 'blur(44px)',
-                        }}
-                      />
-                    </div>
-                    <div className="relative h-full flex items-stretch px-8 py-7" style={{ minHeight: 260 }}>
-                      <div className="flex-1 max-w-[460px] flex flex-col justify-center">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/85 backdrop-blur text-[10px] font-bold tracking-wide uppercase mb-3 w-fit" style={{ color: '#B8410E' }}>
-                          <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />
-                          Top pick for you
-                        </span>
-                        <h3 className="text-[24px] font-semibold text-[#1C1E21] tracking-tight leading-[1.15] mb-2">{c.title}</h3>
-                        <p className="text-[13.5px] text-[#1C1E21]/75 leading-relaxed mb-5 max-w-[400px]">{reasons[i]}. {c.desc.split('.')[0]}.</p>
-                        <button className="inline-flex items-center gap-1.5 px-4 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all w-fit hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]">
-                          <Sparkles className="w-[13px] h-[13px]" fill="currentColor" />
-                          Try now
-                        </button>
-                      </div>
-                      <img
-                        src={c.img}
-                        alt=""
-                        className="absolute right-4 bottom-0 h-[280px] w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03] group-hover:translate-y-[-2px]"
-                        draggable={false}
-                      />
-                    </div>
-                  </article>
-                );
-              }
-              return (
-                <article
-                  key={`rec-${c.title}`}
-                  className="group rounded-2xl bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/15 hover:shadow-[0_8px_22px_rgba(0,0,0,0.06)] transition-all cursor-pointer overflow-hidden flex flex-col"
-                  style={{ minHeight: 200 }}
-                >
-                  <div className="p-5 flex-1 flex flex-col">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0" style={{ background: recTint.tint }}>
-                        <img
-                          src={c.img}
-                          alt=""
-                          className="absolute left-1/2 -translate-x-1/2 top-1 h-[80px] w-auto object-contain"
-                          draggable={false}
-                        />
-                      </div>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-wide uppercase text-[#B8410E]">
-                        <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />
-                        #{i + 1} match
-                      </span>
-                    </div>
-                    <h4 className="text-[15px] font-semibold text-[#1C1E21] leading-tight mb-1">{c.title}</h4>
-                    <p className="text-[12.5px] text-[#6B7280] leading-relaxed line-clamp-2 mb-3">{reasons[i]}.</p>
-                    <div className="mt-auto flex items-center justify-between">
-                      <div className="inline-flex items-center gap-1 text-[11.5px]">
-                        <Star className="w-[11px] h-[11px] text-[#F59E0B] fill-[#F59E0B]" />
-                        <span className="font-semibold text-[#1C1E21]">{c.rating.toFixed(1)}</span>
-                        <span className="text-[#9CA3AF]">· {c.hires}</span>
-                      </div>
-                      <button className="inline-flex items-center gap-1 px-3 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[11.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]">
-                        Try me
-                        <ArrowRight className="w-[11px] h-[11px]" />
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Bundles */}
-        <section className="mt-16">
-          <div className="flex items-end justify-between gap-4 mb-5 flex-wrap">
-            <div>
-              <div className="flex items-center gap-2.5">
-                <Layers className="w-[18px] h-[18px] text-[#6B7280]" />
-                <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight">Agent Bundles</h2>
-                <span className="px-2 py-0.5 rounded-full bg-[#FFF1E5] text-[#B8410E] text-[10.5px] font-bold tracking-wide uppercase">Save up to 30%</span>
-              </div>
-              <p className="text-[13px] text-[#6B7280] mt-1">Pre-built squads for common scenarios. Hire as a team, deploy together.</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              {
-                scenario: 'New branch launch',
-                title: 'Launch Day Squad',
-                desc: 'Spin up a new market in days, not weeks. Greets leads, books crews, watches reviews.',
-                agents: [
-                  { name: 'Chloe', role: 'Inside Sales', img: agentMarketer },
-                  { name: 'Olivia', role: 'Dispatch', img: agentDetective },
-                  { name: 'Maya', role: 'Reviews', img: agentReviews },
-                ],
-                price: '$39/mo',
-                regular: '$58/mo',
-                tint: 'linear-gradient(135deg, #FFE6D5 0%, #FFD0BC 100%)',
-                accent: '#E66B52',
-                tagline: 'Save $19/mo',
-              },
-              {
-                scenario: 'Cash flow crunch',
-                title: 'Collect & Recover',
-                desc: 'Cold quotes, aging invoices, missed follow-ups — chased on schedule, every time.',
-                agents: [
-                  { name: 'Oliver', role: 'Quote Follow-up', img: agentCreator },
-                  { name: 'Ivy', role: 'Invoice Aging', img: agentMarketer },
-                  { name: 'Logan', role: 'Lead Scoring', img: agentSupport },
-                ],
-                price: '$45/mo',
-                regular: '$66/mo',
-                tint: 'linear-gradient(135deg, #E3D6F1 0%, #C9B6E3 100%)',
-                accent: '#A788CC',
-                tagline: 'Save $21/mo',
-              },
-              {
-                scenario: 'Customer love & retention',
-                title: 'Customer Champions',
-                desc: 'Keep happy customers happy. Triages support, follows up post-job, watches reviews.',
-                agents: [
-                  { name: 'Henry', role: 'Support', img: agentSupport },
-                  { name: 'Grace', role: 'CS', img: agentMarketer },
-                  { name: 'Maya', role: 'Reviews', img: agentReviews },
-                ],
-                price: '$32/mo',
-                regular: '$48/mo',
-                tint: 'linear-gradient(135deg, #DCEFE2 0%, #B5DCC1 100%)',
-                accent: '#7DB48E',
-                tagline: 'Save $16/mo',
-              },
-            ].map((b, bi) => {
-              const isHero = bi === 0;
-              if (isHero) {
-                return (
-                  <article
-                    key={b.title}
-                    className="group md:col-span-2 relative rounded-2xl overflow-hidden cursor-pointer transition-all hover:shadow-[0_22px_44px_-18px_rgba(0,0,0,0.18)]"
-                    style={{ background: b.tint, minHeight: 320 }}
-                  >
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                      <div className="absolute" style={{ top: -100, left: -80, width: 360, height: 360, borderRadius: '50%', background: `radial-gradient(circle, ${b.accent}55, transparent 70%)`, filter: 'blur(48px)' }} />
-                      <div className="absolute" style={{ bottom: -120, left: '28%', width: 380, height: 320, borderRadius: '50%', background: `radial-gradient(circle, ${b.accent}33, transparent 70%)`, filter: 'blur(52px)' }} />
-                      <div className="absolute" style={{ top: -80, right: -100, width: 320, height: 320, borderRadius: '50%', background: `radial-gradient(circle, ${b.accent}40, transparent 72%)`, filter: 'blur(48px)' }} />
-                    </div>
-                    <span className="absolute top-4 left-4 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur text-[10px] font-bold tracking-wide uppercase z-10" style={{ color: b.accent }}>
-                      <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />
-                      {b.scenario}
-                    </span>
-                    <span className="absolute top-4 right-4 inline-flex items-center px-2 py-0.5 rounded-md bg-white/90 backdrop-blur text-[#1C1E21] text-[10px] font-bold tracking-wide uppercase z-10">
-                      {b.tagline}
-                    </span>
-
-                    <div className="relative h-full grid grid-cols-[1.1fr_1fr] gap-6 px-8 pt-14 pb-6" style={{ minHeight: 320 }}>
-                      <div className="flex flex-col justify-center">
-                        <h3 className="text-[26px] font-semibold text-[#1C1E21] tracking-tight leading-[1.1] mb-2">{b.title}</h3>
-                        <p className="text-[13.5px] text-[#1C1E21]/75 leading-relaxed mb-4 max-w-[360px]">{b.desc}</p>
-                        <div className="flex items-center gap-1.5 mb-5 flex-wrap">
-                          {b.agents.map((a) => (
-                            <span key={a.name} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/85 backdrop-blur text-[11px] font-medium text-[#4B5563]">
-                              <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.accent }} />
-                              <span className="font-semibold text-[#1C1E21]">{a.name}</span>
-                              <span className="text-[#9CA3AF] font-normal">· {a.role}</span>
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-baseline gap-1.5">
-                            <span className="text-[22px] font-semibold text-[#1C1E21] tabular-nums">{b.price}</span>
-                            <span className="text-[12px] text-[#9CA3AF] line-through tabular-nums">{b.regular}</span>
-                          </div>
-                          <button className="inline-flex items-center gap-1.5 px-4 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]">
-                            <Sparkles className="w-[13px] h-[13px]" fill="currentColor" />
-                            Hire bundle
-                          </button>
-                        </div>
-                      </div>
-                      <div className="relative flex items-end justify-center -space-x-20">
-                        {b.agents.map((a, i) => (
-                          <img
-                            key={i}
-                            src={a.img}
-                            alt=""
-                            className="relative h-[260px] w-auto object-contain drop-shadow-[0_16px_24px_rgba(0,0,0,0.18)] transition-transform duration-300 group-hover:translate-y-[-4px]"
-                            style={{
-                              zIndex: i === 1 ? 2 : 1,
-                              marginBottom: -80,
-                            }}
-                            draggable={false}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </article>
-                );
-              }
-              return (
-                <article
-                  key={b.title}
-                  className="group relative rounded-2xl bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/15 hover:shadow-[0_12px_28px_rgba(0,0,0,0.07)] transition-all cursor-pointer overflow-hidden flex flex-col"
-                  style={{ minHeight: 320 }}
-                >
-                  <div className="relative overflow-hidden" style={{ background: b.tint, height: 200 }}>
-                    <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute" style={{ top: -60, left: -50, width: 240, height: 240, borderRadius: '50%', background: `radial-gradient(circle, ${b.accent}55, transparent 70%)`, filter: 'blur(36px)' }} />
-                      <div className="absolute" style={{ top: -40, right: -60, width: 220, height: 220, borderRadius: '50%', background: `radial-gradient(circle, ${b.accent}40, transparent 72%)`, filter: 'blur(36px)' }} />
-                    </div>
-                    <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur text-[10px] font-bold tracking-wide uppercase z-10" style={{ color: b.accent }}>
-                      <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />
-                      {b.scenario}
-                    </span>
-                    <span className="absolute top-3 right-3 inline-flex items-center px-2 py-0.5 rounded-md bg-white/90 backdrop-blur text-[#1C1E21] text-[10px] font-bold tracking-wide uppercase z-10">
-                      {b.tagline}
-                    </span>
-                    <div className="absolute inset-x-0 bottom-0 flex items-end justify-center -space-x-14 z-10" style={{ marginBottom: -50 }}>
-                      {b.agents.map((a, i) => (
-                        <img
-                          key={i}
-                          src={a.img}
-                          alt=""
-                          className="relative h-[180px] w-auto object-contain drop-shadow-[0_12px_20px_rgba(0,0,0,0.16)] transition-transform duration-300 group-hover:translate-y-[-4px]"
-                          style={{ zIndex: i === 1 ? 2 : 1 }}
-                          draggable={false}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="px-5 pt-4 pb-3 flex-1 flex flex-col">
-                    <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight mb-1">{b.title}</h3>
-                    <p className="text-[12.5px] text-[#6B7280] leading-relaxed mb-3 line-clamp-2 flex-1">{b.desc}</p>
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-[17px] font-semibold text-[#1C1E21] tabular-nums">{b.price}</span>
-                        <span className="text-[11.5px] text-[#9CA3AF] line-through tabular-nums">{b.regular}</span>
-                      </div>
-                      <button className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]">
-                        Hire bundle
-                        <ArrowRight className="w-[12px] h-[12px]" />
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </section>
       </div>
 
     </div>
