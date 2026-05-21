@@ -12,6 +12,7 @@ const agentDetective = '/agent-detective.png';
 const agentCreator = '/agent-creator.png';
 const agentMarketer = '/agent-marketer.png';
 const agentSupport = '/agent-support.png';
+const agentReviews = '/agent-reviews.png';
 import emptyToolkit from '../../imports/agents/empty-toolkit.png';
 import CircularGallery from './CircularGallery';
 
@@ -319,12 +320,12 @@ const statusStyles: Record<AgentStatus, { bg: string; border: string; color: str
 
 const myAgents: Array<{ name: string; desc: string; runs: number; lastRun: string; users: number; rating: number; reviews: number; price: string; skills: number; tools: number; status: AgentStatus; category: AgentCategory; img?: string }> = [
   { name: 'Sales Coach Agent', desc: 'Reviews call transcripts and interaction logs, surfacing coaching moments.', runs: 412, lastRun: '1d ago', users: 7, rating: 4.4, reviews: 4, price: 'Free', skills: 3, tools: 2, status: 'Active', category: 'Sales', img: agentCreator },
-  { name: 'Financial Agent', desc: 'Tracks job costs, generates invoices, and surfaces margin anomalies.', runs: 0, lastRun: '', users: 3, rating: 5.0, reviews: 1, price: '$25/mo', skills: 0, tools: 1, status: 'Draft', category: 'Finance', img: agentMarketer },
+  { name: 'Financial Agent', desc: 'Tracks job costs, generates invoices, and surfaces margin anomalies.', runs: 0, lastRun: '', users: 3, rating: 5.0, reviews: 1, price: '$25/mo', skills: 0, tools: 1, status: 'Draft', category: 'Finance', img: agentReviews },
   { name: 'QBO Support Agent', desc: 'Answers user questions by searching and scraping Zuper documentation.', runs: 1872, lastRun: '8m ago', users: 32, rating: 4.7, reviews: 17, price: 'Free', skills: 4, tools: 3, status: 'Active', category: 'Support', img: agentSupport },
   { name: 'Dispatch Optimizer Agent', desc: 'Optimizes daily routes and crew assignments to reduce drive time and overlaps.', runs: 564, lastRun: '40m ago', users: 14, rating: 4.7, reviews: 8, price: '$15/mo', skills: 5, tools: 4, status: 'Active', category: 'Operations', img: agentDetective },
   { name: 'Estimate Generator Agent', desc: 'Drafts roofing estimates from intake notes and pulls in pricing automatically.', runs: 1024, lastRun: '3h ago', users: 22, rating: 4.5, reviews: 11, price: 'Free', skills: 3, tools: 2, status: 'Paused', category: 'Sales', img: agentCreator },
   { name: 'Quote Follow-up Agent', desc: 'Sends polite, on-brand follow-ups to stalled quotes and tracks response rate.', runs: 740, lastRun: '6h ago', users: 19, rating: 4.6, reviews: 10, price: '$9/mo', skills: 2, tools: 3, status: 'Active', category: 'Sales', img: agentMarketer },
-  { name: 'Safety Compliance Agent', desc: 'Reviews job-site checklists and flags missed safety steps before crew sign-off.', runs: 318, lastRun: '4h ago', users: 11, rating: 4.5, reviews: 6, price: 'Free', skills: 2, tools: 1, status: 'Error', category: 'Compliance', img: agentDetective },
+  { name: 'Safety Compliance Agent', desc: 'Reviews job-site checklists and flags missed safety steps before crew sign-off.', runs: 318, lastRun: '4h ago', users: 11, rating: 4.5, reviews: 6, price: 'Free', skills: 2, tools: 1, status: 'Error', category: 'Compliance', img: agentReviews },
   { name: 'Material Order Agent', desc: 'Watches stock levels, drafts purchase orders, and pings vendors when supplies run low.', runs: 892, lastRun: '1h ago', users: 16, rating: 4.7, reviews: 9, price: '$14/mo', skills: 4, tools: 3, status: 'Active', category: 'Operations', img: agentCreator },
   { name: 'Inside Sales Rep Agent', desc: 'Handles inbound inquiries from homeowners and businesses interested in roofing services.', runs: 1248, lastRun: '2h ago', users: 24, rating: 4.8, reviews: 12, price: 'Free', skills: 6, tools: 4, status: 'Active', category: 'Sales', img: agentMarketer },
   { name: 'Customer Success Agent', desc: 'Supports existing customers throughout their roofing project lifecycle and follow-ups.', runs: 832, lastRun: '5h ago', users: 18, rating: 4.6, reviews: 9, price: '$12/mo', skills: 5, tools: 3, status: 'Paused', category: 'Support', img: agentSupport },
@@ -736,7 +737,7 @@ function AUCreateAgentForm({
   const [readyOpen, setReadyOpen] = useState(false);
   const canDeploy = name.trim().length > 0 && instructions.trim().length > 0;
 
-  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport];
+  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
   const avatarTints: { tint: string; accent: string }[] = [
     { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' },
     { tint: 'linear-gradient(180deg, #E3D6F1 0%, #EFE5F7 100%)', accent: '#A788CC' },
@@ -3406,7 +3407,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 agents: [
                   { name: 'Chloe', role: 'Inside Sales', img: agentMarketer },
                   { name: 'Olivia', role: 'Dispatch', img: agentDetective },
-                  { name: 'Maya', role: 'Reviews', img: agentDetective },
+                  { name: 'Maya', role: 'Reviews', img: agentReviews },
                 ],
                 price: '$39/mo',
                 regular: '$58/mo',
@@ -3434,9 +3435,9 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 title: 'Customer Champions',
                 desc: 'Keep happy customers happy. Triages support, follows up post-job, watches reviews.',
                 agents: [
-                  { name: 'Henry', role: 'Support', img: agentCreator },
+                  { name: 'Henry', role: 'Support', img: agentSupport },
                   { name: 'Grace', role: 'CS', img: agentMarketer },
-                  { name: 'Maya', role: 'Reviews', img: agentDetective },
+                  { name: 'Maya', role: 'Reviews', img: agentReviews },
                 ],
                 price: '$32/mo',
                 regular: '$48/mo',
@@ -5629,7 +5630,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 188,
     tags: [{ icon: Clock, label: 'Nightly' }, { icon: Zap, label: 'Auto-route' }],
-    img: agentMarketer,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #FDE6CC 0%, #FEEFDA 100%)',
     accent: '#E89F5C',
   },
@@ -5641,7 +5642,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 121,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: MessageSquare, label: 'Slack' }],
-    img: agentCreator,
+    img: agentSupport,
     tint: 'linear-gradient(180deg, #FFEAD5 0%, #FFF3E5 100%)',
     accent: '#E89F5C',
   },
@@ -5665,7 +5666,7 @@ const catalogItems = [
     rating: 4.5,
     hires: 92,
     tags: [{ icon: Webhook, label: 'On-create' }, { icon: Zap, label: 'Auto-tag' }],
-    img: agentMarketer,
+    img: agentReviews,
     tint: 'linear-gradient(180deg, #FFE5C9 0%, #FFF1DC 100%)',
     accent: '#E89F5C',
   },
@@ -5680,7 +5681,7 @@ const catalogItems = [
     hires: 218,
     featured: true,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: Mail, label: 'Email' }],
-    img: agentMarketer,
+    img: agentReviews,
     tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)',
     accent: '#E48A98',
   },
@@ -5692,7 +5693,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 144,
     tags: [{ icon: Mail, label: 'Email' }, { icon: BarChart3, label: 'Cluster' }],
-    img: agentDetective,
+    img: agentReviews,
     tint: 'linear-gradient(180deg, #FBD9DD 0%, #FDE9EC 100%)',
     accent: '#E48A98',
   },
@@ -5728,7 +5729,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 156,
     tags: [{ icon: Mail, label: 'Inbox' }, { icon: AlertTriangle, label: 'Triage' }],
-    img: agentDetective,
+    img: agentSupport,
     tint: 'linear-gradient(180deg, #FDDFE2 0%, #FEEEEF 100%)',
     accent: '#E48A98',
   },
@@ -5754,7 +5755,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 96,
     tags: [{ icon: Clock, label: 'Scheduled' }, { icon: Mail, label: 'Email' }],
-    img: agentDetective,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #DCE9F5 0%, #EAF1F8 100%)',
     accent: '#7DA1C9',
   },
@@ -5779,7 +5780,7 @@ const catalogItems = [
     rating: 4.5,
     hires: 78,
     tags: [{ icon: Clock, label: 'Weekly' }, { icon: BarChart3, label: 'Report' }],
-    img: agentCreator,
+    img: agentSupport,
     tint: 'linear-gradient(180deg, #FEF5C7 0%, #FFFAE0 100%)',
     accent: '#CFA64D',
   },
@@ -5818,7 +5819,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 162,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: AlertTriangle, label: 'Alert' }],
-    img: agentMarketer,
+    img: agentReviews,
     tint: 'linear-gradient(180deg, #DDD0EE 0%, #EBE0F4 100%)',
     accent: '#A788CC',
   },
@@ -5842,7 +5843,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 145,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: BarChart3, label: 'Forecast' }],
-    img: agentDetective,
+    img: agentSupport,
     tint: 'linear-gradient(180deg, #DCCBEF 0%, #ECE0F5 100%)',
     accent: '#A788CC',
   },
@@ -5880,7 +5881,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 122,
     tags: [{ icon: Clock, label: 'Per-job' }, { icon: AlertTriangle, label: 'Flag' }],
-    img: agentCreator,
+    img: agentReviews,
     tint: 'linear-gradient(180deg, #D6EADD 0%, #E8F2EB 100%)',
     accent: '#7DB48E',
   },
@@ -5904,7 +5905,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 198,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: MessageSquare, label: 'SMS' }],
-    img: agentMarketer,
+    img: agentSupport,
     tint: 'linear-gradient(180deg, #D8EDDE 0%, #EAF4ED 100%)',
     accent: '#7DB48E',
   },
@@ -7530,7 +7531,7 @@ function VPCreateAgentView({ onClose }: { onClose: () => void }) {
 
   const chatSuggestions = stageSuggestions[chatStage] || [];
 
-  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport];
+  const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
   const shuffleAvatar = () => setAvatarIdx((i) => (i + 1) % avatars.length);
   const currentAvatar = avatars[avatarIdx];
 
