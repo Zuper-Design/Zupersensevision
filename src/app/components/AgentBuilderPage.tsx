@@ -672,7 +672,6 @@ function MJCreateAgentForm({
   const [name, setName] = useState('');
   const [instructions, setInstructions] = useState('');
   const [trigger, setTrigger] = useState<'manual' | 'mention' | 'schedule'>('manual');
-  const [tab, setTab] = useState<'identity' | 'skills' | 'knowledge'>('identity');
   const [avatarIdx, setAvatarIdx] = useState(0);
   const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
   const avatarTints = [
@@ -713,12 +712,6 @@ function MJCreateAgentForm({
     { key: 'manual', label: 'On demand', desc: 'You ask, it runs', icon: Play, tint: '#EFF6FF' },
     { key: 'mention', label: '@mention', desc: 'Pings the agent in Zuper', icon: AtSign, tint: '#FFF1E5' },
     { key: 'schedule', label: 'Scheduled', desc: 'Daily at a set time', icon: Clock, tint: '#ECFDF5' },
-  ];
-
-  const tabs: { key: typeof tab; label: string }[] = [
-    { key: 'identity', label: 'Identity' },
-    { key: 'skills', label: 'Skills & Tools' },
-    { key: 'knowledge', label: 'Knowledge' },
   ];
 
   const deploy = () => {
@@ -770,30 +763,13 @@ function MJCreateAgentForm({
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-1 px-8 h-12 border-b border-[#F0F1F3] flex-shrink-0">
-        {tabs.map((t) => {
-          const active = t.key === tab;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className="relative inline-flex items-center h-12 px-3 text-[13px] font-medium"
-              style={{ color: active ? '#1C1E21' : '#6B7280', transition: 'color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-            >
-              {t.label}
-              {active && <span className="absolute left-3 right-3 bottom-0 h-[2px] bg-[#1C1E21] rounded-full" />}
-            </button>
-          );
-        })}
-      </div>
-
       {/* Body */}
       <div className="flex-1 min-h-0 grid grid-cols-[1fr_540px]">
-        {/* LEFT — form */}
+        {/* LEFT — form (all sections stacked) */}
         <div className="overflow-y-auto px-8 py-7">
-          {tab === 'identity' && (
-            <div className="max-w-[640px] space-y-7">
+          <div className="max-w-[640px] space-y-10">
+            {/* Identity */}
+            <div className="space-y-7">
               <div>
                 <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-3">Identity</div>
                 <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
@@ -851,10 +827,9 @@ function MJCreateAgentForm({
                 </div>
               </div>
             </div>
-          )}
 
-          {tab === 'skills' && (
-            <div className="max-w-[640px]">
+            {/* Skills & Tools */}
+            <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Skills & Tools</div>
                 <span className="text-[11px] text-[#9CA3AF]">{enabledSkills.length}/{skillCatalog.length}</span>
@@ -889,10 +864,9 @@ function MJCreateAgentForm({
                 })}
               </div>
             </div>
-          )}
 
-          {tab === 'knowledge' && (
-            <div className="max-w-[640px]">
+            {/* Knowledge */}
+            <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Knowledge</div>
                 <span className="text-[11px] text-[#9CA3AF]">{enabledKb.length}/{kbCatalog.length}</span>
@@ -927,7 +901,7 @@ function MJCreateAgentForm({
                 })}
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* RIGHT — live agent card preview */}
