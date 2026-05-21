@@ -14,6 +14,7 @@ interface Section {
   title: string;
   icon: typeof Rocket;
   meta: string;
+  dotColor: string;
   paragraphs: string[];
   bullets?: string[];
 }
@@ -24,6 +25,7 @@ const SECTIONS: Section[] = [
     title: 'Releases',
     icon: Rocket,
     meta: 'v2.6.0 · 21 May 2026',
+    dotColor: '#FD5000',
     paragraphs: [
       'Zuper Sense 2.6 is now generally available. The release introduces a redesigned Radar dashboard, faster answer generation across the chart engine, and a brand-new pinned-insight surface that makes it easier to keep an eye on the numbers that matter to your business.',
       'Sense answers now stream in roughly 38% faster on average, and the new charts work natively in both light and dark themes.',
@@ -40,6 +42,7 @@ const SECTIONS: Section[] = [
     title: 'Fixes',
     icon: Wrench,
     meta: '7 fixes in this release',
+    dotColor: '#10B981',
     paragraphs: [
       'We squashed a handful of bugs reported by the field this cycle. Most of these were edge cases around large invoice exports, but the radar filter race condition will be a relief for anyone running multi-region dashboards.',
     ],
@@ -56,6 +59,7 @@ const SECTIONS: Section[] = [
     title: 'Improvements',
     icon: Sparkles,
     meta: 'Quality of life',
+    dotColor: '#8B5CF6',
     paragraphs: [
       'A pass of small refinements based on feedback from the design partner program. Most are subtle — animations are calmer, surfaces are quieter, and the keyboard shortcuts you use daily got faster.',
     ],
@@ -72,6 +76,7 @@ const SECTIONS: Section[] = [
     title: 'API',
     icon: Code2,
     meta: 'Public API v3',
+    dotColor: '#0EA5E9',
     paragraphs: [
       'The public Sense API graduates to v3. Authentication now uses scoped API keys, and the /insights endpoint accepts a wider set of filters so you can replicate everything Radar can do in the UI.',
       'v2 keys continue to work until 01 Aug 2026. After that, generate a v3 key from Settings → Developers.',
@@ -215,7 +220,7 @@ export function ReleasesModal({ open, onClose }: ReleasesModalProps) {
                               <li key={i} className="flex items-start gap-2.5" style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.55 }}>
                                 <span
                                   className="mt-[8px] w-1.5 h-1.5 rounded-full flex-shrink-0"
-                                  style={{ background: '#FD5000' }}
+                                  style={{ background: section.dotColor }}
                                 />
                                 {b}
                               </li>
