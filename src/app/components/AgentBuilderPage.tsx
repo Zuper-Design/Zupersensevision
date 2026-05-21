@@ -47,7 +47,7 @@ const recentActivity = [
 export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => void; currentUser?: string }) {
   const isVP = currentUser === 'VP';
   const isAU = currentUser === 'AU';
-  const [section, setSection] = useState<Section>(isVP ? 'agents' : 'overview');
+  const [section, setSection] = useState<Section>('agents');
   const [auAgentOpen, setAuAgentOpen] = useState(true);
   const [vpCreateOpen, setVpCreateOpen] = useState(false);
   const [auActiveAgent, setAuActiveAgent] = useState<string | null>(null);
