@@ -2903,14 +2903,14 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
               </div>
             );
           }
-          const VISIBLE = 6;
+          const VISIBLE = 3;
           const maxIdx = Math.max(0, filteredCatalog.length - VISIBLE);
           const idx = Math.min(catalogIdx, maxIdx);
           const prev = () => setCatalogIdx((i) => Math.max(0, i - 1));
           const next = () => setCatalogIdx((i) => Math.min(maxIdx, i + 1));
 
-          const CARD_W = 184;
-          const GAP = 16;
+          const CARD_W = 380;
+          const GAP = 28;
           const STEP = CARD_W + GAP;
 
           const handleWheel = (e: React.WheelEvent) => {
