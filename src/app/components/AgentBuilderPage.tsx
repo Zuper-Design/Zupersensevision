@@ -2868,7 +2868,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
             <div className="flex items-center gap-2.5">
               <BookOpen className="w-[18px] h-[18px] text-[#6B7280]" />
               <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight">Browse Catalog</h2>
-              <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold tabular-nums">{catalogItems.length}</span>
+              <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold tabular-nums">6</span>
             </div>
             <p className="text-[13px] text-[#6B7280] mt-1">Pick one, customize it, deploy.</p>
           </div>
@@ -2894,7 +2894,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
             if (cat === 'field') return r.includes('field') || r.includes('coordinator');
             if (cat === 'finance') return r.includes('collection') || r.includes('finance');
             return r.includes(cat);
-          });
+          }).slice(0, 6);
           if (filteredCatalog.length === 0) {
             return (
               <div className="rounded-2xl border border-dashed border-[#E6E8EC] py-14 text-center">
