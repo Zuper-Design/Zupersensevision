@@ -2994,7 +2994,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                     const offset = i - idx;
                     const dist = Math.abs(offset);
                     const sc = isActive ? 1 : 0.92;
-                    const isAdded = i % 3 === 0;
+                    const isAdded = i === 0;
                     const rL = c.role.toLowerCase();
                     const catKey: keyof typeof categoryTint =
                       /sales|closer/.test(rL) ? 'Sales' :
@@ -3048,23 +3048,8 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                         {/* Content */}
                         <div className="px-5 pt-4 pb-3 flex-1 flex flex-col">
                           <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-1">{c.role.split(' ')[0]}</div>
-                          <h3 className="text-[18px] font-semibold text-[#1C1E21] leading-tight mb-1">{c.title}</h3>
-                          <div className="flex items-baseline gap-1.5 mb-3">
-                            <span className="text-[13px] font-semibold" style={{ color: tintInfo.accent }}>{persona.name}</span>
-                            <span className="text-[11.5px] text-[#9CA3AF]">{persona.pronouns}</span>
-                          </div>
-                          <p className="text-[12.5px] text-[#4B5563] leading-relaxed mb-3 line-clamp-2">{c.desc}</p>
-
-                          <div className="flex items-center gap-1.5 mt-auto">
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#F3F4F6] text-[11.5px] font-semibold text-[#1C1E21]">
-                              <Users className="w-[11px] h-[11px] text-[#6B7280]" />
-                              {users} users
-                            </span>
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#F3F4F6] text-[11.5px] font-semibold text-[#1C1E21]">
-                              <RefreshCw className="w-[11px] h-[11px] text-[#6B7280]" />
-                              {lastRun}
-                            </span>
-                          </div>
+                          <h3 className="text-[18px] font-semibold text-[#1C1E21] leading-tight mb-2">{c.title}</h3>
+                          <p className="text-[12.5px] text-[#4B5563] leading-relaxed line-clamp-2">{c.desc}</p>
                         </div>
 
                         {/* Footer */}
@@ -3074,23 +3059,13 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                             <span className="font-semibold text-[#1C1E21]">{c.rating.toFixed(1)}</span>
                             <span className="text-[#9CA3AF]">· {users} users</span>
                           </div>
-                          {isAdded ? (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
-                              className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg bg-[#ECFDF5] text-[#15803D] text-[12.5px] font-semibold transition-all hover:bg-[#D1FAE5]"
-                            >
-                              <CheckCircle2 className="w-[13px] h-[13px]" fill="#10B981" stroke="white" strokeWidth={2.4} />
-                              Added
-                            </button>
-                          ) : (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
-                              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
-                            >
-                              <Sparkles className="w-[12px] h-[12px]" fill="currentColor" />
-                              Try me
-                            </button>
-                          )}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
+                            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                          >
+                            <Sparkles className="w-[12px] h-[12px]" fill="currentColor" />
+                            Try me
+                          </button>
                         </div>
                       </article>
                     );
