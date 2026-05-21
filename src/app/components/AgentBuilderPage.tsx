@@ -2730,6 +2730,16 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
   const wheelLockRef = useRef(false);
   const dragRef = useRef<{ startX: number; startIdx: number; dragging: boolean }>({ startX: 0, startIdx: 0, dragging: false });
   const [triedAgent, setTriedAgent] = useState<typeof catalogItems[number] | null>(null);
+  const [carouselPaused, setCarouselPaused] = useState(false);
+
+  // Auto-rotate the catalog spotlight every 3s, looping 0..5
+  useEffect(() => {
+    if (carouselPaused || triedAgent) return;
+    const t = setInterval(() => {
+      setCatalogIdx((i) => (i + 1) % 6);
+    }, 3000);
+    return () => clearInterval(t);
+  }, [carouselPaused, triedAgent]);
 
   if (triedAgent) {
     return (
@@ -2903,11 +2913,10 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
               </div>
             );
           }
-          const VISIBLE = 3;
-          const maxIdx = Math.max(0, filteredCatalog.length - VISIBLE);
-          const idx = Math.min(catalogIdx, maxIdx);
-          const prev = () => setCatalogIdx((i) => Math.max(0, i - 1));
-          const next = () => setCatalogIdx((i) => Math.min(maxIdx, i + 1));
+          const len = filteredCatalog.length;
+          const idx = Math.min(catalogIdx, len - 1);
+          const prev = () => setCatalogIdx((i) => (i - 1 + len) % len);
+          const next = () => setCatalogIdx((i) => (i + 1) % len);
 
           const CARD_W = 380;
           const GAP = 28;
@@ -2938,30 +2947,32 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
           };
           const onMouseUp = () => { dragRef.current.dragging = false; };
           return (
-            <div className="relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setCarouselPaused(true)}
+              onMouseLeave={() => setCarouselPaused(false)}
+            >
               {/* Left arrow */}
               <button
                 onClick={prev}
-                disabled={idx === 0}
                 aria-label="Previous"
                 style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-[#1C1E21] active:scale-[0.96]"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 flex items-center justify-center text-[#1C1E21] active:scale-[0.96]"
               >
                 <ChevronLeft className="w-[18px] h-[18px]" strokeWidth={2.2} />
               </button>
               {/* Right arrow */}
               <button
                 onClick={next}
-                disabled={idx >= maxIdx}
                 aria-label="Next"
                 style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center text-[#1C1E21] active:scale-[0.96]"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-[#E6E8EC] shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-[#FAFAFB] hover:border-[#1C1E21]/30 flex items-center justify-center text-[#1C1E21] active:scale-[0.96]"
               >
                 <ChevronRight className="w-[18px] h-[18px]" strokeWidth={2.2} />
               </button>
 
               <div
-                className="relative overflow-hidden pt-6 pb-8 select-none cursor-grab active:cursor-grabbing px-14"
+                className="relative overflow-hidden pt-6 pb-8 select-none cursor-grab active:cursor-grabbing"
                 onWheel={handleWheel}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
@@ -2972,7 +2983,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                   className="flex transition-transform duration-[520ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
                   style={{
                     gap: `${GAP}px`,
-                    transform: `translateX(-${idx * STEP}px)`,
+                    transform: `translateX(calc(50% - ${idx * STEP + CARD_W / 2}px))`,
                   }}
                 >
                   {filteredCatalog.map((c, i) => {
@@ -2982,7 +2993,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                     const lastRun = ['2m ago', '8m ago', '24m ago', '1h ago', '3h ago'][i % 5];
                     const offset = i - idx;
                     const dist = Math.abs(offset);
-                    const sc = isActive ? 1 : 0.96;
+                    const sc = isActive ? 1 : 0.92;
                     const isAdded = i % 3 === 0;
                     const rL = c.role.toLowerCase();
                     const catKey: keyof typeof categoryTint =
