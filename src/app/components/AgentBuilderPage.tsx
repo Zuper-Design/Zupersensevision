@@ -1823,17 +1823,17 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
       }}
     >
       {/* Tinted top area with avatar */}
-      <div className="relative flex items-end justify-center overflow-hidden pt-5" style={{ background: tint.tint, height: 165 }}>
+      <div className="relative flex items-end justify-center overflow-hidden pt-6" style={{ background: tint.tint, height: 200 }}>
         <img
           src={agent.img || agentDetective}
           alt={agent.name}
-          className="h-[140px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-1 group-hover:scale-[1.06]"
+          className="h-[170px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-1 group-hover:scale-[1.06]"
           draggable={false}
         />
       </div>
 
       {/* Bottom info block — name + status + 2-line description */}
-      <div className="bg-white px-3 pt-2.5 pb-3 flex flex-col gap-1.5">
+      <div className="bg-white px-4 pt-4 pb-4 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-[13.5px] font-semibold text-[#1C1E21] leading-none truncate flex-1">{agent.name}</h3>
           <span
