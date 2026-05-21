@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle } from 'lucide-react';
 import { SenseLogo } from './components/SenseLogo';
+import { ReleasesModal } from './components/ReleasesModal';
 import { RadarChatPanel } from './components/RadarChatPanel';
 import { UpgradeSenseModal } from './components/UpgradeSenseModal';
 import { CheckoutModal } from './components/CheckoutModal';
@@ -51,6 +52,7 @@ function AppContent() {
   const closeAnnouncement = () => {
     setAnnouncementOpen(false);
   };
+  const [releasesOpen, setReleasesOpen] = useState(false);
   const [showBetaBanner, setShowBetaBanner] = useState(true);
   const [askSenseOpen, setAskSenseOpen] = useState(false);
   const [radarCardChatTitle, setRadarCardChatTitle] = useState<string | null>(null);
@@ -192,6 +194,7 @@ function AppContent() {
         onTrySense={closeAnnouncement}
         onExploreMore={() => window.open('https://www.zuper.co/book-a-demo', '_blank', 'noopener,noreferrer')}
       />
+      <ReleasesModal open={releasesOpen} onClose={() => setReleasesOpen(false)} />
 {/* Top Navigation with Canvas/Chat Options */}
       <TopNavigation
         activeView={activeView}
@@ -458,6 +461,13 @@ function AppContent() {
                             style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                           >
                             View update
+                          </button>
+                          <button
+                            onClick={() => setReleasesOpen(true)}
+                            className="w-full py-1 rounded-md text-[11px] font-semibold text-[#1C1E21] bg-white border border-[#E6E8EC] hover:bg-[#FAFAFA] hover:border-[#D1D5DB] mt-1.5 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                            style={{ transition: 'background-color 180ms cubic-bezier(0.23,1,0.32,1), border-color 180ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 140ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            Releases
                           </button>
                         </div>
                       </div>
