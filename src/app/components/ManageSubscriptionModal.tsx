@@ -725,12 +725,12 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
           <>
             <motion.div
               className="fixed bg-black/40 backdrop-blur-sm z-[400]"
-              style={{ top: 44, left: 72, right: 0, bottom: 0 }}
+              style={{ inset: 0 }}
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
               onClick={() => setConfirmCancel(false)}
             />
-            <div className="fixed z-[410] flex items-center justify-center p-4 pointer-events-none" style={{ top: 44, left: 72, right: 0, bottom: 0 }}>
+            <div className="fixed z-[410] flex items-center justify-center p-4 pointer-events-none" style={{ inset: 0 }}>
               <motion.div
                 className="pointer-events-auto bg-white w-full"
                 style={{ maxWidth: 460, borderRadius: 16, boxShadow: '0 24px 60px rgba(30,34,60,0.22)' }}

@@ -32,7 +32,7 @@ export function UpgradeSenseModal({ isOpen, onClose, isVp, isTrial, showSuccess,
 
   if (!isOpen) return null;
 
-  const overlayStyle = { top: 44, left: 72, right: 0, bottom: 0 };
+  const overlayStyle = { inset: 0 };
 
   return (
     <>

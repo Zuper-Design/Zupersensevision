@@ -94,12 +94,12 @@ export function PersonalizationModal({ isOpen, onClose }: PersonalizationModalPr
       {isOpen && (
         <>
           <motion.div className="fixed bg-black/40 backdrop-blur-sm z-[300]"
-            style={{ top: 44, left: 72, right: 0, bottom: 0 }}
+            style={{ inset: 0 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.16 }} onClick={onClose} />
 
           <motion.div className="fixed z-[310] flex items-center justify-center p-6 pointer-events-none"
-            style={{ top: 44, left: 72, right: 0, bottom: 0 }}
+            style={{ inset: 0 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div
               className="pointer-events-auto w-full overflow-hidden"

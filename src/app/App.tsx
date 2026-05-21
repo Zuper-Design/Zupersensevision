@@ -693,8 +693,8 @@ function AppContent() {
 
       {paymentFailedModalOpen && (
         <>
-          <div className="fixed bg-black/40 backdrop-blur-sm z-[400]" style={{ top: 44, left: 72, right: 0, bottom: 0 }} onClick={() => setPaymentFailedModalOpen(false)} />
-          <div className="fixed z-[410] flex items-center justify-center p-4 pointer-events-none" style={{ top: 44, left: 72, right: 0, bottom: 0 }}>
+          <div className="fixed bg-black/40 backdrop-blur-sm z-[400]" style={{ inset: 0 }} onClick={() => setPaymentFailedModalOpen(false)} />
+          <div className="fixed z-[410] flex items-center justify-center p-4 pointer-events-none" style={{ inset: 0 }}>
             <div className="pointer-events-auto bg-white w-full p-6" style={{ maxWidth: 420, borderRadius: 16, boxShadow: '0 24px 60px rgba(30,34,60,0.22)' }}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#FDECEC' }}>
