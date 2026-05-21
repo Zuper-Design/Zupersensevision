@@ -1823,25 +1823,33 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
       }}
     >
       {/* Tinted top area with avatar */}
-      <div className="relative flex items-end justify-center overflow-hidden pt-5" style={{ background: tint.tint, height: 130 }}>
+      <div className="relative flex items-end justify-center overflow-hidden pt-5" style={{ background: tint.tint, height: 165 }}>
         <img
           src={agent.img || agentDetective}
           alt={agent.name}
-          className="h-[110px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-1 group-hover:scale-[1.06]"
+          className="h-[140px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-1 group-hover:scale-[1.06]"
           draggable={false}
         />
       </div>
 
-      {/* Bottom info block — name + status only */}
-      <div className="bg-white px-3 py-2.5 flex items-center justify-between gap-2">
-        <h3 className="text-[13.5px] font-semibold text-[#1C1E21] leading-none truncate flex-1">{agent.name}</h3>
-        <span
-          className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9.5px] font-bold tracking-wide uppercase flex-shrink-0"
-          style={{ background: statusStyle.bg, color: statusStyle.color }}
+      {/* Bottom info block — name + status + 2-line description */}
+      <div className="bg-white px-3 pt-2.5 pb-3 flex flex-col gap-1.5">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-[13.5px] font-semibold text-[#1C1E21] leading-none truncate flex-1">{agent.name}</h3>
+          <span
+            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9.5px] font-bold tracking-wide uppercase flex-shrink-0"
+            style={{ background: statusStyle.bg, color: statusStyle.color }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusStyle.dot }} />
+            {status}
+          </span>
+        </div>
+        <p
+          className="text-[11.5px] text-[#6B7280] leading-snug overflow-hidden"
+          style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
         >
-          <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusStyle.dot }} />
-          {status}
-        </span>
+          {agent.desc}
+        </p>
       </div>
     </div>
   );
