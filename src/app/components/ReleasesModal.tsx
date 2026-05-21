@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { X, ArrowUpRight, Rocket, Wrench, Sparkles, Code2 } from 'lucide-react';
+import { X, ArrowUpRight, Rocket, Wrench, Sparkles, Code2, Home, MessageSquare, Compass, CreditCard, Mic, ArrowRight, Search, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { SenseLogo } from './SenseLogo';
 
 interface ReleasesModalProps {
   open: boolean;
@@ -27,7 +28,7 @@ const SECTIONS: Section[] = [
     meta: 'v2.6.0 · 21 May 2026',
     dotColor: '#FD5000',
     paragraphs: [
-      'Zuper Sense 2.6 is now generally available. The release introduces a redesigned Radar dashboard, faster answer generation across the chart engine, and a brand-new pinned-insight surface that makes it easier to keep an eye on the numbers that matter to your business.',
+      'Zuper Sense 2.6 is now generally available, and this release ships four major surfaces: a refreshed Sense home, chat with charts, the new Radar dashboard, and a redesigned My Subscription page.',
       'Sense answers now stream in roughly 38% faster on average, and the new charts work natively in both light and dark themes.',
     ],
     bullets: [
@@ -88,6 +89,145 @@ const SECTIONS: Section[] = [
       'Rate limits raised: 600 req/min on read endpoints',
     ],
   },
+];
+
+function MockHome() {
+  return (
+    <div className="absolute inset-0 bg-[#F8F2EC] p-2 flex flex-col">
+      <div className="flex items-center gap-1 mb-1.5">
+        <div className="w-2 h-2 rounded-sm" style={{ background: '#FD5000' }} />
+        <div className="h-1.5 w-10 rounded-sm bg-[#1C1E21]/15" />
+      </div>
+      <div className="flex-1 flex flex-col items-center justify-center gap-1.5">
+        <SenseLogo size={20} animated={false} />
+        <div className="h-1.5 w-20 rounded-full bg-[#1C1E21]/12" />
+        <div className="h-1.5 w-14 rounded-full bg-[#1C1E21]/8" />
+      </div>
+      <div className="bg-white rounded-md h-7 flex items-center px-1.5 gap-1" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <Search className="w-2 h-2 text-[#9CA3AF]" />
+        <div className="h-1 w-12 rounded-full bg-[#E6E8EC]" />
+        <span className="ml-auto inline-flex items-center justify-center w-4 h-4 rounded" style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}>
+          <ArrowRight className="w-2 h-2 text-white" strokeWidth={3} />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function MockChat() {
+  const bars = [40, 60, 88, 55, 72];
+  return (
+    <div className="absolute inset-0 bg-[#F8F2EC] p-2 flex flex-col gap-1.5">
+      {/* User message */}
+      <div className="ml-auto bg-[#1C1E21] rounded-md px-1.5 py-1 max-w-[70%]">
+        <div className="h-1 w-12 rounded-full bg-white/40" />
+      </div>
+      {/* Sense reply card */}
+      <div className="bg-white rounded-md p-1.5 flex flex-col gap-1" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div className="flex items-center gap-1">
+          <span className="inline-flex items-center justify-center w-2.5 h-2.5 rounded-full" style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}>
+            <SenseLogo size={6} animated={false} />
+          </span>
+          <div className="h-1 w-8 rounded-full bg-[#E6E8EC]" />
+        </div>
+        <div className="flex items-end gap-[2px] h-6 px-0.5">
+          {bars.map((h, i) => (
+            <div
+              key={i}
+              className="flex-1 rounded-[1px]"
+              style={{
+                height: `${h}%`,
+                background: i === 2 ? 'linear-gradient(180deg,#FF8043,#FD5000)' : '#FFD9C2',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MockRadar() {
+  return (
+    <div className="absolute inset-0 bg-[#F8F2EC] p-2">
+      <div className="flex items-center gap-1 mb-1.5">
+        <Compass className="w-2 h-2 text-[#FD5000]" strokeWidth={2.4} />
+        <div className="h-1.5 w-10 rounded-full bg-[#1C1E21]/15" />
+      </div>
+      <div className="grid grid-cols-2 gap-1">
+        {/* Bars card */}
+        <div className="bg-white rounded-sm p-1 flex flex-col gap-0.5" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)', height: 28 }}>
+          <div className="h-1 w-6 rounded-full bg-[#E6E8EC]" />
+          <div className="flex items-end gap-[1.5px] h-3 mt-auto">
+            <div className="flex-1 rounded-[1px] bg-[#FFD9C2]" style={{ height: '50%' }} />
+            <div className="flex-1 rounded-[1px] bg-[#FFAB7E]" style={{ height: '80%' }} />
+            <div className="flex-1 rounded-[1px]" style={{ height: '100%', background: 'linear-gradient(180deg,#FF8043,#FD5000)' }} />
+          </div>
+        </div>
+        {/* Donut card */}
+        <div className="bg-white rounded-sm p-1 flex items-center gap-1" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)', height: 28 }}>
+          <div className="relative w-3.5 h-3.5 flex-shrink-0">
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{ background: 'conic-gradient(#FD5000 0% 70%, #FFD9C2 70% 100%)' }}
+            />
+            <div className="absolute inset-[2px] rounded-full bg-white" />
+          </div>
+          <div className="flex flex-col gap-0.5 flex-1">
+            <div className="h-1 w-6 rounded-full bg-[#E6E8EC]" />
+            <div className="h-1 w-4 rounded-full bg-[#F0F0F2]" />
+          </div>
+        </div>
+        {/* Line card */}
+        <div className="bg-white rounded-sm p-1 flex flex-col gap-0.5" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)', height: 28 }}>
+          <div className="h-1 w-7 rounded-full bg-[#E6E8EC]" />
+          <svg viewBox="0 0 60 16" preserveAspectRatio="none" className="w-full h-3 mt-auto">
+            <path d="M0 12 L12 9 L24 10 L36 5 L48 6 L60 2" fill="none" stroke="#FD5000" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </div>
+        {/* Metric card */}
+        <div className="bg-white rounded-sm p-1 flex flex-col justify-center" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04)', height: 28 }}>
+          <div className="h-1 w-5 rounded-full bg-[#E6E8EC] mb-0.5" />
+          <div className="text-[7.5px] font-semibold text-[#1C1E21] leading-none">$24K</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MockSubscription() {
+  return (
+    <div className="absolute inset-0 bg-[#F8F2EC] p-2 flex flex-col gap-1.5">
+      <div className="flex items-center gap-1">
+        <CreditCard className="w-2 h-2 text-[#FD5000]" strokeWidth={2.4} />
+        <div className="h-1.5 w-14 rounded-full bg-[#1C1E21]/15" />
+      </div>
+      {/* Plan card */}
+      <div className="bg-white rounded-md p-1.5 flex flex-col gap-1" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div className="flex items-center justify-between">
+          <div className="h-1 w-8 rounded-full bg-[#E6E8EC]" />
+          <span className="inline-flex items-center px-1 h-2.5 rounded-sm text-[6px] font-semibold text-white" style={{ background: 'linear-gradient(135deg,#FF8043,#FD5000)' }}>PRO</span>
+        </div>
+        <div className="text-[10px] font-semibold text-[#1C1E21] leading-none">$29<span className="text-[6px] font-medium text-[#9CA3AF]">/mo</span></div>
+        <div className="h-[1px] bg-[#F0F0F2] my-0.5" />
+        <div className="flex items-center justify-between">
+          <div className="h-1 w-10 rounded-full bg-[#F0F0F2]" />
+          <Star className="w-2 h-2 text-[#FD5000]" fill="#FD5000" strokeWidth={0} />
+        </div>
+      </div>
+      {/* CTA */}
+      <div className="rounded-sm h-3.5 flex items-center justify-center gap-1" style={{ background: '#1C1E21' }}>
+        <div className="h-0.5 w-6 rounded-full bg-white/50" />
+      </div>
+    </div>
+  );
+}
+
+const HIGHLIGHTS = [
+  { key: 'home', label: 'Sense home', desc: 'Cleaner start screen', mock: MockHome },
+  { key: 'chat', label: 'Chat with charts', desc: 'Answers as graphs', mock: MockChat },
+  { key: 'radar', label: 'Radar dashboard', desc: 'Pin & monitor', mock: MockRadar },
+  { key: 'subscription', label: 'My subscription', desc: 'Plan & billing', mock: MockSubscription },
 ];
 
 export function ReleasesModal({ open, onClose }: ReleasesModalProps) {
@@ -201,6 +341,53 @@ export function ReleasesModal({ open, onClose }: ReleasesModalProps) {
                         exit={{ opacity: 0, y: -4 }}
                         transition={{ duration: 0.14 }}
                       >
+                        {/* Cover banner — only for Releases */}
+                        {section.key === 'releases' && (
+                          <div
+                            className="relative rounded-xl overflow-hidden mb-5 flex items-center justify-center"
+                            style={{
+                              height: 132,
+                              background:
+                                'linear-gradient(135deg, #FFD2B3 0%, #FFAB7E 45%, #FF8043 100%)',
+                              boxShadow:
+                                '0 1px 2px rgba(0,0,0,0.04), 0 14px 28px -18px rgba(253,80,0,0.45)',
+                            }}
+                          >
+                            {/* Soft highlight */}
+                            <span
+                              className="absolute pointer-events-none"
+                              style={{
+                                top: -40,
+                                right: -30,
+                                width: 200,
+                                height: 140,
+                                borderRadius: '50%',
+                                background:
+                                  'radial-gradient(ellipse, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 70%)',
+                                filter: 'blur(10px)',
+                              }}
+                            />
+                            {/* Bottom soft fade */}
+                            <span
+                              className="absolute inset-x-0 bottom-0 h-12 pointer-events-none"
+                              style={{
+                                background:
+                                  'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 100%)',
+                              }}
+                            />
+                            {/* Logo tile */}
+                            <div
+                              className="relative w-14 h-14 rounded-2xl bg-white flex items-center justify-center"
+                              style={{
+                                boxShadow:
+                                  '0 1px 2px rgba(0,0,0,0.04), 0 12px 24px -10px rgba(253,80,0,0.55), 0 0 0 1px rgba(255,255,255,0.4)',
+                              }}
+                            >
+                              <SenseLogo size={28} animated={false} />
+                            </div>
+                          </div>
+                        )}
+
                         <span style={{ fontSize: 11, fontWeight: 500, color: '#B0B4BE', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                           {section.meta}
                         </span>
@@ -226,6 +413,34 @@ export function ReleasesModal({ open, onClose }: ReleasesModalProps) {
                               </li>
                             ))}
                           </ul>
+                        )}
+
+                        {/* 4 highlight screenshots — only for Releases */}
+                        {section.key === 'releases' && (
+                          <div className="mt-7">
+                            <span style={{ fontSize: 11, fontWeight: 500, color: '#B0B4BE', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                              The 4 major releases
+                            </span>
+                            <div className="grid grid-cols-2 gap-3 mt-3">
+                              {HIGHLIGHTS.map(({ key, label, desc, mock: Mock }) => (
+                                <div key={key}>
+                                  <div
+                                    className="relative w-full rounded-lg overflow-hidden border border-[#EDEFF2]"
+                                    style={{
+                                      aspectRatio: '4 / 3',
+                                      boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 14px -8px rgba(28,30,33,0.10)',
+                                    }}
+                                  >
+                                    <Mock />
+                                  </div>
+                                  <div className="mt-1.5 flex items-baseline gap-1.5">
+                                    <span style={{ fontSize: 12.5, fontWeight: 600, color: '#1C1E21' }}>{label}</span>
+                                    <span style={{ fontSize: 11.5, color: '#9CA3AF' }}>{desc}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         )}
                       </motion.div>
                     </AnimatePresence>
