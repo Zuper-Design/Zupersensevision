@@ -2730,16 +2730,6 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
   const wheelLockRef = useRef(false);
   const dragRef = useRef<{ startX: number; startIdx: number; dragging: boolean }>({ startX: 0, startIdx: 0, dragging: false });
   const [triedAgent, setTriedAgent] = useState<typeof catalogItems[number] | null>(null);
-  const [carouselPaused, setCarouselPaused] = useState(false);
-
-  // Auto-rotate the catalog spotlight every 3s, looping 0..5
-  useEffect(() => {
-    if (carouselPaused || triedAgent) return;
-    const t = setInterval(() => {
-      setCatalogIdx((i) => (i + 1) % 6);
-    }, 3000);
-    return () => clearInterval(t);
-  }, [carouselPaused, triedAgent]);
 
   if (triedAgent) {
     return (
@@ -2947,11 +2937,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
           };
           const onMouseUp = () => { dragRef.current.dragging = false; };
           return (
-            <div
-              className="relative"
-              onMouseEnter={() => setCarouselPaused(true)}
-              onMouseLeave={() => setCarouselPaused(false)}
-            >
+            <div className="relative">
               {/* Left arrow */}
               <button
                 onClick={prev}
