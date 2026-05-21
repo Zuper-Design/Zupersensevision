@@ -8,14 +8,28 @@ interface WhatsNewFloaterProps {
 export function WhatsNewFloater({ onOpenAnnouncement, onOpenReleases }: WhatsNewFloaterProps) {
   return (
     <div
-      className="group fixed left-3 bottom-3 z-[120]"
-      style={{ width: 36, transition: 'width 280ms cubic-bezier(0.23,1,0.32,1)' }}
-      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.width = '232px')}
-      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.width = '36px')}
+      className="group absolute left-3 bottom-3 z-30"
+      style={{
+        width: 40,
+        height: 40,
+        transition: 'width 320ms cubic-bezier(0.23,1,0.32,1), height 320ms cubic-bezier(0.23,1,0.32,1), border-radius 320ms cubic-bezier(0.23,1,0.32,1)',
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.width = '232px';
+        el.style.height = 'auto';
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.width = '40px';
+        el.style.height = '40px';
+      }}
     >
       <div
-        className="rounded-xl bg-white border border-[#E6E8EC] overflow-hidden"
+        className="bg-white border border-[#E6E8EC] overflow-hidden group-hover:rounded-xl"
         style={{
+          borderRadius: 9999,
+          transition: 'border-radius 320ms cubic-bezier(0.23,1,0.32,1)',
           boxShadow: '0 1px 2px rgba(28,30,33,0.04), 0 10px 28px -14px rgba(28,30,33,0.18)',
         }}
       >
@@ -89,10 +103,19 @@ export function WhatsNewFloater({ onOpenAnnouncement, onOpenReleases }: WhatsNew
         </div>
 
         {/* Body */}
-        <div className="px-2.5 py-2">
+        <div
+          className="px-0 py-0 group-hover:px-2.5 group-hover:py-2"
+          style={{ transition: 'padding 280ms cubic-bezier(0.23,1,0.32,1)' }}
+        >
           {/* Icon + collapsed pill */}
-          <div className="flex items-center gap-1.5 h-[20px]">
-            <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#374151' }} strokeWidth={2} />
+          <div className="flex items-center justify-center group-hover:justify-start gap-1.5 h-[38px] group-hover:h-[20px]"
+            style={{ transition: 'height 280ms cubic-bezier(0.23,1,0.32,1)' }}
+          >
+            <HelpCircle
+              className="flex-shrink-0 w-[20px] h-[20px] group-hover:w-[14px] group-hover:h-[14px]"
+              style={{ color: '#374151', transition: 'width 220ms cubic-bezier(0.23,1,0.32,1), height 220ms cubic-bezier(0.23,1,0.32,1)' }}
+              strokeWidth={2}
+            />
             <p
               className="text-[11.5px] font-semibold text-[#1C1E21] leading-none opacity-0 group-hover:opacity-100 whitespace-nowrap"
               style={{ transition: 'opacity 200ms cubic-bezier(0.23,1,0.32,1) 80ms' }}

@@ -196,12 +196,6 @@ function AppContent() {
         onExploreMore={() => window.open('https://www.zuper.co/book-a-demo', '_blank', 'noopener,noreferrer')}
       />
       <ReleasesModal open={releasesOpen} onClose={() => setReleasesOpen(false)} />
-      {!demoMode && currentUser === 'RG' && !sidebarOpen && (
-        <WhatsNewFloater
-          onOpenAnnouncement={() => setAnnouncementOpen(true)}
-          onOpenReleases={() => setReleasesOpen(true)}
-        />
-      )}
 {/* Top Navigation with Canvas/Chat Options */}
       <TopNavigation
         activeView={activeView}
@@ -237,7 +231,13 @@ function AppContent() {
         {/* Content + Ask Sense Panel */}
         <div className="flex-1 flex overflow-hidden pb-2 pr-2 gap-2">
           {/* Thread Sidebar — inside content area */}
-          <div className="flex-1 flex overflow-hidden rounded-xl border border-[#E6E8EC] bg-white">
+          <div className="flex-1 flex overflow-hidden rounded-xl border border-[#E6E8EC] bg-white relative">
+            {!demoMode && currentUser === 'RG' && !sidebarOpen && (
+              <WhatsNewFloater
+                onOpenAnnouncement={() => setAnnouncementOpen(true)}
+                onOpenReleases={() => setReleasesOpen(true)}
+              />
+            )}
           <div
             className={`transition-all duration-300 bg-[#FAFAFA] flex-shrink-0 overflow-hidden border-r border-[#E6E8EC] ${
               sidebarOpen && activeView !== 'radar' && !agentBuilderOpen ? 'w-[230px]' : 'w-0 border-r-0'
