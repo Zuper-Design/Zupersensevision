@@ -711,7 +711,7 @@ function AUCreateAgentForm({
   });
   const [avatarIdx, setAvatarIdx] = useState(() => {
     if (seedAgent?.img) {
-      const candidates = [agent1, agent2, agent3];
+      const candidates = [agentDetective, agentMarketer, agentCreator];
       const idx = candidates.findIndex((c) => c === seedAgent.img);
       if (idx >= 0) return idx;
     }
@@ -1598,14 +1598,14 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
           </div>
           <div className="hidden md:flex items-end -space-x-20 flex-shrink-0 self-end" style={{ height: 150 }}>
             <img
-              src={agent1}
+              src={agentDetective}
               alt=""
               className="relative h-[180px] w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
               style={{ marginBottom: -20, zIndex: 11 }}
               draggable={false}
             />
             <img
-              src={agent3}
+              src={agentCreator}
               alt=""
               className="relative h-[200px] w-auto object-contain drop-shadow-[0_16px_24px_rgba(0,0,0,0.18)]"
               style={{ marginBottom: -20, zIndex: 12 }}
@@ -1879,7 +1879,7 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
         </div>
 
         <img
-          src={agent.img || agent1}
+          src={agent.img || agentDetective}
           alt={agent.name}
           className="h-[150px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-2 group-hover:scale-[1.06]"
           draggable={false}
@@ -1989,7 +1989,7 @@ function AUAgentDetailView({
             className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0"
             style={{ background: tint.tint }}
           >
-            <img src={agent.img || agent1} alt="" className="h-7 w-auto object-contain" draggable={false} />
+            <img src={agent.img || agentDetective} alt="" className="h-7 w-auto object-contain" draggable={false} />
           </div>
           <div className="flex items-center gap-2">
             <h1 className="text-[15px] font-semibold text-[#1C1E21]">{persona.name}, {agent.name.replace(' Agent', '')}</h1>
@@ -2035,7 +2035,7 @@ function AUAgentDetailView({
             {isReturning && (
               <div className="flex items-start gap-3 mb-6">
                 <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: tint.tint }}>
-                  <img src={agent.img || agent1} alt="" className="h-8 w-auto object-contain" draggable={false} />
+                  <img src={agent.img || agentDetective} alt="" className="h-8 w-auto object-contain" draggable={false} />
                 </div>
                 <div className="max-w-[560px]">
                   <div className="text-[12px] font-semibold text-[#1C1E21] mb-1">{persona.name}</div>
@@ -2065,7 +2065,7 @@ function AUAgentDetailView({
             {/* Greeting */}
             <div className="flex items-start gap-3 mb-6">
               <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: tint.tint }}>
-                <img src={agent.img || agent1} alt="" className="h-8 w-auto object-contain" draggable={false} />
+                <img src={agent.img || agentDetective} alt="" className="h-8 w-auto object-contain" draggable={false} />
               </div>
               <div className="max-w-[560px]">
                 <div className="text-[12px] font-semibold text-[#1C1E21] mb-1">{persona.name}</div>
@@ -2085,7 +2085,7 @@ function AUAgentDetailView({
             {/* Thinking */}
             <div className="flex items-start gap-3">
               <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: tint.tint }}>
-                <img src={agent.img || agent1} alt="" className="h-8 w-auto object-contain" draggable={false} />
+                <img src={agent.img || agentDetective} alt="" className="h-8 w-auto object-contain" draggable={false} />
               </div>
               <div className="inline-flex items-center gap-2 rounded-2xl rounded-tl-md bg-[#F8F9FB] border border-[#F0F1F3] px-4 py-3 text-[13px] text-[#6B7280]">
                 <span className="inline-flex gap-1">
@@ -2171,7 +2171,7 @@ function AUAgentDetailView({
               {/* Avatar — large, dramatic */}
               <div className="relative flex items-end justify-center pt-10" style={{ height: 290 }}>
                 <img
-                  src={agent.img || agent1}
+                  src={agent.img || agentDetective}
                   alt=""
                   className="relative h-[280px] w-auto object-contain drop-shadow-[0_24px_30px_rgba(0,0,0,0.18)]"
                   style={{ marginBottom: -8 }}
@@ -3404,9 +3404,9 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 title: 'Launch Day Squad',
                 desc: 'Spin up a new market in days, not weeks. Greets leads, books crews, watches reviews.',
                 agents: [
-                  { name: 'Chloe', role: 'Inside Sales', img: agent2 },
-                  { name: 'Olivia', role: 'Dispatch', img: agent1 },
-                  { name: 'Maya', role: 'Reviews', img: agent3 },
+                  { name: 'Chloe', role: 'Inside Sales', img: agentMarketer },
+                  { name: 'Olivia', role: 'Dispatch', img: agentDetective },
+                  { name: 'Maya', role: 'Reviews', img: agentDetective },
                 ],
                 price: '$39/mo',
                 regular: '$58/mo',
@@ -3419,9 +3419,9 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 title: 'Collect & Recover',
                 desc: 'Cold quotes, aging invoices, missed follow-ups — chased on schedule, every time.',
                 agents: [
-                  { name: 'Oliver', role: 'Quote Follow-up', img: agent3 },
-                  { name: 'Ivy', role: 'Invoice Aging', img: agent2 },
-                  { name: 'Logan', role: 'Lead Scoring', img: agent1 },
+                  { name: 'Oliver', role: 'Quote Follow-up', img: agentCreator },
+                  { name: 'Ivy', role: 'Invoice Aging', img: agentMarketer },
+                  { name: 'Logan', role: 'Lead Scoring', img: agentSupport },
                 ],
                 price: '$45/mo',
                 regular: '$66/mo',
@@ -3434,9 +3434,9 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 title: 'Customer Champions',
                 desc: 'Keep happy customers happy. Triages support, follows up post-job, watches reviews.',
                 agents: [
-                  { name: 'Henry', role: 'Support', img: agent3 },
-                  { name: 'Grace', role: 'CS', img: agent2 },
-                  { name: 'Maya', role: 'Reviews', img: agent1 },
+                  { name: 'Henry', role: 'Support', img: agentCreator },
+                  { name: 'Grace', role: 'CS', img: agentMarketer },
+                  { name: 'Maya', role: 'Reviews', img: agentDetective },
                 ],
                 price: '$32/mo',
                 regular: '$48/mo',
@@ -5617,7 +5617,7 @@ const catalogItems = [
     hires: 142,
     featured: true,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: Mail, label: 'Email' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #FDE9CC 0%, #FEF4E0 100%)',
     accent: '#E89F5C',
   },
@@ -5629,7 +5629,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 188,
     tags: [{ icon: Clock, label: 'Nightly' }, { icon: Zap, label: 'Auto-route' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #FDE6CC 0%, #FEEFDA 100%)',
     accent: '#E89F5C',
   },
@@ -5641,7 +5641,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 121,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: MessageSquare, label: 'Slack' }],
-    img: agent3,
+    img: agentCreator,
     tint: 'linear-gradient(180deg, #FFEAD5 0%, #FFF3E5 100%)',
     accent: '#E89F5C',
   },
@@ -5653,7 +5653,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 165,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: Mail, label: 'Email' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #FCE4D6 0%, #FDEEE2 100%)',
     accent: '#E89F5C',
   },
@@ -5665,7 +5665,7 @@ const catalogItems = [
     rating: 4.5,
     hires: 92,
     tags: [{ icon: Webhook, label: 'On-create' }, { icon: Zap, label: 'Auto-tag' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #FFE5C9 0%, #FFF1DC 100%)',
     accent: '#E89F5C',
   },
@@ -5680,7 +5680,7 @@ const catalogItems = [
     hires: 218,
     featured: true,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: Mail, label: 'Email' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)',
     accent: '#E48A98',
   },
@@ -5692,7 +5692,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 144,
     tags: [{ icon: Mail, label: 'Email' }, { icon: BarChart3, label: 'Cluster' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #FBD9DD 0%, #FDE9EC 100%)',
     accent: '#E48A98',
   },
@@ -5704,7 +5704,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 176,
     tags: [{ icon: Clock, label: 'Weekly' }, { icon: AlertTriangle, label: 'Alert' }],
-    img: agent3,
+    img: agentCreator,
     tint: 'linear-gradient(180deg, #FCDDE0 0%, #FDECEE 100%)',
     accent: '#E48A98',
   },
@@ -5716,7 +5716,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 128,
     tags: [{ icon: Clock, label: 'Triggered' }, { icon: MessageSquare, label: 'SMS' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #FCD9DC 0%, #FDE7EA 100%)',
     accent: '#E48A98',
   },
@@ -5728,7 +5728,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 156,
     tags: [{ icon: Mail, label: 'Inbox' }, { icon: AlertTriangle, label: 'Triage' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #FDDFE2 0%, #FEEEEF 100%)',
     accent: '#E48A98',
   },
@@ -5742,7 +5742,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 312,
     tags: [{ icon: Webhook, label: 'Webhook' }, { icon: Zap, label: 'Auto-create' }],
-    img: agent3,
+    img: agentCreator,
     tint: 'linear-gradient(180deg, #FEF6D6 0%, #FEFAE5 100%)',
     accent: '#CFA64D',
   },
@@ -5754,7 +5754,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 96,
     tags: [{ icon: Clock, label: 'Scheduled' }, { icon: Mail, label: 'Email' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #DCE9F5 0%, #EAF1F8 100%)',
     accent: '#7DA1C9',
   },
@@ -5767,7 +5767,7 @@ const catalogItems = [
     hires: 264,
     featured: true,
     tags: [{ icon: Zap, label: 'Scored' }, { icon: Webhook, label: 'Webhook' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #FEF1C7 0%, #FEF7DA 100%)',
     accent: '#CFA64D',
   },
@@ -5779,7 +5779,7 @@ const catalogItems = [
     rating: 4.5,
     hires: 78,
     tags: [{ icon: Clock, label: 'Weekly' }, { icon: BarChart3, label: 'Report' }],
-    img: agent3,
+    img: agentCreator,
     tint: 'linear-gradient(180deg, #FEF5C7 0%, #FFFAE0 100%)',
     accent: '#CFA64D',
   },
@@ -5791,7 +5791,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 132,
     tags: [{ icon: Clock, label: 'Monthly' }, { icon: Mail, label: 'Email' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #DCE9F5 0%, #ECF2F8 100%)',
     accent: '#7DA1C9',
   },
@@ -5806,7 +5806,7 @@ const catalogItems = [
     hires: 256,
     featured: true,
     tags: [{ icon: Clock, label: 'Scheduled' }, { icon: Mail, label: 'Email' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #E3D6F1 0%, #EFE5F7 100%)',
     accent: '#A788CC',
   },
@@ -5818,7 +5818,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 162,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: AlertTriangle, label: 'Alert' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #DDD0EE 0%, #EBE0F4 100%)',
     accent: '#A788CC',
   },
@@ -5830,7 +5830,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 198,
     tags: [{ icon: Webhook, label: 'QBO sync' }, { icon: Zap, label: 'Auto-tag' }],
-    img: agent3,
+    img: agentCreator,
     tint: 'linear-gradient(180deg, #E0D2F0 0%, #EBE0F4 100%)',
     accent: '#A788CC',
   },
@@ -5842,7 +5842,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 145,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: BarChart3, label: 'Forecast' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #DCCBEF 0%, #ECE0F5 100%)',
     accent: '#A788CC',
   },
@@ -5854,7 +5854,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 109,
     tags: [{ icon: Clock, label: 'Scheduled' }, { icon: Mail, label: 'Email' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #E5D8F1 0%, #EFE6F7 100%)',
     accent: '#A788CC',
   },
@@ -5868,7 +5868,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 174,
     tags: [{ icon: Clock, label: 'Daily' }, { icon: MessageSquare, label: 'SMS' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #DCEFE2 0%, #ECF5EF 100%)',
     accent: '#7DB48E',
   },
@@ -5880,7 +5880,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 122,
     tags: [{ icon: Clock, label: 'Per-job' }, { icon: AlertTriangle, label: 'Flag' }],
-    img: agent3,
+    img: agentCreator,
     tint: 'linear-gradient(180deg, #D6EADD 0%, #E8F2EB 100%)',
     accent: '#7DB48E',
   },
@@ -5892,7 +5892,7 @@ const catalogItems = [
     rating: 4.6,
     hires: 86,
     tags: [{ icon: Clock, label: 'Per-job' }, { icon: Zap, label: 'Image AI' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #DCEFE2 0%, #ECF5EF 100%)',
     accent: '#7DB48E',
   },
@@ -5904,7 +5904,7 @@ const catalogItems = [
     rating: 4.8,
     hires: 198,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: MessageSquare, label: 'SMS' }],
-    img: agent2,
+    img: agentMarketer,
     tint: 'linear-gradient(180deg, #D8EDDE 0%, #EAF4ED 100%)',
     accent: '#7DB48E',
   },
@@ -5916,7 +5916,7 @@ const catalogItems = [
     rating: 4.7,
     hires: 134,
     tags: [{ icon: Clock, label: 'Realtime' }, { icon: Webhook, label: 'Auto-fill' }],
-    img: agent3,
+    img: agentCreator,
     tint: 'linear-gradient(180deg, #DEEEE3 0%, #EDF4EF 100%)',
     accent: '#7DB48E',
   },
@@ -5960,7 +5960,7 @@ function CatalogView() {
 
           <div className="hidden md:flex flex-col items-center gap-2 flex-shrink-0 pt-1">
             <div className="flex -space-x-3">
-              {[agent1, agent2, agent3].map((src, i) => (
+              {[agentDetective, agentMarketer, agentCreator].map((src, i) => (
                 <div key={i} className="w-14 h-14 rounded-2xl border-2 border-white overflow-hidden bg-[#F3F4F6] shadow-[0_4px_10px_rgba(0,0,0,0.06)]" style={{ zIndex: 3 - i }}>
                   <img src={src} alt="" className="w-full h-full object-cover object-top" draggable={false} />
                 </div>
@@ -6276,7 +6276,7 @@ function VPAgentsView({ onOpenCreate }: { onOpenCreate?: () => void }) {
           { icon: Users, label: `${a.users} users` },
           { icon: RefreshCw, label: a.lastRun || 'Idle' },
         ],
-        img: a.img || agent1,
+        img: a.img || agentDetective,
         tint: t.tint,
         accent: t.accent,
         stats: [
@@ -6340,7 +6340,7 @@ function VPAgentsView({ onOpenCreate }: { onOpenCreate?: () => void }) {
     hires: 0,
     hired: false,
     tags: [{ icon: Wrench, label: 'Any tool' }, { icon: Sparkles, label: 'Any schedule' }],
-    img: agent1,
+    img: agentDetective,
     tint: 'linear-gradient(180deg, #F3F4F6 0%, #FAFAFA 100%)',
     accent: '#1C1E21',
     stats: [
