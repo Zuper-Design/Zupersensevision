@@ -931,78 +931,46 @@ function MJCreateAgentForm({
         </div>
 
         {/* RIGHT — live agent card preview */}
-        <aside className="border-l border-[#F0F1F3] bg-[#FAFAFB] overflow-y-auto">
-          <div className="px-6 pt-8 pb-6">
-            <div className="relative rounded-2xl bg-white border border-[#EDEFF2] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 10px 28px -20px rgba(28,30,33,0.18)' }}>
-              <div className="relative pt-6 pb-4 px-5" style={{ background: avatarTint }}>
-                <div className="flex flex-col items-center text-center">
-                  <button
-                    onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
-                    className="relative w-[88px] h-[88px] rounded-full overflow-hidden bg-white active:scale-[0.96]"
-                    style={{ boxShadow: '0 0 0 1px rgba(0,0,0,0.06)' }}
-                    aria-label="Change avatar"
-                  >
-                    <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-1 h-[100px] w-auto object-contain" draggable={false} />
-                    <span className="absolute bottom-0.5 right-0.5 w-6 h-6 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center" style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
-                      <Pencil className="w-[11px] h-[11px] text-[#1C1E21]" />
-                    </span>
-                  </button>
-                  <h2 className="text-[18px] font-semibold text-[#1C1E21] mt-3 tracking-tight">{name.trim() || 'New Agent'}</h2>
-                  <p className="text-[12.5px] text-[#6B7280] mt-1 leading-snug line-clamp-3 max-w-[280px]">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
-                </div>
-              </div>
+        <aside
+          className="overflow-y-auto flex items-start justify-center pt-12 pb-12 px-8"
+          style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE0CC 60%, #FFCFA8 100%)' }}
+        >
+          <div
+            className="relative w-full max-w-[320px] rounded-[24px] bg-white p-3.5"
+            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 18px 44px -16px rgba(28,30,33,0.18)' }}
+          >
+            {/* Hero — avatar in pastel rounded block */}
+            <button
+              onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
+              className="relative w-full overflow-hidden rounded-[16px] active:scale-[0.99]"
+              style={{ background: avatarTint, aspectRatio: '1 / 1', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              aria-label="Change avatar"
+            >
+              <img
+                src={avatar}
+                alt=""
+                className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[105%] h-auto object-contain"
+                draggable={false}
+              />
+              <span
+                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center opacity-0 hover:opacity-100"
+                style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.10)', transition: 'opacity 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                <Pencil className="w-[12px] h-[12px] text-[#1C1E21]" />
+              </span>
+            </button>
 
-              {/* Trigger badge */}
-              <div className="px-5 py-3.5 border-t border-[#F0F1F3] flex items-center justify-between text-[12px]">
-                <span className="font-medium text-[#6B7280]">Trigger</span>
-                <span className="font-semibold text-[#1C1E21]">{triggers.find((t) => t.key === trigger)?.label}</span>
+            {/* Caption row */}
+            <div className="px-1 pt-4 pb-2">
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight truncate">{name.trim() || 'Your agent'}</h2>
+                <span className="inline-flex items-center px-2 h-5 rounded-md bg-[#DCFCE7] text-[#15803D] text-[10.5px] font-semibold tabular-nums flex-shrink-0">
+                  Z-{(134 + avatarIdx).toString()}
+                </span>
               </div>
-
-              {/* Skills */}
-              <div className="px-5 py-4 border-t border-[#F0F1F3]">
-                <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Skills</span>
-                  <span className="text-[10.5px] text-[#9CA3AF] font-medium">{enabledSkills.length}</span>
-                </div>
-                {enabledSkills.length === 0 ? (
-                  <p className="text-[12px] text-[#9CA3AF] italic">No skills added yet</p>
-                ) : (
-                  <div className="flex flex-wrap gap-1.5">
-                    {enabledSkills.map((s) => {
-                      const Icon = s.icon;
-                      return (
-                        <span key={s.key} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#F3F4F6] text-[11.5px] font-medium text-[#1C1E21]">
-                          <Icon className="w-[11px] h-[11px] text-[#6B7280]" />
-                          {s.label}
-                        </span>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Knowledge */}
-              <div className="px-5 py-4 border-t border-[#F0F1F3]">
-                <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Knowledge</span>
-                  <span className="text-[10.5px] text-[#9CA3AF] font-medium">{enabledKb.length}</span>
-                </div>
-                {enabledKb.length === 0 ? (
-                  <p className="text-[12px] text-[#9CA3AF] italic">No knowledge sources added yet</p>
-                ) : (
-                  <div className="flex flex-wrap gap-1.5">
-                    {enabledKb.map((k) => {
-                      const Icon = k.icon;
-                      return (
-                        <span key={k.key} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#F3F4F6] text-[11.5px] font-medium text-[#1C1E21]">
-                          <Icon className="w-[11px] h-[11px] text-[#6B7280]" />
-                          {k.label}
-                        </span>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              <p className="text-[12.5px] text-[#9CA3AF] mt-1 leading-snug line-clamp-3">
+                {instructions.trim() || 'Describe your agent.'}
+              </p>
             </div>
           </div>
         </aside>
