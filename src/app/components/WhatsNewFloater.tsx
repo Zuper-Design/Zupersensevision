@@ -28,7 +28,7 @@ export function WhatsNewFloater({ onOpenAnnouncement, onOpenReleases }: WhatsNew
             'opacity 200ms cubic-bezier(0.23,1,0.32,1), transform 200ms cubic-bezier(0.23,1,0.32,1)',
         }}
       >
-        <HelpCircle size={22} style={{ color: '#1C1E21' }} strokeWidth={2} />
+        <HelpCircle size={17} style={{ color: '#1C1E21' }} strokeWidth={2} />
       </button>
 
       {/* Expanded card */}
