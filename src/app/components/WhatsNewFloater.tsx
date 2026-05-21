@@ -108,12 +108,22 @@ export function WhatsNewFloater({ onOpenAnnouncement, onOpenReleases }: WhatsNew
           style={{ transition: 'padding 280ms cubic-bezier(0.23,1,0.32,1)' }}
         >
           {/* Icon + collapsed pill */}
-          <div className="flex items-center justify-center group-hover:justify-start gap-1.5 h-[38px] group-hover:h-[20px]"
+          <div
+            className="flex items-center justify-center group-hover:justify-start gap-1.5 h-[38px] group-hover:h-[20px]"
             style={{ transition: 'height 280ms cubic-bezier(0.23,1,0.32,1)' }}
           >
+            {/* Big icon in collapsed circle */}
             <HelpCircle
-              className="flex-shrink-0 w-[20px] h-[20px] group-hover:w-[14px] group-hover:h-[14px]"
-              style={{ color: '#374151', transition: 'width 220ms cubic-bezier(0.23,1,0.32,1), height 220ms cubic-bezier(0.23,1,0.32,1)' }}
+              size={22}
+              className="flex-shrink-0 group-hover:hidden"
+              style={{ color: '#1C1E21' }}
+              strokeWidth={2}
+            />
+            {/* Small icon in expanded card */}
+            <HelpCircle
+              size={14}
+              className="flex-shrink-0 hidden group-hover:block"
+              style={{ color: '#374151' }}
               strokeWidth={2}
             />
             <p
