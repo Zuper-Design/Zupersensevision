@@ -909,42 +909,100 @@ function MJCreateAgentForm({
           className="overflow-y-auto flex items-start justify-center pt-12 pb-12 px-8"
           style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE0CC 60%, #FFCFA8 100%)' }}
         >
-          <div
-            className="relative w-full max-w-[420px] rounded-[24px] bg-white p-3.5"
-            style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 18px 44px -16px rgba(28,30,33,0.18)' }}
-          >
-            {/* Hero — avatar in pastel rounded block */}
-            <button
-              onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
-              className="relative w-full overflow-hidden rounded-[16px] active:scale-[0.99]"
-              style={{ background: avatarTint, aspectRatio: '1 / 1', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              aria-label="Change avatar"
+          <div className="w-full max-w-[420px] space-y-3">
+            <div
+              className="relative w-full rounded-[24px] bg-white p-3.5"
+              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 18px 44px -16px rgba(28,30,33,0.18)' }}
             >
-              <img
-                src={avatar}
-                alt=""
-                className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[105%] h-auto object-contain"
-                draggable={false}
-              />
-              <span
-                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center opacity-0 hover:opacity-100"
-                style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.10)', transition: 'opacity 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              {/* Hero — avatar in pastel rounded block */}
+              <button
+                onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
+                className="relative w-full overflow-hidden rounded-[16px] active:scale-[0.99]"
+                style={{ background: avatarTint, aspectRatio: '1 / 1', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                aria-label="Change avatar"
               >
-                <Pencil className="w-[12px] h-[12px] text-[#1C1E21]" />
-              </span>
-            </button>
-
-            {/* Caption row */}
-            <div className="px-1 pt-4 pb-2">
-              <div className="flex items-center justify-between gap-2">
-                <h2 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight truncate">{name.trim() || 'Your agent'}</h2>
-                <span className="inline-flex items-center px-2 h-5 rounded-md bg-[#DCFCE7] text-[#15803D] text-[10.5px] font-semibold tabular-nums flex-shrink-0">
-                  Z-{(134 + avatarIdx).toString()}
+                <img
+                  src={avatar}
+                  alt=""
+                  className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[105%] h-auto object-contain"
+                  draggable={false}
+                />
+                <span
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center opacity-0 hover:opacity-100"
+                  style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.10)', transition: 'opacity 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  <Pencil className="w-[12px] h-[12px] text-[#1C1E21]" />
                 </span>
+              </button>
+
+              {/* Caption row */}
+              <div className="px-1 pt-4 pb-2">
+                <div className="flex items-center justify-between gap-2">
+                  <h2 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight truncate">{name.trim() || 'Your agent'}</h2>
+                  <span className="inline-flex items-center px-2 h-5 rounded-md bg-[#DCFCE7] text-[#15803D] text-[10.5px] font-semibold tabular-nums flex-shrink-0">
+                    Z-{(134 + avatarIdx).toString()}
+                  </span>
+                </div>
+                <p className="text-[12.5px] text-[#9CA3AF] mt-1 leading-snug line-clamp-3">
+                  {instructions.trim() || 'Describe your agent.'}
+                </p>
               </div>
-              <p className="text-[12.5px] text-[#9CA3AF] mt-1 leading-snug line-clamp-3">
-                {instructions.trim() || 'Describe your agent.'}
-              </p>
+            </div>
+
+            {/* Skills summary */}
+            {enabledSkills.length > 0 && (
+              <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
+                <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#DCFCE7' }}>
+                  <Zap className="w-[16px] h-[16px] text-[#15803D]" fill="#15803D" />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Skills</div>
+                  <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
+                    {enabledSkills.length} active · {enabledSkills.length} {enabledSkills.length === 1 ? 'tool' : 'tools'}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Knowledge summary */}
+            {enabledKb.length > 0 && (
+              <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
+                <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#EFF6FF' }}>
+                  <Database className="w-[16px] h-[16px] text-[#1D4ED8]" />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Knowledge</div>
+                  <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
+                    {enabledKb.length} {enabledKb.length === 1 ? 'source' : 'sources'} connected
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Triggers summary */}
+            <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
+              <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#FFF1E5' }}>
+                <Clock className="w-[16px] h-[16px] text-[#C2410C]" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Triggers</div>
+                <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
+                  {triggers.find((t) => t.key === trigger)?.label}
+                </div>
+              </div>
+            </div>
+
+            {/* Model summary */}
+            <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
+              <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#F3F4F6' }}>
+                <Bot className="w-[16px] h-[16px] text-[#4B5563]" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Model</div>
+                <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
+                  Zuper Lite · temp 0.70
+                </div>
+              </div>
             </div>
           </div>
         </aside>
