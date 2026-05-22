@@ -991,14 +991,10 @@ function MJCreateAgentForm({
 
       <div className="flex-1 min-h-0" style={{ background: '#F8F9FB' }}>
         <div className="max-w-[820px] mx-auto px-6 py-10">
-          <div className="mb-6">
+          <div className="mb-8">
             <h1 className="text-[28px] font-semibold tracking-tight text-[#1C1E21]">Create your agent</h1>
             <p className="text-[14px] text-[#6B7280] mt-1.5">Configure who they are, what they can do, and how they jump in.</p>
           </div>
-          <div
-            className="rounded-2xl bg-white px-8 py-8"
-            style={{ border: '1px solid #EDEFF2', boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 12px 32px -16px rgba(28,30,33,0.12)' }}
-          >
           {/* Hero strip — peach background, avatar + name + instructions */}
           <div className="relative rounded-2xl px-6 py-6 mb-6" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
             <div className="flex items-center gap-5">
@@ -1151,7 +1147,6 @@ function MJCreateAgentForm({
               onToggle={(key, on) => setKb((p) => ({ ...p, [key]: on }))}
             />
           </section>
-          </div>
         </div>
       </div>
     </div>
