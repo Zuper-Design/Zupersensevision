@@ -874,10 +874,7 @@ function MJCreateAgentForm({
 
                 {/* Add to route */}
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Webhook className="w-[15px] h-[15px] text-[#1C1E21]" />
-                    <h3 className="text-[14px] font-semibold text-[#1C1E21]">Add to route</h3>
-                  </div>
+                  <h3 className="text-[14px] font-semibold text-[#1C1E21] mb-1">Triggers</h3>
                   <p className="text-[12.5px] text-[#6B7280] mb-3">When should this agent jump in?</p>
                   <div className="space-y-2.5">
                     {triggerCatalog.map((t) => {
