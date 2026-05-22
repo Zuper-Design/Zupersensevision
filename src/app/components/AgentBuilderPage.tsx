@@ -797,30 +797,25 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
     return () => document.removeEventListener('mousedown', close);
   }, [open]);
 
-  const available = catalog.filter((c) => !enabled[c.key]);
-  const exhausted = available.length === 0;
-
   return (
     <div className="relative" ref={wrapperRef}>
-      {!exhausted && (
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="w-full flex items-center justify-center gap-2 h-14 rounded-xl bg-white text-[13.5px] font-medium text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
-          style={{
-            border: '1.5px dashed #D1D5DB',
-            transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
-          onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
-        >
-          <Plus className="w-4 h-4" strokeWidth={2.4} />
-          {buttonLabel}
-          <ChevronDown
-            className="w-3.5 h-3.5 text-[#9CA3AF]"
-            style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 180ms cubic-bezier(0.23,1,0.32,1)' }}
-          />
-        </button>
-      )}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-center gap-1.5 h-10 rounded-lg bg-white text-[12.5px] font-medium text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
+        style={{
+          border: '1.25px dashed #D1D5DB',
+          transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
+      >
+        <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+        {buttonLabel}
+        <ChevronDown
+          className="w-3 h-3 text-[#9CA3AF]"
+          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 180ms cubic-bezier(0.23,1,0.32,1)' }}
+        />
+      </button>
 
       {open && (
         <div
@@ -832,22 +827,33 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
           }}
         >
           <style>{`@keyframes addPickerIn { from { opacity: 0; transform: scale(0.97) translateY(-4px) } to { opacity: 1; transform: scale(1) translateY(0) } }`}</style>
-          {available.map((c) => {
+          {catalog.map((c) => {
             const Icon = c.icon;
+            const isOn = !!enabled[c.key];
             return (
               <button
                 key={c.key}
-                onClick={() => { onToggle(c.key, true); setOpen(false); }}
-                className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-[#FAFAFB] text-left active:scale-[0.99]"
+                onClick={() => onToggle(c.key, !isOn)}
+                className="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-[#FAFAFB] text-left active:scale-[0.99]"
                 style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
               >
-                <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: c.tint || '#F3F4F6' }}>
-                  <Icon className="w-[14px] h-[14px] text-[#4B5563]" />
+                <span className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: c.tint || '#F3F4F6' }}>
+                  <Icon className="w-[13px] h-[13px] text-[#4B5563]" />
                 </span>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
-                  <p className="text-[11.5px] text-[#6B7280] leading-snug mt-0.5">{c.desc}</p>
+                  <h4 className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
+                  <p className="text-[11px] text-[#6B7280] leading-snug mt-0.5">{c.desc}</p>
                 </div>
+                <span
+                  className="w-4 h-4 rounded-[5px] flex items-center justify-center flex-shrink-0"
+                  style={{
+                    background: isOn ? '#1C1E21' : '#FFFFFF',
+                    border: isOn ? '1px solid #1C1E21' : '1px solid #D1D5DB',
+                    transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                >
+                  {isOn && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                </span>
               </button>
             );
           })}
@@ -867,24 +873,24 @@ function AddedItem({
   const Icon = item.icon;
   return (
     <div
-      className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-[#E6E8EC] bg-white"
+      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-white"
       style={{ animation: 'addedItemIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}
     >
       <style>{`@keyframes addedItemIn { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
-      <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: item.tint || '#F3F4F6' }}>
-        <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
+      <span className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: item.tint || '#F3F4F6' }}>
+        <Icon className="w-[13px] h-[13px] text-[#4B5563]" />
       </span>
       <div className="flex-1 min-w-0">
-        <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
-        <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{item.desc}</p>
+        <h4 className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
+        <p className="text-[11px] text-[#6B7280] leading-snug mt-0.5 truncate">{item.desc}</p>
       </div>
       <button
         onClick={onRemove}
-        className="w-7 h-7 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+        className="w-6 h-6 -mr-0.5 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
         style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
         aria-label={`Remove ${item.label}`}
       >
-        <X className="w-4 h-4" />
+        <X className="w-3.5 h-3.5" />
       </button>
     </div>
   );
