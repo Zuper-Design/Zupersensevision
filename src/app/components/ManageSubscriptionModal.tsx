@@ -204,16 +204,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
             >
               <div className="flex items-center gap-2 mb-5">
                 <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Current plan</p>
-                <span style={{ width: 3, height: 3, borderRadius: '50%', background: '#D1D5DB' }} />
-                {isAU ? (
-                  <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(253,80,0,0.10)', color: '#FD5000', fontSize: 11, fontWeight: 600, letterSpacing: '0.03em' }}
-                  >
-                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#FD5000', display: 'inline-block' }} />
-                    FREE TRIAL
-                  </span>
-                ) : isVp ? (
+                {!isAU && <span style={{ width: 3, height: 3, borderRadius: '50%', background: '#D1D5DB' }} />}
+                {isAU ? null : isVp ? (
                   <span
                     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
                     style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 11, fontWeight: 600, letterSpacing: '0.03em' }}
@@ -232,43 +224,61 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 )}
               </div>
 
-              <div className="flex items-end justify-between mb-6">
-                <div>
-                  <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 4 }}>Zuper Sense</h2>
-                  {isAU ? (
-                    <div className="flex items-baseline gap-1">
-                      <span style={{ fontSize: 40, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.035em', lineHeight: 1 }}>Free</span>
-                      <span style={{ fontSize: 14, color: '#9CA3AF' }}>during trial</span>
-                    </div>
-                  ) : (
+              {isAU ? (
+                <div className="mb-6">
+                  <h2 style={{ fontSize: 28, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', lineHeight: 1.15 }}>You're on a free trial</h2>
+                  <p style={{ fontSize: 14, color: '#6B7280', marginTop: 8, lineHeight: 1.55 }}>Full access to Sense until your trial ends. Subscribe anytime to keep going without interruption.</p>
+                </div>
+              ) : (
+                <div className="flex items-end justify-between mb-6">
+                  <div>
+                    <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 4 }}>Zuper Sense</h2>
                     <div className="flex items-baseline gap-1">
                       <span style={{ fontSize: 40, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.035em', lineHeight: 1 }}>$399</span>
                       <span style={{ fontSize: 14, color: '#9CA3AF' }}>/ month</span>
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #EEF0F3', background: '#FAFBFC' }}>
-                <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid #EEF0F3' }}>
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff', border: '1px solid #E6E8EC' }}>
-                    <Calendar className="w-4 h-4 text-[#6B7280]" />
+              {isAU ? (
+                <div
+                  className="rounded-xl flex items-center gap-3 px-5 py-4"
+                  style={{ border: '1px solid #FFE2CC', background: 'linear-gradient(135deg, #FFF7F0 0%, #FFFBF7 100%)' }}
+                >
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: '#fff', border: '1px solid #FFD7BC' }}
+                  >
+                    <Calendar className="w-4 h-4" style={{ color: '#FD5000' }} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>{isAU ? 'Trial ends' : 'Next billing date'}</p>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</p>
+                    <p style={{ fontSize: 11, fontWeight: 600, color: '#B0744C', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Trial ends</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>May 21, 2026</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 px-5 py-4">
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff', border: '1px solid #E6E8EC' }}>
-                    <Clock className="w-4 h-4 text-[#6B7280]" />
+              ) : (
+                <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #EEF0F3', background: '#FAFBFC' }}>
+                  <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid #EEF0F3' }}>
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff', border: '1px solid #E6E8EC' }}>
+                      <Calendar className="w-4 h-4 text-[#6B7280]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Next billing date</p>
+                      <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Subscription started on</p>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>Mar 20, 2025</p>
+                  <div className="flex items-center gap-3 px-5 py-4">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff', border: '1px solid #E6E8EC' }}>
+                      <Clock className="w-4 h-4 text-[#6B7280]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Subscription started on</p>
+                      <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>Mar 20, 2025</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="mt-6 pt-5 flex items-center justify-end" style={{ borderTop: '1px solid #F0F2F5' }}>
                 {isAU ? (
