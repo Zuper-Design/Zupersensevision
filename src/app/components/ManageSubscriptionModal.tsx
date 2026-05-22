@@ -191,22 +191,14 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
             >
               <div className="flex items-center gap-2 mb-5">
                 <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Current plan</p>
-                {!isAU && <span style={{ width: 3, height: 3, borderRadius: '50%', background: '#D1D5DB' }} />}
-                {isAU ? null : isVp ? (
+                {!isAU && !cancelled && <span style={{ width: 3, height: 3, borderRadius: '50%', background: '#D1D5DB' }} />}
+                {isAU || cancelled ? null : isVp ? (
                   <span
                     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
                     style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 11, fontWeight: 600, letterSpacing: '0.03em' }}
                   >
                     <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#DC2626', display: 'inline-block' }} />
                     TRIAL ENDED
-                  </span>
-                ) : cancelled ? (
-                  <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(180,131,21,0.12)', color: '#92660D', fontSize: 11, fontWeight: 600, letterSpacing: '0.03em' }}
-                  >
-                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#D49A2A', display: 'inline-block' }} />
-                    NON-RENEWING
                   </span>
                 ) : (
                   <span
