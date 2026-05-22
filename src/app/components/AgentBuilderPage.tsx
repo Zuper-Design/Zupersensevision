@@ -826,13 +826,6 @@ function MJCreateAgentForm({
   const enabledKb = kbCatalog.filter((k) => kb[k.key]);
   const canDeploy = name.trim().length > 1 && enabledSkills.length > 0;
 
-  const steps: { key: string; label: string; done: boolean }[] = [
-    { key: 'identity', label: 'Identity', done: name.trim().length > 1 },
-    { key: 'triggers', label: 'Triggers', done: true },
-    { key: 'skills', label: 'Skills', done: enabledSkills.length > 0 },
-    { key: 'knowledge', label: 'Knowledge', done: enabledKb.length > 0 },
-  ];
-
   const deploy = () => {
     if (!canDeploy) return;
     const record: typeof myAgents[number] = {
@@ -894,30 +887,6 @@ function MJCreateAgentForm({
                 <p className="text-[14px] text-[#6B7280] mt-1.5 leading-snug line-clamp-2">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
               </div>
             </div>
-          </div>
-
-          {/* Stepper */}
-          <div className="flex items-center gap-2 mb-7 overflow-x-auto scrollbar-auto-hide">
-            {steps.map((s, i) => {
-              const done = s.done && i !== 0;
-              const active = i === 0 && !s.done;
-              return (
-                <div key={s.key} className="flex items-center gap-2 flex-shrink-0">
-                  <span
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium"
-                    style={{ color: done ? '#15803D' : active ? '#1C1E21' : '#15803D' }}
-                  >
-                    {i === 0 && !s.done ? (
-                      <span className="w-5 h-5 rounded-full bg-[#1C1E21] text-white text-[10.5px] font-semibold inline-flex items-center justify-center">{i + 1}</span>
-                    ) : (
-                      <CheckCircle2 className="w-[14px] h-[14px] text-[#15803D]" />
-                    )}
-                    {s.label}
-                  </span>
-                  {i < steps.length - 1 && <span className="text-[#D1D5DB]">·</span>}
-                </div>
-              );
-            })}
           </div>
 
           {/* IDENTITY */}
