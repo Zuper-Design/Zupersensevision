@@ -269,7 +269,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 </div>
               )}
 
-              <div className="mt-6 pt-5 flex items-center justify-end" style={{ borderTop: '1px solid #F0F2F5' }}>
+              <div className="mt-6 flex items-center justify-end">
                 {isAU ? (
                   <button
                     onClick={onUpgrade}
