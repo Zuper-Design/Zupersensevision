@@ -783,6 +783,7 @@ function MJCreateAgentForm({
 }) {
   const [name, setName] = useState('');
   const [instructions, setInstructions] = useState('');
+  const [trigger, setTrigger] = useState<'manual' | 'mention' | 'schedule'>('manual');
   const [avatarIdx, setAvatarIdx] = useState(0);
   const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
   const avatarTints = [
@@ -795,140 +796,59 @@ function MJCreateAgentForm({
   const avatar = avatars[avatarIdx % avatars.length];
   const avatarTint = avatarTints[avatarIdx % avatarTints.length];
 
-  type SkillDef = { key: string; label: string; desc: string; icon: any };
+  type SkillDef = { key: string; label: string; desc: string; icon: any; tint: string };
   const skillCatalog: SkillDef[] = [
-    { key: 'Create Job', label: 'Create Job', desc: 'Gather job details from conversation, validate required fields, and create a new job in Zuper.', icon: Plus },
-    { key: 'Create Customer', label: 'Create Customer', desc: 'Collect customer information, validate, and create a new customer record in Zuper.', icon: Users },
-    { key: 'Add Job Note', label: 'Add Job Note', desc: 'Identify a job, compose a contextual note, and attach it to the job in Zuper.', icon: Pencil },
-    { key: 'Create Invoice', label: 'Create Invoice', desc: 'Gather invoice details from job and customer context, validate line items, and create in Zuper.', icon: Mail },
-    { key: 'Write Executive Summary', label: 'Write Executive Summary', desc: 'Fetch job details and compose a structured professional executive summary.', icon: Sparkles },
-    { key: 'Find Customer by Name', label: 'Find Zuper Customer by Name', desc: 'Search Zuper customers by name keyword and classify the result as a single match, multiple, or none.', icon: Search },
+    { key: 'Read Zuper data', label: 'Read Zuper data', desc: 'Jobs, contacts, schedules', icon: Database, tint: '#EFF6FF' },
+    { key: 'Send emails', label: 'Send emails', desc: 'Drafts on-brand, sends on approval', icon: Mail, tint: '#FFF1E5' },
+    { key: 'Send SMS', label: 'Send SMS', desc: 'Text customers with templates', icon: MessageSquare, tint: '#FFF1E5' },
+    { key: 'Trigger workflows', label: 'Trigger workflows', desc: 'Kick off Zuper automations', icon: Zap, tint: '#FEF3C7' },
+    { key: 'Schedule jobs', label: 'Schedule jobs', desc: 'Auto-create or reschedule', icon: Clock, tint: '#FEF3C7' },
+    { key: 'Web search', label: 'Web search', desc: 'Look up & enrich records', icon: Globe, tint: '#ECFDF5' },
+    { key: 'Summarize threads', label: 'Summarize threads', desc: 'Roll up long convos', icon: BookOpen, tint: '#ECFDF5' },
+    { key: 'Analyze metrics', label: 'Analyze metrics', desc: 'Spot anomalies & trends', icon: BarChart3, tint: '#EFF6FF' },
   ];
-  const toolCatalog: SkillDef[] = [
-    { key: 'Send Email', label: 'Send Email', desc: 'Send an email to a specified recipient with subject and body.', icon: Mail },
-    { key: 'Send Slack Message', label: 'Send Slack Message', desc: 'Send a message to a Slack channel via webhook.', icon: MessageSquare },
+  const kbCatalog: SkillDef[] = [
+    { key: 'Help Center', label: 'Help Center', desc: 'Public docs & guides', icon: BookOpen, tint: '#EFF6FF' },
+    { key: 'Internal SOPs', label: 'Internal SOPs', desc: 'Your private playbooks', icon: FileText, tint: '#FFF1E5' },
+    { key: 'Customer history', label: 'Customer history', desc: 'Past tickets & calls', icon: History, tint: '#ECFDF5' },
+    { key: 'Pricing book', label: 'Pricing book', desc: 'Quotes & rate cards', icon: FileText, tint: '#FFF1E5' },
+    { key: 'Safety policies', label: 'Safety policies', desc: 'Crew & site checklists', icon: FileText, tint: '#FFF1E5' },
   ];
-
-  type KbDef = { key: string; label: string; url: string; tag: 'PREDEFINED' | 'WEB'; mcp?: boolean; status: 'Connected' | 'Ready' };
-  const kbCatalog: KbDef[] = [
-    { key: 'Zuper Documentation', label: 'Zuper Documentation', url: 'https://docs.zuper.co', tag: 'PREDEFINED', mcp: true, status: 'Connected' },
-    { key: 'Quickbooks API', label: 'Quickbooks API Error', url: 'https://developer.intuit.com/app/developer/qbo/docs/d...', tag: 'WEB', status: 'Ready' },
-  ];
-
-  type TriggerDef = { key: 'schedule' | 'mention' | 'webhook'; label: string; desc: string; icon: any; tint: string; iconColor: string };
-  const triggerCatalog: TriggerDef[] = [
-    { key: 'schedule', label: 'Scheduled Execution', desc: 'Run this agent on a recurring schedule.', icon: Clock, tint: '#EFF6FF', iconColor: '#1D4ED8' },
-    { key: 'mention', label: 'Mention', desc: 'Trigger this agent when mentioned in a conversation.', icon: AtSign, tint: '#DCFCE7', iconColor: '#15803D' },
-    { key: 'webhook', label: 'Webhook', desc: 'Trigger this agent from any external tool via a signed HTTPS POST.', icon: Webhook, tint: '#FEF3C7', iconColor: '#92400E' },
+  const triggerCatalog: { key: 'manual' | 'mention' | 'schedule'; label: string; desc: string; icon: any; tint: string }[] = [
+    { key: 'manual', label: 'On demand', desc: 'You ask, it runs', icon: Play, tint: '#EFF6FF' },
+    { key: 'mention', label: '@mention', desc: 'Pings the agent in Zuper', icon: AtSign, tint: '#FFF1E5' },
+    { key: 'schedule', label: 'Scheduled', desc: 'Daily at a set time', icon: Clock, tint: '#ECFDF5' },
   ];
 
-  const [skills, setSkills] = useState<Record<string, boolean>>({});
-  const [tools, setTools] = useState<Record<string, boolean>>({});
-  const [kb, setKb] = useState<Record<string, boolean>>({});
-  const [triggers, setTriggers] = useState<Record<string, boolean>>({});
-  const [model, setModel] = useState<'Zuper Lite' | 'Zuper Pro'>('Zuper Lite');
-  const [temperature, setTemperature] = useState(0.7);
-  const [memRecent, setMemRecent] = useState(false);
-  const [memWorking, setMemWorking] = useState(false);
-
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    identity: true,
-    skills: true,
-    knowledge: false,
-  });
-  const [advancedOpen, setAdvancedOpen] = useState(false);
-  const toggleSection = (k: string) => setOpenSections((p) => ({ ...p, [k]: !p[k] }));
-
+  const [skills, setSkills] = useState<Record<string, boolean>>({ 'Read Zuper data': true });
+  const [kb, setKb] = useState<Record<string, boolean>>({ 'Help Center': true });
   const enabledSkills = skillCatalog.filter((s) => skills[s.key]);
-  const enabledTools = toolCatalog.filter((t) => tools[t.key]);
   const enabledKb = kbCatalog.filter((k) => kb[k.key]);
-  const enabledTriggers = triggerCatalog.filter((t) => triggers[t.key]);
-  const totalSkills = enabledSkills.length + enabledTools.length;
-  const canDeploy = name.trim().length > 1 && totalSkills > 0;
+  const canDeploy = name.trim().length > 1 && enabledSkills.length > 0;
+
+  const steps: { key: string; label: string; done: boolean }[] = [
+    { key: 'identity', label: 'Identity', done: name.trim().length > 1 },
+    { key: 'triggers', label: 'Triggers', done: true },
+    { key: 'skills', label: 'Skills', done: enabledSkills.length > 0 },
+    { key: 'knowledge', label: 'Knowledge', done: enabledKb.length > 0 },
+  ];
 
   const deploy = () => {
     if (!canDeploy) return;
     const record: typeof myAgents[number] = {
       name: name.trim(),
       desc: instructions.trim().split('.')[0] || 'Custom agent.',
-      runs: 0,
-      lastRun: '',
-      users: 1,
-      rating: 5.0,
-      reviews: 0,
-      price: 'Free',
-      skills: enabledSkills.length,
-      tools: enabledTools.length,
-      status: 'Active',
-      category: 'Operations',
-      img: avatar,
+      runs: 0, lastRun: '', users: 1, rating: 5.0, reviews: 0, price: 'Free',
+      skills: enabledSkills.length, tools: enabledKb.length,
+      status: 'Active', category: 'Operations', img: avatar,
     };
     onDeploy(record, false);
   };
 
-  const Toggle = ({ on, onClick }: { on: boolean; onClick: () => void }) => (
-    <button
-      onClick={(e) => { e.stopPropagation(); onClick(); }}
-      className="relative w-9 h-5 rounded-full flex-shrink-0"
-      style={{
-        background: on ? '#1C1E21' : '#E6E8EC',
-        transition: 'background-color 180ms cubic-bezier(0.23,1,0.32,1)',
-      }}
-      aria-pressed={on}
-    >
-      <span
-        className="absolute top-0.5 w-4 h-4 rounded-full bg-white"
-        style={{
-          left: on ? 'calc(100% - 18px)' : '2px',
-          transition: 'left 180ms cubic-bezier(0.23,1,0.32,1)',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.15)',
-        }}
-      />
-    </button>
-  );
-
-  const Section = ({ id, icon: Icon, title, subtitle, action, children }: { id: string; icon?: any; title: string; subtitle?: string; action?: React.ReactNode; children: React.ReactNode }) => {
-    const open = !!openSections[id];
-    return (
-      <section className="border-b border-[#F0F1F3] py-7">
-        <button
-          onClick={() => toggleSection(id)}
-          className="w-full flex items-start justify-between gap-4 text-left"
-        >
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              {Icon && <Icon className="w-[18px] h-[18px] text-[#1C1E21]" />}
-              <h2 className="text-[18px] font-semibold text-[#1C1E21] tracking-tight">{title}</h2>
-            </div>
-            {subtitle && <p className="text-[13px] text-[#6B7280]">{subtitle}</p>}
-          </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
-            {action}
-            <ChevronDown
-              className="w-[18px] h-[18px] text-[#9CA3AF]"
-              style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
-            />
-          </div>
-        </button>
-        <div
-          className="grid"
-          style={{
-            gridTemplateRows: open ? '1fr' : '0fr',
-            transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)',
-          }}
-        >
-          <div style={{ overflow: open ? 'visible' : 'hidden' }}>
-            <div className="pt-6">{children}</div>
-          </div>
-        </div>
-      </section>
-    );
-  };
-
   return (
-    <div className="absolute inset-0 bg-white overflow-hidden flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0">
+    <div className="absolute inset-0 bg-white overflow-y-auto flex flex-col">
+      {/* Header bar — DRAFT + Deploy */}
+      <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <button
             onClick={onCancel}
@@ -938,387 +858,205 @@ function MJCreateAgentForm({
           >
             <ChevronLeft className="w-[16px] h-[16px]" />
           </button>
-          <h1 className="text-[14px] font-medium text-[#1C1E21] tracking-tight">Create agent</h1>
-        </div>
-        <div className="flex items-center gap-3">
           <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-[#FFF4ED] text-[#C2410C] text-[10px] font-bold uppercase tracking-wide">Draft</span>
           <span className="text-[12px] text-[#9CA3AF]">Building…</span>
-          <button
-            onClick={deploy}
-            disabled={!canDeploy}
-            className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
-          >
-            <Play className="w-[11px] h-[11px]" fill="currentColor" />
-            Deploy
-          </button>
         </div>
+        <button
+          onClick={deploy}
+          disabled={!canDeploy}
+          className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+        >
+          <Play className="w-[11px] h-[11px]" fill="currentColor" />
+          Deploy
+        </button>
       </div>
 
-      {/* Body */}
-      <div className="flex-1 min-h-0 grid grid-cols-[1fr_540px]">
-        {/* LEFT — form */}
-        <div className="overflow-y-auto px-8 py-7">
-          <div className="max-w-[820px] mx-auto">
-            {/* Identity */}
-            <Section id="identity" icon={Bot} title="Identity" subtitle="Name, instructions and where this agent should jump in.">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
-                  <input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Mia, Lead Concierge"
-                    style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
-                  <textarea
-                    value={instructions}
-                    onChange={(e) => setInstructions(e.target.value)}
-                    rows={5}
-                    placeholder="What should this agent do? Tone, constraints, anything else worth knowing."
-                    style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none"
-                  />
-                </div>
-
-                {/* Add to route */}
-                <TriggerPicker
-                  catalog={triggerCatalog}
-                  enabled={triggers}
-                  setEnabled={setTriggers}
-                  Toggle={Toggle}
-                />
-              </div>
-            </Section>
-
-            {/* Skills */}
-            <Section id="skills" icon={Zap} title="Skills" subtitle="Instruction sets with built-in tools that give your agent specific abilities.">
-              <div className="grid grid-cols-2 gap-3">
-                {skillCatalog.map((s) => {
-                  const Icon = s.icon;
-                  const on = !!skills[s.key];
-                  return (
-                    <div
-                      key={s.key}
-                      className="relative rounded-xl border bg-white p-4"
-                      style={{ borderColor: on ? '#1C1E21' : '#E6E8EC', transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <span className="w-9 h-9 rounded-lg bg-[#1C1E21] flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-[15px] h-[15px] text-white" />
-                        </span>
-                        <Toggle on={on} onClick={() => setSkills((p) => ({ ...p, [s.key]: !p[s.key] }))} />
-                      </div>
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <h3 className="text-[14px] font-semibold text-[#1C1E21]">{s.label}</h3>
-                        <span className="inline-flex items-center px-1.5 h-4 rounded-md bg-[#EFF6FF] text-[#1D4ED8] text-[9.5px] font-bold tracking-wide uppercase">Predefined</span>
-                      </div>
-                      <p className="text-[12.5px] text-[#6B7280] leading-snug">{s.desc}</p>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Standalone Tools */}
-              <div className="mt-7">
-                <div className="flex items-center gap-2 mb-1">
-                  <Wrench className="w-[16px] h-[16px] text-[#1C1E21]" />
-                  <h3 className="text-[15px] font-semibold text-[#1C1E21]">Standalone Tools</h3>
-                </div>
-                <p className="text-[12.5px] text-[#6B7280] mb-4">General-purpose tools your agent can use independently.</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {toolCatalog.map((s) => {
-                    const Icon = s.icon;
-                    const on = !!tools[s.key];
-                    return (
-                      <div
-                        key={s.key}
-                        className="relative rounded-xl border bg-white p-4"
-                        style={{ borderColor: on ? '#1C1E21' : '#E6E8EC', transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                      >
-                        <div className="flex items-start justify-between mb-3">
-                          <span className="w-9 h-9 rounded-lg bg-[#F3F4F6] flex items-center justify-center flex-shrink-0">
-                            <Icon className="w-[15px] h-[15px] text-[#4B5563]" />
-                          </span>
-                          <Toggle on={on} onClick={() => setTools((p) => ({ ...p, [s.key]: !p[s.key] }))} />
-                        </div>
-                        <h3 className="text-[14px] font-semibold text-[#1C1E21] mb-1.5">{s.label}</h3>
-                        <p className="text-[12.5px] text-[#6B7280] leading-snug">{s.desc}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </Section>
-
-            {/* Knowledge base */}
-            <Section
-              id="knowledge"
-              icon={Database}
-              title="Knowledge base"
-              subtitle="Connect data sources to give your agent domain knowledge."
-              action={
+      <div className="flex-1 min-h-0">
+        <div className="max-w-[780px] mx-auto px-8 py-7">
+          {/* Hero strip — peach background, avatar + name + instructions */}
+          <div className="relative rounded-2xl px-6 py-6 mb-6" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
+            <div className="flex items-center gap-5">
+              <div className="relative flex-shrink-0">
                 <button
-                  onClick={(e) => { e.stopPropagation(); }}
-                  className="inline-flex items-center gap-1.5 px-3 h-8 rounded-lg bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/30 text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.98]"
-                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
+                  className="relative w-[88px] h-[88px] rounded-full overflow-hidden active:scale-[0.96]"
+                  style={{ background: avatarTint, boxShadow: '0 0 0 1px rgba(0,0,0,0.06)' }}
+                  aria-label="Change avatar"
                 >
-                  <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-                  Add Knowledge
+                  <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-1 h-[100px] w-auto object-contain" draggable={false} />
                 </button>
-              }
-            >
-              <div className="rounded-xl border border-[#E6E8EC] overflow-hidden">
-                {kbCatalog.map((k, i) => {
-                  const on = !!kb[k.key];
-                  return (
-                    <div key={k.key} className={`flex items-center gap-3 px-4 py-3.5 bg-white ${i > 0 ? 'border-t border-[#F0F1F3]' : ''}`}>
-                      <span className="w-9 h-9 rounded-lg bg-[#EFF6FF] flex items-center justify-center flex-shrink-0">
-                        <Globe className="w-[15px] h-[15px] text-[#1D4ED8]" />
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <h4 className="text-[13.5px] font-semibold text-[#1C1E21] truncate">{k.label}</h4>
-                          <span className="inline-flex items-center px-1.5 h-4 rounded-md bg-[#EFF6FF] text-[#1D4ED8] text-[9.5px] font-bold tracking-wide uppercase flex-shrink-0">{k.tag}</span>
-                          {k.mcp && <span className="inline-flex items-center px-1.5 h-4 rounded-md bg-[#FEF3C7] text-[#92400E] text-[9.5px] font-bold tracking-wide uppercase flex-shrink-0">MCP</span>}
-                          <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#15803D] flex-shrink-0">
-                            <CheckCircle2 className="w-[11px] h-[11px]" />
-                            {k.status}
-                          </span>
-                        </div>
-                        <p className="text-[12px] text-[#9CA3AF] truncate">{k.url}</p>
-                      </div>
-                      <Toggle on={on} onClick={() => setKb((p) => ({ ...p, [k.key]: !p[k.key] }))} />
-                    </div>
-                  );
-                })}
-              </div>
-            </Section>
-
-            {/* Advanced link — opens modal */}
-            <div className="pt-6 flex justify-center">
-              <button
-                onClick={() => setAdvancedOpen(true)}
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1E21] active:scale-[0.98]"
-                style={{ transition: 'color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              >
-                <Settings className="w-[14px] h-[14px]" />
-                Advanced settings
-              </button>
-            </div>
-            {/* Advanced placeholder — never rendered inline */}
-          </div>
-        </div>
-
-        {/* RIGHT — live agent preview */}
-        <aside
-          className="overflow-y-auto flex items-start justify-center pt-12 pb-12 px-8"
-          style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE0CC 60%, #FFCFA8 100%)' }}
-        >
-          <div className="w-full max-w-[420px] space-y-3">
-            <div
-              className="relative w-full rounded-[24px] bg-white p-3.5"
-              style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 18px 44px -16px rgba(28,30,33,0.18)' }}
-            >
-              <button
-                onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
-                className="relative w-full overflow-hidden rounded-[16px] active:scale-[0.99]"
-                style={{ background: avatarTint, aspectRatio: '1 / 1', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                aria-label="Change avatar"
-              >
-                <img
-                  src={avatar}
-                  alt=""
-                  className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[105%] h-auto object-contain"
-                  draggable={false}
-                />
-              </button>
-              <div className="px-1 pt-4 pb-2">
-                <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight truncate">{name.trim() || 'Your agent'}</h2>
-                  <span className="inline-flex items-center px-2 h-5 rounded-md bg-[#DCFCE7] text-[#15803D] text-[10.5px] font-semibold tabular-nums flex-shrink-0">
-                    Z-{(134 + avatarIdx).toString()}
-                  </span>
-                </div>
-                <p className="text-[12.5px] text-[#9CA3AF] mt-1 leading-snug line-clamp-3">
-                  {instructions.trim() || 'Describe your agent.'}
-                </p>
-              </div>
-            </div>
-
-            {totalSkills > 0 && (
-              <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
-                <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#DCFCE7' }}>
-                  <Zap className="w-[16px] h-[16px] text-[#15803D]" fill="#15803D" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center pointer-events-none" style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
+                  <Pencil className="w-[12px] h-[12px] text-[#1C1E21]" />
                 </span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Skills</div>
-                  <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
-                    {enabledSkills.length} active · {enabledTools.length} {enabledTools.length === 1 ? 'tool' : 'tools'}
-                  </div>
-                </div>
               </div>
-            )}
-
-            {enabledKb.length > 0 && (
-              <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
-                <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#EFF6FF' }}>
-                  <Database className="w-[16px] h-[16px] text-[#1D4ED8]" />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Knowledge</div>
-                  <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
-                    {enabledKb.length} {enabledKb.length === 1 ? 'source' : 'sources'} connected
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {enabledTriggers.length > 0 && (
-              <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
-                <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#FFF1E5' }}>
-                  <Clock className="w-[16px] h-[16px] text-[#C2410C]" />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Triggers</div>
-                  <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
-                    {enabledTriggers.map((t) => t.label.split(' ')[0]).join(' · ')}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="w-full rounded-2xl bg-white p-3.5 flex items-center gap-3" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 6px 16px -10px rgba(28,30,33,0.10)' }}>
-              <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#F3F4F6' }}>
-                <Bot className="w-[16px] h-[16px] text-[#4B5563]" />
-              </span>
               <div className="flex-1 min-w-0">
-                <div className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[#9CA3AF]">Model</div>
-                <div className="text-[13.5px] font-semibold text-[#1C1E21] mt-0.5">
-                  {model} · temp {temperature.toFixed(2)}
-                </div>
+                <h2 className="text-[22px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate">{name.trim() || 'New Agent'}</h2>
+                <p className="text-[14px] text-[#6B7280] mt-1.5 leading-snug line-clamp-2">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
               </div>
             </div>
           </div>
-        </aside>
-      </div>
 
-      {/* Advanced modal */}
-      {advancedOpen && (
-        <div
-          className="fixed z-[200] flex items-center justify-center p-6"
-          style={{ inset: 0, background: 'rgba(12,14,17,0.45)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
-          onClick={() => setAdvancedOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-[680px] bg-white rounded-[16px] overflow-hidden"
-            style={{ boxShadow: '0 24px 80px rgba(20,20,30,0.20)' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between px-7 pt-6 pb-4">
-              <div>
-                <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', marginBottom: 3 }}>Advanced</h2>
-                <p style={{ fontSize: 14, color: '#9CA3AF' }}>Fine-tune the model, behavior, and memory.</p>
-              </div>
-              <button
-                onClick={() => setAdvancedOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F3F4F6] transition-colors"
-                aria-label="Close"
-              >
-                <X className="w-4 h-4 text-[#9CA3AF]" />
-              </button>
-            </div>
-
-            <div className="px-7 pb-7 space-y-7 max-h-[70vh] overflow-y-auto">
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <Bot className="w-[16px] h-[16px] text-[#1C1E21]" />
-                  <h3 className="text-[15px] font-semibold text-[#1C1E21]">Model & Behavior</h3>
+          {/* Stepper */}
+          <div className="flex items-center gap-2 mb-7 overflow-x-auto scrollbar-auto-hide">
+            {steps.map((s, i) => {
+              const done = s.done && i !== 0;
+              const active = i === 0 && !s.done;
+              return (
+                <div key={s.key} className="flex items-center gap-2 flex-shrink-0">
+                  <span
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium"
+                    style={{ color: done ? '#15803D' : active ? '#1C1E21' : '#15803D' }}
+                  >
+                    {i === 0 && !s.done ? (
+                      <span className="w-5 h-5 rounded-full bg-[#1C1E21] text-white text-[10.5px] font-semibold inline-flex items-center justify-center">{i + 1}</span>
+                    ) : (
+                      <CheckCircle2 className="w-[14px] h-[14px] text-[#15803D]" />
+                    )}
+                    {s.label}
+                  </span>
+                  {i < steps.length - 1 && <span className="text-[#D1D5DB]">·</span>}
                 </div>
-                <div className="grid grid-cols-2 gap-5">
-                  <div>
-                    <div className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-2">Model</div>
-                    <div className="relative">
-                      <select
-                        value={model}
-                        onChange={(e) => setModel(e.target.value as 'Zuper Lite' | 'Zuper Pro')}
-                        className="w-full appearance-none px-3 pr-9 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
-                        style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                      >
-                        <option>Zuper Lite</option>
-                        <option>Zuper Pro</option>
-                      </select>
-                      <ChevronDown className="w-[14px] h-[14px] text-[#9CA3AF] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    </div>
-                    <p className="text-[11.5px] text-[#9CA3AF] mt-2">Larger models reason better but cost more per run.</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Temperature</span>
-                      <span className="text-[14px] font-semibold text-[#1C1E21] tabular-nums">{temperature.toFixed(2)}</span>
-                    </div>
-                    <input
-                      type="range"
-                      min={0}
-                      max={1}
-                      step={0.05}
-                      value={temperature}
-                      onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                      className="w-full accent-[#1C1E21]"
-                    />
-                    <div className="flex items-center justify-between text-[11.5px] text-[#9CA3AF] mt-1.5">
-                      <span>0.0 · precise</span>
-                      <span>creative · 1.0</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-[15px] font-semibold text-[#1C1E21] mb-3">Memory</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { key: 'recent', label: 'Recent Messages', desc: 'Last 20 messages per thread, used as conversational context.', icon: MessageSquare, on: memRecent, set: setMemRecent },
-                    { key: 'working', label: 'Working Memory', desc: 'User preferences and session context the agent learns over time.', icon: Database, on: memWorking, set: setMemWorking },
-                  ].map((m) => {
-                    const Icon = m.icon;
-                    return (
-                      <div key={m.key} className="rounded-xl border border-[#E6E8EC] bg-white p-4">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <div className="flex items-center gap-2">
-                            <Icon className="w-[15px] h-[15px] text-[#4B5563]" />
-                            <h4 className="text-[14px] font-semibold text-[#1C1E21]">{m.label}</h4>
-                          </div>
-                          <button
-                            onClick={() => m.set(!m.on)}
-                            className="inline-flex items-center gap-1.5 px-2 h-5 rounded-md text-[9.5px] font-bold uppercase tracking-wide"
-                            style={{
-                              background: m.on ? '#DCFCE7' : '#F3F4F6',
-                              color: m.on ? '#15803D' : '#6B7280',
-                              transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1)',
-                            }}
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.on ? '#15803D' : '#9CA3AF' }} />
-                            {m.on ? 'Enabled' : 'Disabled'}
-                          </button>
-                        </div>
-                        <p className="text-[12px] text-[#6B7280] leading-snug">{m.desc}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
+
+          {/* IDENTITY */}
+          <section className="mb-8">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-4">Identity</div>
+            <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Mia, Lead Concierge"
+              style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] mb-5"
+            />
+            <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
+            <textarea
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              rows={5}
+              placeholder="What should this agent do? Tone, constraints, anything else worth knowing."
+              style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none"
+            />
+          </section>
+
+          {/* TRIGGERS */}
+          <section className="mb-8 pt-7 border-t border-[#F0F1F3]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Triggers</div>
+              <span className="text-[11px] text-[#9CA3AF]">choose 1</span>
+            </div>
+            <div className="space-y-2.5">
+              {triggerCatalog.map((t) => {
+                const Icon = t.icon;
+                const selected = trigger === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setTrigger(t.key)}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
+                    style={{
+                      borderColor: selected ? '#1C1E21' : '#E6E8EC',
+                      background: selected ? '#FAFAFB' : '#FFFFFF',
+                      transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                  >
+                    <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
+                      <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
+                      <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
+                    </div>
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: selected ? '#1C1E21' : 'transparent', border: selected ? 'none' : '1.5px solid #D1D5DB' }}>
+                      {selected && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* SKILLS & TOOLS */}
+          <section className="mb-8 pt-7 border-t border-[#F0F1F3]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Skills & Tools</div>
+              <span className="text-[11px] text-[#9CA3AF]">{enabledSkills.length}/{skillCatalog.length}</span>
+            </div>
+            <div className="space-y-2.5">
+              {skillCatalog.map((s) => {
+                const Icon = s.icon;
+                const on = !!skills[s.key];
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => setSkills((p) => ({ ...p, [s.key]: !p[s.key] }))}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
+                    style={{
+                      borderColor: on ? '#1C1E21' : '#E6E8EC',
+                      background: on ? '#FAFAFB' : '#FFFFFF',
+                      transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                  >
+                    <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: s.tint }}>
+                      <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{s.label}</h4>
+                      <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{s.desc}</p>
+                    </div>
+                    <span className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: on ? '#1C1E21' : 'transparent', border: on ? 'none' : '1.5px solid #D1D5DB' }}>
+                      {on && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* KNOWLEDGE */}
+          <section className="mb-8 pt-7 border-t border-[#F0F1F3]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Knowledge</div>
+              <span className="text-[11px] text-[#9CA3AF]">{enabledKb.length}/{kbCatalog.length}</span>
+            </div>
+            <div className="space-y-2.5">
+              {kbCatalog.map((k) => {
+                const Icon = k.icon;
+                const on = !!kb[k.key];
+                return (
+                  <button
+                    key={k.key}
+                    onClick={() => setKb((p) => ({ ...p, [k.key]: !p[k.key] }))}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
+                    style={{
+                      borderColor: on ? '#1C1E21' : '#E6E8EC',
+                      background: on ? '#FAFAFB' : '#FFFFFF',
+                      transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                  >
+                    <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: k.tint }}>
+                      <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{k.label}</h4>
+                      <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{k.desc}</p>
+                    </div>
+                    <span className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: on ? '#1C1E21' : 'transparent', border: on ? 'none' : '1.5px solid #D1D5DB' }}>
+                      {on && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
         </div>
-      )}
+      </div>
     </div>
   );
 }
-
 
 function AUCreateAgentForm({
   onCancel,
