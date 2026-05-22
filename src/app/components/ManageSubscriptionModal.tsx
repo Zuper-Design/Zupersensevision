@@ -61,7 +61,6 @@ const PLAN_FEATURES = [
   'Instant answers with charts, tables, and summaries',
   'Radar, your personal KPI dashboard, always up to date',
   'Daily sync with your JobNimbus data',
-  'Unlimited queries',
 ];
 
 type Tab = 'overview' | 'payment' | 'history' | 'billing';
