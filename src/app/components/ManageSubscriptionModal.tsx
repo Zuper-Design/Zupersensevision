@@ -183,18 +183,6 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               </div>
             </div>
           )}
-          {cancelled && !isVp && (
-            <div
-              className="mt-6 flex items-start gap-3 rounded-xl p-4"
-              style={{ background: '#FBF3E2', border: '1px solid #F0E3C1' }}
-            >
-              <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#8B6A1A' }} />
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: '#6B4F15' }}>Your subscription ends on May 21, 2026</p>
-                <p style={{ fontSize: 13, color: '#8B6A1A', marginTop: 2 }}>You can reactivate anytime before then to continue using Sense.</p>
-              </div>
-            </div>
-          )}
           <div className="pt-8 grid grid-cols-[1fr_360px] gap-8 items-stretch">
             {/* ── Left: Plan hero + billing info ── */}
             <div
@@ -211,6 +199,14 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   >
                     <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#DC2626', display: 'inline-block' }} />
                     TRIAL ENDED
+                  </span>
+                ) : cancelled ? (
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(180,131,21,0.12)', color: '#92660D', fontSize: 11, fontWeight: 600, letterSpacing: '0.03em' }}
+                  >
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#D49A2A', display: 'inline-block' }} />
+                    NON-RENEWING
                   </span>
                 ) : (
                   <span
@@ -231,7 +227,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               ) : (
                 <div className="flex items-end justify-between mb-6">
                   <div>
-                    <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 4 }}>Zuper Sense</h2>
+                    <h2 style={{ fontSize: 18, fontWeight: 600, color: cancelled ? '#6B7280' : '#1C1E21', letterSpacing: '-0.01em', marginBottom: 4 }}>
+                      {cancelled ? 'Your subscription ends on May 21, 2026' : 'Zuper Sense'}
+                    </h2>
                     <div className="flex items-baseline gap-1">
                       <span style={{ fontSize: 40, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.035em', lineHeight: 1 }}>$399</span>
                       <span style={{ fontSize: 14, color: '#9CA3AF' }}>/ month</span>
