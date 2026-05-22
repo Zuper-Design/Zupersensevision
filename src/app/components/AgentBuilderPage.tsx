@@ -890,70 +890,77 @@ function MJCreateAgentForm({
           </div>
 
           {/* IDENTITY */}
-          <section className="mb-8">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-4">Identity</div>
-            <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Mia, Lead Concierge"
-              style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] mb-5"
-            />
-            <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
-            <textarea
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
-              rows={5}
-              placeholder="What should this agent do? Tone, constraints, anything else worth knowing."
-              style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none"
-            />
-          </section>
+          <section className="mb-10">
+            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Identity</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">Give your agent a name, tell it how to behave, and decide when it should jump in.</p>
 
-          {/* TRIGGERS */}
-          <section className="mb-8 pt-7 border-t border-[#F0F1F3]">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Triggers</div>
-              <span className="text-[11px] text-[#9CA3AF]">choose 1</span>
-            </div>
-            <div className="space-y-2.5">
-              {triggerCatalog.map((t) => {
-                const Icon = t.icon;
-                const selected = trigger === t.key;
-                return (
-                  <button
-                    key={t.key}
-                    onClick={() => setTrigger(t.key)}
-                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
-                    style={{
-                      borderColor: selected ? '#1C1E21' : '#E6E8EC',
-                      background: selected ? '#FAFAFB' : '#FFFFFF',
-                      transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
-                    }}
-                  >
-                    <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
-                      <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
-                      <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
-                    </div>
-                    <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: selected ? '#1C1E21' : 'transparent', border: selected ? 'none' : '1.5px solid #D1D5DB' }}>
-                      {selected && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="space-y-5">
+              <div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Mia, Lead Concierge"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
+                <textarea
+                  value={instructions}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  rows={5}
+                  placeholder="What should this agent do? Tone, constraints, anything else worth knowing."
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-[13px] font-medium text-[#1C1E21]">Triggers</label>
+                  <span className="text-[11px] text-[#9CA3AF]">choose 1</span>
+                </div>
+                <div className="space-y-2.5">
+                  {triggerCatalog.map((t) => {
+                    const Icon = t.icon;
+                    const selected = trigger === t.key;
+                    return (
+                      <button
+                        key={t.key}
+                        onClick={() => setTrigger(t.key)}
+                        className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
+                        style={{
+                          borderColor: selected ? '#1C1E21' : '#E6E8EC',
+                          background: selected ? '#FAFAFB' : '#FFFFFF',
+                          transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                        }}
+                      >
+                        <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
+                          <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
+                        </div>
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: selected ? '#1C1E21' : 'transparent', border: selected ? 'none' : '1.5px solid #D1D5DB' }}>
+                          {selected && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </section>
 
           {/* SKILLS & TOOLS */}
-          <section className="mb-8 pt-7 border-t border-[#F0F1F3]">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Skills & Tools</div>
-              <span className="text-[11px] text-[#9CA3AF]">{enabledSkills.length}/{skillCatalog.length}</span>
+          <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
+            <div className="flex items-end justify-between mb-1.5">
+              <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21]">Skills and tools</h2>
+              <span className="text-[12px] text-[#9CA3AF] pb-1">{enabledSkills.length}/{skillCatalog.length}</span>
             </div>
+            <p className="text-[14px] text-[#6B7280] mb-6">Pick the abilities and tools your agent can use to get work done.</p>
             <div className="space-y-2.5">
               {skillCatalog.map((s) => {
                 const Icon = s.icon;
@@ -986,11 +993,12 @@ function MJCreateAgentForm({
           </section>
 
           {/* KNOWLEDGE */}
-          <section className="mb-8 pt-7 border-t border-[#F0F1F3]">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Knowledge</div>
-              <span className="text-[11px] text-[#9CA3AF]">{enabledKb.length}/{kbCatalog.length}</span>
+          <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
+            <div className="flex items-end justify-between mb-1.5">
+              <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21]">Knowledge base</h2>
+              <span className="text-[12px] text-[#9CA3AF] pb-1">{enabledKb.length}/{kbCatalog.length}</span>
             </div>
+            <p className="text-[14px] text-[#6B7280] mb-6">Connect data sources to give your agent domain knowledge.</p>
             <div className="space-y-2.5">
               {kbCatalog.map((k) => {
                 const Icon = k.icon;
