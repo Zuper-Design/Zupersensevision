@@ -662,6 +662,118 @@ function AgentReadyModal({
   );
 }
 
+function TriggerPicker({
+  catalog,
+  enabled,
+  setEnabled,
+  Toggle,
+}: {
+  catalog: { key: string; label: string; desc: string; icon: any; tint: string; iconColor: string }[];
+  enabled: Record<string, boolean>;
+  setEnabled: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  Toggle: (props: { on: boolean; onClick: () => void }) => JSX.Element;
+}) {
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!pickerOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!triggerRef.current?.contains(e.target as Node)) setPickerOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [pickerOpen]);
+
+  const enabledList = catalog.filter((t) => enabled[t.key]);
+  const allEnabled = enabledList.length === catalog.length;
+
+  return (
+    <div>
+      <h3 className="text-[14px] font-semibold text-[#1C1E21] mb-1">Triggers</h3>
+      <p className="text-[12.5px] text-[#6B7280] mb-3">When should this agent jump in?</p>
+
+      {enabledList.length > 0 && (
+        <div className="grid grid-cols-2 gap-2.5 mb-3">
+          {enabledList.map((t) => {
+            const Icon = t.icon;
+            return (
+              <div
+                key={t.key}
+                className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white border border-[#1C1E21]/15"
+              >
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
+                  <Icon className="w-[14px] h-[14px]" style={{ color: t.iconColor }} strokeWidth={2.2} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight truncate">{t.label}</h4>
+                </div>
+                <button
+                  onClick={() => setEnabled((p) => ({ ...p, [t.key]: false }))}
+                  className="w-6 h-6 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21]"
+                  style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label={`Remove ${t.label}`}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!allEnabled && (
+        <div ref={triggerRef} className="relative inline-block">
+          <button
+            onClick={() => setPickerOpen((v) => !v)}
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/30 text-[13px] font-medium text-[#1C1E21] active:scale-[0.98]"
+            style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+          >
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+            Add triggers
+            <ChevronDown
+              className="w-3.5 h-3.5 text-[#9CA3AF]"
+              style={{ transform: pickerOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 180ms cubic-bezier(0.23,1,0.32,1)' }}
+            />
+          </button>
+
+          {pickerOpen && (
+            <div
+              className="absolute left-0 top-full mt-2 z-20 w-[320px] bg-white border border-[#E6E8EC] rounded-xl overflow-hidden p-1"
+              style={{
+                boxShadow: '0 12px 32px -8px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.08)',
+                animation: 'triggerPickerIn 200ms cubic-bezier(0.23,1,0.32,1) both',
+              }}
+            >
+              <style>{`@keyframes triggerPickerIn { from { opacity: 0; transform: scale(0.97) translateY(-4px) } to { opacity: 1; transform: scale(1) translateY(0) } }`}</style>
+              {catalog.map((t) => {
+                const Icon = t.icon;
+                const on = !!enabled[t.key];
+                return (
+                  <div
+                    key={t.key}
+                    className="flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-[#FAFAFB]"
+                    style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  >
+                    <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
+                      <Icon className="w-[14px] h-[14px]" style={{ color: t.iconColor }} strokeWidth={2.2} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
+                      <p className="text-[11.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
+                    </div>
+                    <Toggle on={on} onClick={() => setEnabled((p) => ({ ...p, [t.key]: !p[t.key] }))} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MJCreateAgentForm({
   onCancel,
   onDeploy,
@@ -873,32 +985,12 @@ function MJCreateAgentForm({
                 </div>
 
                 {/* Add to route */}
-                <div>
-                  <h3 className="text-[14px] font-semibold text-[#1C1E21] mb-1">Triggers</h3>
-                  <p className="text-[12.5px] text-[#6B7280] mb-3">When should this agent jump in?</p>
-                  <div className="space-y-2.5">
-                    {triggerCatalog.map((t) => {
-                      const Icon = t.icon;
-                      const on = !!triggers[t.key];
-                      return (
-                        <div
-                          key={t.key}
-                          className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-white border"
-                          style={{ borderColor: on ? '#1C1E21' : '#E6E8EC', transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                        >
-                          <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
-                            <Icon className="w-[17px] h-[17px]" style={{ color: t.iconColor }} strokeWidth={2.2} />
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
-                            <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
-                          </div>
-                          <Toggle on={on} onClick={() => setTriggers((p) => ({ ...p, [t.key]: !p[t.key] }))} />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                <TriggerPicker
+                  catalog={triggerCatalog}
+                  enabled={triggers}
+                  setEnabled={setTriggers}
+                  Toggle={Toggle}
+                />
               </div>
             </Section>
 
