@@ -244,16 +244,16 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               {isAU ? (
                 <div
                   className="rounded-xl flex items-center gap-3 px-5 py-4"
-                  style={{ border: '1px solid #FFE2CC', background: 'linear-gradient(135deg, #FFF7F0 0%, #FFFBF7 100%)' }}
+                  style={{ border: '1px solid #EEF0F3', background: '#FAFBFC' }}
                 >
                   <div
                     className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: '#fff', border: '1px solid #FFD7BC' }}
+                    style={{ background: '#fff', border: '1px solid #E6E8EC' }}
                   >
-                    <Calendar className="w-4 h-4" style={{ color: '#FD5000' }} />
+                    <Calendar className="w-4 h-4 text-[#6B7280]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: 11, fontWeight: 600, color: '#B0744C', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Trial ends</p>
+                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Trial ends</p>
                     <p style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>May 21, 2026</p>
                   </div>
                 </div>
