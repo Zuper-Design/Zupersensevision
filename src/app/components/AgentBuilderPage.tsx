@@ -774,6 +774,117 @@ function TriggerPicker({
   );
 }
 
+function AddPicker<T extends { key: string; label: string; desc: string; icon: any; tint?: string }>({
+  buttonLabel,
+  catalog,
+  enabled,
+  onToggle,
+}: {
+  buttonLabel: string;
+  catalog: T[];
+  enabled: Record<string, boolean>;
+  onToggle: (key: string, on: boolean) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => {
+      if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [open]);
+
+  const available = catalog.filter((c) => !enabled[c.key]);
+  const exhausted = available.length === 0;
+
+  return (
+    <div className="relative inline-block" ref={wrapperRef}>
+      {!exhausted && (
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/30 text-[13px] font-medium text-[#1C1E21] active:scale-[0.97]"
+          style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+        >
+          <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+          {buttonLabel}
+          <ChevronDown
+            className="w-3.5 h-3.5 text-[#9CA3AF]"
+            style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 180ms cubic-bezier(0.23,1,0.32,1)' }}
+          />
+        </button>
+      )}
+
+      {open && (
+        <div
+          className="absolute left-0 top-full mt-2 z-30 w-[340px] bg-white border border-[#E6E8EC] rounded-xl overflow-hidden p-1"
+          style={{
+            boxShadow: '0 12px 32px -8px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.08)',
+            transformOrigin: 'top left',
+            animation: 'addPickerIn 200ms cubic-bezier(0.23,1,0.32,1) both',
+          }}
+        >
+          <style>{`@keyframes addPickerIn { from { opacity: 0; transform: scale(0.97) translateY(-4px) } to { opacity: 1; transform: scale(1) translateY(0) } }`}</style>
+          {available.map((c) => {
+            const Icon = c.icon;
+            return (
+              <button
+                key={c.key}
+                onClick={() => { onToggle(c.key, true); setOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-[#FAFAFB] text-left active:scale-[0.99]"
+                style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: c.tint || '#F3F4F6' }}>
+                  <Icon className="w-[14px] h-[14px] text-[#4B5563]" />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
+                  <p className="text-[11.5px] text-[#6B7280] leading-snug mt-0.5">{c.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AddedItem({
+  item,
+  onRemove,
+}: {
+  item: { key: string; label: string; desc: string; icon: any; tint?: string };
+  onRemove: () => void;
+}) {
+  const Icon = item.icon;
+  return (
+    <div
+      className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-[#E6E8EC] bg-white"
+      style={{ animation: 'addedItemIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+    >
+      <style>{`@keyframes addedItemIn { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
+      <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: item.tint || '#F3F4F6' }}>
+        <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
+      </span>
+      <div className="flex-1 min-w-0">
+        <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
+        <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{item.desc}</p>
+      </div>
+      <button
+        onClick={onRemove}
+        className="w-7 h-7 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+        style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+        aria-label={`Remove ${item.label}`}
+      >
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
 function MJCreateAgentForm({
   onCancel,
   onDeploy,
@@ -783,7 +894,6 @@ function MJCreateAgentForm({
 }) {
   const [name, setName] = useState('');
   const [instructions, setInstructions] = useState('');
-  const [trigger, setTrigger] = useState<'manual' | 'mention' | 'schedule'>('manual');
   const [avatarIdx, setAvatarIdx] = useState(0);
   const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
   const avatarTints = [
@@ -820,11 +930,21 @@ function MJCreateAgentForm({
     { key: 'schedule', label: 'Scheduled', desc: 'Daily at a set time', icon: Clock, tint: '#ECFDF5' },
   ];
 
-  const [skills, setSkills] = useState<Record<string, boolean>>({ 'Read Zuper data': true });
-  const [kb, setKb] = useState<Record<string, boolean>>({ 'Help Center': true });
+  const toolCatalog: SkillDef[] = [
+    { key: 'Send Email', label: 'Send Email', desc: 'Send an email to a specified recipient with subject and body.', icon: Mail, tint: '#FFF1E5' },
+    { key: 'Send Slack Message', label: 'Send Slack Message', desc: 'Send a message to a Slack channel via webhook.', icon: MessageSquare, tint: '#FFF1E5' },
+  ];
+  const triggerItems = triggerCatalog.map((t) => ({ key: t.key, label: t.label, desc: t.desc, icon: t.icon, tint: t.tint }));
+
+  const [skills, setSkills] = useState<Record<string, boolean>>({});
+  const [tools, setTools] = useState<Record<string, boolean>>({});
+  const [kb, setKb] = useState<Record<string, boolean>>({});
+  const [triggers, setTriggers] = useState<Record<string, boolean>>({});
   const enabledSkills = skillCatalog.filter((s) => skills[s.key]);
+  const enabledTools = toolCatalog.filter((t) => tools[t.key]);
   const enabledKb = kbCatalog.filter((k) => kb[k.key]);
-  const canDeploy = name.trim().length > 1 && enabledSkills.length > 0;
+  const enabledTriggers = triggerItems.filter((t) => triggers[t.key]);
+  const canDeploy = name.trim().length > 1 && (enabledSkills.length + enabledTools.length) > 0;
 
   const deploy = () => {
     if (!canDeploy) return;
@@ -917,78 +1037,79 @@ function MJCreateAgentForm({
                 />
               </div>
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <label className="block text-[13px] font-medium text-[#1C1E21]">Triggers</label>
-                  <span className="text-[11px] text-[#9CA3AF]">choose 1</span>
-                </div>
-                <div className="space-y-2.5">
-                  {triggerCatalog.map((t) => {
-                    const Icon = t.icon;
-                    const selected = trigger === t.key;
-                    return (
-                      <button
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Triggers</label>
+                {enabledTriggers.length > 0 && (
+                  <div className="space-y-2.5 mb-3">
+                    {enabledTriggers.map((t) => (
+                      <AddedItem
                         key={t.key}
-                        onClick={() => setTrigger(t.key)}
-                        className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
-                        style={{
-                          borderColor: selected ? '#1C1E21' : '#E6E8EC',
-                          background: selected ? '#FAFAFB' : '#FFFFFF',
-                          transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
-                        }}
-                      >
-                        <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
-                          <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
-                          <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
-                        </div>
-                        <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: selected ? '#1C1E21' : 'transparent', border: selected ? 'none' : '1.5px solid #D1D5DB' }}>
-                          {selected && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+                        item={t}
+                        onRemove={() => setTriggers((p) => ({ ...p, [t.key]: false }))}
+                      />
+                    ))}
+                  </div>
+                )}
+                <AddPicker
+                  buttonLabel="Add trigger"
+                  catalog={triggerItems}
+                  enabled={triggers}
+                  onToggle={(key, on) => setTriggers((p) => ({ ...p, [key]: on }))}
+                />
               </div>
             </div>
           </section>
 
           {/* SKILLS & TOOLS */}
           <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
-            <div className="flex items-end justify-between mb-1.5">
-              <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21]">Skills and tools</h2>
-              <span className="text-[12px] text-[#9CA3AF] pb-1">{enabledSkills.length}/{skillCatalog.length}</span>
-            </div>
+            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Skills and tools</h2>
             <p className="text-[14px] text-[#6B7280] mb-6">Pick the abilities and tools your agent can use to get work done.</p>
-            <div className="space-y-2.5">
-              {skillCatalog.map((s) => {
-                const Icon = s.icon;
-                const on = !!skills[s.key];
-                return (
-                  <button
-                    key={s.key}
-                    onClick={() => setSkills((p) => ({ ...p, [s.key]: !p[s.key] }))}
-                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
-                    style={{
-                      borderColor: on ? '#1C1E21' : '#E6E8EC',
-                      background: on ? '#FAFAFB' : '#FFFFFF',
-                      transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
-                    }}
-                  >
-                    <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: s.tint }}>
-                      <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{s.label}</h4>
-                      <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{s.desc}</p>
-                    </div>
-                    <span className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: on ? '#1C1E21' : 'transparent', border: on ? 'none' : '1.5px solid #D1D5DB' }}>
-                      {on && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
-                    </span>
-                  </button>
-                );
-              })}
+
+            <div className="mb-7">
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-[13px] font-medium text-[#1C1E21]">Skills</label>
+                <span className="text-[11px] text-[#9CA3AF]">{enabledSkills.length}/{skillCatalog.length}</span>
+              </div>
+              {enabledSkills.length > 0 && (
+                <div className="space-y-2.5 mb-3">
+                  {enabledSkills.map((s) => (
+                    <AddedItem
+                      key={s.key}
+                      item={s}
+                      onRemove={() => setSkills((p) => ({ ...p, [s.key]: false }))}
+                    />
+                  ))}
+                </div>
+              )}
+              <AddPicker
+                buttonLabel="Add skill"
+                catalog={skillCatalog}
+                enabled={skills}
+                onToggle={(key, on) => setSkills((p) => ({ ...p, [key]: on }))}
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <label className="block text-[13px] font-medium text-[#1C1E21]">Tools</label>
+                <span className="text-[11px] text-[#9CA3AF]">{enabledTools.length}/{toolCatalog.length}</span>
+              </div>
+              {enabledTools.length > 0 && (
+                <div className="space-y-2.5 mb-3">
+                  {enabledTools.map((t) => (
+                    <AddedItem
+                      key={t.key}
+                      item={t}
+                      onRemove={() => setTools((p) => ({ ...p, [t.key]: false }))}
+                    />
+                  ))}
+                </div>
+              )}
+              <AddPicker
+                buttonLabel="Add tool"
+                catalog={toolCatalog}
+                enabled={tools}
+                onToggle={(key, on) => setTools((p) => ({ ...p, [key]: on }))}
+              />
             </div>
           </section>
 
@@ -999,35 +1120,23 @@ function MJCreateAgentForm({
               <span className="text-[12px] text-[#9CA3AF] pb-1">{enabledKb.length}/{kbCatalog.length}</span>
             </div>
             <p className="text-[14px] text-[#6B7280] mb-6">Connect data sources to give your agent domain knowledge.</p>
-            <div className="space-y-2.5">
-              {kbCatalog.map((k) => {
-                const Icon = k.icon;
-                const on = !!kb[k.key];
-                return (
-                  <button
+            {enabledKb.length > 0 && (
+              <div className="space-y-2.5 mb-3">
+                {enabledKb.map((k) => (
+                  <AddedItem
                     key={k.key}
-                    onClick={() => setKb((p) => ({ ...p, [k.key]: !p[k.key] }))}
-                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border bg-white text-left active:scale-[0.99]"
-                    style={{
-                      borderColor: on ? '#1C1E21' : '#E6E8EC',
-                      background: on ? '#FAFAFB' : '#FFFFFF',
-                      transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), background-color 160ms cubic-bezier(0.23,1,0.32,1)',
-                    }}
-                  >
-                    <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: k.tint }}>
-                      <Icon className="w-[16px] h-[16px] text-[#4B5563]" />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{k.label}</h4>
-                      <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{k.desc}</p>
-                    </div>
-                    <span className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: on ? '#1C1E21' : 'transparent', border: on ? 'none' : '1.5px solid #D1D5DB' }}>
-                      {on && <Check className="w-[12px] h-[12px] text-white" strokeWidth={3} />}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                    item={k}
+                    onRemove={() => setKb((p) => ({ ...p, [k.key]: false }))}
+                  />
+                ))}
+              </div>
+            )}
+            <AddPicker
+              buttonLabel="Add knowledge"
+              catalog={kbCatalog}
+              enabled={kb}
+              onToggle={(key, on) => setKb((p) => ({ ...p, [key]: on }))}
+            />
           </section>
         </div>
       </div>
