@@ -837,19 +837,16 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
   onToggle: (key: string, on: boolean) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    const close = (e: MouseEvent) => {
-      if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
   }, [open]);
 
   return (
-    <div className="relative" ref={wrapperRef}>
+    <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-center gap-1.5 h-10 rounded-lg bg-white text-[12.5px] font-medium text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
@@ -869,46 +866,80 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
       </button>
 
       {open && (
-        <div
-          className="absolute left-0 right-0 top-full mt-2 z-30 bg-white border border-[#E6E8EC] rounded-xl overflow-hidden p-1"
-          style={{
-            boxShadow: '0 12px 32px -8px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.08)',
-            transformOrigin: 'top center',
-            animation: 'addPickerIn 200ms cubic-bezier(0.23,1,0.32,1) both',
-          }}
-        >
-          <style>{`@keyframes addPickerIn { from { opacity: 0; transform: scale(0.97) translateY(-4px) } to { opacity: 1; transform: scale(1) translateY(0) } }`}</style>
-          {catalog.map((c) => {
-            const Icon = c.icon;
-            const isOn = !!enabled[c.key];
-            return (
-              <button
-                key={c.key}
-                onClick={() => onToggle(c.key, !isOn)}
-                className="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-[#FAFAFB] text-left active:scale-[0.99]"
-                style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              >
-                <span className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: c.tint || '#F3F4F6' }}>
-                  <Icon className="w-[13px] h-[13px]" style={{ color: c.iconColor || '#4B5563' }} />
-                </span>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
-                  <p className="text-[11px] text-[#6B7280] leading-snug mt-0.5">{c.desc}</p>
-                </div>
-                <span
-                  className="w-4 h-4 rounded-[5px] flex items-center justify-center flex-shrink-0"
-                  style={{
-                    background: isOn ? '#1C1E21' : '#FFFFFF',
-                    border: isOn ? '1px solid #1C1E21' : '1px solid #D1D5DB',
-                    transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)',
-                  }}
+        <>
+          <div
+            className="fixed inset-0 z-[300] bg-black/40 backdrop-blur-sm"
+            style={{ animation: 'addPickerOverlayIn 180ms cubic-bezier(0.23,1,0.32,1) both' }}
+            onClick={() => setOpen(false)}
+          />
+          <div className="fixed inset-0 z-[310] flex items-center justify-center p-4 pointer-events-none">
+            <div
+              className="pointer-events-auto bg-white w-full max-w-[460px] rounded-2xl overflow-hidden"
+              style={{
+                boxShadow: '0 24px 60px rgba(30,34,60,0.22)',
+                animation: 'addPickerModalIn 220ms cubic-bezier(0.23,1,0.32,1) both',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <style>{`
+                @keyframes addPickerOverlayIn { from { opacity: 0 } to { opacity: 1 } }
+                @keyframes addPickerModalIn { from { opacity: 0; transform: scale(0.96) translateY(6px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+              `}</style>
+              <div className="flex items-center justify-between px-5 pt-5 pb-3">
+                <h3 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">{buttonLabel}</h3>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label="Close"
                 >
-                  {isOn && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="px-3 pb-3 max-h-[440px] overflow-y-auto">
+                {catalog.map((c) => {
+                  const Icon = c.icon;
+                  const isOn = !!enabled[c.key];
+                  return (
+                    <button
+                      key={c.key}
+                      onClick={() => onToggle(c.key, !isOn)}
+                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-[#FAFAFB] text-left active:scale-[0.995]"
+                      style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                    >
+                      <span className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: c.tint || '#F3F4F6' }}>
+                        <Icon className="w-[15px] h-[15px]" style={{ color: c.iconColor || '#4B5563' }} />
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-[13.5px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
+                        <p className="text-[12px] text-[#6B7280] leading-snug mt-0.5">{c.desc}</p>
+                      </div>
+                      <span
+                        className="w-[18px] h-[18px] rounded-[5px] flex items-center justify-center flex-shrink-0"
+                        style={{
+                          background: isOn ? '#1C1E21' : '#FFFFFF',
+                          border: isOn ? '1px solid #1C1E21' : '1px solid #D1D5DB',
+                          transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                        }}
+                      >
+                        {isOn && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="px-5 py-3 border-t border-[#F0F1F3] flex items-center justify-end">
+                <button
+                  onClick={() => setOpen(false)}
+                  className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] active:scale-[0.98]"
+                  style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
