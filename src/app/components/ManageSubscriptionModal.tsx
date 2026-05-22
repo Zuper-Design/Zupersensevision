@@ -196,7 +196,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               </div>
             </div>
           )}
-          <div className="pt-8 grid grid-cols-[1fr_360px] gap-8 items-start">
+          <div className="pt-8 grid grid-cols-[1fr_360px] gap-8 items-stretch">
             {/* ── Left: Plan hero + billing info ── */}
             <div
               className="rounded-2xl p-7"
