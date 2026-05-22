@@ -46,6 +46,7 @@ const recentActivity = [
 
 export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => void; currentUser?: string }) {
   const isVP = currentUser === 'VP';
+  const isMJ = currentUser === 'MJ';
   const isAU = currentUser === 'AU' || currentUser === 'MJ';
   const [section, setSection] = useState<Section>('agents');
   const [auAgentOpen, setAuAgentOpen] = useState(true);
@@ -101,7 +102,57 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
           <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">AI Studio</h1>
         </div>
 
-        {isAU ? (
+        {isMJ ? (
+          <nav className="flex-1 p-3 space-y-0.5">
+            <button
+              onClick={() => setSection('agents')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
+                section === 'agents' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+              }`}
+            >
+              <Bot className={`w-[15px] h-[15px] ${section === 'agents' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <span className="flex-1 text-left">My agents</span>
+            </button>
+            <button
+              onClick={() => setSection('catalog')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
+                section === 'catalog' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+              }`}
+            >
+              <LayoutGrid className={`w-[15px] h-[15px] ${section === 'catalog' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <span className="flex-1 text-left">Marketplace</span>
+            </button>
+            <button
+              onClick={() => setSection('skills')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
+                section === 'skills' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+              }`}
+            >
+              <Zap className={`w-[15px] h-[15px] ${section === 'skills' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <span className="flex-1 text-left">Skills</span>
+            </button>
+            <button
+              onClick={() => setSection('knowledge')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
+                section === 'knowledge' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+              }`}
+            >
+              <Database className={`w-[15px] h-[15px] ${section === 'knowledge' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <span className="flex-1 text-left">Knowledge base</span>
+            </button>
+
+            <div className="my-2 border-t border-[#F0F1F3]" />
+
+            <button
+              disabled
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#C0C4CC] cursor-not-allowed"
+            >
+              <BarChart3 className="w-[15px] h-[15px] text-[#C0C4CC]" />
+              <span className="flex-1 text-left">Usage</span>
+              <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#FFF4ED] text-[#FD5000]">SOON</span>
+            </button>
+          </nav>
+        ) : isAU ? (
           <nav className="flex-1 p-3 space-y-0.5">
             {/* Overview */}
             <button
