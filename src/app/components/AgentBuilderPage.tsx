@@ -801,14 +801,19 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
   const exhausted = available.length === 0;
 
   return (
-    <div className="relative inline-block" ref={wrapperRef}>
+    <div className="relative" ref={wrapperRef}>
       {!exhausted && (
         <button
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/30 text-[13px] font-medium text-[#1C1E21] active:scale-[0.97]"
-          style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+          className="w-full flex items-center justify-center gap-2 h-14 rounded-xl bg-white text-[13.5px] font-medium text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
+          style={{
+            border: '1.5px dashed #D1D5DB',
+            transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
         >
-          <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+          <Plus className="w-4 h-4" strokeWidth={2.4} />
           {buttonLabel}
           <ChevronDown
             className="w-3.5 h-3.5 text-[#9CA3AF]"
@@ -819,10 +824,10 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
 
       {open && (
         <div
-          className="absolute left-0 top-full mt-2 z-30 w-[340px] bg-white border border-[#E6E8EC] rounded-xl overflow-hidden p-1"
+          className="absolute left-0 right-0 top-full mt-2 z-30 bg-white border border-[#E6E8EC] rounded-xl overflow-hidden p-1"
           style={{
             boxShadow: '0 12px 32px -8px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.08)',
-            transformOrigin: 'top left',
+            transformOrigin: 'top center',
             animation: 'addPickerIn 200ms cubic-bezier(0.23,1,0.32,1) both',
           }}
         >
@@ -984,8 +989,16 @@ function MJCreateAgentForm({
         </button>
       </div>
 
-      <div className="flex-1 min-h-0">
-        <div className="max-w-[780px] mx-auto px-8 py-7">
+      <div className="flex-1 min-h-0" style={{ background: '#F8F9FB' }}>
+        <div className="max-w-[820px] mx-auto px-6 py-10">
+          <div className="mb-6">
+            <h1 className="text-[28px] font-semibold tracking-tight text-[#1C1E21]">Create your agent</h1>
+            <p className="text-[14px] text-[#6B7280] mt-1.5">Configure who they are, what they can do, and how they jump in.</p>
+          </div>
+          <div
+            className="rounded-2xl bg-white px-8 py-8"
+            style={{ border: '1px solid #EDEFF2', boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 12px 32px -16px rgba(28,30,33,0.12)' }}
+          >
           {/* Hero strip — peach background, avatar + name + instructions */}
           <div className="relative rounded-2xl px-6 py-6 mb-6" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
             <div className="flex items-center gap-5">
@@ -1138,6 +1151,7 @@ function MJCreateAgentForm({
               onToggle={(key, on) => setKb((p) => ({ ...p, [key]: on }))}
             />
           </section>
+          </div>
         </div>
       </div>
     </div>
