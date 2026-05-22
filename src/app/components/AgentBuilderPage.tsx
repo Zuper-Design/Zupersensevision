@@ -957,6 +957,16 @@ function MJCreateAgentForm({
   const [name, setName] = useState('');
   const [instructions, setInstructions] = useState('');
   const [avatarIdx, setAvatarIdx] = useState(0);
+  const [avatarOpen, setAvatarOpen] = useState(false);
+  const avatarMenuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!avatarOpen) return;
+    const close = (e: MouseEvent) => {
+      if (!avatarMenuRef.current?.contains(e.target as Node)) setAvatarOpen(false);
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [avatarOpen]);
   const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
   const avatarTints = [
     'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)',
@@ -1055,18 +1065,56 @@ function MJCreateAgentForm({
           {/* Hero strip — peach background, avatar + name + instructions */}
           <div className="relative rounded-2xl px-6 py-6 mb-6" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
             <div className="flex items-center gap-5">
-              <div className="relative flex-shrink-0">
+              <div className="relative flex-shrink-0" ref={avatarMenuRef}>
                 <button
-                  onClick={() => setAvatarIdx((i) => (i + 1) % avatars.length)}
+                  onClick={() => setAvatarOpen((v) => !v)}
                   className="relative w-[88px] h-[88px] rounded-full overflow-hidden active:scale-[0.96]"
-                  style={{ background: avatarTint, boxShadow: '0 0 0 1px rgba(0,0,0,0.06)' }}
+                  style={{ background: avatarTint, boxShadow: '0 0 0 1px rgba(0,0,0,0.06)', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                   aria-label="Change avatar"
                 >
                   <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-1 h-[100px] w-auto object-contain" draggable={false} />
                 </button>
-                <span className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center pointer-events-none" style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}>
+                <button
+                  onClick={() => setAvatarOpen((v) => !v)}
+                  className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center active:scale-[0.92]"
+                  style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label="Edit avatar"
+                >
                   <Pencil className="w-[12px] h-[12px] text-[#1C1E21]" />
-                </span>
+                </button>
+                {avatarOpen && (
+                  <div
+                    className="absolute z-30 left-0 top-full mt-3 bg-white rounded-xl p-2"
+                    style={{
+                      border: '1px solid #E6E8EC',
+                      boxShadow: '0 12px 32px -8px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.08)',
+                      transformOrigin: 'top left',
+                      animation: 'avatarMenuIn 200ms cubic-bezier(0.23,1,0.32,1) both',
+                    }}
+                  >
+                    <style>{`@keyframes avatarMenuIn { from { opacity: 0; transform: scale(0.95) translateY(-4px) } to { opacity: 1; transform: scale(1) translateY(0) } }`}</style>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {avatars.map((src, i) => {
+                        const active = i === avatarIdx;
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => { setAvatarIdx(i); setAvatarOpen(false); }}
+                            className="relative w-12 h-12 rounded-full overflow-hidden active:scale-[0.94]"
+                            style={{
+                              background: avatarTints[i % avatarTints.length],
+                              boxShadow: active ? '0 0 0 2px #1C1E21' : '0 0 0 1px rgba(0,0,0,0.06)',
+                              transition: 'box-shadow 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                            }}
+                            aria-label={`Avatar ${i + 1}`}
+                          >
+                            <img src={src} alt="" className="absolute left-1/2 -translate-x-1/2 top-0.5 h-[54px] w-auto object-contain" draggable={false} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-[22px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate">{name.trim() || 'New Agent'}</h2>
