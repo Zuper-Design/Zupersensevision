@@ -917,7 +917,7 @@ function MJCreateAgentForm({
             transition: 'grid-template-rows 280ms cubic-bezier(0.23,1,0.32,1)',
           }}
         >
-          <div className="overflow-hidden">
+          <div style={{ overflow: open ? 'visible' : 'hidden' }}>
             <div className="pt-6">{children}</div>
           </div>
         </div>
