@@ -825,7 +825,7 @@ function TriggerPicker({
   );
 }
 
-function AddPicker<T extends { key: string; label: string; desc: string; icon: any; tint?: string }>({
+function AddPicker<T extends { key: string; label: string; desc: string; icon: any; tint?: string; iconColor?: string }>({
   buttonLabel,
   catalog,
   enabled,
@@ -889,7 +889,7 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                 style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
               >
                 <span className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: c.tint || '#F3F4F6' }}>
-                  <Icon className="w-[13px] h-[13px] text-[#4B5563]" />
+                  <Icon className="w-[13px] h-[13px]" style={{ color: c.iconColor || '#4B5563' }} />
                 </span>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
@@ -918,7 +918,7 @@ function AddedItem({
   item,
   onRemove,
 }: {
-  item: { key: string; label: string; desc: string; icon: any; tint?: string };
+  item: { key: string; label: string; desc: string; icon: any; tint?: string; iconColor?: string };
   onRemove: () => void;
 }) {
   const Icon = item.icon;
@@ -929,7 +929,7 @@ function AddedItem({
     >
       <style>{`@keyframes addedItemIn { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
       <span className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: item.tint || '#F3F4F6' }}>
-        <Icon className="w-[13px] h-[13px] text-[#4B5563]" />
+        <Icon className="w-[13px] h-[13px]" style={{ color: item.iconColor || '#4B5563' }} />
       </span>
       <div className="flex-1 min-w-0">
         <h4 className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
@@ -968,35 +968,35 @@ function MJCreateAgentForm({
   const avatar = avatars[avatarIdx % avatars.length];
   const avatarTint = avatarTints[avatarIdx % avatarTints.length];
 
-  type SkillDef = { key: string; label: string; desc: string; icon: any; tint: string };
+  type SkillDef = { key: string; label: string; desc: string; icon: any; tint: string; iconColor: string };
   const skillCatalog: SkillDef[] = [
-    { key: 'Read Zuper data', label: 'Read Zuper data', desc: 'Jobs, contacts, schedules', icon: Database, tint: '#EFF6FF' },
-    { key: 'Send emails', label: 'Send emails', desc: 'Drafts on-brand, sends on approval', icon: Mail, tint: '#FFF1E5' },
-    { key: 'Send SMS', label: 'Send SMS', desc: 'Text customers with templates', icon: MessageSquare, tint: '#FFF1E5' },
-    { key: 'Trigger workflows', label: 'Trigger workflows', desc: 'Kick off Zuper automations', icon: Zap, tint: '#FEF3C7' },
-    { key: 'Schedule jobs', label: 'Schedule jobs', desc: 'Auto-create or reschedule', icon: Clock, tint: '#FEF3C7' },
-    { key: 'Web search', label: 'Web search', desc: 'Look up & enrich records', icon: Globe, tint: '#ECFDF5' },
-    { key: 'Summarize threads', label: 'Summarize threads', desc: 'Roll up long convos', icon: BookOpen, tint: '#ECFDF5' },
-    { key: 'Analyze metrics', label: 'Analyze metrics', desc: 'Spot anomalies & trends', icon: BarChart3, tint: '#EFF6FF' },
+    { key: 'Read Zuper data', label: 'Read Zuper data', desc: 'Jobs, contacts, schedules', icon: Database, tint: '#DBEAFE', iconColor: '#2563EB' },
+    { key: 'Send emails', label: 'Send emails', desc: 'Drafts on-brand, sends on approval', icon: Mail, tint: '#FFE0CC', iconColor: '#EA580C' },
+    { key: 'Send SMS', label: 'Send SMS', desc: 'Text customers with templates', icon: MessageSquare, tint: '#FFE0CC', iconColor: '#EA580C' },
+    { key: 'Trigger workflows', label: 'Trigger workflows', desc: 'Kick off Zuper automations', icon: Zap, tint: '#FEF08A', iconColor: '#A16207' },
+    { key: 'Schedule jobs', label: 'Schedule jobs', desc: 'Auto-create or reschedule', icon: Clock, tint: '#FEF08A', iconColor: '#A16207' },
+    { key: 'Web search', label: 'Web search', desc: 'Look up & enrich records', icon: Globe, tint: '#D1FAE5', iconColor: '#059669' },
+    { key: 'Summarize threads', label: 'Summarize threads', desc: 'Roll up long convos', icon: BookOpen, tint: '#D1FAE5', iconColor: '#059669' },
+    { key: 'Analyze metrics', label: 'Analyze metrics', desc: 'Spot anomalies & trends', icon: BarChart3, tint: '#DBEAFE', iconColor: '#2563EB' },
   ];
   const kbCatalog: SkillDef[] = [
-    { key: 'Help Center', label: 'Help Center', desc: 'Public docs & guides', icon: BookOpen, tint: '#EFF6FF' },
-    { key: 'Internal SOPs', label: 'Internal SOPs', desc: 'Your private playbooks', icon: FileText, tint: '#FFF1E5' },
-    { key: 'Customer history', label: 'Customer history', desc: 'Past tickets & calls', icon: History, tint: '#ECFDF5' },
-    { key: 'Pricing book', label: 'Pricing book', desc: 'Quotes & rate cards', icon: FileText, tint: '#FFF1E5' },
-    { key: 'Safety policies', label: 'Safety policies', desc: 'Crew & site checklists', icon: FileText, tint: '#FFF1E5' },
+    { key: 'Help Center', label: 'Help Center', desc: 'Public docs & guides', icon: BookOpen, tint: '#DBEAFE', iconColor: '#2563EB' },
+    { key: 'Internal SOPs', label: 'Internal SOPs', desc: 'Your private playbooks', icon: FileText, tint: '#FFE0CC', iconColor: '#EA580C' },
+    { key: 'Customer history', label: 'Customer history', desc: 'Past tickets & calls', icon: History, tint: '#D1FAE5', iconColor: '#059669' },
+    { key: 'Pricing book', label: 'Pricing book', desc: 'Quotes & rate cards', icon: FileText, tint: '#E9D5FF', iconColor: '#7C3AED' },
+    { key: 'Safety policies', label: 'Safety policies', desc: 'Crew & site checklists', icon: FileText, tint: '#FEF08A', iconColor: '#A16207' },
   ];
-  const triggerCatalog: { key: 'manual' | 'mention' | 'schedule'; label: string; desc: string; icon: any; tint: string }[] = [
-    { key: 'manual', label: 'On demand', desc: 'You ask, it runs', icon: Play, tint: '#EFF6FF' },
-    { key: 'mention', label: '@mention', desc: 'Pings the agent in Zuper', icon: AtSign, tint: '#FFF1E5' },
-    { key: 'schedule', label: 'Scheduled', desc: 'Daily at a set time', icon: Clock, tint: '#ECFDF5' },
+  const triggerCatalog: { key: 'manual' | 'mention' | 'schedule'; label: string; desc: string; icon: any; tint: string; iconColor: string }[] = [
+    { key: 'manual', label: 'On demand', desc: 'You ask, it runs', icon: Play, tint: '#DBEAFE', iconColor: '#2563EB' },
+    { key: 'mention', label: '@mention', desc: 'Pings the agent in Zuper', icon: AtSign, tint: '#FFE0CC', iconColor: '#EA580C' },
+    { key: 'schedule', label: 'Scheduled', desc: 'Daily at a set time', icon: Clock, tint: '#D1FAE5', iconColor: '#059669' },
   ];
 
   const toolCatalog: SkillDef[] = [
-    { key: 'Send Email', label: 'Send Email', desc: 'Send an email to a specified recipient with subject and body.', icon: Mail, tint: '#FFF1E5' },
-    { key: 'Send Slack Message', label: 'Send Slack Message', desc: 'Send a message to a Slack channel via webhook.', icon: MessageSquare, tint: '#FFF1E5' },
+    { key: 'Send Email', label: 'Send Email', desc: 'Send an email to a specified recipient with subject and body.', icon: Mail, tint: '#FFE0CC', iconColor: '#EA580C' },
+    { key: 'Send Slack Message', label: 'Send Slack Message', desc: 'Send a message to a Slack channel via webhook.', icon: MessageSquare, tint: '#E9D5FF', iconColor: '#7C3AED' },
   ];
-  const triggerItems = triggerCatalog.map((t) => ({ key: t.key, label: t.label, desc: t.desc, icon: t.icon, tint: t.tint }));
+  const triggerItems = triggerCatalog.map((t) => ({ key: t.key, label: t.label, desc: t.desc, icon: t.icon, tint: t.tint, iconColor: t.iconColor }));
 
   const [skills, setSkills] = useState<Record<string, boolean>>({});
   const [tools, setTools] = useState<Record<string, boolean>>({});
@@ -1105,7 +1105,7 @@ function MJCreateAgentForm({
               <div>
                 <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Triggers</label>
                 {enabledTriggers.length > 0 && (
-                  <div className="space-y-2.5 mb-3">
+                  <div className="grid grid-cols-2 gap-2.5 mb-3">
                     {enabledTriggers.map((t) => (
                       <AddedItem
                         key={t.key}
@@ -1136,7 +1136,7 @@ function MJCreateAgentForm({
                 <span className="text-[11px] text-[#9CA3AF]">{enabledSkills.length}/{skillCatalog.length}</span>
               </div>
               {enabledSkills.length > 0 && (
-                <div className="space-y-2.5 mb-3">
+                <div className="grid grid-cols-2 gap-2.5 mb-3">
                   {enabledSkills.map((s) => (
                     <AddedItem
                       key={s.key}
@@ -1160,7 +1160,7 @@ function MJCreateAgentForm({
                 <span className="text-[11px] text-[#9CA3AF]">{enabledTools.length}/{toolCatalog.length}</span>
               </div>
               {enabledTools.length > 0 && (
-                <div className="space-y-2.5 mb-3">
+                <div className="grid grid-cols-2 gap-2.5 mb-3">
                   {enabledTools.map((t) => (
                     <AddedItem
                       key={t.key}
