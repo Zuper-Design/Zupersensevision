@@ -5,7 +5,7 @@ import {
   LayoutGrid, Bot, BookOpen, MessageSquare, Zap, Database, BarChart3, LifeBuoy, Plus,
   Search, MoreHorizontal, Play, Pencil, List, LayoutGrid as GridIcon, Star, Users, Check, AlertTriangle,
   Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Trash2, ChevronDown, X, Upload,
-  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText,
+  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText, Settings,
 } from 'lucide-react';
 import avatarBg from '../../imports/agents/avatar-bg.png';
 import agentClassic1 from '../../imports/agents/agent-1.png';
