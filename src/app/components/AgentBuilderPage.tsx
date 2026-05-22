@@ -723,9 +723,8 @@ function MJCreateAgentForm({
     identity: true,
     skills: true,
     knowledge: false,
-    triggers: false,
-    advanced: false,
   });
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const toggleSection = (k: string) => setOpenSections((p) => ({ ...p, [k]: !p[k] }));
 
   const enabledSkills = skillCatalog.filter((s) => skills[s.key]);
@@ -849,8 +848,8 @@ function MJCreateAgentForm({
         <div className="overflow-y-auto px-8 py-7">
           <div className="max-w-[820px] mx-auto">
             {/* Identity */}
-            <Section id="identity" icon={Bot} title="Identity" subtitle="Give your agent a name and tell it how to behave.">
-              <div className="space-y-5">
+            <Section id="identity" icon={Bot} title="Identity" subtitle="Name, instructions and where this agent should jump in.">
+              <div className="space-y-6">
                 <div>
                   <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
                   <input
@@ -871,6 +870,37 @@ function MJCreateAgentForm({
                     style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
                     className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none"
                   />
+                </div>
+
+                {/* Add to route */}
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Webhook className="w-[15px] h-[15px] text-[#1C1E21]" />
+                    <h3 className="text-[14px] font-semibold text-[#1C1E21]">Add to route</h3>
+                  </div>
+                  <p className="text-[12.5px] text-[#6B7280] mb-3">When should this agent jump in?</p>
+                  <div className="space-y-2.5">
+                    {triggerCatalog.map((t) => {
+                      const Icon = t.icon;
+                      const on = !!triggers[t.key];
+                      return (
+                        <div
+                          key={t.key}
+                          className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-white border"
+                          style={{ borderColor: on ? '#1C1E21' : '#E6E8EC', transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                        >
+                          <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
+                            <Icon className="w-[17px] h-[17px]" style={{ color: t.iconColor }} strokeWidth={2.2} />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
+                            <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
+                          </div>
+                          <Toggle on={on} onClick={() => setTriggers((p) => ({ ...p, [t.key]: !p[t.key] }))} />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </Section>
@@ -979,115 +1009,18 @@ function MJCreateAgentForm({
               </div>
             </Section>
 
-            {/* Triggers — Add to route */}
-            <Section id="triggers" icon={Webhook} title="Add to route" subtitle="When should this agent jump in?">
-              <div className="space-y-2.5">
-                {triggerCatalog.map((t) => {
-                  const Icon = t.icon;
-                  const on = !!triggers[t.key];
-                  return (
-                    <div
-                      key={t.key}
-                      className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-white border"
-                      style={{ borderColor: on ? '#1C1E21' : '#E6E8EC', transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    >
-                      <span className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
-                        <Icon className="w-[17px] h-[17px]" style={{ color: t.iconColor }} strokeWidth={2.2} />
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.label}</h4>
-                        <p className="text-[12.5px] text-[#6B7280] leading-snug mt-0.5">{t.desc}</p>
-                      </div>
-                      <Toggle on={on} onClick={() => setTriggers((p) => ({ ...p, [t.key]: !p[t.key] }))} />
-                    </div>
-                  );
-                })}
-              </div>
-            </Section>
-
-            {/* Advanced */}
-            <Section id="advanced" icon={Settings} title="Advanced" subtitle="Fine-tune the model, behavior, and memory.">
-              <div className="space-y-7">
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Bot className="w-[16px] h-[16px] text-[#1C1E21]" />
-                    <h3 className="text-[15px] font-semibold text-[#1C1E21]">Model & Behavior</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-5">
-                    <div>
-                      <div className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-2">Model</div>
-                      <div className="relative">
-                        <select
-                          value={model}
-                          onChange={(e) => setModel(e.target.value as 'Zuper Lite' | 'Zuper Pro')}
-                          className="w-full appearance-none px-3 pr-9 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
-                          style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                        >
-                          <option>Zuper Lite</option>
-                          <option>Zuper Pro</option>
-                        </select>
-                        <ChevronDown className="w-[14px] h-[14px] text-[#9CA3AF] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                      <p className="text-[11.5px] text-[#9CA3AF] mt-2">Larger models reason better but cost more per run.</p>
-                    </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Temperature</span>
-                        <span className="text-[14px] font-semibold text-[#1C1E21] tabular-nums">{temperature.toFixed(2)}</span>
-                      </div>
-                      <input
-                        type="range"
-                        min={0}
-                        max={1}
-                        step={0.05}
-                        value={temperature}
-                        onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                        className="w-full accent-[#1C1E21]"
-                      />
-                      <div className="flex items-center justify-between text-[11.5px] text-[#9CA3AF] mt-1.5">
-                        <span>0.0 · precise</span>
-                        <span>creative · 1.0</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-[15px] font-semibold text-[#1C1E21] mb-3">Memory</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { key: 'recent', label: 'Recent Messages', desc: 'Last 20 messages per thread, used as conversational context.', icon: MessageSquare, on: memRecent, set: setMemRecent },
-                      { key: 'working', label: 'Working Memory', desc: 'User preferences and session context the agent learns over time.', icon: Database, on: memWorking, set: setMemWorking },
-                    ].map((m) => {
-                      const Icon = m.icon;
-                      return (
-                        <div key={m.key} className="rounded-xl border border-[#E6E8EC] bg-white p-4">
-                          <div className="flex items-center justify-between mb-1.5">
-                            <div className="flex items-center gap-2">
-                              <Icon className="w-[15px] h-[15px] text-[#4B5563]" />
-                              <h4 className="text-[14px] font-semibold text-[#1C1E21]">{m.label}</h4>
-                            </div>
-                            <button
-                              onClick={() => m.set(!m.on)}
-                              className="inline-flex items-center gap-1.5 px-2 h-5 rounded-md text-[9.5px] font-bold uppercase tracking-wide"
-                              style={{
-                                background: m.on ? '#DCFCE7' : '#F3F4F6',
-                                color: m.on ? '#15803D' : '#6B7280',
-                                transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1)',
-                              }}
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.on ? '#15803D' : '#9CA3AF' }} />
-                              {m.on ? 'Enabled' : 'Disabled'}
-                            </button>
-                          </div>
-                          <p className="text-[12px] text-[#6B7280] leading-snug">{m.desc}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </Section>
+            {/* Advanced link — opens modal */}
+            <div className="pt-6 flex justify-center">
+              <button
+                onClick={() => setAdvancedOpen(true)}
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1E21] active:scale-[0.98]"
+                style={{ transition: 'color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                <Settings className="w-[14px] h-[14px]" />
+                Advanced settings
+              </button>
+            </div>
+            {/* Advanced placeholder — never rendered inline */}
           </div>
         </div>
 
@@ -1183,6 +1116,116 @@ function MJCreateAgentForm({
           </div>
         </aside>
       </div>
+
+      {/* Advanced modal */}
+      {advancedOpen && (
+        <div
+          className="fixed z-[200] flex items-center justify-center p-6"
+          style={{ inset: 0, background: 'rgba(12,14,17,0.45)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+          onClick={() => setAdvancedOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-[680px] bg-white rounded-[16px] overflow-hidden"
+            style={{ boxShadow: '0 24px 80px rgba(20,20,30,0.20)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between px-7 pt-6 pb-4">
+              <div>
+                <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', marginBottom: 3 }}>Advanced</h2>
+                <p style={{ fontSize: 14, color: '#9CA3AF' }}>Fine-tune the model, behavior, and memory.</p>
+              </div>
+              <button
+                onClick={() => setAdvancedOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#F3F4F6] transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-4 h-4 text-[#9CA3AF]" />
+              </button>
+            </div>
+
+            <div className="px-7 pb-7 space-y-7 max-h-[70vh] overflow-y-auto">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Bot className="w-[16px] h-[16px] text-[#1C1E21]" />
+                  <h3 className="text-[15px] font-semibold text-[#1C1E21]">Model & Behavior</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-5">
+                  <div>
+                    <div className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-2">Model</div>
+                    <div className="relative">
+                      <select
+                        value={model}
+                        onChange={(e) => setModel(e.target.value as 'Zuper Lite' | 'Zuper Pro')}
+                        className="w-full appearance-none px-3 pr-9 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                        style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                      >
+                        <option>Zuper Lite</option>
+                        <option>Zuper Pro</option>
+                      </select>
+                      <ChevronDown className="w-[14px] h-[14px] text-[#9CA3AF] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                    <p className="text-[11.5px] text-[#9CA3AF] mt-2">Larger models reason better but cost more per run.</p>
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10.5px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF]">Temperature</span>
+                      <span className="text-[14px] font-semibold text-[#1C1E21] tabular-nums">{temperature.toFixed(2)}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={temperature}
+                      onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                      className="w-full accent-[#1C1E21]"
+                    />
+                    <div className="flex items-center justify-between text-[11.5px] text-[#9CA3AF] mt-1.5">
+                      <span>0.0 · precise</span>
+                      <span>creative · 1.0</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-[15px] font-semibold text-[#1C1E21] mb-3">Memory</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: 'recent', label: 'Recent Messages', desc: 'Last 20 messages per thread, used as conversational context.', icon: MessageSquare, on: memRecent, set: setMemRecent },
+                    { key: 'working', label: 'Working Memory', desc: 'User preferences and session context the agent learns over time.', icon: Database, on: memWorking, set: setMemWorking },
+                  ].map((m) => {
+                    const Icon = m.icon;
+                    return (
+                      <div key={m.key} className="rounded-xl border border-[#E6E8EC] bg-white p-4">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <Icon className="w-[15px] h-[15px] text-[#4B5563]" />
+                            <h4 className="text-[14px] font-semibold text-[#1C1E21]">{m.label}</h4>
+                          </div>
+                          <button
+                            onClick={() => m.set(!m.on)}
+                            className="inline-flex items-center gap-1.5 px-2 h-5 rounded-md text-[9.5px] font-bold uppercase tracking-wide"
+                            style={{
+                              background: m.on ? '#DCFCE7' : '#F3F4F6',
+                              color: m.on ? '#15803D' : '#6B7280',
+                              transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1)',
+                            }}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.on ? '#15803D' : '#9CA3AF' }} />
+                            {m.on ? 'Enabled' : 'Disabled'}
+                          </button>
+                        </div>
+                        <p className="text-[12px] text-[#6B7280] leading-snug">{m.desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
