@@ -989,7 +989,7 @@ function MJCreateAgentForm({
         </button>
       </div>
 
-      <div className="flex-1 min-h-0" style={{ background: '#F8F9FB' }}>
+      <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
         <div className="max-w-[820px] mx-auto px-6 py-10">
           <div className="mb-8">
             <h1 className="text-[28px] font-semibold tracking-tight text-[#1C1E21]">Create your agent</h1>
