@@ -1,4 +1,4 @@
-import { CreditCard, ChevronDown, Check, Calendar, Building2, Sparkles, Plus, Download, ChevronLeft, AlertTriangle, CheckCircle2, RotateCcw, Clock } from 'lucide-react';
+import { CreditCard, ChevronDown, Check, Calendar, Building2, Sparkles, Plus, Download, ChevronLeft, AlertTriangle, CheckCircle2, RotateCcw, Clock, MessageSquare, BarChart3, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -749,30 +749,39 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="p-6">
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.01em', marginBottom: 8 }}>Cancel your subscription?</h3>
-                  <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 16 }}>
-                    Are you sure you want to cancel? You'll keep access until <span style={{ fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</span>, then Sense will stop working for this workspace.
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.015em', marginBottom: 8 }}>Cancel your subscription?</h3>
+                  <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 18 }}>
+                    You'll keep access until <span style={{ fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</span>. After that, Sense stops working for this workspace and you'll lose:
                   </p>
-                  <div
-                    className="rounded-lg p-3.5 mb-5"
-                    style={{ background: '#FFF7F0', border: '1px solid #F5E0CF' }}
-                  >
-                    <p style={{ fontSize: 13, color: '#6B4A2B', lineHeight: 1.5 }}>
-                      You'll lose unlimited queries, Radar dashboards, and daily JobNimbus sync.
-                    </p>
-                  </div>
+                  <ul className="space-y-2.5 mb-6">
+                    {[
+                      { Icon: MessageSquare, label: 'Sense chat and instant answers' },
+                      { Icon: BarChart3, label: 'Radar dashboards' },
+                      { Icon: RefreshCw, label: 'Daily JobNimbus sync' },
+                    ].map(({ Icon, label }) => (
+                      <li key={label} className="flex items-center gap-3">
+                        <span
+                          className="inline-flex items-center justify-center w-7 h-7 rounded-lg flex-shrink-0"
+                          style={{ background: '#F3F4F6' }}
+                        >
+                          <Icon className="w-3.5 h-3.5" style={{ color: '#6B7280' }} strokeWidth={2} />
+                        </span>
+                        <span style={{ fontSize: 13.5, color: '#1C1E21', lineHeight: 1.4 }}>{label}</span>
+                      </li>
+                    ))}
+                  </ul>
                   <div className="flex items-center gap-2.5">
                     <button
                       onClick={() => setConfirmCancel(false)}
-                      className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold text-white"
-                      style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)' }}
+                      className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold text-white active:scale-[0.98]"
+                      style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                     >
                       Keep subscription
                     </button>
                     <button
                       onClick={handleConfirmCancel}
-                      className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold transition-colors"
-                      style={{ background: '#FEECEC', color: '#DC2626', border: 'none' }}
+                      className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold active:scale-[0.98]"
+                      style={{ background: '#FEECEC', color: '#DC2626', border: 'none', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                       onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#FDDADA')}
                       onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#FEECEC')}
                     >
