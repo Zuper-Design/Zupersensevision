@@ -1092,7 +1092,7 @@ function MJCreateAgentForm({
       <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
         <div className="max-w-[820px] mx-auto px-6 py-10">
           {/* Hero strip — peach background, avatar + name + instructions */}
-          <div className="sticky top-[60px] z-20 bg-white pt-3 pb-4 mb-4 -mx-6 px-6">
+          <div className="sticky top-14 z-20 bg-white pt-4 pb-4 mb-4 -mx-6 px-6">
           <div className="rounded-2xl px-8 py-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
             <div className="flex items-center gap-6">
               <div className="relative flex-shrink-0" ref={avatarMenuRef}>
