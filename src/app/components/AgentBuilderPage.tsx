@@ -1062,10 +1062,10 @@ function MJCreateAgentForm({
   };
 
   return (
-    <div className="absolute inset-0 bg-white overflow-y-auto flex flex-col">
-      {/* Header bar — DRAFT + Deploy */}
+    <div className="fixed inset-0 bg-white overflow-y-auto flex flex-col z-50">
+      {/* Header bar — Create agent + Deploy */}
       <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={onCancel}
             className="w-8 h-8 -ml-2 rounded-lg hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#6B7280]"
@@ -1074,8 +1074,7 @@ function MJCreateAgentForm({
           >
             <ChevronLeft className="w-[16px] h-[16px]" />
           </button>
-          <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-[#FFF4ED] text-[#C2410C] text-[10px] font-bold uppercase tracking-wide">Draft</span>
-          <span className="text-[12px] text-[#9CA3AF]">Building…</span>
+          <span className="text-[14px] font-semibold text-[#1C1E21] tracking-tight">Create agent</span>
         </div>
         <button
           onClick={deploy}
@@ -1089,10 +1088,6 @@ function MJCreateAgentForm({
 
       <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
         <div className="max-w-[820px] mx-auto px-6 py-10">
-          <div className="mb-8">
-            <h1 className="text-[28px] font-semibold tracking-tight text-[#1C1E21]">Create your agent</h1>
-            <p className="text-[14px] text-[#6B7280] mt-1.5">Configure who they are, what they can do, and how they jump in.</p>
-          </div>
           {/* Hero strip — peach background, avatar + name + instructions */}
           <div className="relative rounded-2xl px-6 py-6 mb-6" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
             <div className="flex items-center gap-5">
