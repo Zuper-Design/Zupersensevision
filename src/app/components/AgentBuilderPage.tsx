@@ -52,6 +52,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
   const [auAgentOpen, setAuAgentOpen] = useState(true);
   const [vpCreateOpen, setVpCreateOpen] = useState(false);
   const [auActiveAgent, setAuActiveAgent] = useState<string | null>(null);
+  const [mjCreating, setMjCreating] = useState(false);
   const [customAgents, setCustomAgents] = useState<typeof myAgents>([]);
   const [agentVisits, setAgentVisits] = useState<Record<string, number>>({});
   const addCustomAgent = (a: typeof myAgents[number]) => {
@@ -94,6 +95,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
   return (
     <div className="flex h-full w-full bg-white">
       {/* Left sidebar */}
+      {!(isMJ && mjCreating) && (
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
           <div className="w-7 h-7 rounded-md bg-[#FFF4ED] border border-[#FFE2D1] flex items-center justify-center">
@@ -265,6 +267,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
           </button>
         </div>
       </aside>
+      )}
 
       {/* Main content */}
       {isAU && auActiveAgent && [...customAgents, ...myAgents].find((a) => a.name === auActiveAgent) ? (
@@ -303,7 +306,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
       <main className="flex-1 overflow-y-auto relative">
         <div className="px-8 pt-8 pb-12">
           {section === 'agents' ? (
-            isVP ? <VPAgentsView onOpenCreate={() => setVpCreateOpen(true)} /> : isAU ? <AUMyAgentsView isMJ={currentUser === 'MJ'} onEnterMarketplace={() => setSection('catalog')} onOpenAgent={openAgent} customAgents={customAgents} onAddCustomAgent={addCustomAgent} /> : <MyAgentsView />
+            isVP ? <VPAgentsView onOpenCreate={() => setVpCreateOpen(true)} /> : isAU ? <AUMyAgentsView isMJ={currentUser === 'MJ'} onEnterMarketplace={() => setSection('catalog')} onOpenAgent={openAgent} customAgents={customAgents} onAddCustomAgent={addCustomAgent} onCreatingChange={setMjCreating} /> : <MyAgentsView />
           ) : section === 'catalog' ? (
             <CatalogView />
           ) : section === 'skills' ? (
@@ -1089,7 +1092,7 @@ function MJCreateAgentForm({
       <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
         <div className="max-w-[820px] mx-auto px-6 py-10">
           {/* Hero strip — peach background, avatar + name + instructions */}
-          <div className="relative rounded-2xl px-8 py-8 mb-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
+          <div className="sticky top-[60px] z-20 rounded-2xl px-8 py-8 mb-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
             <div className="flex items-center gap-6">
               <div className="relative flex-shrink-0" ref={avatarMenuRef}>
                 <button
@@ -2137,13 +2140,14 @@ function SelectedListSection({
   );
 }
 
-function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], onAddCustomAgent, isMJ = false }: { onEnterMarketplace?: () => void; onOpenAgent?: (name: string) => void; customAgents?: typeof myAgents; onAddCustomAgent?: (a: typeof myAgents[number]) => void; isMJ?: boolean }) {
+function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], onAddCustomAgent, isMJ = false, onCreatingChange }: { onEnterMarketplace?: () => void; onOpenAgent?: (name: string) => void; customAgents?: typeof myAgents; onAddCustomAgent?: (a: typeof myAgents[number]) => void; isMJ?: boolean; onCreatingChange?: (creating: boolean) => void }) {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [statusFilter, setStatusFilter] = useState<'All' | AgentStatus>('All');
   const [pricingFilter, setPricingFilter] = useState<'All' | 'Free' | 'Paid'>('All');
   const [categoryFilter, setCategoryFilter] = useState<'All' | AgentCategory>('All');
   const [search, setSearch] = useState('');
   const [creating, setCreating] = useState(false);
+  useEffect(() => { onCreatingChange?.(creating); }, [creating, onCreatingChange]);
   const [toast, setToast] = useState<string | null>(null);
   const [firstTime, setFirstTime] = useState(true);
   const hasCustom = customAgents.length > 0;
