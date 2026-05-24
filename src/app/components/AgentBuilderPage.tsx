@@ -1062,7 +1062,7 @@ function MJCreateAgentForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-white overflow-y-auto flex flex-col z-50">
+    <div className="absolute inset-0 bg-white overflow-y-auto flex flex-col">
       {/* Header bar — Create agent + Deploy */}
       <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
         <div className="flex items-center gap-2">
@@ -1089,28 +1089,28 @@ function MJCreateAgentForm({
       <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
         <div className="max-w-[820px] mx-auto px-6 py-10">
           {/* Hero strip — peach background, avatar + name + instructions */}
-          <div className="relative rounded-2xl px-6 py-6 mb-6" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
-            <div className="flex items-center gap-5">
+          <div className="relative rounded-2xl px-8 py-8 mb-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
+            <div className="flex items-center gap-6">
               <div className="relative flex-shrink-0" ref={avatarMenuRef}>
                 <button
                   onClick={() => setAvatarOpen((v) => !v)}
-                  className="relative w-[88px] h-[88px] rounded-full overflow-hidden active:scale-[0.96]"
+                  className="relative w-[112px] h-[112px] rounded-full overflow-hidden active:scale-[0.96]"
                   style={{ background: avatarTint, boxShadow: '0 0 0 1px rgba(0,0,0,0.06)', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                   aria-label="Change avatar"
                 >
-                  <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-1 h-[100px] w-auto object-contain" draggable={false} />
+                  <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-1 h-[126px] w-auto object-contain" draggable={false} />
                 </button>
                 <button
                   onClick={() => setAvatarOpen((v) => !v)}
-                  className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center active:scale-[0.92]"
+                  className="absolute -bottom-0.5 -right-0.5 w-8 h-8 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center active:scale-[0.92]"
                   style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                   aria-label="Edit avatar"
                 >
-                  <Pencil className="w-[12px] h-[12px] text-[#1C1E21]" />
+                  <Pencil className="w-[13px] h-[13px] text-[#1C1E21]" />
                 </button>
                 {avatarOpen && (
                   <div
-                    className="absolute z-30 left-0 top-full mt-3 bg-white rounded-xl p-2"
+                    className="absolute z-30 left-0 top-full mt-3 bg-white rounded-2xl p-4 w-[320px]"
                     style={{
                       border: '1px solid #E6E8EC',
                       boxShadow: '0 12px 32px -8px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.08)',
@@ -1119,14 +1119,15 @@ function MJCreateAgentForm({
                     }}
                   >
                     <style>{`@keyframes avatarMenuIn { from { opacity: 0; transform: scale(0.95) translateY(-4px) } to { opacity: 1; transform: scale(1) translateY(0) } }`}</style>
-                    <div className="grid grid-cols-5 gap-1.5">
+                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Choose avatar</p>
+                    <div className="grid grid-cols-3 gap-3 mb-3">
                       {avatars.map((src, i) => {
                         const active = i === avatarIdx;
                         return (
                           <button
                             key={i}
                             onClick={() => { setAvatarIdx(i); setAvatarOpen(false); }}
-                            className="relative w-12 h-12 rounded-full overflow-hidden active:scale-[0.94]"
+                            className="relative w-[84px] h-[84px] rounded-full overflow-hidden active:scale-[0.94]"
                             style={{
                               background: avatarTints[i % avatarTints.length],
                               boxShadow: active ? '0 0 0 2px #1C1E21' : '0 0 0 1px rgba(0,0,0,0.06)',
@@ -1134,17 +1135,34 @@ function MJCreateAgentForm({
                             }}
                             aria-label={`Avatar ${i + 1}`}
                           >
-                            <img src={src} alt="" className="absolute left-1/2 -translate-x-1/2 top-0.5 h-[54px] w-auto object-contain" draggable={false} />
+                            <img src={src} alt="" className="absolute left-1/2 -translate-x-1/2 top-0.5 h-[96px] w-auto object-contain" draggable={false} />
+                            {active && (
+                              <span className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-[#1C1E21] flex items-center justify-center" style={{ boxShadow: '0 0 0 2px #fff' }}>
+                                <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                              </span>
+                            )}
                           </button>
                         );
                       })}
                     </div>
+                    <button
+                      className="w-full h-10 rounded-xl flex items-center justify-center gap-2 text-[12.5px] font-medium text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
+                      style={{
+                        border: '1.25px dashed #D1D5DB',
+                        transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
+                      onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
+                    >
+                      <Upload className="w-3.5 h-3.5" strokeWidth={2.2} />
+                      Upload custom
+                    </button>
                   </div>
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-[22px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate">{name.trim() || 'New Agent'}</h2>
-                <p className="text-[14px] text-[#6B7280] mt-1.5 leading-snug line-clamp-2">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
+                <h2 className="text-[26px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate">{name.trim() || 'New Agent'}</h2>
+                <p className="text-[15px] text-[#6B7280] mt-2 leading-snug line-clamp-2">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
               </div>
             </div>
           </div>
