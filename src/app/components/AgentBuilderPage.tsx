@@ -833,11 +833,13 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
   catalog,
   enabled,
   onToggle,
+  renderConfig,
 }: {
   buttonLabel: string;
   catalog: T[];
   enabled: Record<string, boolean>;
   onToggle: (key: string, on: boolean) => void;
+  renderConfig?: (item: T) => React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -899,62 +901,77 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <div className="px-6 pb-4 max-h-[480px] overflow-y-auto">
+              <div className="px-6 pb-4 max-h-[520px] overflow-y-auto">
                 <div className="grid grid-cols-2 gap-2.5">
                   {catalog.map((c) => {
                     const Icon = c.icon;
                     const isOn = !!enabled[c.key];
                     const accent = c.iconColor || '#1C1E21';
                     const accentSoft = c.tint || '#F3F4F6';
+                    const configNode = isOn ? renderConfig?.(c) : null;
                     return (
-                      <button
-                        key={c.key}
-                        onClick={() => onToggle(c.key, !isOn)}
-                        className="flex items-start gap-2.5 px-3 py-3 rounded-xl text-left active:scale-[0.995]"
-                        style={{
-                          background: isOn ? accentSoft : '#FFFFFF',
-                          border: `1px solid ${isOn ? accent : '#E6E8EC'}`,
-                          transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
-                        }}
-                      >
-                        <span
-                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                          style={{ background: isOn ? accent : '#1C1E21' }}
+                      <div key={c.key} className={configNode ? 'col-span-2' : ''}>
+                        <button
+                          onClick={() => onToggle(c.key, !isOn)}
+                          className="w-full flex items-start gap-3 px-3 py-3 rounded-xl text-left active:scale-[0.995]"
+                          style={{
+                            background: isOn ? accentSoft : '#FFFFFF',
+                            border: `1px solid ${isOn ? accent : '#E6E8EC'}`,
+                            transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                          }}
                         >
-                          <Icon className="w-[14px] h-[14px] text-white" strokeWidth={2.2} />
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
-                            <span
-                              aria-hidden
-                              className="relative inline-flex items-center flex-shrink-0"
-                              style={{
-                                width: 28,
-                                height: 16,
-                                borderRadius: 999,
-                                background: isOn ? '#1C1E21' : '#E6E8EC',
-                                transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)',
-                              }}
-                            >
+                          <span
+                            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                            style={{
+                              background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
+                              border: `1px solid ${accent}33`,
+                              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
+                            }}
+                          >
+                            <Icon className="w-[16px] h-[16px]" style={{ color: accent }} strokeWidth={2} />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
                               <span
+                                aria-hidden
+                                className="relative inline-flex items-center flex-shrink-0 mt-0.5"
                                 style={{
-                                  position: 'absolute',
-                                  top: 2,
-                                  left: isOn ? 14 : 2,
-                                  width: 12,
-                                  height: 12,
+                                  width: 28,
+                                  height: 16,
                                   borderRadius: 999,
-                                  background: '#FFFFFF',
-                                  boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
-                                  transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
+                                  background: isOn ? '#1C1E21' : '#E6E8EC',
+                                  transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)',
                                 }}
-                              />
-                            </span>
+                              >
+                                <span
+                                  style={{
+                                    position: 'absolute',
+                                    top: 2,
+                                    left: isOn ? 14 : 2,
+                                    width: 12,
+                                    height: 12,
+                                    borderRadius: 999,
+                                    background: '#FFFFFF',
+                                    boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
+                                    transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
+                                  }}
+                                />
+                              </span>
+                            </div>
+                            <p className="text-[11.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
                           </div>
-                          <p className="text-[11.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
-                        </div>
-                      </button>
+                        </button>
+                        {configNode && (
+                          <div
+                            className="mt-2 px-4 py-4 rounded-xl bg-white"
+                            style={{ border: '1px solid #EDEFF2', animation: 'configIn 200ms cubic-bezier(0.23,1,0.32,1) both' }}
+                          >
+                            <style>{`@keyframes configIn { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
+                            {configNode}
+                          </div>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -1020,6 +1037,9 @@ function MJCreateAgentForm({
   const [instructions, setInstructions] = useState('');
   const [avatarIdx, setAvatarIdx] = useState(0);
   const [avatarOpen, setAvatarOpen] = useState(false);
+  const [schedFreq, setSchedFreq] = useState<'hour' | 'day' | 'week' | 'month' | 'weekdays' | 'custom'>('week');
+  const [schedHour, setSchedHour] = useState('09');
+  const [schedMin, setSchedMin] = useState('00');
   const avatarMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!avatarOpen) return;
@@ -1245,6 +1265,98 @@ function MJCreateAgentForm({
                   catalog={triggerItems}
                   enabled={triggers}
                   onToggle={(key, on) => setTriggers((p) => ({ ...p, [key]: on }))}
+                  renderConfig={(t) => {
+                    if (t.key !== 'schedule') return null;
+                    const freqs: { key: typeof schedFreq; label: string }[] = [
+                      { key: 'hour', label: 'Every hour' },
+                      { key: 'day', label: 'Every day' },
+                      { key: 'week', label: 'Every week' },
+                      { key: 'month', label: 'Every month' },
+                      { key: 'weekdays', label: 'Weekdays' },
+                      { key: 'custom', label: 'Custom' },
+                    ];
+                    const summaryMap: Record<typeof schedFreq, string> = {
+                      hour: 'every hour',
+                      day: 'every day',
+                      week: 'every Monday',
+                      month: 'on the 1st of every month',
+                      weekdays: 'Mon–Fri',
+                      custom: 'a custom schedule',
+                    };
+                    return (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <div className="mb-4">
+                          <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Frequency</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {freqs.map((f) => {
+                              const active = schedFreq === f.key;
+                              return (
+                                <button
+                                  key={f.key}
+                                  onClick={() => setSchedFreq(f.key)}
+                                  className="px-3 h-8 rounded-full text-[12.5px] font-medium active:scale-[0.97]"
+                                  style={{
+                                    background: active ? '#1C1E21' : '#FFFFFF',
+                                    color: active ? '#FFFFFF' : '#1C1E21',
+                                    border: `1px solid ${active ? '#1C1E21' : '#E6E8EC'}`,
+                                    transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                                  }}
+                                >
+                                  {f.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <div className="mb-4">
+                          <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Time</p>
+                          <div className="flex items-center gap-1.5">
+                            <select
+                              value={schedHour}
+                              onChange={(e) => setSchedHour(e.target.value)}
+                              className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                              style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                            >
+                              {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((h) => (
+                                <option key={h} value={h}>{h}</option>
+                              ))}
+                            </select>
+                            <span className="text-[13px] text-[#9CA3AF]">:</span>
+                            <select
+                              value={schedMin}
+                              onChange={(e) => setSchedMin(e.target.value)}
+                              className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                              style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                            >
+                              {['00', '15', '30', '45'].map((m) => (
+                                <option key={m} value={m}>{m}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div
+                          className="flex items-center gap-2 px-3 py-2.5 rounded-lg mb-3"
+                          style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}
+                        >
+                          <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                          <p className="text-[12px] text-[#4B5563]">
+                            Runs <span className="font-semibold text-[#1C1E21]">{summaryMap[schedFreq]}</span> at <span className="font-semibold text-[#1C1E21]">{schedHour}:{schedMin}</span>
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 text-[12px] text-[#6B7280]">
+                            <Globe className="w-3.5 h-3.5" />
+                            <span>Timezone:</span>
+                            <span className="font-semibold text-[#1C1E21]">Asia/Calcutta</span>
+                          </div>
+                          <button className="text-[12px] font-medium text-[#1C1E21] hover:text-black inline-flex items-center gap-1">
+                            Advanced cron expression
+                            <ChevronDown className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }}
                 />
               </div>
             </div>
