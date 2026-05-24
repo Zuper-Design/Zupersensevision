@@ -877,7 +877,7 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
           />
           <div className="fixed inset-0 z-[310] flex items-center justify-center p-4 pointer-events-none">
             <div
-              className="pointer-events-auto bg-white w-full max-w-[460px] rounded-2xl overflow-hidden"
+              className="pointer-events-auto bg-white w-full max-w-[640px] rounded-2xl overflow-hidden"
               style={{
                 boxShadow: '0 24px 60px rgba(30,34,60,0.22)',
                 animation: 'addPickerModalIn 220ms cubic-bezier(0.23,1,0.32,1) both',
@@ -888,8 +888,8 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                 @keyframes addPickerOverlayIn { from { opacity: 0 } to { opacity: 1 } }
                 @keyframes addPickerModalIn { from { opacity: 0; transform: scale(0.96) translateY(6px) } to { opacity: 1; transform: scale(1) translateY(0) } }
               `}</style>
-              <div className="flex items-center justify-between px-5 pt-5 pb-3">
-                <h3 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">{buttonLabel}</h3>
+              <div className="flex items-center justify-between px-6 pt-5 pb-4">
+                <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">{buttonLabel}</h3>
                 <button
                   onClick={() => setOpen(false)}
                   className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
@@ -899,37 +899,65 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <div className="px-3 pb-3 max-h-[440px] overflow-y-auto">
-                {catalog.map((c) => {
-                  const Icon = c.icon;
-                  const isOn = !!enabled[c.key];
-                  return (
-                    <button
-                      key={c.key}
-                      onClick={() => onToggle(c.key, !isOn)}
-                      className="w-full flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-[#FAFAFB] text-left active:scale-[0.995]"
-                      style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    >
-                      <span className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: c.tint || '#F3F4F6' }}>
-                        <Icon className="w-[15px] h-[15px]" style={{ color: c.iconColor || '#4B5563' }} />
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-[13.5px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
-                        <p className="text-[12px] text-[#6B7280] leading-snug mt-0.5">{c.desc}</p>
-                      </div>
-                      <span
-                        className="w-[18px] h-[18px] rounded-[5px] flex items-center justify-center flex-shrink-0"
+              <div className="px-6 pb-4 max-h-[480px] overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2.5">
+                  {catalog.map((c) => {
+                    const Icon = c.icon;
+                    const isOn = !!enabled[c.key];
+                    const accent = c.iconColor || '#1C1E21';
+                    const accentSoft = c.tint || '#F3F4F6';
+                    return (
+                      <button
+                        key={c.key}
+                        onClick={() => onToggle(c.key, !isOn)}
+                        className="flex items-start gap-2.5 px-3 py-3 rounded-xl text-left active:scale-[0.995]"
                         style={{
-                          background: isOn ? '#1C1E21' : '#FFFFFF',
-                          border: isOn ? '1px solid #1C1E21' : '1px solid #D1D5DB',
-                          transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                          background: isOn ? accentSoft : '#FFFFFF',
+                          border: `1px solid ${isOn ? accent : '#E6E8EC'}`,
+                          transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
                         }}
                       >
-                        {isOn && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
-                      </span>
-                    </button>
-                  );
-                })}
+                        <span
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ background: isOn ? accent : '#1C1E21' }}
+                        >
+                          <Icon className="w-[14px] h-[14px] text-white" strokeWidth={2.2} />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
+                            <span
+                              aria-hidden
+                              className="relative inline-flex items-center flex-shrink-0"
+                              style={{
+                                width: 28,
+                                height: 16,
+                                borderRadius: 999,
+                                background: isOn ? '#1C1E21' : '#E6E8EC',
+                                transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  top: 2,
+                                  left: isOn ? 14 : 2,
+                                  width: 12,
+                                  height: 12,
+                                  borderRadius: 999,
+                                  background: '#FFFFFF',
+                                  boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
+                                  transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
+                                }}
+                              />
+                            </span>
+                          </div>
+                          <p className="text-[11.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               <div className="px-5 py-3 border-t border-[#F0F1F3] flex items-center justify-end">
                 <button
