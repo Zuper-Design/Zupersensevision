@@ -3042,35 +3042,60 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
   const status = agent.status;
   const statusStyle = statusStyles[status];
   const tint = categoryTint[agent.category] || { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' };
+  const accent = tint.accent;
 
   return (
     <div
       onClick={onOpen}
-      className="group relative rounded-xl border border-[#E6E8EC] transition-all duration-300 ease-out cursor-pointer overflow-hidden flex flex-col hover:-translate-y-1"
+      className="group relative rounded-2xl cursor-pointer overflow-hidden flex flex-col"
       style={{
-        // Hover styles applied dynamically via Tailwind arbitrary not possible for accent — use inline + group-hover override below
+        background: `linear-gradient(180deg, ${accent}26 0%, ${accent}10 38%, #FFFFFF 78%)`,
+        border: `1px solid ${accent}33`,
+        boxShadow: `0 1px 2px rgba(28,30,33,0.04), 0 12px 28px -16px ${accent}33`,
+        transition: 'transform 240ms cubic-bezier(0.23,1,0.32,1), box-shadow 240ms cubic-bezier(0.23,1,0.32,1), border-color 240ms cubic-bezier(0.23,1,0.32,1)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = `0 18px 38px -16px rgba(0,0,0,0.14), 0 0 0 3px ${tint.accent}22, 0 0 14px ${tint.accent}33`;
-        e.currentTarget.style.borderColor = `${tint.accent}66`;
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = `0 4px 12px -2px rgba(28,30,33,0.06), 0 28px 48px -22px ${accent}55, 0 0 0 1px ${accent}44`;
+        e.currentTarget.style.borderColor = `${accent}66`;
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = '';
-        e.currentTarget.style.borderColor = '';
+        e.currentTarget.style.transform = '';
+        e.currentTarget.style.boxShadow = `0 1px 2px rgba(28,30,33,0.04), 0 12px 28px -16px ${accent}33`;
+        e.currentTarget.style.borderColor = `${accent}33`;
       }}
     >
-      {/* Tinted top area with avatar */}
-      <div className="relative flex items-end justify-center overflow-hidden pt-6" style={{ background: tint.tint, height: 200 }}>
+      {/* Soft radial bloom behind avatar — adds AI/glass feel */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{
+          top: -40,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 320,
+          height: 220,
+          borderRadius: '50%',
+          background: `radial-gradient(closest-side, ${accent}55 0%, ${accent}00 70%)`,
+          filter: 'blur(28px)',
+        }}
+      />
+      {/* Inner highlight line for glassy depth */}
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }} />
+
+      {/* Avatar — sits on the card gradient, no separate pane */}
+      <div className="relative flex items-end justify-center overflow-hidden pt-6" style={{ height: 200 }}>
         <img
           src={agent.img || agentDetective}
           alt={agent.name}
-          className="h-[170px] w-auto object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.10)] transition-transform duration-400 ease-out group-hover:-translate-y-1 group-hover:scale-[1.06]"
+          className="relative h-[170px] w-auto object-contain transition-transform duration-400 ease-out group-hover:-translate-y-1 group-hover:scale-[1.06]"
+          style={{ filter: `drop-shadow(0 8px 18px ${accent}55) drop-shadow(0 2px 4px rgba(0,0,0,0.08))` }}
           draggable={false}
         />
       </div>
 
-      {/* Bottom info block — name + status + 2-line description */}
-      <div className="bg-white px-4 pt-4 pb-4 flex flex-col gap-2">
+      {/* Bottom info block — gradient continues, no hard white split */}
+      <div className="relative px-4 pt-4 pb-4 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <h3 className="text-[13.5px] font-semibold text-[#1C1E21] leading-none truncate flex-1">{agent.name}</h3>
           <span
