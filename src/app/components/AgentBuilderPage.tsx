@@ -3383,7 +3383,15 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             </div>
 
             <div className="text-center mb-7 relative z-10">
-              <Wand2 className="mx-auto mb-3 w-9 h-9 text-[#7C3AED]/70" strokeWidth={1.6} />
+              <button
+                onClick={() => setChooserOpen(false)}
+                className="mx-auto mb-3 block rounded-md hover:opacity-100 active:scale-[0.94]"
+                style={{ transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1), opacity 160ms ease' }}
+                aria-label="Back to my agents"
+                title="Back to my agents"
+              >
+                <Wand2 className="w-9 h-9 text-[#7C3AED]/70" strokeWidth={1.6} />
+              </button>
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
               <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
                 Spin up a custom agent or pick one from the marketplace.
