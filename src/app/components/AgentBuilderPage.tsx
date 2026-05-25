@@ -3294,12 +3294,12 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 className="relative rounded-2xl overflow-hidden text-left p-7 flex flex-col h-[460px] active:scale-[0.995] group"
                 style={{
                   background: '#FFFFFF',
-                  border: '1px solid #EEF0F3',
+                  border: '1px solid rgba(124,58,237,0.22)',
                   boxShadow: '0 1px 2px rgba(28,30,33,0.03)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1), border-color 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 8px rgba(28,30,33,0.04), 0 22px 44px -22px rgba(124,58,237,0.22)'; e.currentTarget.style.borderColor = '#E4E6EB'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = '#EEF0F3'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 8px rgba(28,30,33,0.04), 0 22px 44px -22px rgba(124,58,237,0.22)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.34)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.22)'; }}
               >
                 {/* Blank-canvas grid — darker in centre, fades out at edges */}
                 <svg
@@ -3326,9 +3326,14 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 <div className="relative flex-1 flex items-center justify-center my-2">
                   <div className="relative w-[240px] h-[170px]">
                     {/* Floating skill chip — top left */}
-                    <div className="absolute left-0 top-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-5deg)' }}>
+                    <div className="absolute left-0 top-0 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-5deg)' }}>
                       <Zap className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Skill</span>
+                    </div>
+                    {/* Floating tools chip — under skill */}
+                    <div className="absolute left-3 top-9 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-2deg)' }}>
+                      <Wrench className="w-3 h-3 text-[#7C3AED]" />
+                      <span className="text-[10px] font-semibold text-[#1C1E21]">Tools</span>
                     </div>
                     {/* Floating knowledge chip — top right */}
                     <div className="absolute right-0 top-0 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(6deg)' }}>
