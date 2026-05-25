@@ -3385,7 +3385,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
             <div className="text-center mb-7 relative z-10">
               <button
-                onClick={() => setChooserOpen(false)}
+                onClick={() => { setChooserOpen(false); setFirstTime(false); }}
                 className="mx-auto mb-3 block rounded-md hover:opacity-100 active:scale-[0.94]"
                 style={{ transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1), opacity 160ms ease' }}
                 aria-label="Back to my agents"
