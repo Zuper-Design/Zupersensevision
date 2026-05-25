@@ -5954,11 +5954,15 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
   const [name, setName] = useState('');
   const [instructions, setInstructions] = useState('');
   const [url, setUrl] = useState('');
+  const [urlOpen, setUrlOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const urlInputRef = useRef<HTMLInputElement>(null);
 
   const triggerFile = () => fileInputRef.current?.click();
   const removeFile = () => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; };
+  const openUrl = () => { setUrlOpen(true); setTimeout(() => urlInputRef.current?.focus(), 0); };
+  const removeUrl = () => { setUrl(''); setUrlOpen(false); };
 
   const fileSize = (b: number) => {
     if (b < 1024) return `${b} B`;
@@ -5966,7 +5970,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
     return `${(b / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const canSave = !!name.trim() && (!!url.trim() || !!file);
+  const canSave = !!name.trim() && !!instructions.trim();
 
   return (
     <>
@@ -5990,7 +5994,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
           <div className="flex items-center justify-between px-6 pt-5 pb-3">
             <div>
               <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">Add Knowledge</h3>
-              <p className="text-[12.5px] text-[#6B7280] mt-1">Give your agents a source — a web page or a file they can answer from.</p>
+              <p className="text-[12.5px] text-[#6B7280] mt-1">Write instructions for what this knowledge is — optionally attach a link or a file.</p>
             </div>
             <button
               onClick={onClose}
@@ -6017,43 +6021,37 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
             </div>
 
             <div>
-              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions <span className="text-[#9CA3AF] font-normal">(optional)</span></label>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
               <textarea
                 value={instructions}
                 onChange={(e) => setInstructions(e.target.value)}
-                placeholder="How should agents use this source? e.g., 'Cite specific sections and link back when answering.'"
-                rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
+                placeholder="Describe what this knowledge is and how agents should use it. e.g., 'Our refund policy — cite section numbers and link back when answering.'"
+                rows={5}
+                className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
                 style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
               />
-            </div>
 
-            {/* Source — composed input (URL with inline upload button) */}
-            <div>
-              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Source</label>
-              <div
-                className="flex items-center gap-1 pl-3 pr-1 h-10 rounded-lg bg-white border border-[#E6E8EC] focus-within:border-[#1C1E21]"
-                style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-              >
-                <Globe className="w-[15px] h-[15px] text-[#9CA3AF] flex-shrink-0" />
-                <input
-                  type="text"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="Paste a URL — or upload a file"
-                  disabled={!!file}
-                  className="flex-1 min-w-0 px-2 bg-transparent text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none disabled:text-[#9CA3AF] disabled:cursor-not-allowed"
-                />
+              {/* Secondary actions — only used if the user has a link or file too */}
+              <div className="flex items-center gap-1.5 mt-2.5">
+                <button
+                  type="button"
+                  onClick={openUrl}
+                  disabled={urlOpen || !!url}
+                  className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-md text-[12px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[#4B5563]"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  <Globe className="w-[13px] h-[13px]" />
+                  Add web URL
+                </button>
                 <button
                   type="button"
                   onClick={triggerFile}
-                  className="inline-flex items-center gap-1 px-2 h-8 rounded-md text-[12px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.96]"
+                  disabled={!!file}
+                  className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-md text-[12px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[#4B5563]"
                   style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                  aria-label="Upload file"
-                  title="Upload a file"
                 >
                   <Upload className="w-[13px] h-[13px]" />
-                  Upload
+                  Upload file
                 </button>
                 <input
                   ref={fileInputRef}
@@ -6063,30 +6061,56 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
                   onChange={(e) => setFile(e.target.files?.[0] || null)}
                 />
               </div>
-
-              {file && (
-                <div
-                  className="mt-2 flex items-center gap-3 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-[#FAFAFB]"
-                  style={{ animation: 'addKbPreview 220ms cubic-bezier(0.23,1,0.32,1) both' }}
-                >
-                  <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1px solid rgba(124,58,237,0.20)' }}>
-                    <FileText className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[12.5px] font-medium text-[#1C1E21] truncate">{file.name}</div>
-                    <div className="text-[11px] text-[#9CA3AF]">{fileSize(file.size)}</div>
-                  </div>
-                  <button
-                    onClick={removeFile}
-                    className="p-1 rounded-md text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94] flex-shrink-0"
-                    style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                    aria-label="Remove file"
-                  >
-                    <X className="w-[14px] h-[14px]" />
-                  </button>
-                </div>
-              )}
             </div>
+
+            {/* Optional attachments — render conditionally below the secondary buttons */}
+            {urlOpen && (
+              <div
+                className="flex items-center gap-1 pl-3 pr-1 h-10 rounded-lg bg-white border border-[#E6E8EC] focus-within:border-[#1C1E21]"
+                style={{ animation: 'addKbPreview 200ms cubic-bezier(0.23,1,0.32,1) both', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                <Globe className="w-[15px] h-[15px] text-[#9CA3AF] flex-shrink-0" />
+                <input
+                  ref={urlInputRef}
+                  type="text"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://docs.example.com"
+                  className="flex-1 min-w-0 px-2 bg-transparent text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none"
+                />
+                <button
+                  onClick={removeUrl}
+                  className="p-1 rounded-md text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94] flex-shrink-0"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label="Remove URL"
+                >
+                  <X className="w-[14px] h-[14px]" />
+                </button>
+              </div>
+            )}
+
+            {file && (
+              <div
+                className="flex items-center gap-3 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-[#FAFAFB]"
+                style={{ animation: 'addKbPreview 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+              >
+                <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1px solid rgba(124,58,237,0.20)' }}>
+                  <FileText className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[12.5px] font-medium text-[#1C1E21] truncate">{file.name}</div>
+                  <div className="text-[11px] text-[#9CA3AF]">{fileSize(file.size)}</div>
+                </div>
+                <button
+                  onClick={removeFile}
+                  className="p-1 rounded-md text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94] flex-shrink-0"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label="Remove file"
+                >
+                  <X className="w-[14px] h-[14px]" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Footer */}
