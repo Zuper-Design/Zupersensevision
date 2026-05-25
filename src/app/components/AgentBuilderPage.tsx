@@ -95,7 +95,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
   return (
     <div className="flex h-full w-full bg-white">
       {/* Left sidebar */}
-      {!(isMJ && mjCreating && !auActiveAgent) && (
+      {!(isMJ && (mjCreating || auActiveAgent)) && (
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
           <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
@@ -1360,6 +1360,31 @@ function MJCreateAgentForm({
   const canDeploy = name.trim().length > 1 && (enabledSkills.length + enabledTools.length) > 0;
   const [deployPhase, setDeployPhase] = useState<'idle' | 'glow' | 'success'>('idle');
   const isEdit = !!seedAgent;
+
+  // Capture the initial values once so we can tell when the user has
+  // actually changed something — disables Save changes until then.
+  const initialRef = useRef({
+    name: seedAgent?.name ?? '',
+    instructions: seedAgent?.desc ?? '',
+    avatarIdx: seedAvatarIdx === -1 ? 0 : seedAvatarIdx,
+    skills: toMap(preset?.skills),
+    tools: toMap(preset?.tools),
+    kb: toMap(preset?.kb),
+    triggers: toMap(preset?.triggers),
+  });
+  const sameMap = (a: Record<string, boolean>, b: Record<string, boolean>) => {
+    const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+    for (const k of keys) if (!!a[k] !== !!b[k]) return false;
+    return true;
+  };
+  const isDirty =
+    name !== initialRef.current.name ||
+    instructions !== initialRef.current.instructions ||
+    avatarIdx !== initialRef.current.avatarIdx ||
+    !sameMap(skills, initialRef.current.skills) ||
+    !sameMap(tools, initialRef.current.tools) ||
+    !sameMap(kb, initialRef.current.kb) ||
+    !sameMap(triggers, initialRef.current.triggers);
   const missingHint = !canDeploy
     ? (name.trim().length <= 1
         ? 'Give your agent a name to continue'
@@ -1515,8 +1540,8 @@ function MJCreateAgentForm({
           )}
           <button
             onClick={deploy}
-            disabled={!canDeploy || deployPhase !== 'idle'}
-            className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+            disabled={!canDeploy || deployPhase !== 'idle' || (isEdit && !isDirty)}
+            className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' && (!isEdit || isDirty) ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
           >
             {deployPhase === 'idle' ? (
               isEdit ? (
