@@ -109,37 +109,37 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
             <button
               onClick={() => setSection('agents')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
-                section === 'agents' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+                section === 'agents' ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
               }`}
             >
-              <Bot className={`w-[15px] h-[15px] ${section === 'agents' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <Bot className={`w-[15px] h-[15px] ${section === 'agents' ? 'text-[#1C1E21]' : 'text-[#6B7280]'}`} />
               <span className="flex-1 text-left">My agents</span>
             </button>
             <button
               onClick={() => setSection('catalog')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
-                section === 'catalog' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+                section === 'catalog' ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
               }`}
             >
-              <LayoutGrid className={`w-[15px] h-[15px] ${section === 'catalog' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <LayoutGrid className={`w-[15px] h-[15px] ${section === 'catalog' ? 'text-[#1C1E21]' : 'text-[#6B7280]'}`} />
               <span className="flex-1 text-left">Marketplace</span>
             </button>
             <button
               onClick={() => setSection('skills')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
-                section === 'skills' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+                section === 'skills' ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
               }`}
             >
-              <Zap className={`w-[15px] h-[15px] ${section === 'skills' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <Zap className={`w-[15px] h-[15px] ${section === 'skills' ? 'text-[#1C1E21]' : 'text-[#6B7280]'}`} />
               <span className="flex-1 text-left">Skills</span>
             </button>
             <button
               onClick={() => setSection('knowledge')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
-                section === 'knowledge' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+                section === 'knowledge' ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
               }`}
             >
-              <Database className={`w-[15px] h-[15px] ${section === 'knowledge' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <Database className={`w-[15px] h-[15px] ${section === 'knowledge' ? 'text-[#1C1E21]' : 'text-[#6B7280]'}`} />
               <span className="flex-1 text-left">Knowledge base</span>
             </button>
 
@@ -203,10 +203,10 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
             <button
               onClick={() => setSection('skills')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
-                section === 'skills' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+                section === 'skills' ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
               }`}
             >
-              <Zap className={`w-[15px] h-[15px] ${section === 'skills' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <Zap className={`w-[15px] h-[15px] ${section === 'skills' ? 'text-[#1C1E21]' : 'text-[#6B7280]'}`} />
               <span className="flex-1 text-left">Skills</span>
             </button>
 
@@ -214,10 +214,10 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
             <button
               onClick={() => setSection('knowledge')}
               className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
-                section === 'knowledge' ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
+                section === 'knowledge' ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21]'
               }`}
             >
-              <Database className={`w-[15px] h-[15px] ${section === 'knowledge' ? 'text-[#2563EB]' : 'text-[#6B7280]'}`} />
+              <Database className={`w-[15px] h-[15px] ${section === 'knowledge' ? 'text-[#1C1E21]' : 'text-[#6B7280]'}`} />
               <span className="flex-1 text-left">Knowledge Base</span>
             </button>
 
