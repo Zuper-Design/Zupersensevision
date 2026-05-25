@@ -5642,10 +5642,10 @@ function ChatPanel({ selectedName, onClose }: { selectedName: string | null; onC
 }
 
 const kbStats = [
-  { label: 'Total Sources', value: '2', sub: '1 predefined, 1 custom', Icon: Database, iconBg: '#EFF6FF', iconColor: '#3B82F6' },
-  { label: 'Total Chunks', value: '102', sub: 'Indexed vectors', Icon: Layers, iconBg: '#EFF6FF', iconColor: '#3B82F6' },
-  { label: 'Files Indexed', value: '0', sub: 'PDF, DOCX, TXT, CSV', Icon: BookOpen, iconBg: '#F0FDF4', iconColor: '#10B981' },
-  { label: 'Web Pages', value: '2', sub: 'URLs scraped', Icon: Globe, iconBg: '#FFFBEB', iconColor: '#F59E0B' },
+  { label: 'Total Sources', value: '2', sub: '1 predefined, 1 custom', Icon: Database, iconBg: '#F5F3FF', iconColor: '#7C3AED' },
+  { label: 'Total Chunks', value: '102', sub: 'Indexed vectors', Icon: Layers, iconBg: '#F5F3FF', iconColor: '#7C3AED' },
+  { label: 'Files Indexed', value: '0', sub: 'PDF, DOCX, TXT, CSV', Icon: BookOpen, iconBg: '#FCE7F3', iconColor: '#DB2777' },
+  { label: 'Web Pages', value: '2', sub: 'URLs scraped', Icon: Globe, iconBg: '#EDE9FE', iconColor: '#6D28D9' },
 ];
 
 const kbSources = [
@@ -5653,8 +5653,8 @@ const kbSources = [
     name: 'Zuper Documentation',
     url: 'https://docs.zuper.co',
     typeTags: [
-      { label: 'PREDEFINED', bg: '#DBEAFE', color: '#2563EB' },
-      { label: 'MCP', bg: '#FEF3C7', color: '#92400E' },
+      { label: 'PREDEFINED', bg: '#F5F3FF', color: '#7C3AED' },
+      { label: 'MCP', bg: '#FCE7F3', color: '#BE185D' },
     ],
     status: 'Connected',
     updated: 'about 1 month ago',
@@ -5725,7 +5725,7 @@ function KnowledgeBaseView() {
             <input
               type="text"
               placeholder="Search knowledge bases..."
-              className="w-full pl-9 pr-3 h-9 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition"
+              className="w-full pl-9 pr-3 h-9 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition"
             />
           </div>
           <button className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#4B5563] font-medium hover:border-[#1C1E21]/30 transition">
@@ -5754,12 +5754,12 @@ function KnowledgeBaseView() {
                     <span
                       className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
                       style={{
-                        background: 'linear-gradient(160deg, #DBEAFE 0%, #FFFFFF 100%)',
-                        border: '1px solid rgba(37,99,235,0.20)',
-                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px rgba(37,99,235,0.10)',
+                        background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)',
+                        border: '1px solid rgba(124,58,237,0.20)',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px rgba(124,58,237,0.10)',
                       }}
                     >
-                      <Globe className="w-[17px] h-[17px]" style={{ color: '#2563EB' }} strokeWidth={2} />
+                      <Globe className="w-[17px] h-[17px]" style={{ color: '#7C3AED' }} strokeWidth={2} />
                     </span>
                     <div className="min-w-0">
                       <div className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{s.name}</div>
@@ -5971,7 +5971,7 @@ function SkillsView() {
             <input
               type="text"
               placeholder="Search skills..."
-              className="w-full pl-9 pr-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition"
+              className="w-full pl-9 pr-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition"
             />
           </div>
           <button
@@ -5991,11 +5991,11 @@ function SkillsView() {
             key={t}
             onClick={() => setTab(t)}
             className={`relative pb-3 text-[13px] font-medium transition ${
-              tab === t ? 'text-[#2563EB]' : 'text-[#6B7280] hover:text-[#1C1E21]'
+              tab === t ? 'text-[#7C3AED]' : 'text-[#6B7280] hover:text-[#1C1E21]'
             }`}
           >
             {t}
-            {tab === t && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#2563EB] rounded-full" />}
+            {tab === t && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#7C3AED] rounded-full" />}
           </button>
         ))}
       </div>
@@ -6005,13 +6005,16 @@ function SkillsView() {
         {filtered.map((s) => (
           <div
             key={s.name}
-            className="rounded-xl bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/15 hover:shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all cursor-pointer p-5"
+            className="rounded-xl bg-white border border-[#E6E8EC] hover:border-[rgba(124,58,237,0.30)] hover:shadow-[0_6px_18px_-10px_rgba(124,58,237,0.35)] transition-all cursor-pointer p-5"
           >
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-[14.5px] font-semibold text-[#1C1E21]">{s.name}</h3>
+              <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1px solid rgba(124,58,237,0.20)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 2px 6px -3px rgba(124,58,237,0.30)' }}>
+                <Zap className="w-[14px] h-[14px]" style={{ color: '#7C3AED' }} strokeWidth={2.2} />
+              </span>
+              <h3 className="text-[14.5px] font-semibold text-[#1C1E21] flex-1 min-w-0 truncate">{s.name}</h3>
               <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10.5px] font-semibold tracking-wide uppercase ${
                 s.type === 'Predefined'
-                  ? 'bg-[#EFF6FF] text-[#2563EB]'
+                  ? 'bg-[#F5F3FF] text-[#7C3AED]'
                   : 'bg-[#F3F4F6] text-[#4B5563]'
               }`}>
                 {s.type}
