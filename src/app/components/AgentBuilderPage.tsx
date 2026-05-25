@@ -1994,113 +1994,116 @@ function MJCreateAgentForm({
           </section>
 
           {/* ADVANCED OPTIONS */}
-          <section className="mb-10 pt-2">
+          <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
             <button
               type="button"
               onClick={() => setAdvOpen((v) => !v)}
-              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1C1E21] hover:text-black active:scale-[0.98]"
+              className="w-full flex items-start justify-between gap-4 text-left active:scale-[0.998]"
               style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
             >
-              Advanced options
-              <ChevronDown
-                className="w-3.5 h-3.5"
-                style={{ transform: advOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
-              />
+              <div>
+                <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Advanced</h2>
+                <p className="text-[14px] text-[#6B7280]">Fine-tune the model, behavior, and memory for {name.trim() || 'this agent'}.</p>
+              </div>
+              <span
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B7280] flex-shrink-0 mt-1 hover:bg-[#F3F4F6]"
+                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                <ChevronDown
+                  className="w-4 h-4"
+                  style={{ transform: advOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
+                />
+              </span>
             </button>
             {advOpen && (
-              <div className="mt-5" style={{ animation: 'mjAdvIn 240ms cubic-bezier(0.23,1,0.32,1) both' }}>
+              <div className="mt-6 space-y-5" style={{ animation: 'mjAdvIn 240ms cubic-bezier(0.23,1,0.32,1) both' }}>
                 <style>{`@keyframes mjAdvIn { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
-                <h3 className="text-[20px] font-semibold tracking-tight text-[#1C1E21] mb-1">Advanced</h3>
-                <p className="text-[13.5px] text-[#6B7280] mb-7">Fine-tune the model, behavior, and memory for {name.trim() || 'this agent'}.</p>
-
-                {/* Model & Behavior */}
-                <div className="mb-9">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Bot className="w-[15px] h-[15px] text-[#1C1E21]" />
-                    <h4 className="text-[14px] font-semibold text-[#1C1E21]">Model & Behavior</h4>
+                <div>
+                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Model</label>
+                  <div className="relative">
+                    <select
+                      value={advModel}
+                      onChange={(e) => setAdvModel(e.target.value)}
+                      className="w-full h-10 pl-3 pr-9 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] appearance-none focus:outline-none focus:border-[#1C1E21]"
+                      style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                    >
+                      <option>Zuper Lite</option>
+                      <option>Zuper Pro</option>
+                      <option>Zuper Max</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-[#9CA3AF] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
-                  <div className="grid grid-cols-2 gap-7">
-                    <div>
-                      <p className="text-[10.5px] font-semibold text-[#9CA3AF] tracking-[0.08em] uppercase mb-2">Model</p>
-                      <div className="relative">
-                        <select
-                          value={advModel}
-                          onChange={(e) => setAdvModel(e.target.value)}
-                          className="w-full h-11 pl-3.5 pr-9 rounded-xl bg-white border border-[#E6E8EC] text-[14px] font-medium text-[#1C1E21] appearance-none focus:outline-none focus:border-[#1C1E21]"
-                          style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                        >
-                          <option>Zuper Lite</option>
-                          <option>Zuper Pro</option>
-                          <option>Zuper Max</option>
-                        </select>
-                        <ChevronDown className="w-4 h-4 text-[#9CA3AF] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      </div>
-                      <p className="text-[12px] text-[#9CA3AF] mt-2">Larger models reason better but cost more per run.</p>
-                    </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-[10.5px] font-semibold text-[#9CA3AF] tracking-[0.08em] uppercase">Temperature</p>
-                        <p className="text-[14px] font-semibold text-[#1C1E21]">{advTemp.toFixed(2)}</p>
-                      </div>
-                      <input
-                        type="range"
-                        min={0}
-                        max={1}
-                        step={0.05}
-                        value={advTemp}
-                        onChange={(e) => setAdvTemp(parseFloat(e.target.value))}
-                        className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
-                        style={{
-                          background: `linear-gradient(to right, #1C1E21 0%, #1C1E21 ${advTemp * 100}%, #E6E8EC ${advTemp * 100}%, #E6E8EC 100%)`,
-                          marginTop: 8,
-                        }}
-                      />
-                      <style>{`input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 999px; background: #1C1E21; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.18); border: 2px solid #fff; } input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 999px; background: #1C1E21; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.18); border: 2px solid #fff; }`}</style>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-[11.5px] text-[#9CA3AF]">0.0 · precise</span>
-                        <span className="text-[11.5px] text-[#9CA3AF]">creative · 1.0</span>
-                      </div>
-                    </div>
+                  <p className="text-[12px] text-[#9CA3AF] mt-1.5">Larger models reason better but cost more per run.</p>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-[13px] font-medium text-[#1C1E21]">Temperature</label>
+                    <span className="text-[13px] font-semibold text-[#1C1E21] tabular-nums">{advTemp.toFixed(2)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={advTemp}
+                    onChange={(e) => setAdvTemp(parseFloat(e.target.value))}
+                    className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #1C1E21 0%, #1C1E21 ${advTemp * 100}%, #E6E8EC ${advTemp * 100}%, #E6E8EC 100%)`,
+                    }}
+                  />
+                  <style>{`input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 999px; background: #1C1E21; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.18); border: 2px solid #fff; } input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 999px; background: #1C1E21; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.18); border: 2px solid #fff; }`}</style>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-[11.5px] text-[#9CA3AF]">0.0 · precise</span>
+                    <span className="text-[11.5px] text-[#9CA3AF]">creative · 1.0</span>
                   </div>
                 </div>
 
-                {/* Memory */}
                 <div>
-                  <h4 className="text-[18px] font-semibold tracking-tight text-[#1C1E21] mb-4">Memory</h4>
-                  <div className="grid grid-cols-2 gap-3">
+                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Memory</label>
+                  <div className="grid grid-cols-2 gap-2.5">
                     {[
-                      { key: 'recent', label: 'Recent Messages', desc: 'Last 20 messages per thread, used as conversational context.', icon: MessageSquare, on: advRecent, toggle: () => setAdvRecent((v) => !v) },
-                      { key: 'working', label: 'Working Memory', desc: 'User preferences and session context the agent learns over time.', icon: Database, on: advWorking, toggle: () => setAdvWorking((v) => !v) },
+                      { key: 'recent', label: 'Recent Messages', desc: 'Last 20 messages per thread, used as conversational context.', icon: MessageSquare, tint: '#FFE0CC', iconColor: '#EA580C', on: advRecent, toggle: () => setAdvRecent((v) => !v) },
+                      { key: 'working', label: 'Working Memory', desc: 'User preferences and session context the agent learns over time.', icon: Database, tint: '#DBEAFE', iconColor: '#2563EB', on: advWorking, toggle: () => setAdvWorking((v) => !v) },
                     ].map((m) => {
                       const Icon = m.icon;
                       return (
                         <button
                           key={m.key}
                           onClick={m.toggle}
-                          className="text-left rounded-xl px-4 py-4 bg-white active:scale-[0.997]"
+                          className="flex items-center gap-3.5 px-4 py-4 rounded-xl text-left active:scale-[0.997]"
                           style={{
+                            background: '#FFFFFF',
                             border: `1px solid ${m.on ? '#1C1E21' : '#EEF0F3'}`,
                             transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
                           }}
                         >
-                          <div className="flex items-center justify-between gap-2 mb-2">
-                            <div className="flex items-center gap-2">
-                              <Icon className="w-[15px] h-[15px] text-[#1C1E21]" />
-                              <h5 className="text-[14px] font-semibold text-[#1C1E21]">{m.label}</h5>
-                            </div>
-                            <span
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                              style={{
-                                background: m.on ? 'rgba(16,185,129,0.10)' : '#F3F4F6',
-                                color: m.on ? '#059669' : '#9CA3AF',
-                                fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em',
-                              }}
-                            >
-                              <span style={{ width: 5, height: 5, borderRadius: '50%', background: m.on ? '#10B981' : '#9CA3AF', display: 'inline-block' }} />
-                              {m.on ? 'ENABLED' : 'DISABLED'}
-                            </span>
+                          <span
+                            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                            style={{
+                              background: `linear-gradient(160deg, ${m.tint} 0%, #FFFFFF 100%)`,
+                              border: `1px solid ${m.iconColor}33`,
+                              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${m.iconColor}1A`,
+                            }}
+                          >
+                            <Icon className="w-[17px] h-[17px]" style={{ color: m.iconColor }} strokeWidth={2} />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{m.label}</h4>
+                            <p className="text-[12.5px] text-[#6B7280] leading-snug mt-1">{m.desc}</p>
                           </div>
-                          <p className="text-[12.5px] text-[#6B7280] leading-snug">{m.desc}</p>
+                          <span
+                            aria-hidden
+                            className="relative inline-flex items-center flex-shrink-0"
+                            style={{
+                              width: 32, height: 18, borderRadius: 999,
+                              background: m.on ? '#1C1E21' : '#E6E8EC',
+                              transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                            }}
+                          >
+                            <span style={{ position: 'absolute', top: 2, left: m.on ? 16 : 2, width: 14, height: 14, borderRadius: 999, background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.18)', transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)' }} />
+                          </span>
                         </button>
                       );
                     })}
@@ -4470,9 +4473,6 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 >
                   {filteredCatalog.map((c, i) => {
                     const isActive = i === idx;
-                    const persona = catalogPersonas[c.title] || hiredPersonas[c.title] || { name: c.title.split(' ')[0], pronouns: 'it/its' };
-                    const users = 8 + ((i * 7) % 36);
-                    const lastRun = ['2m ago', '8m ago', '24m ago', '1h ago', '3h ago'][i % 5];
                     const offset = i - idx;
                     const dist = Math.abs(offset);
                     const sc = isActive ? 1 : 0.92;
@@ -4486,28 +4486,43 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                       /field|coordinator/.test(rL) ? 'Compliance' :
                       'Sales';
                     const tintInfo = categoryTint[catKey];
+                    const accent = tintInfo.accent;
                     return (
                       <article
                         key={c.title}
                         onClick={() => setCatalogIdx(i)}
-                        className="rounded-2xl bg-white border border-[#E6E8EC] cursor-pointer overflow-hidden flex flex-col flex-shrink-0"
+                        className="relative rounded-2xl cursor-pointer overflow-hidden flex flex-col flex-shrink-0"
                         style={{
                           width: CARD_W,
+                          background: `linear-gradient(180deg, ${accent}1F 0%, ${accent}0A 40%, #FFFFFF 80%)`,
+                          border: '1px solid #EEF0F3',
                           transform: `scale(${sc})`,
                           transformOrigin: '50% 50%',
                           opacity: dist > 3 ? 0 : isActive ? 1 : 0.7,
                           boxShadow: isActive
-                            ? '0 22px 48px -18px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.04)'
-                            : '0 8px 22px -16px rgba(0,0,0,0.10)',
+                            ? '0 2px 4px rgba(28,30,33,0.04), 0 18px 36px -20px rgba(28,30,33,0.22)'
+                            : '0 1px 2px rgba(28,30,33,0.03)',
                           transition:
                             'transform 520ms cubic-bezier(0.23,1,0.32,1), opacity 360ms cubic-bezier(0.23,1,0.32,1), box-shadow 360ms cubic-bezier(0.23,1,0.32,1)',
                         }}
                       >
-                        {/* Hero with avatar — pure pastel, no overlays */}
-                        <div
-                          className="relative overflow-hidden"
-                          style={{ background: tintInfo.tint, height: 320 }}
-                        >
+                        {/* Soft radial bloom behind avatar */}
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute"
+                          style={{
+                            top: -40, left: '50%', transform: 'translateX(-50%)',
+                            width: 360, height: 240,
+                            borderRadius: '50%',
+                            background: `radial-gradient(closest-side, ${accent}55 0%, ${accent}00 70%)`,
+                            filter: 'blur(28px)',
+                          }}
+                        />
+                        {/* Inner highlight line */}
+                        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }} />
+
+                        {/* Avatar — sits on the card gradient, no separate pane */}
+                        <div className="relative flex items-end justify-center overflow-hidden" style={{ height: 320 }}>
                           {isAdded ? (
                             <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-white text-[10px] font-bold tracking-wide uppercase text-[#15803D] z-10">
                               <CheckCircle2 className="w-[12px] h-[12px] text-[#10B981]" fill="#10B981" stroke="white" strokeWidth={2.4} />
@@ -4522,24 +4537,24 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                           <img
                             src={c.img}
                             alt={c.title}
-                            className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[100%] w-auto object-contain"
+                            className="relative h-[100%] w-auto object-contain"
+                            style={{ filter: `drop-shadow(0 8px 18px ${accent}55) drop-shadow(0 2px 4px rgba(0,0,0,0.08))` }}
                             draggable={false}
                           />
                         </div>
 
                         {/* Content */}
-                        <div className="px-5 pt-4 pb-3 flex-1 flex flex-col">
+                        <div className="relative px-5 pt-4 pb-3 flex-1 flex flex-col">
                           <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-1">{c.role.split(' ')[0]}</div>
                           <h3 className="text-[18px] font-semibold text-[#1C1E21] leading-tight mb-2">{c.title}</h3>
                           <p className="text-[12.5px] text-[#4B5563] leading-relaxed line-clamp-2">{c.desc}</p>
                         </div>
 
                         {/* Footer */}
-                        <div className="border-t border-[#F0F1F3] px-5 py-3 flex items-center justify-between">
+                        <div className="relative border-t border-[#F0F1F3] px-5 py-3 flex items-center justify-between">
                           <div className="flex items-center gap-1.5 text-[12.5px]">
                             <Star className="w-[13px] h-[13px] text-[#F59E0B] fill-[#F59E0B]" />
                             <span className="font-semibold text-[#1C1E21]">{c.rating.toFixed(1)}</span>
-                            <span className="text-[#9CA3AF]">· {users} users</span>
                           </div>
                           <button
                             onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
