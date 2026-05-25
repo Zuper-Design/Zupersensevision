@@ -4000,8 +4000,54 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
   const tintAccent = mpPalette[Math.abs(agent.title.split('').reduce((h, c) => (h << 5) - h + c.charCodeAt(0), 0)) % mpPalette.length];
   const tint = { tint: `linear-gradient(180deg, ${tintAccent}1F 0%, ${tintAccent}0A 40%, #FFFFFF 80%)`, accent: tintAccent };
   const [input, setInput] = useState('');
+  const capabilitiesByCategory: Record<string, { icon: typeof Wrench; title: string; desc: string }[]> = {
+    Operations: [
+      { icon: Clock, title: 'Watches your operation 24/7', desc: 'Reads jobs, crew capacity, and live signals — no manual checks.' },
+      { icon: Zap, title: 'Plans before you wake up', desc: 'Drafts tomorrow\'s schedule or fix overnight, ready by 6am.' },
+      { icon: Mail, title: 'Notifies only when it matters', desc: 'Quiet by default. Pings you when a decision is yours to make.' },
+    ],
+    Sales: [
+      { icon: Zap, title: 'Greets inbound in under a minute', desc: 'Qualifies budget, timeline, and fit before the lead cools off.' },
+      { icon: Wrench, title: 'Hands off only the hot ones', desc: 'Closers stop drowning in noise. They see ready-to-buy first.' },
+      { icon: Mail, title: 'Drafts on-brand follow-ups', desc: 'Writes the email in your voice and waits for your approval.' },
+    ],
+    Support: [
+      { icon: Zap, title: 'Catches issues early', desc: 'Spots unhappy customers before they post a 1-star review.' },
+      { icon: Mail, title: 'Drafts the reply for you', desc: 'Pulls from docs + past tickets — sends only when you approve.' },
+      { icon: Wrench, title: 'Escalates with full context', desc: 'When a human is needed, hands off with history attached.' },
+    ],
+    Finance: [
+      { icon: Wrench, title: 'Reads every invoice', desc: 'Reconciles against jobs, flags anomalies, exports to QuickBooks.' },
+      { icon: Clock, title: 'Chases on day 30, 60, 90', desc: 'Past-due invoices get a polite, persistent nudge automatically.' },
+      { icon: Mail, title: 'Keeps your books clean', desc: 'No more late-night reconciliation. Drafts emails for tough cases.' },
+    ],
+    Compliance: [
+      { icon: Wrench, title: 'Checks every job-site sign-off', desc: 'Photos, signatures, timestamps — collected on-the-go.' },
+      { icon: Zap, title: 'Flags missed steps live', desc: 'Crews get a nudge before they leave site. Nothing slips.' },
+      { icon: Mail, title: 'Files audit-ready evidence', desc: 'Logs everything to Zuper so audits become a 10-minute task.' },
+    ],
+  };
+  const capabilities = capabilitiesByCategory[catKey] || capabilitiesByCategory.Operations;
+
+  const quoteByCategory: Record<string, string> = {
+    Operations: `I'll take ${agent.saves.replace('Saves ', '')} of grunt work off your plate and stop tomorrow's surprises from costing you money.`,
+    Sales: `I'll greet every inbound lead in under a minute so your closers spend their day closing — not chasing cold ones.`,
+    Support: `I'll resolve the easy stuff in your voice, catch the unhappy customers early, and keep your rating climbing.`,
+    Finance: `I'll keep cash flowing — chasing overdue invoices on day 30, 60, 90 — so you stop leaving money on the table.`,
+    Compliance: `I'll make sure every job closes clean — sign-offs, photos, evidence — so audits stop being a fire drill.`,
+  };
+  const businessQuote = quoteByCategory[catKey] || quoteByCategory.Operations;
+
+  const greetingByCategory: Record<string, string> = {
+    Operations: `Hey — I'm ${persona.name}. I run while you sleep so your mornings start with a plan, not a fire. Ask me anything — how I'd handle a specific scenario, what I read, where I draw the line.`,
+    Sales: `Hey — I'm ${persona.name}. My job is to make sure no inbound lead ever sits cold. Ask me anything — how I qualify, where I hand off, what I'd say to a tough prospect.`,
+    Support: `Hey — I'm ${persona.name}. I'm here to be a calm voice when your customers need answers. Ask me anything — how I learn from your docs, when I escalate, what my replies sound like.`,
+    Finance: `Hey — I'm ${persona.name}. I keep your cash flow steady without you babysitting the books. Ask me anything — how I chase, when I escalate, what I never touch.`,
+    Compliance: `Hey — I'm ${persona.name}. I make sure every job closes clean and every step is logged. Ask me anything — what I check, when I flag, how I keep crews moving.`,
+  };
+
   const [messages, setMessages] = useState<{ from: 'agent' | 'user'; text: string; rich?: string }[]>([
-    { from: 'agent', text: `Hey — I'm ${persona.name}. ${catalogOutcomes[agent.title] || agent.desc} Ask me anything below, or pick one of those quick prompts.` },
+    { from: 'agent', text: greetingByCategory[catKey] || greetingByCategory.Operations },
   ]);
   const [sending, setSending] = useState(false);
   const [hiredOpen, setHiredOpen] = useState(false);
@@ -4009,11 +4055,6 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
   const price = agent.featured ? 'Free' : '$12/mo';
   const saves = agent.saves.replace('Saves ', '');
   const tools = ['Zuper', 'Gmail', 'Slack', 'Webhooks'];
-  const capabilities = [
-    { icon: Wrench, title: 'Reads your Zuper data', desc: 'Jobs, contacts, schedules, invoices — all in context.' },
-    { icon: Zap, title: 'Triggers automatically', desc: 'Schedules, mentions, webhooks. I show up exactly when needed.' },
-    { icon: Mail, title: 'Sends on-brand replies', desc: 'Drafts emails and SMS in your voice. Sends only when you approve.' },
-  ];
   const suggestions = [
     'What exactly do you do?',
     'How long is setup?',
@@ -4154,7 +4195,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                 I'm <span style={{ color: tint.accent }}>{persona.name}</span> agent
               </h2>
               <p className="text-[13px] text-[#4B5563] leading-relaxed mb-3 max-w-[460px]">
-                {catalogOutcomes[agent.title] || agent.desc}
+                {agent.desc}
               </p>
 
               <div className="flex items-center gap-3 mb-4 text-[11.5px] text-[#6B7280]">
@@ -4307,7 +4348,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
           <div className="rounded-2xl border border-[#E6E8EC] p-4" style={{ background: `linear-gradient(180deg, ${tint.accent}0D 0%, #FFFFFF 100%)` }}>
             <Quote className="w-[14px] h-[14px] mb-2" style={{ color: tint.accent }} strokeWidth={2.5} />
             <p className="text-[12.5px] text-[#1C1E21] leading-[1.55] italic">
-              "{catalogOutcomes[agent.title] || agent.desc}"
+              "{businessQuote}"
             </p>
             <div className="mt-3 pt-3 border-t border-[#F0F1F3] text-[11px] text-[#6B7280]">
               — {persona.name}, your {agent.title.toLowerCase()}
