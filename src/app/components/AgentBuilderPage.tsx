@@ -5,7 +5,7 @@ import {
   LayoutGrid, Bot, BookOpen, MessageSquare, Zap, Database, BarChart3, LifeBuoy, Plus,
   Search, MoreHorizontal, Play, Pencil, List, LayoutGrid as GridIcon, Star, Users, Check, AlertTriangle,
   Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Loader2, Trash2, ChevronDown, X, Upload,
-  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText, Settings,
+  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText, Settings, Quote,
 } from 'lucide-react';
 import avatarBg from '../../imports/agents/avatar-bg.png';
 import agentClassic1 from '../../imports/agents/agent-1.png';
@@ -4116,8 +4116,9 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         </button>
       </div>
 
-      <div className="max-w-[1100px] mx-auto w-full px-6 py-6 pb-24">
-        <div className="flex flex-col gap-4">
+      <div className="max-w-[1180px] mx-auto w-full px-6 py-6 pb-24">
+        <div className="grid grid-cols-[1fr_280px] gap-4 items-start">
+        <div className="flex flex-col gap-4 min-w-0">
         {/* Hero card — agent pitches itself */}
         <div className="relative rounded-3xl border border-[#E6E8EC] overflow-hidden bg-white">
           <div className="grid grid-cols-[260px_1fr] items-stretch">
@@ -4282,6 +4283,37 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
             </div>
           </div>
         </div>
+        </div>
+
+        {/* Right rail — capabilities + quote */}
+        <aside className="flex flex-col gap-3 sticky top-[72px]">
+          <div className="rounded-2xl bg-white border border-[#E6E8EC] p-4">
+            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9CA3AF] mb-2.5">Capabilities</div>
+            <ul className="space-y-2.5">
+              {capabilities.map(({ icon: Icon, title, desc }) => (
+                <li key={title} className="flex items-start gap-2.5">
+                  <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: `${tint.accent}14`, border: `1px solid ${tint.accent}26` }}>
+                    <Icon className="w-[13px] h-[13px]" style={{ color: tint.accent }} strokeWidth={2} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{title}</div>
+                    <div className="text-[11.5px] text-[#6B7280] leading-snug mt-0.5">{desc}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-[#E6E8EC] p-4" style={{ background: `linear-gradient(180deg, ${tint.accent}0D 0%, #FFFFFF 100%)` }}>
+            <Quote className="w-[14px] h-[14px] mb-2" style={{ color: tint.accent }} strokeWidth={2.5} />
+            <p className="text-[12.5px] text-[#1C1E21] leading-[1.55] italic">
+              "{catalogOutcomes[agent.title] || agent.desc}"
+            </p>
+            <div className="mt-3 pt-3 border-t border-[#F0F1F3] text-[11px] text-[#6B7280]">
+              — {persona.name}, your {agent.title.toLowerCase()}
+            </div>
+          </div>
+        </aside>
         </div>
 
       </div>
