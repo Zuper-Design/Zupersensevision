@@ -3346,14 +3346,15 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
-          <div className="relative pt-16 overflow-hidden">
-            {/* Slow-drifting gradient blobs — fixed to viewport bottom so they
-               always bleed up from the bottom edge regardless of page height. */}
-            <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 h-[60vh] overflow-hidden" style={{ zIndex: 0 }}>
+          <div className="relative pt-16 overflow-hidden min-h-[calc(100vh-80px)]">
+            {/* Slow-drifting gradient blobs — anchored to the section bottom
+               so they bleed up from the bottom of the main content (never
+               into the sidebar). */}
+            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] overflow-hidden" style={{ zIndex: 0 }}>
               <span
                 className="absolute"
                 style={{
-                  bottom: '-55%',
+                  bottom: '-70%',
                   left: '-6%',
                   width: 760,
                   height: 760,
@@ -3366,7 +3367,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               <span
                 className="absolute"
                 style={{
-                  bottom: '-60%',
+                  bottom: '-75%',
                   right: '-8%',
                   width: 820,
                   height: 820,
