@@ -3151,7 +3151,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
     <>
       {isEmpty && !isMJ && <div className="mb-8">{marketplaceBanner}</div>}
 
-      {/* My Agents header + search + create */}
+      {/* My Agents header + search + create — hidden on MJ empty state */}
+      {!(isEmpty && isMJ) && (
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
           <div className="flex items-center gap-2.5 mb-1">
@@ -3159,7 +3160,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             <h1 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight">My Agents</h1>
             {!isEmpty && <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold">{visibleCount}</span>}
           </div>
-          <p className="text-[13px] text-[#6B7280]">{isEmpty && isMJ ? 'Spin up your first agent — or hire one from the marketplace.' : 'Manage and monitor your deployed AI agents.'}</p>
+          <p className="text-[13px] text-[#6B7280]">Manage and monitor your deployed AI agents.</p>
         </div>
         {!isEmpty && (
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -3182,6 +3183,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
           </div>
         )}
       </div>
+      )}
 
 
       {isEmpty ? (
@@ -3203,7 +3205,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4 max-w-[760px] mx-auto">
-              {/* Create — primary, light card with orange accent */}
+              {/* Create — blank-canvas card, violet hint */}
               <button
                 onClick={() => setCreating(true)}
                 className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[380px] active:scale-[0.995] group"
@@ -3213,20 +3215,32 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   boxShadow: '0 1px 2px rgba(28,30,33,0.03)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1), border-color 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 8px rgba(28,30,33,0.05), 0 22px 44px -22px rgba(253,80,0,0.28)'; e.currentTarget.style.borderColor = '#E1E4E8'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 8px rgba(28,30,33,0.04), 0 22px 44px -22px rgba(124,58,237,0.22)'; e.currentTarget.style.borderColor = '#E4E6EB'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = '#EEF0F3'; }}
               >
-                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -60, width: 240, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.18), rgba(253,80,0,0) 70%)', filter: 'blur(24px)' }} />
+                {/* Blank-canvas grid */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.5 }} xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <pattern id="mjCreateGrid" width="22" height="22" patternUnits="userSpaceOnUse">
+                      <path d="M22 0 L0 0 0 22" fill="none" stroke="#F0F1F4" strokeWidth="1" />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#mjCreateGrid)" />
+                </svg>
+                {/* Soft violet bloom in the corner */}
+                <span aria-hidden className="pointer-events-none absolute" style={{ top: -90, right: -80, width: 280, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(196,181,253,0.40), rgba(196,181,253,0) 70%)', filter: 'blur(36px)' }} />
+                {/* Top inset highlight */}
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)' }} />
+
                 <span
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-auto relative overflow-hidden"
+                  className="relative w-12 h-12 rounded-2xl flex items-center justify-center mb-auto overflow-hidden"
                   style={{
-                    background: 'linear-gradient(160deg, #FFE0CC 0%, #FFFFFF 100%)',
-                    border: '1px solid rgba(253,80,0,0.22)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7), 0 6px 14px -6px rgba(253,80,0,0.35)',
+                    background: 'linear-gradient(160deg, #EDE9FE 0%, #FFFFFF 100%)',
+                    border: '1px solid rgba(124,58,237,0.20)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 6px 14px -8px rgba(124,58,237,0.30)',
                   }}
                 >
-                  <Plus className="w-5 h-5" style={{ color: '#EA580C' }} strokeWidth={2.6} />
+                  <Plus className="w-5 h-5" style={{ color: '#6D28D9' }} strokeWidth={2.6} />
                 </span>
                 <div className="relative">
                   <h3 className="text-[18px] font-semibold text-[#1C1E21] tracking-tight mb-1.5">Create your own</h3>
