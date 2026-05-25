@@ -3206,7 +3206,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               {/* Create — primary, light card with orange accent */}
               <button
                 onClick={() => setCreating(true)}
-                className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[260px] active:scale-[0.995] group"
+                className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[320px] active:scale-[0.995] group"
                 style={{
                   background: '#FFFFFF',
                   border: '1px solid #EEF0F3',
@@ -3238,29 +3238,70 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 </div>
               </button>
 
-              {/* Marketplace */}
+              {/* Marketplace — marketing-style card */}
               <button
                 onClick={onEnterMarketplace}
-                className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[260px] active:scale-[0.995] group"
+                className="relative rounded-2xl overflow-hidden text-left flex flex-col h-[320px] active:scale-[0.995] group"
                 style={{
-                  background: 'linear-gradient(160deg, #FFF6EF 0%, #FFEBDC 60%, #FFE2CE 100%)',
-                  boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 18px 40px -20px rgba(234,88,12,0.20)',
+                  background: 'linear-gradient(135deg, #FFF0E2 0%, #FFE3CC 35%, #FFCFB0 70%, #FFB590 100%)',
+                  boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 22px 48px -22px rgba(234,88,12,0.30)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 12px -2px rgba(28,30,33,0.06), 0 28px 56px -22px rgba(234,88,12,0.32)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 18px 40px -20px rgba(234,88,12,0.20)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 12px -2px rgba(28,30,33,0.06), 0 32px 60px -22px rgba(234,88,12,0.42)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 22px 48px -22px rgba(234,88,12,0.30)'; }}
               >
-                <span aria-hidden className="pointer-events-none absolute" style={{ top: -60, right: -50, width: 320, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.30), rgba(253,80,0,0) 70%)', filter: 'blur(32px)' }} />
-                <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }} />
-                <div className="relative flex items-end justify-start -space-x-4 mb-auto pt-1" style={{ height: 96 }}>
-                  <img src={agentMarketer} alt="" className="h-[96px] w-auto object-contain object-bottom drop-shadow-[0_6px_12px_rgba(234,88,12,0.25)]" style={{ zIndex: 1 }} draggable={false} />
-                  <img src={agentSupport} alt="" className="h-[96px] w-auto object-contain object-bottom drop-shadow-[0_6px_12px_rgba(234,88,12,0.25)]" style={{ zIndex: 2 }} draggable={false} />
-                  <img src={agentReviews} alt="" className="h-[96px] w-auto object-contain object-bottom drop-shadow-[0_6px_12px_rgba(234,88,12,0.25)]" style={{ zIndex: 1 }} draggable={false} />
+                {/* Decorative grain dots */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.18 }} xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <pattern id="mjMpDots" width="18" height="18" patternUnits="userSpaceOnUse">
+                      <circle cx="1" cy="1" r="1" fill="#B8410E" opacity="0.6" />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#mjMpDots)" />
+                </svg>
+                {/* Radial blooms */}
+                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 360, height: 300, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.45), rgba(253,80,0,0) 70%)', filter: 'blur(36px)' }} />
+                <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -40, width: 260, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(255,180,140,0.55), rgba(255,180,140,0) 70%)', filter: 'blur(40px)' }} />
+                {/* Top inset highlight */}
+                <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent)' }} />
+
+                {/* Top — eyebrow + headline + chips */}
+                <div className="relative px-6 pt-6 z-10">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3" style={{ background: 'linear-gradient(135deg, #F8A88B 0%, #F08465 100%)', boxShadow: '0 4px 12px -4px rgba(234,88,12,0.45)' }}>
+                    <Sparkles className="w-[11px] h-[11px] text-white" fill="currentColor" />
+                    <span className="text-[10.5px] font-bold tracking-[0.10em] uppercase text-white">Sense Marketplace</span>
+                  </span>
+                  <h3 className="text-[22px] font-semibold tracking-tight leading-[1.15] mb-1">
+                    <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
+                    <span style={{ color: '#C2410C' }}>agents.</span>
+                  </h3>
+                  <p className="text-[12.5px] text-[#6B4A2B] leading-snug max-w-[260px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
                 </div>
-                <div className="relative">
-                  <h3 className="text-[18px] font-semibold text-[#1C1E21] tracking-tight mb-1.5">Browse marketplace</h3>
-                  <p className="text-[12.5px] text-[#6B4A2B] leading-snug mb-4">13+ pre-built agents ready to deploy in minutes.</p>
-                  <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1C1E21]">
+
+                {/* Avatars */}
+                <div className="relative flex-1 min-h-0 flex items-end justify-center pt-2 z-10">
+                  <div className="flex items-end -space-x-5" style={{ height: 132 }}>
+                    <img src={agentMarketer} alt="" className="h-[120px] w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(120,40,10,0.30)]" style={{ zIndex: 1, transform: 'translateY(4px)' }} draggable={false} />
+                    <img src={agentSupport} alt="" className="h-[132px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(120,40,10,0.32)]" style={{ zIndex: 3 }} draggable={false} />
+                    <img src={agentReviews} alt="" className="h-[120px] w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(120,40,10,0.30)]" style={{ zIndex: 2, transform: 'translateY(4px)' }} draggable={false} />
+                  </div>
+                </div>
+
+                {/* Bottom — chips + CTA */}
+                <div className="relative px-6 pb-5 z-10">
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10.5px] font-semibold text-[#1C1E21]" style={{ background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(6px)' }}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                      13+ agents
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-[10.5px] font-semibold text-[#1C1E21]" style={{ background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(6px)' }}>
+                      Free starter
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-[10.5px] font-semibold text-[#1C1E21]" style={{ background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(6px)' }}>
+                      Deploys in &lt;24h
+                    </span>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg bg-[#1C1E21] text-white text-[12.5px] font-semibold" style={{ boxShadow: '0 6px 16px -6px rgba(28,30,33,0.4)' }}>
                     Enter marketplace
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
