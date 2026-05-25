@@ -3101,21 +3101,21 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       className="relative overflow-hidden"
       style={{
         borderRadius: 14,
-        background: 'linear-gradient(135deg, #FFF0E2 0%, #FFE8D4 35%, #FFE0CC 70%, #FFEEDB 100%)',
-        border: '1px solid rgba(255, 120, 80, 0.22)',
+        background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 35%, #DDD6FE 70%, #EEF2FF 100%)',
+        border: '1px solid rgba(124, 58, 237, 0.20)',
       }}
     >
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-        <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.4 }} xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.6 }} xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="auMpDotsCompact" width="20" height="20" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="1" fill="#B8410E" opacity="0.18" />
+            <pattern id="auMpGridCompact" width="22" height="22" patternUnits="userSpaceOnUse">
+              <path d="M22 0 L0 0 0 22" fill="none" stroke="#E0DCF0" strokeWidth="1" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill="url(#auMpDotsCompact)" />
+          <rect width="100%" height="100%" fill="url(#auMpGridCompact)" />
         </svg>
-        <div className="absolute" style={{ top: -40, right: -60, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, #FFB68C 0%, #FF9968 45%, transparent 75%)', opacity: 0.45, filter: 'blur(30px)' }} />
-        <div className="absolute" style={{ bottom: -60, left: -40, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, #FFD089 0%, transparent 70%)', opacity: 0.4, filter: 'blur(28px)' }} />
+        <div className="absolute" style={{ top: -40, right: -60, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(167,139,250,0.55) 0%, rgba(167,139,250,0.30) 45%, transparent 75%)', opacity: 0.7, filter: 'blur(30px)' }} />
+        <div className="absolute" style={{ bottom: -60, left: -40, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.32) 0%, transparent 70%)', opacity: 0.6, filter: 'blur(28px)' }} />
       </div>
 
       <div className="relative flex items-center justify-between gap-4 px-5 py-4" style={{ zIndex: 10 }}>
@@ -3123,8 +3123,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{
-              background: 'linear-gradient(135deg, #F8A88B 0%, #F08465 100%)',
-              boxShadow: '0 4px 10px -4px rgba(232, 108, 80, 0.45)',
+              background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
+              boxShadow: '0 4px 10px -4px rgba(124, 58, 237, 0.45)',
             }}
           >
             <Sparkles className="w-[18px] h-[18px] text-white" fill="currentColor" />
@@ -3133,7 +3133,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             <h3 className="text-[14.5px] font-semibold tracking-tight text-[#1C1E21] leading-none">
               Sense Agents Marketplace
             </h3>
-            <span className="px-1.5 py-0.5 rounded bg-white/70 text-[#B8410E] text-[9.5px] font-bold tracking-wide uppercase">New</span>
+            <span className="px-1.5 py-0.5 rounded bg-white/70 text-[#6D28D9] text-[9.5px] font-bold tracking-wide uppercase">New</span>
           </div>
         </div>
         <button
