@@ -3344,9 +3344,16 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                       <Clock className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Trigger</span>
                     </div>
-                    {/* Center avatar placeholder */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[76px] h-[76px] rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1.5px dashed rgba(124,58,237,0.35)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 20px -10px rgba(124,58,237,0.30)' }}>
-                      <Plus className="w-9 h-9 text-[#7C3AED]" strokeWidth={2.2} />
+                    {/* Center plus tile — matches the top-left tile */}
+                    <div
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-2xl flex items-center justify-center overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(160deg, #EDE9FE 0%, #FFFFFF 100%)',
+                        border: '1px solid rgba(124,58,237,0.20)',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 20px -10px rgba(124,58,237,0.30)',
+                      }}
+                    >
+                      <Plus className="w-7 h-7" style={{ color: '#6D28D9' }} strokeWidth={2.6} />
                     </div>
                     {/* Sparkle accents */}
                     <Sparkles className="absolute left-4 bottom-4 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" style={{ transform: 'rotate(-15deg)' }} />
