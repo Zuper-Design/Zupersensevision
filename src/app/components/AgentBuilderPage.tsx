@@ -3302,10 +3302,10 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = '#EEF0F3'; }}
               >
                 {/* Blank-canvas grid */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.5 }} xmlns="http://www.w3.org/2000/svg">
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <pattern id="mjCreateGrid" width="22" height="22" patternUnits="userSpaceOnUse">
-                      <path d="M22 0 L0 0 0 22" fill="none" stroke="#F0F1F4" strokeWidth="1" />
+                      <path d="M22 0 L0 0 0 22" fill="none" stroke="#E2E4EA" strokeWidth="1" />
                     </pattern>
                   </defs>
                   <rect width="100%" height="100%" fill="url(#mjCreateGrid)" />
@@ -3314,17 +3314,6 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 <span aria-hidden className="pointer-events-none absolute" style={{ top: -90, right: -80, width: 280, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(196,181,253,0.40), rgba(196,181,253,0) 70%)', filter: 'blur(36px)' }} />
                 {/* Top inset highlight */}
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)' }} />
-
-                <span
-                  className="relative w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(160deg, #EDE9FE 0%, #FFFFFF 100%)',
-                    border: '1px solid rgba(124,58,237,0.20)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 6px 14px -8px rgba(124,58,237,0.30)',
-                  }}
-                >
-                  <Plus className="w-5 h-5" style={{ color: '#6D28D9' }} strokeWidth={2.6} />
-                </span>
 
                 {/* Blank-canvas illustration */}
                 <div className="relative flex-1 flex items-center justify-center my-2">
