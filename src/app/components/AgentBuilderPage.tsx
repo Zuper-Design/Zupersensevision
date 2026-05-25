@@ -887,20 +887,16 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-center gap-1.5 h-10 rounded-lg bg-white text-[12.5px] font-medium text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
+        className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-white text-[13.5px] font-semibold text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
         style={{
-          border: '1.25px dashed #D1D5DB',
-          transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+          border: '1.5px dashed #B3B8C0',
+          transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
         }}
         onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
-        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#B3B8C0')}
       >
-        <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+        <Plus className="w-4 h-4" strokeWidth={2.6} />
         {buttonLabel}
-        <ChevronDown
-          className="w-3 h-3 text-[#9CA3AF]"
-          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 180ms cubic-bezier(0.23,1,0.32,1)' }}
-        />
       </button>
 
       {open && (
@@ -1223,6 +1219,11 @@ function MJCreateAgentForm({
   const [slackMentions, setSlackMentions] = useState('');
   const [toolEmailTo, setToolEmailTo] = useState('');
   const [toolEmailSubject, setToolEmailSubject] = useState('[Sense] ');
+  const [advOpen, setAdvOpen] = useState(false);
+  const [advModel, setAdvModel] = useState('Zuper Lite');
+  const [advTemp, setAdvTemp] = useState(0.7);
+  const [advRecent, setAdvRecent] = useState(false);
+  const [advWorking, setAdvWorking] = useState(false);
   const avatarMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!avatarOpen) return;
@@ -1990,6 +1991,123 @@ function MJCreateAgentForm({
               createLabel="Create knowledge source"
               onCreate={() => {}}
             />
+          </section>
+
+          {/* ADVANCED OPTIONS */}
+          <section className="mb-10 pt-2">
+            <button
+              type="button"
+              onClick={() => setAdvOpen((v) => !v)}
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1C1E21] hover:text-black active:scale-[0.98]"
+              style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+            >
+              Advanced options
+              <ChevronDown
+                className="w-3.5 h-3.5"
+                style={{ transform: advOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
+              />
+            </button>
+            {advOpen && (
+              <div className="mt-5" style={{ animation: 'mjAdvIn 240ms cubic-bezier(0.23,1,0.32,1) both' }}>
+                <style>{`@keyframes mjAdvIn { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
+                <h3 className="text-[20px] font-semibold tracking-tight text-[#1C1E21] mb-1">Advanced</h3>
+                <p className="text-[13.5px] text-[#6B7280] mb-7">Fine-tune the model, behavior, and memory for {name.trim() || 'this agent'}.</p>
+
+                {/* Model & Behavior */}
+                <div className="mb-9">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Bot className="w-[15px] h-[15px] text-[#1C1E21]" />
+                    <h4 className="text-[14px] font-semibold text-[#1C1E21]">Model & Behavior</h4>
+                  </div>
+                  <div className="grid grid-cols-2 gap-7">
+                    <div>
+                      <p className="text-[10.5px] font-semibold text-[#9CA3AF] tracking-[0.08em] uppercase mb-2">Model</p>
+                      <div className="relative">
+                        <select
+                          value={advModel}
+                          onChange={(e) => setAdvModel(e.target.value)}
+                          className="w-full h-11 pl-3.5 pr-9 rounded-xl bg-white border border-[#E6E8EC] text-[14px] font-medium text-[#1C1E21] appearance-none focus:outline-none focus:border-[#1C1E21]"
+                          style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        >
+                          <option>Zuper Lite</option>
+                          <option>Zuper Pro</option>
+                          <option>Zuper Max</option>
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-[#9CA3AF] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                      <p className="text-[12px] text-[#9CA3AF] mt-2">Larger models reason better but cost more per run.</p>
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-[10.5px] font-semibold text-[#9CA3AF] tracking-[0.08em] uppercase">Temperature</p>
+                        <p className="text-[14px] font-semibold text-[#1C1E21]">{advTemp.toFixed(2)}</p>
+                      </div>
+                      <input
+                        type="range"
+                        min={0}
+                        max={1}
+                        step={0.05}
+                        value={advTemp}
+                        onChange={(e) => setAdvTemp(parseFloat(e.target.value))}
+                        className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, #1C1E21 0%, #1C1E21 ${advTemp * 100}%, #E6E8EC ${advTemp * 100}%, #E6E8EC 100%)`,
+                          marginTop: 8,
+                        }}
+                      />
+                      <style>{`input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 999px; background: #1C1E21; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.18); border: 2px solid #fff; } input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 999px; background: #1C1E21; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.18); border: 2px solid #fff; }`}</style>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-[11.5px] text-[#9CA3AF]">0.0 · precise</span>
+                        <span className="text-[11.5px] text-[#9CA3AF]">creative · 1.0</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Memory */}
+                <div>
+                  <h4 className="text-[18px] font-semibold tracking-tight text-[#1C1E21] mb-4">Memory</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { key: 'recent', label: 'Recent Messages', desc: 'Last 20 messages per thread, used as conversational context.', icon: MessageSquare, on: advRecent, toggle: () => setAdvRecent((v) => !v) },
+                      { key: 'working', label: 'Working Memory', desc: 'User preferences and session context the agent learns over time.', icon: Database, on: advWorking, toggle: () => setAdvWorking((v) => !v) },
+                    ].map((m) => {
+                      const Icon = m.icon;
+                      return (
+                        <button
+                          key={m.key}
+                          onClick={m.toggle}
+                          className="text-left rounded-xl px-4 py-4 bg-white active:scale-[0.997]"
+                          style={{
+                            border: `1px solid ${m.on ? '#1C1E21' : '#EEF0F3'}`,
+                            transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                          }}
+                        >
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                              <Icon className="w-[15px] h-[15px] text-[#1C1E21]" />
+                              <h5 className="text-[14px] font-semibold text-[#1C1E21]">{m.label}</h5>
+                            </div>
+                            <span
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                              style={{
+                                background: m.on ? 'rgba(16,185,129,0.10)' : '#F3F4F6',
+                                color: m.on ? '#059669' : '#9CA3AF',
+                                fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em',
+                              }}
+                            >
+                              <span style={{ width: 5, height: 5, borderRadius: '50%', background: m.on ? '#10B981' : '#9CA3AF', display: 'inline-block' }} />
+                              {m.on ? 'ENABLED' : 'DISABLED'}
+                            </span>
+                          </div>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug">{m.desc}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
         </div>
       </div>
