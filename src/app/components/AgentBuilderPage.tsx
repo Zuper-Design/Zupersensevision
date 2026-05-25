@@ -5887,141 +5887,236 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [instructions, setInstructions] = useState('');
+  const [instructionsOpen, setInstructionsOpen] = useState(false);
+  const [instructionsDraft, setInstructionsDraft] = useState('');
+  const instructionsTextareaRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!instructionsOpen) return;
+    setInstructionsDraft(instructions);
+    const t = setTimeout(() => instructionsTextareaRef.current?.focus(), 60);
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setInstructionsOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => { clearTimeout(t); document.removeEventListener('keydown', onKey); };
+  }, [instructionsOpen, instructions]);
   const [enabledTools, setEnabledTools] = useState<Record<string, boolean>>({});
   const canSave = name.trim().length > 0;
-
-  const enabledCount = Object.values(enabledTools).filter(Boolean).length;
+  const missingHint = !canSave ? 'Give your skill a name to continue' : null;
 
   return (
-    <div className="max-w-[860px] mx-auto">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-[14px] font-normal leading-none mb-4" aria-label="Breadcrumb">
-        <button onClick={onCancel} className="text-[#9CA3AF] hover:text-[#6B7280] transition leading-none">Skills</button>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M9 18l6-6-6-6" />
-        </svg>
-        <span className="text-[#6B7280] leading-none">New Skill</span>
-      </nav>
+    <div className="absolute inset-0 bg-white overflow-y-auto flex flex-col">
+      {/* Instructions modal */}
+      {instructionsOpen && (
+        <>
+          <style>{`
+            @keyframes skInstOverlay { from { opacity: 0 } to { opacity: 1 } }
+            @keyframes skInstModal { from { opacity: 0; transform: scale(0.96) translateY(8px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+          `}</style>
+          <div
+            className="fixed inset-0 z-[400] bg-black/40 backdrop-blur-sm"
+            style={{ animation: 'skInstOverlay 180ms cubic-bezier(0.23,1,0.32,1) both' }}
+            onClick={() => setInstructionsOpen(false)}
+          />
+          <div className="fixed inset-0 z-[410] flex items-center justify-center p-4 pointer-events-none">
+            <div
+              className="pointer-events-auto bg-white w-full max-w-[640px] rounded-2xl overflow-hidden"
+              style={{ boxShadow: '0 24px 60px rgba(30,34,60,0.22)', animation: 'skInstModal 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-6 pt-5 pb-3">
+                <div>
+                  <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">Instructions</h3>
+                  <p className="text-[12.5px] text-[#6B7280] mt-1">Injected into the agent's prompt when this skill is active.</p>
+                </div>
+                <button
+                  onClick={() => setInstructionsOpen(false)}
+                  className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="px-6 pb-4">
+                <textarea
+                  ref={instructionsTextareaRef}
+                  value={instructionsDraft}
+                  onChange={(e) => setInstructionsDraft(e.target.value)}
+                  placeholder={`Example:\n• Read the latest email from the customer\n• Identify the job ID mentioned\n• Draft a polite reply confirming the appointment time\n• Wait for approval before sending`}
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
+                  style={{ minHeight: 520, transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                />
+              </div>
+              <div className="px-6 py-3 border-t border-[#F0F1F3] flex items-center justify-between">
+                <span className="text-[11.5px] text-[#9CA3AF]">{instructionsDraft.trim().length} characters</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setInstructionsOpen(false)}
+                    className="px-3 h-9 rounded-lg text-[13px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] active:scale-[0.98]"
+                    style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => { setInstructions(instructionsDraft); setInstructionsOpen(false); }}
+                    className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] active:scale-[0.98]"
+                    style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6 gap-6">
-        <h1 className="text-[24px] font-semibold text-[#1C1E21] tracking-tight leading-tight">Create a new skill</h1>
-        <div className="flex items-center gap-2 flex-shrink-0 pt-1">
+      {/* Header bar */}
+      <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
+        <div className="flex items-center gap-2">
           <button
             onClick={onCancel}
-            className="px-4 h-9 rounded-lg border border-[#E6E8EC] bg-white text-[#1C1E21] text-[13px] font-medium hover:bg-[#F8F9FB] transition"
+            className="w-8 h-8 -ml-2 rounded-lg hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#6B7280]"
+            style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+            aria-label="Back"
           >
-            Cancel
+            <ChevronLeft className="w-[16px] h-[16px]" />
           </button>
+          <span className="text-[14px] font-semibold text-[#1C1E21] tracking-tight">{name.trim() || 'New skill'}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          {missingHint && <span className="text-[11.5px] text-[#9CA3AF]">{missingHint}</span>}
           <button
             onClick={canSave ? onSave : undefined}
             disabled={!canSave}
-            className={`inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-white text-[13px] font-semibold transition-all ${
-              canSave
-                ? 'bg-[#1C1E21] hover:bg-black shadow-[0_2px_6px_rgba(28,30,33,0.18)] cursor-pointer'
-                : 'bg-[#9CA3AF] cursor-not-allowed'
-            }`}
+            className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canSave ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-              <polyline points="17 21 17 13 7 13 7 21" />
-              <polyline points="7 3 7 8 15 8" />
-            </svg>
-            Save Skill
+            <Check className="w-[12px] h-[12px]" strokeWidth={2.8} />
+            Save skill
           </button>
         </div>
       </div>
 
-      {/* Section 1: Basics */}
-      <FormSection
-        step={1}
-        title="Basics"
-        subtitle="Give your skill a clear name and a short summary that teammates will see."
-      >
-        <div className="grid grid-cols-1 gap-5">
-          <Field label="Name" required>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Daily Digest Emailer"
-              className="w-full px-3.5 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition"
-            />
-          </Field>
-          <Field label="Description">
-            <input
-              type="text"
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              placeholder="Short description shown on skill cards"
-              className="w-full px-3.5 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition"
-            />
-          </Field>
-        </div>
-      </FormSection>
-
-      {/* Section 2: Instructions */}
-      <FormSection
-        step={2}
-        title="Instructions"
-        subtitle="Tell the agent exactly what to do when this skill is active. This is injected into the agent's prompt."
-      >
-        <textarea
-          value={instructions}
-          onChange={(e) => setInstructions(e.target.value)}
-          placeholder={`Example:\n• Read the latest email from the customer\n• Identify the job ID mentioned\n• Draft a polite reply confirming the appointment time\n• Wait for approval before sending`}
-          rows={10}
-          className="w-full px-3.5 py-3 rounded-lg bg-white border border-[#E6E8EC] text-[13.5px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition resize-y leading-relaxed font-mono"
-        />
-        <p className="mt-2 text-[11.5px] text-[#9CA3AF]">{instructions.length} characters</p>
-      </FormSection>
-
-      {/* Section 3: Tools */}
-      <FormSection
-        step={3}
-        title="Tools"
-        subtitle={
-          <>
-            <span className="font-semibold text-[#1C1E21]">Tools</span> let your skill take action — send messages, fetch data, or call external services. Toggle on the ones this skill needs.
-          </>
-        }
-      >
-        <div className="space-y-2">
-          {skillTools.map((t) => {
-            const enabled = !!enabledTools[t.key];
-            return (
-              <div
-                key={t.key}
-                onClick={() => setEnabledTools((prev) => ({ ...prev, [t.key]: !enabled }))}
-                className={`relative flex items-center gap-3 px-4 py-3 rounded-xl border transition cursor-pointer ${
-                  enabled
-                    ? 'border-[#1C1E21]/20 bg-[#FAFAFB]'
-                    : 'border-[#E6E8EC] hover:border-[#1C1E21]/15 hover:bg-[#FAFAFB]'
-                }`}
+      <div className="flex-1 min-h-0">
+        <div className="max-w-[820px] mx-auto px-6 py-10">
+          {/* Hero strip */}
+          <div className="mb-8 rounded-2xl px-8 py-8" style={{ background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 60%, #DDD6FE 100%)' }}>
+            <div className="flex items-center gap-5">
+              <span
+                className="w-[88px] h-[88px] rounded-2xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(160deg, #8B5CF6 0%, #EC4899 100%)',
+                  boxShadow: '0 12px 28px -10px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.25)',
+                }}
               >
-                <div className="w-9 h-9 rounded-lg bg-[#F3F4F6] flex items-center justify-center flex-shrink-0">
-                  <t.Icon className="w-[16px] h-[16px] text-[#6B7280]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[13.5px] font-semibold text-[#1C1E21] mb-0.5 tracking-tight">{t.name}</div>
-                  <div className="text-[12px] text-[#6B7280] leading-snug">{t.desc}</div>
-                </div>
+                <Wand2 className="w-[34px] h-[34px] text-white" strokeWidth={2} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-[22px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate">{name.trim() || 'New skill'}</h2>
+                <p className="text-[14px] text-[#4C2A8F] mt-1.5 leading-snug line-clamp-2">{desc.trim() || 'Add a short summary teammates will see on this skill.'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* IDENTITY */}
+          <section className="mb-10">
+            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Identity</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">Give your skill a clear name and a short summary teammates will see.</p>
+
+            <div className="space-y-5">
+              <div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Daily Digest Emailer"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Description</label>
+                <input
+                  type="text"
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                  placeholder="Short description shown on skill cards"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                />
+              </div>
+              <div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
                 <button
                   type="button"
-                  onClick={(e) => { e.stopPropagation(); setEnabledTools((prev) => ({ ...prev, [t.key]: !enabled })); }}
-                  className={`relative inline-flex items-center w-[36px] h-[20px] p-0 rounded-full border-0 transition-colors flex-shrink-0 ${enabled ? 'bg-[#1C1E21]' : 'bg-[#E5E7EB]'}`}
-                  aria-pressed={enabled}
-                  aria-label={`Toggle ${t.name}`}
+                  onClick={() => setInstructionsOpen(true)}
+                  className="w-full flex flex-col items-start text-left px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] hover:border-[#1C1E21]/40 active:scale-[0.997]"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)', minHeight: 84 }}
                 >
-                  <span
-                    className={`absolute top-1/2 -translate-y-1/2 w-[16px] h-[16px] bg-white rounded-full shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 ${enabled ? 'left-[18px]' : 'left-[2px]'}`}
-                  />
+                  {instructions.trim() ? (
+                    <span className="block text-[14px] font-normal text-[#1C1E21] leading-snug whitespace-pre-wrap line-clamp-3">{instructions}</span>
+                  ) : (
+                    <span className="block text-[14px] font-normal text-[#C0C4CC] leading-snug">Tell the agent exactly what to do when this skill is active.</span>
+                  )}
                 </button>
               </div>
-            );
-          })}
+            </div>
+          </section>
+
+          {/* TOOLS */}
+          <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
+            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Tools</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">Pick the tools this skill can use — send messages, fetch data, or call external services.</p>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              {skillTools.map((t, i) => {
+                const enabled = !!enabledTools[t.key];
+                const accents = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
+                const accent = accents[i % accents.length];
+                const accentSoft = `${accent}26`;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setEnabledTools((prev) => ({ ...prev, [t.key]: !enabled }))}
+                    className="flex items-center gap-3.5 px-4 py-4 rounded-xl text-left active:scale-[0.997]"
+                    style={{
+                      background: '#FFFFFF',
+                      border: `1px solid ${enabled ? '#1C1E21' : '#EEF0F3'}`,
+                      transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                  >
+                    <span
+                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                      style={{
+                        background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
+                        border: `1px solid ${accent}33`,
+                        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
+                      }}
+                    >
+                      <t.Icon className="w-[17px] h-[17px]" style={{ color: accent }} strokeWidth={2} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{t.name}</h4>
+                      <p className="text-[12.5px] text-[#6B7280] leading-snug mt-1">{t.desc}</p>
+                    </div>
+                    <span
+                      aria-hidden
+                      className="relative inline-flex items-center flex-shrink-0"
+                      style={{
+                        width: 32, height: 18, borderRadius: 999,
+                        background: enabled ? '#1C1E21' : '#E6E8EC',
+                        transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                    >
+                      <span style={{ position: 'absolute', top: 2, left: enabled ? 16 : 2, width: 14, height: 14, borderRadius: 999, background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.18)', transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)' }} />
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
         </div>
-      </FormSection>
+      </div>
     </div>
   );
 }
