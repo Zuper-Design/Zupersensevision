@@ -1131,31 +1131,42 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
 function AddedItem({
   item,
   onRemove,
+  detail,
 }: {
   item: { key: string; label: string; desc: string; icon: any; tint?: string; iconColor?: string };
   onRemove: () => void;
+  detail?: string | null;
 }) {
   const Icon = item.icon;
+  const accent = item.iconColor || '#4B5563';
+  const accentSoft = item.tint || '#F3F4F6';
   return (
     <div
-      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-white"
+      className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl border border-[#EEF0F3] bg-white"
       style={{ animation: 'addedItemIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}
     >
       <style>{`@keyframes addedItemIn { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
-      <span className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: item.tint || '#F3F4F6' }}>
-        <Icon className="w-[13px] h-[13px]" style={{ color: item.iconColor || '#4B5563' }} />
+      <span
+        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+        style={{
+          background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
+          border: `1px solid ${accent}33`,
+          boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
+        }}
+      >
+        <Icon className="w-[17px] h-[17px]" style={{ color: accent }} strokeWidth={2} />
       </span>
       <div className="flex-1 min-w-0">
-        <h4 className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
-        <p className="text-[11px] text-[#6B7280] leading-snug mt-0.5 truncate">{item.desc}</p>
+        <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
+        <p className="text-[12.5px] text-[#6B7280] leading-snug mt-1">{detail || item.desc}</p>
       </div>
       <button
         onClick={onRemove}
-        className="w-6 h-6 -mr-0.5 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+        className="w-7 h-7 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
         style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
         aria-label={`Remove ${item.label}`}
       >
-        <X className="w-3.5 h-3.5" />
+        <X className="w-4 h-4" />
       </button>
     </div>
   );
@@ -1179,14 +1190,31 @@ function MJCreateAgentForm({
   const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [instructionsDraft, setInstructionsDraft] = useState('');
+  const [instructionsEnhancing, setInstructionsEnhancing] = useState(false);
   const instructionsTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const instructionsDraftRef = useRef(instructionsDraft);
+  useEffect(() => { instructionsDraftRef.current = instructionsDraft; }, [instructionsDraft]);
+  const closeInstructions = () => setInstructionsOpen(false);
+  const enhanceInstructions = () => {
+    if (instructionsEnhancing) return;
+    setInstructionsEnhancing(true);
+    setTimeout(() => {
+      const t = instructionsDraftRef.current.trim();
+      const base = t || "You're a friendly dispatcher. Acknowledge each customer by name, summarize the issue, and offer the next available appointment.";
+      setInstructionsDraft(
+        `You are a focused, professional agent. ${base}\n\nBehavior:\n• Confirm understanding before taking action\n• Reference customer or job context whenever it exists\n• Keep replies concise and structured\n• Ask for missing details rather than guessing`
+      );
+      setInstructionsEnhancing(false);
+    }, 600);
+  };
   useEffect(() => {
     if (!instructionsOpen) return;
     setInstructionsDraft(instructions);
     const t = setTimeout(() => instructionsTextareaRef.current?.focus(), 60);
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setInstructionsOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeInstructions(); };
     document.addEventListener('keydown', onKey);
     return () => { clearTimeout(t); document.removeEventListener('keydown', onKey); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instructionsOpen, instructions]);
   const [avatarIdx, setAvatarIdx] = useState(seedAvatarIdx === -1 ? 0 : seedAvatarIdx);
   const [avatarOpen, setAvatarOpen] = useState(false);
@@ -1329,7 +1357,7 @@ function MJCreateAgentForm({
           <div
             className="fixed inset-0 z-[400] bg-black/40 backdrop-blur-sm"
             style={{ animation: 'mjInstOverlay 180ms cubic-bezier(0.23,1,0.32,1) both' }}
-            onClick={() => setInstructionsOpen(false)}
+            onClick={closeInstructions}
           />
           <div className="fixed inset-0 z-[410] flex items-center justify-center p-4 pointer-events-none">
             <div
@@ -1343,7 +1371,7 @@ function MJCreateAgentForm({
                   <p className="text-[12.5px] text-[#6B7280] mt-1">Set the tone, rules, and examples.</p>
                 </div>
                 <button
-                  onClick={() => setInstructionsOpen(false)}
+                  onClick={closeInstructions}
                   className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
                   style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                   aria-label="Close"
@@ -1362,7 +1390,24 @@ function MJCreateAgentForm({
                 />
               </div>
               <div className="px-6 py-3 border-t border-[#F0F1F3] flex items-center justify-between">
-                <span className="text-[11.5px] text-[#9CA3AF]">{instructionsDraft.trim().length} characters</span>
+                <button
+                  onClick={enhanceInstructions}
+                  disabled={instructionsEnhancing}
+                  className={`inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg bg-white text-[13px] font-semibold active:scale-[0.98] ${instructionsEnhancing ? 'text-[#A78BFA] border-[#DDD6FE] cursor-not-allowed' : 'text-[#7C3AED] border-[#7C3AED] hover:bg-[#F5F3FF]'}`}
+                  style={{ border: `1px solid ${instructionsEnhancing ? '#DDD6FE' : '#7C3AED'}`, transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  {instructionsEnhancing ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Enhancing…
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5" fill="currentColor" />
+                      Enhance with AI
+                    </>
+                  )}
+                </button>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setInstructionsOpen(false)}
@@ -1373,8 +1418,8 @@ function MJCreateAgentForm({
                   </button>
                   <button
                     onClick={() => { setInstructions(instructionsDraft); setInstructionsOpen(false); }}
-                    className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] active:scale-[0.98]"
-                    style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] hover:bg-black active:scale-[0.98]"
+                    style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                   >
                     Save
                   </button>
@@ -1600,14 +1645,38 @@ function MJCreateAgentForm({
               <div>
                 <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Triggers</label>
                 {enabledTriggers.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2.5 mb-3">
-                    {enabledTriggers.map((t) => (
-                      <AddedItem
-                        key={t.key}
-                        item={t}
-                        onRemove={() => setTriggers((p) => ({ ...p, [t.key]: false }))}
-                      />
-                    ))}
+                  <div className="space-y-2.5 mb-3">
+                    {enabledTriggers.map((t) => {
+                      let detail: string | null = null;
+                      if (t.key === 'schedule') {
+                        const freqLabel: Record<typeof schedFreq, string> = {
+                          hour: 'Every hour',
+                          day: 'Every day',
+                          week: 'Every Monday',
+                          month: 'On the 1st of every month',
+                          weekdays: 'Mon–Fri',
+                          custom: 'Custom schedule',
+                        };
+                        detail = `${freqLabel[schedFreq]} at ${schedHour}:${schedMin}`;
+                      } else if (t.key === 'mention') {
+                        const on = [
+                          mentionSurfaces.chat && 'Chat threads',
+                          mentionSurfaces.comments && 'Comments',
+                          mentionSurfaces.dm && 'Direct messages',
+                        ].filter(Boolean);
+                        detail = on.length ? on.join(' · ') : 'No surfaces selected';
+                      } else if (t.key === 'webhook') {
+                        detail = 'POST https://hooks.zuper.co/v1/agent/9f3a-mia';
+                      }
+                      return (
+                        <AddedItem
+                          key={t.key}
+                          item={t}
+                          detail={detail}
+                          onRemove={() => setTriggers((p) => ({ ...p, [t.key]: false }))}
+                        />
+                      );
+                    })}
                   </div>
                 )}
                 <AddPicker
@@ -1811,14 +1880,20 @@ function MJCreateAgentForm({
             <div className="mb-7">
               <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Skills</label>
               {enabledSkills.length > 0 && (
-                <div className="grid grid-cols-2 gap-2.5 mb-3">
-                  {enabledSkills.map((s) => (
+                <div className="space-y-2.5 mb-3">
+                  {enabledSkills.map((s) => {
+                    let detail: string | null = null;
+                    if (s.key === 'Send emails') detail = `From ${emailFrom}${emailSignature ? ' · signature on' : ''}`;
+                    else if (s.key === 'Send SMS') detail = `Sending from ${smsNumber}`;
+                    return (
                     <AddedItem
                       key={s.key}
                       item={s}
+                      detail={detail}
                       onRemove={() => setSkills((p) => ({ ...p, [s.key]: false }))}
                     />
-                  ))}
+                    );
+                  })}
                 </div>
               )}
               <AddPicker
@@ -1889,14 +1964,24 @@ function MJCreateAgentForm({
             <div>
               <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Tools</label>
               {enabledTools.length > 0 && (
-                <div className="grid grid-cols-2 gap-2.5 mb-3">
-                  {enabledTools.map((t) => (
-                    <AddedItem
-                      key={t.key}
-                      item={t}
-                      onRemove={() => setTools((p) => ({ ...p, [t.key]: false }))}
-                    />
-                  ))}
+                <div className="space-y-2.5 mb-3">
+                  {enabledTools.map((t) => {
+                    let detail: string | null = null;
+                    if (t.key === 'Send Email') {
+                      const to = toolEmailTo.trim();
+                      detail = `${to || 'No default recipient'} · subject "${toolEmailSubject.trim()}"`;
+                    } else if (t.key === 'Send Slack Message') {
+                      detail = `Posts to ${slackChannel}${slackMentions.trim() ? ` · pings ${slackMentions.trim()}` : ''}`;
+                    }
+                    return (
+                      <AddedItem
+                        key={t.key}
+                        item={t}
+                        detail={detail}
+                        onRemove={() => setTools((p) => ({ ...p, [t.key]: false }))}
+                      />
+                    );
+                  })}
                 </div>
               )}
               <AddPicker
@@ -5892,14 +5977,31 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
   const [instructions, setInstructions] = useState('');
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [instructionsDraft, setInstructionsDraft] = useState('');
+  const [instructionsEnhancing, setInstructionsEnhancing] = useState(false);
   const instructionsTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const instructionsDraftRef = useRef(instructionsDraft);
+  useEffect(() => { instructionsDraftRef.current = instructionsDraft; }, [instructionsDraft]);
+  const closeInstructions = () => setInstructionsOpen(false);
+  const enhanceInstructions = () => {
+    if (instructionsEnhancing) return;
+    setInstructionsEnhancing(true);
+    setTimeout(() => {
+      const t = instructionsDraftRef.current.trim();
+      const base = t || "You're a friendly dispatcher. Acknowledge each customer by name, summarize the issue, and offer the next available appointment.";
+      setInstructionsDraft(
+        `You are a focused, professional agent. ${base}\n\nBehavior:\n• Confirm understanding before taking action\n• Reference customer or job context whenever it exists\n• Keep replies concise and structured\n• Ask for missing details rather than guessing`
+      );
+      setInstructionsEnhancing(false);
+    }, 600);
+  };
   useEffect(() => {
     if (!instructionsOpen) return;
     setInstructionsDraft(instructions);
     const t = setTimeout(() => instructionsTextareaRef.current?.focus(), 60);
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setInstructionsOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeInstructions(); };
     document.addEventListener('keydown', onKey);
     return () => { clearTimeout(t); document.removeEventListener('keydown', onKey); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [instructionsOpen, instructions]);
   const [enabledTools, setEnabledTools] = useState<Record<string, boolean>>({});
   const canSave = name.trim().length > 0;
@@ -5917,7 +6019,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
           <div
             className="fixed inset-0 z-[400] bg-black/40 backdrop-blur-sm"
             style={{ animation: 'skInstOverlay 180ms cubic-bezier(0.23,1,0.32,1) both' }}
-            onClick={() => setInstructionsOpen(false)}
+            onClick={closeInstructions}
           />
           <div className="fixed inset-0 z-[410] flex items-center justify-center p-4 pointer-events-none">
             <div
@@ -5931,7 +6033,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
                   <p className="text-[12.5px] text-[#6B7280] mt-1">Injected into the agent's prompt when this skill is active.</p>
                 </div>
                 <button
-                  onClick={() => setInstructionsOpen(false)}
+                  onClick={closeInstructions}
                   className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
                   style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                   aria-label="Close"
@@ -5950,7 +6052,24 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
                 />
               </div>
               <div className="px-6 py-3 border-t border-[#F0F1F3] flex items-center justify-between">
-                <span className="text-[11.5px] text-[#9CA3AF]">{instructionsDraft.trim().length} characters</span>
+                <button
+                  onClick={enhanceInstructions}
+                  disabled={instructionsEnhancing}
+                  className={`inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg bg-white text-[13px] font-semibold active:scale-[0.98] ${instructionsEnhancing ? 'text-[#A78BFA] border-[#DDD6FE] cursor-not-allowed' : 'text-[#7C3AED] border-[#7C3AED] hover:bg-[#F5F3FF]'}`}
+                  style={{ border: `1px solid ${instructionsEnhancing ? '#DDD6FE' : '#7C3AED'}`, transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  {instructionsEnhancing ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Enhancing…
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5" fill="currentColor" />
+                      Enhance with AI
+                    </>
+                  )}
+                </button>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setInstructionsOpen(false)}
@@ -5961,8 +6080,8 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
                   </button>
                   <button
                     onClick={() => { setInstructions(instructionsDraft); setInstructionsOpen(false); }}
-                    className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] active:scale-[0.98]"
-                    style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] hover:bg-black active:scale-[0.98]"
+                    style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                   >
                     Save
                   </button>
