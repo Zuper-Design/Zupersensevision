@@ -1303,10 +1303,19 @@ function MJCreateAgentForm({
     { tint: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', accent: '#2563EB', soft: '#BFDBFE' },
     { tint: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', accent: '#DB2777', soft: '#FBCFE8' },
   ];
-  const theme = avatarThemes[avatarIdx % avatarThemes.length];
+  // Prefer the seed's tint/accent (e.g. when hired from marketplace) so
+  // the canvas keeps the marketplace's violet/pink palette.
+  const baseTheme = avatarThemes[avatarIdx % avatarThemes.length];
+  const theme = (seedAgent?.tint && seedAgent?.accent)
+    ? { tint: seedAgent.tint, accent: seedAgent.accent, soft: seedAgent.accent + '33' }
+    : baseTheme;
   const avatar = avatars[avatarIdx % avatars.length];
-  const avatarTint = avatarTints[avatarIdx % avatarTints.length];
-  const avatarAccent = avatarAccents[avatarIdx % avatarAccents.length];
+  const avatarTint = (seedAgent?.tint && seedAgent?.accent)
+    ? seedAgent.tint
+    : avatarTints[avatarIdx % avatarTints.length];
+  const avatarAccent = (seedAgent?.accent)
+    ? seedAgent.accent
+    : avatarAccents[avatarIdx % avatarAccents.length];
 
   type SkillDef = { key: string; label: string; desc: string; icon: any; tint: string; iconColor: string; url?: string; badges?: KbBadge[]; status?: 'connected' | 'ready' | 'pending' };
   const skillCatalog: SkillDef[] = [
@@ -4200,6 +4209,11 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         status: 'Active',
         category: catKey === 'Compliance' ? 'Compliance' : catKey === 'Support' ? 'Support' : catKey === 'Finance' ? 'Finance' : catKey === 'Operations' ? 'Operations' : 'Sales',
         img: agent.img,
+        // Carry the marketplace accent forward so the loading modal, the
+        // hire-flow create canvas, and the agent details page all read in
+        // the same colour.
+        tint: tint.tint,
+        accent: tint.accent,
       };
       onHire?.(record);
       onChatWith?.(record.name);
