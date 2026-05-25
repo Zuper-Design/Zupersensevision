@@ -3188,7 +3188,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
       {isEmpty ? (
         isMJ ? (
-          <div className="relative pt-2">
+          <div className="relative pt-16">
             <div className="text-center mb-7">
               <img
                 src={emptyToolkit}
