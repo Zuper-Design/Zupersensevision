@@ -95,7 +95,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
   return (
     <div className="flex h-full w-full bg-white">
       {/* Left sidebar */}
-      {!(isMJ && mjCreating) && (
+      {!(isMJ && mjCreating && !auActiveAgent) && (
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
           <div className="w-7 h-7 rounded-md bg-[#FFF4ED] border border-[#FFE2D1] flex items-center justify-center">
@@ -1323,7 +1323,7 @@ function MJCreateAgentForm({
           >
             <ChevronLeft className="w-[16px] h-[16px]" />
           </button>
-          <span className="text-[14px] font-semibold text-[#1C1E21] tracking-tight">Create agent</span>
+          <span className="text-[14px] font-semibold text-[#1C1E21] tracking-tight">{seedAgent ? (name.trim() || seedAgent.name) : 'Create agent'}</span>
         </div>
         <button
           onClick={deploy}
