@@ -6001,25 +6001,6 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
 
       <div className="flex-1 min-h-0">
         <div className="max-w-[820px] mx-auto px-6 py-10">
-          {/* Hero strip */}
-          <div className="mb-8 rounded-2xl px-8 py-8" style={{ background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 60%, #DDD6FE 100%)' }}>
-            <div className="flex items-center gap-5">
-              <span
-                className="w-[88px] h-[88px] rounded-2xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
-                style={{
-                  background: 'linear-gradient(160deg, #8B5CF6 0%, #EC4899 100%)',
-                  boxShadow: '0 12px 28px -10px rgba(124,58,237,0.45), inset 0 1px 0 rgba(255,255,255,0.25)',
-                }}
-              >
-                <Wand2 className="w-[34px] h-[34px] text-white" strokeWidth={2} />
-              </span>
-              <div className="flex-1 min-w-0">
-                <h2 className="text-[22px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate">{name.trim() || 'New skill'}</h2>
-                <p className="text-[14px] text-[#4C2A8F] mt-1.5 leading-snug line-clamp-2">{desc.trim() || 'Add a short summary teammates will see on this skill.'}</p>
-              </div>
-            </div>
-          </div>
-
           {/* IDENTITY */}
           <section className="mb-10">
             <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Identity</h2>
