@@ -3347,31 +3347,31 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16 overflow-hidden">
-            {/* Slow-floating gradient blobs */}
+            {/* Slow-drifting gradient blobs — bleed up from the bottom */}
             <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
               <span
                 className="absolute"
                 style={{
-                  top: '-12%',
-                  left: '-10%',
-                  width: 520,
-                  height: 520,
+                  bottom: '-40%',
+                  left: '-8%',
+                  width: 720,
+                  height: 720,
                   borderRadius: '50%',
-                  background: 'radial-gradient(closest-side, rgba(167,139,250,0.55) 0%, rgba(196,181,253,0.32) 45%, rgba(196,181,253,0) 75%)',
-                  filter: 'blur(40px)',
+                  background: 'radial-gradient(closest-side, rgba(167,139,250,0.55) 0%, rgba(196,181,253,0.30) 45%, rgba(196,181,253,0) 75%)',
+                  filter: 'blur(56px)',
                   animation: 'chooserBlobA 22s ease-in-out infinite alternate',
                 }}
               />
               <span
                 className="absolute"
                 style={{
-                  bottom: '-18%',
-                  right: '-12%',
-                  width: 560,
-                  height: 560,
+                  bottom: '-45%',
+                  right: '-10%',
+                  width: 780,
+                  height: 780,
                   borderRadius: '50%',
                   background: 'radial-gradient(closest-side, rgba(244,114,182,0.45) 0%, rgba(244,114,182,0.22) 45%, rgba(244,114,182,0) 75%)',
-                  filter: 'blur(48px)',
+                  filter: 'blur(60px)',
                   animation: 'chooserBlobB 26s ease-in-out infinite alternate',
                 }}
               />
@@ -3379,13 +3379,13 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             <style>{`
               @keyframes chooserBlobA {
                 0%   { transform: translate(0, 0) scale(1); }
-                50%  { transform: translate(120px, 60px) scale(1.12); }
-                100% { transform: translate(60px, -40px) scale(0.95); }
+                50%  { transform: translate(140px, -40px) scale(1.08); }
+                100% { transform: translate(-60px, 20px) scale(0.95); }
               }
               @keyframes chooserBlobB {
                 0%   { transform: translate(0, 0) scale(1); }
-                50%  { transform: translate(-100px, -50px) scale(0.92); }
-                100% { transform: translate(-160px, 30px) scale(1.10); }
+                50%  { transform: translate(-160px, -60px) scale(1.10); }
+                100% { transform: translate(80px, 30px) scale(0.92); }
               }
             `}</style>
 
