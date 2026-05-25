@@ -1232,8 +1232,8 @@ function MJCreateAgentForm({
   const [advOpen, setAdvOpen] = useState(false);
   const [advModel, setAdvModel] = useState('Zuper Lite');
   const [advTemp, setAdvTemp] = useState(0.7);
-  const [advRecent, setAdvRecent] = useState(false);
-  const [advWorking, setAdvWorking] = useState(false);
+  const [advRecent, setAdvRecent] = useState(true);
+  const [advWorking, setAdvWorking] = useState(true);
   const avatarMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!avatarOpen) return;
