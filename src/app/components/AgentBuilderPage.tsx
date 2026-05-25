@@ -1295,13 +1295,14 @@ function MJCreateAgentForm({
     'linear-gradient(180deg, #FFE0EA 0%, #FFEBF1 100%)',
   ];
   const avatarAccents = ['#DC2626', '#EA580C', '#059669', '#2563EB', '#DB2777'];
-  // Theme follows the selected avatar so the hero matches the character.
+  // Theme follows the selected avatar — same 3-stop fade-to-white as the
+  // marketplace-hired hero so every card across AI Studio reads alike.
   const avatarThemes = [
-    { tint: 'linear-gradient(135deg, #FCE4E6 0%, #FBCFE8 100%)', accent: '#DB2777', soft: '#FBCFE8' },
-    { tint: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)', accent: '#EA580C', soft: '#FFE0CC' },
-    { tint: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', accent: '#059669', soft: '#A7F3D0' },
-    { tint: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', accent: '#2563EB', soft: '#BFDBFE' },
-    { tint: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', accent: '#DB2777', soft: '#FBCFE8' },
+    { tint: 'linear-gradient(180deg, #DB27771F 0%, #DB27770A 40%, #FFFFFF 80%)', accent: '#DB2777', soft: '#FBCFE8' },
+    { tint: 'linear-gradient(180deg, #EA580C1F 0%, #EA580C0A 40%, #FFFFFF 80%)', accent: '#EA580C', soft: '#FFE0CC' },
+    { tint: 'linear-gradient(180deg, #0596691F 0%, #0596690A 40%, #FFFFFF 80%)', accent: '#059669', soft: '#A7F3D0' },
+    { tint: 'linear-gradient(180deg, #2563EB1F 0%, #2563EB0A 40%, #FFFFFF 80%)', accent: '#2563EB', soft: '#BFDBFE' },
+    { tint: 'linear-gradient(180deg, #DB27771F 0%, #DB27770A 40%, #FFFFFF 80%)', accent: '#DB2777', soft: '#FBCFE8' },
   ];
   // Prefer the seed's tint/accent (e.g. when hired from marketplace) so
   // the canvas keeps the marketplace's violet/pink palette.
@@ -7589,11 +7590,11 @@ function CreateAgentCard({ layout }: { layout: 'grid' | 'list' }) {
 }
 
 const categoryTint: Record<string, { tint: string; accent: string }> = {
-  Sales: { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' },
-  Operations: { tint: 'linear-gradient(180deg, #FDE9CC 0%, #FEF4E0 100%)', accent: '#E89F5C' },
-  Support: { tint: 'linear-gradient(180deg, #DCEFE2 0%, #ECF5EF 100%)', accent: '#7DB48E' },
-  Finance: { tint: 'linear-gradient(180deg, #E3D6F1 0%, #EFE5F7 100%)', accent: '#A788CC' },
-  Compliance: { tint: 'linear-gradient(180deg, #DCE9F5 0%, #EAF1F8 100%)', accent: '#7DA1C9' },
+  Sales: { tint: 'linear-gradient(180deg, #E48A981F 0%, #E48A980A 40%, #FFFFFF 80%)', accent: '#E48A98' },
+  Operations: { tint: 'linear-gradient(180deg, #E89F5C1F 0%, #E89F5C0A 40%, #FFFFFF 80%)', accent: '#E89F5C' },
+  Support: { tint: 'linear-gradient(180deg, #7DB48E1F 0%, #7DB48E0A 40%, #FFFFFF 80%)', accent: '#7DB48E' },
+  Finance: { tint: 'linear-gradient(180deg, #A788CC1F 0%, #A788CC0A 40%, #FFFFFF 80%)', accent: '#A788CC' },
+  Compliance: { tint: 'linear-gradient(180deg, #7DA1C91F 0%, #7DA1C90A 40%, #FFFFFF 80%)', accent: '#7DA1C9' },
 };
 
 type VPCardData = {
