@@ -3397,7 +3397,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 Spin up a custom agent or pick one from the marketplace.
               </p>
             </div>
-            <div className="relative z-10 grid grid-cols-2 gap-5 max-w-[920px] mx-auto">
+            <div className="relative z-10 grid grid-cols-2 gap-5 max-w-[820px] mx-auto">
               {/* Create — blank-canvas card, violet hint */}
               <button
                 onClick={() => { setChooserOpen(false); setCreating(true); }}
@@ -3506,10 +3506,10 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
                 {/* Avatars — equal height, shared baseline */}
                 <div className="relative flex-1 min-h-0 flex items-center justify-center z-10 -mt-1">
-                  <div className="flex items-end -space-x-20" style={{ height: 160 }}>
-                    <img src={agentMarketer} alt="" className="h-[156px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 1 }} draggable={false} />
-                    <img src={agentSupport} alt="" className="h-[160px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.26)]" style={{ zIndex: 3 }} draggable={false} />
-                    <img src={agentReviews} alt="" className="h-[156px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 2 }} draggable={false} />
+                  <div className="flex items-end -space-x-16" style={{ height: 200 }}>
+                    <img src={agentMarketer} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 1 }} draggable={false} />
+                    <img src={agentSupport} alt="" className="h-[200px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.26)]" style={{ zIndex: 3 }} draggable={false} />
+                    <img src={agentReviews} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 2 }} draggable={false} />
                   </div>
                 </div>
 
