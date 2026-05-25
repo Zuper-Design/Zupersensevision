@@ -4149,33 +4149,23 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
             </div>
 
             <div className="px-6 py-5 flex flex-col">
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full mb-2.5 w-fit" style={{ background: `${tint.accent}1A`, color: tint.accent }}>
-                <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />
-                <span className="text-[10px] font-bold tracking-[0.14em] uppercase">{agent.role}</span>
-              </div>
-              <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight leading-[1.15]">
-                I'm <span style={{ color: tint.accent }}>{persona.name}</span>,
+              <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight leading-[1.2] mb-2">
+                I'm <span style={{ color: tint.accent }}>{persona.name}</span> agent
               </h2>
-              <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight leading-tight mb-2">
-                {agent.title.toLowerCase()} that runs while you sleep.
-              </h3>
-              <p className="text-[13px] text-[#4B5563] leading-relaxed mb-4 max-w-[460px]">
+              <p className="text-[13.5px] text-[#4B5563] leading-relaxed mb-4 max-w-[460px]">
                 {catalogOutcomes[agent.title] || agent.desc}
               </p>
 
-              {/* Stat tiles — Saves + Rating */}
-              <div className="grid grid-cols-2 gap-2 mb-5 max-w-[320px]">
-                <div className="rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-3 py-2.5">
-                  <div className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9CA3AF] mb-0.5">Saves</div>
-                  <div className="text-[18px] font-semibold text-[#1C1E21] leading-none">{saves}</div>
-                </div>
-                <div className="rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-3 py-2.5">
-                  <div className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9CA3AF] mb-0.5">Rating</div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-[18px] font-semibold text-[#1C1E21] leading-none">{agent.rating.toFixed(1)}</span>
-                    <Star className="w-[13px] h-[13px] text-[#F59E0B] fill-[#F59E0B]" />
-                  </div>
-                </div>
+              <div className="flex items-center gap-4 mb-5 text-[12px] text-[#6B7280]">
+                <span className="inline-flex items-center gap-1">
+                  <span className="font-semibold text-[#1C1E21]">{saves}</span>
+                  saves
+                </span>
+                <span className="w-px h-3 bg-[#E6E8EC]" />
+                <span className="inline-flex items-center gap-1">
+                  <Star className="w-[11px] h-[11px] text-[#F59E0B] fill-[#F59E0B]" />
+                  <span className="font-semibold text-[#1C1E21]">{agent.rating.toFixed(1)}</span>
+                </span>
               </div>
 
               <div className="mt-auto">
