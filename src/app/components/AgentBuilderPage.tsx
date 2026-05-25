@@ -3995,7 +3995,10 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
     /finance|collection/.test(rL) ? 'Finance' :
     /field|coordinator/.test(rL) ? 'Compliance' :
     'Sales';
-  const tint = categoryTint[catKey];
+  // Match the marketplace card palette (violet / pink family) so the preview reads as part of the same surface.
+  const mpPalette = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
+  const tintAccent = mpPalette[Math.abs(agent.title.split('').reduce((h, c) => (h << 5) - h + c.charCodeAt(0), 0)) % mpPalette.length];
+  const tint = { tint: `linear-gradient(180deg, ${tintAccent}1F 0%, ${tintAccent}0A 40%, #FFFFFF 80%)`, accent: tintAccent };
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ from: 'agent' | 'user'; text: string; rich?: string }[]>([
     { from: 'agent', text: `Hey — I'm ${persona.name}. ${catalogOutcomes[agent.title] || agent.desc} Ask me anything below, or pick one of those quick prompts.` },
@@ -4116,7 +4119,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         </button>
       </div>
 
-      <div className="max-w-[1200px] mx-auto w-full px-6 py-6 pb-24 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
+      <div className="max-w-[1100px] mx-auto w-full px-6 py-6 pb-24">
         <div className="flex flex-col gap-4">
         {/* Hero card — agent pitches itself */}
         <div className="relative rounded-3xl border border-[#E6E8EC] overflow-hidden bg-white">
@@ -4163,8 +4166,8 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                 {catalogOutcomes[agent.title] || agent.desc}
               </p>
 
-              {/* Stat tiles */}
-              <div className="grid grid-cols-3 gap-2 mb-5">
+              {/* Stat tiles — Saves + Rating */}
+              <div className="grid grid-cols-2 gap-2 mb-5 max-w-[320px]">
                 <div className="rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-3 py-2.5">
                   <div className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9CA3AF] mb-0.5">Saves</div>
                   <div className="text-[18px] font-semibold text-[#1C1E21] leading-none">{saves}</div>
@@ -4176,33 +4179,16 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                     <Star className="w-[13px] h-[13px] text-[#F59E0B] fill-[#F59E0B]" />
                   </div>
                 </div>
-                <div className="rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-3 py-2.5">
-                  <div className="text-[10px] uppercase tracking-[0.12em] font-semibold text-[#9CA3AF] mb-0.5">Hires</div>
-                  <div className="text-[18px] font-semibold text-[#1C1E21] leading-none tabular-nums">{agent.hires.toLocaleString()}</div>
-                </div>
               </div>
 
-              {/* Tools row */}
-              <div className="flex items-center gap-2 mb-5">
-                <span className="text-[11px] uppercase tracking-[0.12em] font-semibold text-[#9CA3AF]">Connects to</span>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {tools.map((t) => (
-                    <span key={t} className="inline-flex items-center px-2 py-0.5 rounded-md bg-white border border-[#E6E8EC] text-[11px] font-medium text-[#4B5563]">{t}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 mt-auto">
+              <div className="mt-auto">
                 <button
                   onClick={() => setHiredOpen(true)}
-                  className="inline-flex items-center justify-center gap-1.5 px-5 h-11 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                  className="inline-flex items-center justify-center gap-1.5 px-5 h-11 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
                 >
                   <Sparkles className="w-[14px] h-[14px]" fill="currentColor" />
                   Hire {persona.name} — {price}
                   <ArrowRight className="w-[14px] h-[14px]" />
-                </button>
-                <button className="inline-flex items-center gap-1.5 px-4 h-11 rounded-xl text-[#4B5563] hover:text-[#1C1E21] text-[13px] font-semibold transition">
-                  See sample run
                 </button>
               </div>
             </div>
@@ -4326,40 +4312,6 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         </div>
         </div>
 
-        {/* Right sidebar — capabilities + agent quote */}
-        <aside className="flex flex-col gap-3">
-          {/* Quote card — dark */}
-          <div className="relative rounded-2xl overflow-hidden border border-[#1C1E21]" style={{ background: 'linear-gradient(160deg, #1C1E21 0%, #16181B 100%)' }}>
-            <div className="absolute" style={{ top: -50, right: -40, width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}66, transparent 70%)`, filter: 'blur(36px)' }} />
-            <div className="absolute" style={{ bottom: -60, left: -30, width: 180, height: 180, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}33, transparent 70%)`, filter: 'blur(36px)' }} />
-            <div className="relative p-4">
-              <div className="text-[32px] leading-none font-serif italic mb-1" style={{ color: tint.accent }}>"</div>
-              <p className="text-[13.5px] text-white leading-relaxed font-medium italic mb-3 -mt-2">
-                {catalogQuotes[agent.title] || hiredQuotes[agent.title] || `I plug into your Zuper workspace and quietly handle the work so your team can focus on customers.`}
-              </p>
-              <div className="flex items-center gap-2 pt-3 border-t border-white/10">
-                <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: tint.tint }}>
-                  <img src={agent.img} alt="" className="h-6 w-auto object-contain" draggable={false} />
-                </div>
-                <div className="leading-tight">
-                  <div className="text-[12px] font-semibold text-white">— {persona.name}</div>
-                  <div className="text-[10.5px] text-[#9CA3AF]">{agent.role}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Capabilities */}
-          {capabilities.map((cap) => (
-            <div key={cap.title} className="rounded-2xl bg-white border border-[#E6E8EC] p-4 hover:border-[#1C1E21]/15 transition">
-              <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-2.5" style={{ background: `${tint.accent}1A` }}>
-                <cap.icon className="w-[16px] h-[16px]" style={{ color: tint.accent }} />
-              </div>
-              <h4 className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">{cap.title}</h4>
-              <p className="text-[12px] text-[#6B7280] leading-relaxed">{cap.desc}</p>
-            </div>
-          ))}
-        </aside>
       </div>
 
       </div>
