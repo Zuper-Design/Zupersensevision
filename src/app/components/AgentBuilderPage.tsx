@@ -4108,9 +4108,6 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
           <button onClick={onBack} className="w-8 h-8 rounded-lg hover:bg-[#F3F4F6] flex items-center justify-center text-[#4B5563] transition" aria-label="Back">
             <ChevronLeft className="w-[18px] h-[18px]" />
           </button>
-          <div className="w-7 h-7 rounded-md overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: tint.tint }}>
-            <img src={agent.img} alt="" className="h-6 w-auto object-contain" draggable={false} />
-          </div>
           <h1 className="text-[14px] font-semibold text-[#1C1E21]">{persona.name}, {agent.title}</h1>
           <span className="px-1.5 py-0.5 rounded-md bg-[#F3F4F6] text-[#4B5563] text-[10px] font-semibold uppercase tracking-wide">Preview</span>
         </div>
@@ -4123,27 +4120,27 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         <div className="flex flex-col gap-4">
         {/* Hero card — agent pitches itself */}
         <div className="relative rounded-3xl border border-[#E6E8EC] overflow-hidden bg-white">
-          <div className="grid grid-cols-[300px_1fr] items-stretch">
-            <div className="relative overflow-hidden flex items-end justify-center" style={{ background: tint.tint, minHeight: 360 }}>
+          <div className="grid grid-cols-[260px_1fr] items-stretch">
+            <div className="relative overflow-hidden flex items-end justify-center" style={{ background: tint.tint, minHeight: 280 }}>
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute" style={{ top: -60, left: -40, width: 240, height: 240, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}55, transparent 70%)`, filter: 'blur(36px)' }} />
-                <div className="absolute" style={{ bottom: -80, right: -40, width: 240, height: 240, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}33, transparent 72%)`, filter: 'blur(36px)' }} />
+                <div className="absolute" style={{ top: -60, left: -40, width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}55, transparent 70%)`, filter: 'blur(32px)' }} />
+                <div className="absolute" style={{ bottom: -80, right: -40, width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}33, transparent 72%)`, filter: 'blur(32px)' }} />
               </div>
-              <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[#15803D] text-[10.5px] font-bold uppercase tracking-wide z-10">
-                <span className="relative flex h-2 w-2">
+              <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white text-[#15803D] text-[10px] font-bold uppercase tracking-wide z-10">
+                <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60 bg-[#10B981]" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#10B981]" />
                 </span>
                 Online
               </span>
-              <span className="absolute top-4 right-4 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white text-[#1C1E21] text-[10.5px] font-bold uppercase tracking-wide z-10">
+              <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white text-[#1C1E21] text-[10px] font-bold uppercase tracking-wide z-10">
                 {price === 'Free' && <Sparkles className="w-[10px] h-[10px] text-[#F59E0B]" fill="#F59E0B" />}
                 {price}
               </span>
               <motion.img
                 src={agent.img}
                 alt=""
-                className="relative h-[300px] w-auto object-contain drop-shadow-[0_16px_24px_rgba(0,0,0,0.18)]"
+                className="relative h-[240px] w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
@@ -4151,18 +4148,18 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
               />
             </div>
 
-            <div className="px-7 py-7 flex flex-col">
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full mb-3 w-fit" style={{ background: `${tint.accent}1A`, color: tint.accent }}>
+            <div className="px-6 py-5 flex flex-col">
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full mb-2.5 w-fit" style={{ background: `${tint.accent}1A`, color: tint.accent }}>
                 <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />
                 <span className="text-[10px] font-bold tracking-[0.14em] uppercase">{agent.role}</span>
               </div>
-              <h2 className="text-[28px] font-semibold text-[#1C1E21] tracking-tight leading-[1.1]">
+              <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight leading-[1.15]">
                 I'm <span style={{ color: tint.accent }}>{persona.name}</span>,
               </h2>
-              <h3 className="text-[20px] font-semibold text-[#1C1E21] tracking-tight leading-tight mb-3">
+              <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight leading-tight mb-2">
                 {agent.title.toLowerCase()} that runs while you sleep.
               </h3>
-              <p className="text-[13.5px] text-[#4B5563] leading-relaxed mb-5 max-w-[460px]">
+              <p className="text-[13px] text-[#4B5563] leading-relaxed mb-4 max-w-[460px]">
                 {catalogOutcomes[agent.title] || agent.desc}
               </p>
 
@@ -4198,14 +4195,9 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         {/* Chat — the agent speaking */}
         <div className="rounded-2xl bg-white border border-[#E6E8EC] flex flex-col min-h-[620px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px -16px rgba(0,0,0,0.08)' }}>
           <div className="flex items-center justify-between gap-3 px-6 h-16 border-b border-[#F0F1F3]">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0" style={{ background: tint.tint }}>
-                <img src={agent.img} alt="" className="h-9 w-auto object-contain" draggable={false} />
-              </div>
-              <div className="min-w-0">
-                <div className="text-[15px] font-semibold text-[#1C1E21] tracking-tight leading-tight">Chat with {persona.name}</div>
-                <div className="text-[12px] text-[#6B7280] mt-0.5">Ask anything · {persona.name} replies in their own voice</div>
-              </div>
+            <div className="min-w-0">
+              <div className="text-[15px] font-semibold text-[#1C1E21] tracking-tight leading-tight">Chat with {persona.name}</div>
+              <div className="text-[12px] text-[#6B7280] mt-0.5">Ask anything · {persona.name} replies in their own voice</div>
             </div>
             <span className="text-[11px] text-[#9CA3AF]">No data saved · preview</span>
           </div>
@@ -4219,20 +4211,15 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                   initial={{ opacity: 0, y: 6, filter: 'blur(4px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                  className="flex items-start gap-4"
+                  className="flex flex-col"
                 >
-                  <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: tint.tint }}>
-                    <img src={agent.img} alt="" className="h-8 w-auto object-contain" draggable={false} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[11px] font-medium uppercase tracking-[0.10em] mb-1.5" style={{ color: tint.accent }}>{persona.name}</div>
-                    <p className="text-[14.5px] text-[#1C1E21] leading-[1.65]">{m.text}</p>
-                    {m.rich && (
-                      <div className="mt-3 rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-4 py-3 text-[12.5px] text-[#1C1E21] font-mono whitespace-pre-line leading-relaxed">
-                        {m.rich}
-                      </div>
-                    )}
-                  </div>
+                  <div className="text-[11px] font-medium uppercase tracking-[0.10em] mb-1.5" style={{ color: tint.accent }}>{persona.name}</div>
+                  <p className="text-[14.5px] text-[#1C1E21] leading-[1.65]">{m.text}</p>
+                  {m.rich && (
+                    <div className="mt-3 rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-4 py-3 text-[12.5px] text-[#1C1E21] font-mono whitespace-pre-line leading-relaxed">
+                      {m.rich}
+                    </div>
+                  )}
                 </motion.div>
               ) : (
                 <motion.div
@@ -4247,18 +4234,13 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
               )
             ))}
             {sending && (
-              <div className="flex items-start gap-4">
-                <div className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: tint.tint }}>
-                  <img src={agent.img} alt="" className="h-8 w-auto object-contain" draggable={false} />
-                </div>
-                <div className="flex items-center gap-2 text-[13.5px] text-[#9CA3AF] pt-2">
-                  <span className="inline-flex gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '120ms' }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '240ms' }} />
-                  </span>
-                  {persona.name} is typing
-                </div>
+              <div className="flex items-center gap-2 text-[13.5px] text-[#9CA3AF]">
+                <span className="inline-flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '120ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '240ms' }} />
+                </span>
+                {persona.name} is typing
               </div>
             )}
             </div>
