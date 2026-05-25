@@ -3347,21 +3347,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16 overflow-hidden min-h-[calc(100vh-80px)]">
-            {/* AI workspace backdrop — mesh wash, scanning rings, dot grid,
-               and a few twinkling particles. Sits behind the cards so they
-               feel lifted off a living surface. */}
+            {/* Twinkling particles — quiet decorative motion */}
             <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
-              {/* Mesh gradient — multi-stop radial wash */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    'radial-gradient(ellipse 55% 45% at 28% 32%, rgba(167,139,250,0.22) 0%, transparent 60%),' +
-                    'radial-gradient(ellipse 50% 40% at 78% 70%, rgba(244,114,182,0.18) 0%, transparent 60%),' +
-                    'radial-gradient(ellipse 60% 50% at 50% 110%, rgba(196,181,253,0.20) 0%, transparent 65%)',
-                }}
-              />
-
               {/* Twinkling particles — quiet movement, decorative only */}
               {[
                 { top: '18%', left: '14%', size: 4, delay: 0,    color: 'rgba(167,139,250,0.55)' },
