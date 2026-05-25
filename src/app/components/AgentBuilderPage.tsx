@@ -3340,33 +3340,33 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 onClick={onEnterMarketplace}
                 className="relative rounded-2xl overflow-hidden text-left flex flex-col h-[380px] active:scale-[0.995] group"
                 style={{
-                  background: 'linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 28%, #DDD6FE 58%, #C4B5FD 85%, #A78BFA 100%)',
-                  boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.35)',
+                  background: 'linear-gradient(135deg, #F7F5FF 0%, #F0EBFE 30%, #E5DCFC 60%, #D8CBF8 100%)',
+                  boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.22)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 12px -2px rgba(28,30,33,0.06), 0 36px 64px -22px rgba(124,58,237,0.48)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.35)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 12px -2px rgba(28,30,33,0.06), 0 36px 64px -22px rgba(124,58,237,0.32)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.22)'; }}
               >
                 {/* Radial blooms */}
-                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 360, height: 300, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(168,85,247,0.55), rgba(168,85,247,0) 70%)', filter: 'blur(36px)' }} />
-                <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -40, width: 280, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.40), rgba(236,72,153,0) 70%)', filter: 'blur(40px)' }} />
+                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 360, height: 300, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(168,85,247,0.28), rgba(168,85,247,0) 70%)', filter: 'blur(36px)' }} />
+                <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -40, width: 280, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.18), rgba(236,72,153,0) 70%)', filter: 'blur(40px)' }} />
                 {/* Top inset highlight */}
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent)' }} />
 
                 {/* Top — eyebrow */}
                 <div className="relative px-6 pt-6 z-10">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)', boxShadow: '0 4px 12px -4px rgba(124,58,237,0.45)' }}>
-                    <Sparkles className="w-[11px] h-[11px] text-white" fill="currentColor" />
-                    <span className="text-[10.5px] font-bold tracking-[0.10em] uppercase text-white">Sense Marketplace</span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(124,58,237,0.18)', backdropFilter: 'blur(8px)' }}>
+                    <Sparkles className="w-[11px] h-[11px] text-[#7C3AED]" fill="currentColor" />
+                    <span className="text-[10.5px] font-semibold tracking-[0.10em] uppercase text-[#6D28D9]">Sense Marketplace</span>
                   </span>
                 </div>
 
                 {/* Avatars — equal height, shared baseline */}
                 <div className="relative flex-1 min-h-0 flex items-center justify-center z-10 -mt-1">
-                  <div className="flex items-end -space-x-10" style={{ height: 152 }}>
-                    <img src={agentMarketer} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.32)]" style={{ zIndex: 1 }} draggable={false} />
-                    <img src={agentSupport} alt="" className="h-[152px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.38)]" style={{ zIndex: 3 }} draggable={false} />
-                    <img src={agentReviews} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.32)]" style={{ zIndex: 2 }} draggable={false} />
+                  <div className="flex items-end -space-x-20" style={{ height: 152 }}>
+                    <img src={agentMarketer} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 1 }} draggable={false} />
+                    <img src={agentSupport} alt="" className="h-[152px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.26)]" style={{ zIndex: 3 }} draggable={false} />
+                    <img src={agentReviews} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 2 }} draggable={false} />
                   </div>
                 </div>
 
