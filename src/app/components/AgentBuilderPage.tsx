@@ -53,6 +53,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
   const [vpCreateOpen, setVpCreateOpen] = useState(false);
   const [auActiveAgent, setAuActiveAgent] = useState<string | null>(null);
   const [mjCreating, setMjCreating] = useState(false);
+  const [mjChooserOpen, setMjChooserOpen] = useState(false);
   const [customAgents, setCustomAgents] = useState<typeof myAgents>([]);
   const [agentVisits, setAgentVisits] = useState<Record<string, number>>({});
   const addCustomAgent = (a: typeof myAgents[number]) => {
@@ -95,7 +96,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
   return (
     <div className="flex h-full w-full bg-white">
       {/* Left sidebar */}
-      {!(isMJ && (mjCreating || auActiveAgent)) && (
+      {!(isMJ && (mjCreating || mjChooserOpen || auActiveAgent)) && (
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
           <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
@@ -325,7 +326,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
       <main className="flex-1 overflow-y-auto relative">
         <div className="px-8 pt-8 pb-12">
           {section === 'agents' ? (
-            isVP ? <VPAgentsView onOpenCreate={() => setVpCreateOpen(true)} /> : isAU ? <AUMyAgentsView isMJ={currentUser === 'MJ'} onEnterMarketplace={() => setSection('catalog')} onOpenAgent={openAgent} customAgents={customAgents} onAddCustomAgent={addCustomAgent} onCreatingChange={setMjCreating} /> : <MyAgentsView />
+            isVP ? <VPAgentsView onOpenCreate={() => setVpCreateOpen(true)} /> : isAU ? <AUMyAgentsView isMJ={currentUser === 'MJ'} onEnterMarketplace={() => setSection('catalog')} onOpenAgent={openAgent} customAgents={customAgents} onAddCustomAgent={addCustomAgent} onCreatingChange={setMjCreating} onChooserChange={setMjChooserOpen} /> : <MyAgentsView />
           ) : section === 'catalog' ? (
             <CatalogView />
           ) : section === 'skills' ? (
@@ -3119,18 +3120,21 @@ function SelectedListSection({
   );
 }
 
-function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], onAddCustomAgent, isMJ = false, onCreatingChange }: { onEnterMarketplace?: () => void; onOpenAgent?: (name: string) => void; customAgents?: typeof myAgents; onAddCustomAgent?: (a: typeof myAgents[number]) => void; isMJ?: boolean; onCreatingChange?: (creating: boolean) => void }) {
+function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], onAddCustomAgent, isMJ = false, onCreatingChange, onChooserChange }: { onEnterMarketplace?: () => void; onOpenAgent?: (name: string) => void; customAgents?: typeof myAgents; onAddCustomAgent?: (a: typeof myAgents[number]) => void; isMJ?: boolean; onCreatingChange?: (creating: boolean) => void; onChooserChange?: (open: boolean) => void }) {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [statusFilter, setStatusFilter] = useState<'All' | AgentStatus>('All');
   const [pricingFilter, setPricingFilter] = useState<'All' | 'Free' | 'Paid'>('All');
   const [categoryFilter, setCategoryFilter] = useState<'All' | AgentCategory>('All');
   const [search, setSearch] = useState('');
   const [creating, setCreating] = useState(false);
+  const [chooserOpen, setChooserOpen] = useState(false);
   useEffect(() => { onCreatingChange?.(creating); }, [creating, onCreatingChange]);
+  useEffect(() => { onChooserChange?.(chooserOpen); }, [chooserOpen, onChooserChange]);
   const [toast, setToast] = useState<string | null>(null);
   const [firstTime, setFirstTime] = useState(true);
   const hasCustom = customAgents.length > 0;
   const isEmpty = firstTime && !hasCustom;
+  const showChooser = isMJ && (isEmpty || chooserOpen);
   const visibleCount = isEmpty ? 0 : Math.min(6, customAgents.length + 6);
 
   const showToast = (msg: string) => {
@@ -3305,8 +3309,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
     <>
       {isEmpty && !isMJ && <div className="mb-8">{marketplaceBanner}</div>}
 
-      {/* My Agents header + search + create — hidden on MJ empty state */}
-      {!(isEmpty && isMJ) && (
+      {/* My Agents header + search + create — hidden whenever chooser is showing */}
+      {!showChooser && (
       <div className="flex items-start justify-between gap-4 mb-5">
         <div>
           <div className="flex items-center gap-2.5 mb-1">
@@ -3328,7 +3332,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               />
             </div>
             <button
-              onClick={() => setCreating(true)}
+              onClick={() => (isMJ ? setChooserOpen(true) : setCreating(true))}
               className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
             >
               <Plus className="w-4 h-4" strokeWidth={2.5} />
@@ -3340,7 +3344,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       )}
 
 
-      {isEmpty ? (
+      {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16">
             <div className="text-center mb-7">
@@ -3361,7 +3365,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             <div className="grid grid-cols-2 gap-5 max-w-[920px] mx-auto">
               {/* Create — blank-canvas card, violet hint */}
               <button
-                onClick={() => setCreating(true)}
+                onClick={() => { setChooserOpen(false); setCreating(true); }}
                 className="relative rounded-2xl overflow-hidden text-left p-7 flex flex-col h-[460px] active:scale-[0.995] group"
                 style={{
                   background: '#FFFFFF',
@@ -3445,7 +3449,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
               {/* Marketplace — marketing-style card */}
               <button
-                onClick={onEnterMarketplace}
+                onClick={() => { setChooserOpen(false); onEnterMarketplace?.(); }}
                 className="relative rounded-2xl overflow-hidden text-left flex flex-col h-[460px] active:scale-[0.995] group"
                 style={{
                   background: 'linear-gradient(135deg, #F7F5FF 0%, #F0EBFE 30%, #E5DCFC 60%, #D8CBF8 100%)',
@@ -3549,17 +3553,12 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             const seedAgents = filtered.slice(0, 6).map((a, i) => ({ ...a, runs: [7, 4, 9, 12, 5, 18][i] ?? a.runs }));
             const gridAgents = [...customAgents, ...seedAgents].slice(0, 6);
             return (
-              <>
-                <div className="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 pt-3">
-                  {gridAgents.map((a) => (
-                    <AUAgentCardCompact key={a.name} agent={a} onOpen={() => onOpenAgent?.(a.name)} />
-                  ))}
-                  <CreateAgentCard layout="grid" />
-                </div>
-                <div className="mt-6">
-                  {marketplaceBannerCompact}
-                </div>
-              </>
+              <div className="grid grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 pt-3">
+                {gridAgents.map((a) => (
+                  <AUAgentCardCompact key={a.name} agent={a} onOpen={() => onOpenAgent?.(a.name)} />
+                ))}
+                <CreateAgentCard layout="grid" />
+              </div>
             );
           })()
         ) : (
