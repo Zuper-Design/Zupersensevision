@@ -3306,8 +3306,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   className="absolute inset-0 w-full h-full pointer-events-none"
                   xmlns="http://www.w3.org/2000/svg"
                   style={{
-                    WebkitMaskImage: 'radial-gradient(ellipse 55% 50% at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.18) 100%)',
-                    maskImage: 'radial-gradient(ellipse 55% 50% at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.18) 100%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse 38% 35% at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.40) 60%, rgba(0,0,0,0.12) 100%)',
+                    maskImage: 'radial-gradient(ellipse 38% 35% at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.40) 60%, rgba(0,0,0,0.12) 100%)',
                   }}
                 >
                   <defs>
