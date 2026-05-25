@@ -3378,6 +3378,28 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             </div>
 
             <div className="text-center mb-7 relative z-10">
+              <div className="relative mx-auto mb-4 w-[72px] h-[72px]">
+                {/* Soft violet halo */}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -m-4 rounded-full pointer-events-none"
+                  style={{
+                    background: 'radial-gradient(closest-side, rgba(167,139,250,0.45) 0%, rgba(244,114,182,0.20) 55%, transparent 80%)',
+                    filter: 'blur(14px)',
+                  }}
+                />
+                {/* Wand tile */}
+                <div
+                  className="relative w-[72px] h-[72px] rounded-2xl flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)',
+                    border: '1px solid rgba(124,58,237,0.28)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 12px 28px -14px rgba(124,58,237,0.50)',
+                  }}
+                >
+                  <Wand2 className="w-9 h-9 text-[#7C3AED]" strokeWidth={1.8} />
+                </div>
+              </div>
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
               <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
                 Spin up a custom agent or pick one from the marketplace.
