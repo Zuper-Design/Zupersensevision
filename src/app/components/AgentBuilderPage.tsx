@@ -3287,11 +3287,11 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 Spin up a custom agent or pick one from the marketplace.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4 max-w-[760px] mx-auto">
+            <div className="grid grid-cols-2 gap-5 max-w-[920px] mx-auto">
               {/* Create — blank-canvas card, violet hint */}
               <button
                 onClick={() => setCreating(true)}
-                className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[380px] active:scale-[0.995] group"
+                className="relative rounded-2xl overflow-hidden text-left p-7 flex flex-col h-[460px] active:scale-[0.995] group"
                 style={{
                   background: '#FFFFFF',
                   border: '1px solid #EEF0F3',
@@ -3328,7 +3328,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
                 {/* Blank-canvas illustration */}
                 <div className="relative flex-1 flex items-center justify-center my-2">
-                  <div className="relative w-[200px] h-[140px]">
+                  <div className="relative w-[240px] h-[170px]">
                     {/* Floating skill chip — top left */}
                     <div className="absolute left-0 top-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-5deg)' }}>
                       <Zap className="w-3 h-3 text-[#7C3AED]" />
@@ -3345,8 +3345,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Trigger</span>
                     </div>
                     {/* Center avatar placeholder */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[64px] h-[64px] rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1.5px dashed rgba(124,58,237,0.35)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 20px -10px rgba(124,58,237,0.30)' }}>
-                      <Bot className="w-7 h-7 text-[#7C3AED]" strokeWidth={1.8} />
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[76px] h-[76px] rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1.5px dashed rgba(124,58,237,0.35)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 20px -10px rgba(124,58,237,0.30)' }}>
+                      <Bot className="w-8 h-8 text-[#7C3AED]" strokeWidth={1.8} />
                     </div>
                     {/* Sparkle accents */}
                     <Sparkles className="absolute left-4 bottom-4 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" style={{ transform: 'rotate(-15deg)' }} />
@@ -3367,7 +3367,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               {/* Marketplace — marketing-style card */}
               <button
                 onClick={onEnterMarketplace}
-                className="relative rounded-2xl overflow-hidden text-left flex flex-col h-[380px] active:scale-[0.995] group"
+                className="relative rounded-2xl overflow-hidden text-left flex flex-col h-[460px] active:scale-[0.995] group"
                 style={{
                   background: 'linear-gradient(135deg, #F7F5FF 0%, #F0EBFE 30%, #E5DCFC 60%, #D8CBF8 100%)',
                   boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.22)',
@@ -3383,7 +3383,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent)' }} />
 
                 {/* Top — eyebrow */}
-                <div className="relative px-6 pt-6 z-10">
+                <div className="relative px-7 pt-7 z-10">
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(124,58,237,0.18)', backdropFilter: 'blur(8px)' }}>
                     <Sparkles className="w-[11px] h-[11px] text-[#7C3AED]" fill="currentColor" />
                     <span className="text-[10.5px] font-semibold tracking-[0.10em] uppercase text-[#6D28D9]">Sense Marketplace</span>
@@ -3392,15 +3392,15 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
                 {/* Avatars — equal height, shared baseline */}
                 <div className="relative flex-1 min-h-0 flex items-center justify-center z-10 -mt-1">
-                  <div className="flex items-end -space-x-20" style={{ height: 152 }}>
-                    <img src={agentMarketer} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 1 }} draggable={false} />
-                    <img src={agentSupport} alt="" className="h-[152px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.26)]" style={{ zIndex: 3 }} draggable={false} />
-                    <img src={agentReviews} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 2 }} draggable={false} />
+                  <div className="flex items-end -space-x-20" style={{ height: 180 }}>
+                    <img src={agentMarketer} alt="" className="h-[176px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 1 }} draggable={false} />
+                    <img src={agentSupport} alt="" className="h-[180px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.26)]" style={{ zIndex: 3 }} draggable={false} />
+                    <img src={agentReviews} alt="" className="h-[176px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 2 }} draggable={false} />
                   </div>
                 </div>
 
                 {/* Bottom — title + subtext + CTA */}
-                <div className="relative px-6 pb-5 z-10">
+                <div className="relative px-7 pb-7 z-10">
                   <h3 className="text-[20px] font-semibold tracking-tight leading-[1.15] mb-1">
                     <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
                     <span style={{ color: '#6D28D9' }}>agents.</span>
