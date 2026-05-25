@@ -276,8 +276,26 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="flex-1 overflow-hidden"
+          className="flex-1 overflow-hidden relative"
         >
+          {isMJ ? (
+            <MJCreateAgentForm
+              seedAgent={[...customAgents, ...myAgents].find((a) => a.name === auActiveAgent)!}
+              onCancel={() => setAuActiveAgent(null)}
+              onDeploy={(record) => {
+                if (record) {
+                  setCustomAgents((prev) => {
+                    const exists = prev.some((a) => a.name === auActiveAgent);
+                    if (exists) {
+                      return prev.map((a) => a.name === auActiveAgent ? { ...a, ...record } : a);
+                    }
+                    return [record, ...prev];
+                  });
+                }
+                setAuActiveAgent(null);
+              }}
+            />
+          ) : (
           <AUCreateAgentForm
             mode="live"
             chatHidden={currentUser === 'MJ'}
@@ -301,6 +319,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
               setAuActiveAgent(fork.name);
             }}
           />
+          )}
         </motion.main>
       ) : (
       <main className="flex-1 overflow-y-auto relative">
@@ -1151,13 +1170,18 @@ function AddedItem({
 function MJCreateAgentForm({
   onCancel,
   onDeploy,
+  seedAgent,
 }: {
   onCancel: () => void;
   onDeploy: (record?: typeof myAgents[number], openChat?: boolean) => void;
+  seedAgent?: typeof myAgents[number];
 }) {
-  const [name, setName] = useState('');
-  const [instructions, setInstructions] = useState('');
-  const [avatarIdx, setAvatarIdx] = useState(0);
+  const seedAvatarIdx = seedAgent
+    ? [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews].findIndex((a) => a === seedAgent.img)
+    : 0;
+  const [name, setName] = useState(seedAgent?.name ?? '');
+  const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
+  const [avatarIdx, setAvatarIdx] = useState(seedAvatarIdx === -1 ? 0 : seedAvatarIdx);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [schedFreq, setSchedFreq] = useState<'hour' | 'day' | 'week' | 'month' | 'weekdays' | 'custom'>('week');
   const [schedHour, setSchedHour] = useState('09');
