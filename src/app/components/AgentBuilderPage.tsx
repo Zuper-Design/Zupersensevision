@@ -3346,77 +3346,56 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
-          <div className="relative pt-16">
-            <div className="text-center mb-7">
-              <div
-                onClick={() => setFirstTime(false)}
-                title="Populate with starter agents"
-                className="relative mx-auto mb-3 cursor-pointer h-[96px] w-[160px] flex items-center justify-center"
-                style={{ transition: 'transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.04)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; }}
-              >
-                {/* Soft violet-pink halo */}
-                <span
-                  aria-hidden
-                  className="absolute pointer-events-none"
-                  style={{
-                    inset: 0,
-                    background: 'radial-gradient(ellipse 60% 75% at center, rgba(196,181,253,0.55) 0%, rgba(244,114,182,0.18) 55%, transparent 80%)',
-                    filter: 'blur(18px)',
-                  }}
-                />
-                {/* Constellation — thin links between dots, a glowing centre */}
-                <svg viewBox="0 0 160 96" className="relative w-full h-full">
-                  <defs>
-                    <linearGradient id="constLink" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.85" />
-                      <stop offset="100%" stopColor="#F9A8D4" stopOpacity="0.85" />
-                    </linearGradient>
-                    <radialGradient id="constCore" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#7C3AED" />
-                      <stop offset="60%" stopColor="#A78BFA" />
-                      <stop offset="100%" stopColor="#EC4899" />
-                    </radialGradient>
-                    <radialGradient id="constCoreGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.55" />
-                      <stop offset="100%" stopColor="#C4B5FD" stopOpacity="0" />
-                    </radialGradient>
-                  </defs>
+          <div className="relative pt-16 overflow-hidden">
+            {/* Slow-floating gradient blobs */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+              <span
+                className="absolute"
+                style={{
+                  top: '-12%',
+                  left: '-10%',
+                  width: 520,
+                  height: 520,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(closest-side, rgba(167,139,250,0.55) 0%, rgba(196,181,253,0.32) 45%, rgba(196,181,253,0) 75%)',
+                  filter: 'blur(40px)',
+                  animation: 'chooserBlobA 22s ease-in-out infinite alternate',
+                }}
+              />
+              <span
+                className="absolute"
+                style={{
+                  bottom: '-18%',
+                  right: '-12%',
+                  width: 560,
+                  height: 560,
+                  borderRadius: '50%',
+                  background: 'radial-gradient(closest-side, rgba(244,114,182,0.45) 0%, rgba(244,114,182,0.22) 45%, rgba(244,114,182,0) 75%)',
+                  filter: 'blur(48px)',
+                  animation: 'chooserBlobB 26s ease-in-out infinite alternate',
+                }}
+              />
+            </div>
+            <style>{`
+              @keyframes chooserBlobA {
+                0%   { transform: translate(0, 0) scale(1); }
+                50%  { transform: translate(120px, 60px) scale(1.12); }
+                100% { transform: translate(60px, -40px) scale(0.95); }
+              }
+              @keyframes chooserBlobB {
+                0%   { transform: translate(0, 0) scale(1); }
+                50%  { transform: translate(-100px, -50px) scale(0.92); }
+                100% { transform: translate(-160px, 30px) scale(1.10); }
+              }
+            `}</style>
 
-                  {/* Links */}
-                  <g stroke="url(#constLink)" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.85">
-                    <line x1="80" y1="48" x2="30" y2="28" />
-                    <line x1="80" y1="48" x2="22" y2="64" />
-                    <line x1="80" y1="48" x2="132" y2="22" />
-                    <line x1="80" y1="48" x2="138" y2="62" />
-                    <line x1="80" y1="48" x2="60" y2="80" />
-                    <line x1="80" y1="48" x2="100" y2="14" />
-                  </g>
-
-                  {/* Outer nodes */}
-                  <circle cx="30" cy="28" r="4" fill="#FFFFFF" stroke="#A78BFA" strokeWidth="1.4" />
-                  <circle cx="22" cy="64" r="3.5" fill="#FFFFFF" stroke="#F472B6" strokeWidth="1.4" />
-                  <circle cx="132" cy="22" r="3.5" fill="#FFFFFF" stroke="#A78BFA" strokeWidth="1.4" />
-                  <circle cx="138" cy="62" r="4" fill="#FFFFFF" stroke="#F472B6" strokeWidth="1.4" />
-                  <circle cx="60" cy="80" r="3" fill="#FFFFFF" stroke="#C4B5FD" strokeWidth="1.4" />
-                  <circle cx="100" cy="14" r="3" fill="#FFFFFF" stroke="#F9A8D4" strokeWidth="1.4" />
-
-                  {/* Centre glow + core */}
-                  <circle cx="80" cy="48" r="20" fill="url(#constCoreGlow)" />
-                  <circle cx="80" cy="48" r="9" fill="url(#constCore)" />
-                  <circle cx="80" cy="48" r="9" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="1" opacity="0.7" />
-                </svg>
-                {/* Tiny sparkles for delight */}
-                <Sparkles className="absolute top-1 right-3 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" />
-                <Sparkles className="absolute bottom-3 left-3 w-2.5 h-2.5 text-[#F9A8D4]" fill="#F9A8D4" />
-              </div>
+            <div className="text-center mb-7 relative">
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
               <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
                 Spin up a custom agent or pick one from the marketplace.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-5 max-w-[920px] mx-auto">
+            <div className="relative grid grid-cols-2 gap-5 max-w-[920px] mx-auto">
               {/* Create — blank-canvas card, violet hint */}
               <button
                 onClick={() => { setChooserOpen(false); setCreating(true); }}
