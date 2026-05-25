@@ -1042,59 +1042,57 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                         return (
                           <div
                             key={c.key}
-                            className="flex items-start gap-3 px-3 py-3 rounded-xl"
+                            className="flex items-center gap-3.5 px-4 py-4 rounded-xl"
                             style={{
                               background: '#FFFFFF',
-                              border: `1px solid ${isOn ? '#1C1E21' : '#E6E8EC'}`,
+                              border: `1px solid ${isOn ? '#1C1E21' : '#EEF0F3'}`,
                               transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)',
                             }}
                           >
                             <span
-                              className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                              className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
                               style={{
                                 background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
                                 border: `1px solid ${accent}33`,
                                 boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
                               }}
                             >
-                              <Icon className="w-[16px] h-[16px]" style={{ color: accent }} strokeWidth={2} />
+                              <Icon className="w-[17px] h-[17px]" style={{ color: accent }} strokeWidth={2} />
                             </span>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
-                                <button
-                                  onClick={() => {
-                                    const next = !isOn;
-                                    onToggle(c.key, next);
-                                    if (next && hasConfig) setDetailKey(c.key);
-                                  }}
-                                  aria-label={isOn ? 'Disable' : 'Enable'}
-                                  className="relative inline-flex items-center flex-shrink-0 mt-0.5 active:scale-[0.96]"
-                                  style={{
-                                    width: 28,
-                                    height: 16,
-                                    borderRadius: 999,
-                                    background: isOn ? '#1C1E21' : '#E6E8EC',
-                                    transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
-                                  }}
-                                >
-                                  <span
-                                    style={{
-                                      position: 'absolute',
-                                      top: 2,
-                                      left: isOn ? 14 : 2,
-                                      width: 12,
-                                      height: 12,
-                                      borderRadius: 999,
-                                      background: '#FFFFFF',
-                                      boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
-                                      transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
-                                    }}
-                                  />
-                                </button>
-                              </div>
-                              <p className="text-[11.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
+                              <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
+                              <p className="text-[12.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
                             </div>
+                            <button
+                              onClick={() => {
+                                const next = !isOn;
+                                onToggle(c.key, next);
+                                if (next && hasConfig) setDetailKey(c.key);
+                              }}
+                              aria-label={isOn ? 'Disable' : 'Enable'}
+                              className="relative inline-flex items-center flex-shrink-0 active:scale-[0.96]"
+                              style={{
+                                width: 32,
+                                height: 18,
+                                borderRadius: 999,
+                                background: isOn ? '#1C1E21' : '#E6E8EC',
+                                transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  position: 'absolute',
+                                  top: 2,
+                                  left: isOn ? 16 : 2,
+                                  width: 14,
+                                  height: 14,
+                                  borderRadius: 999,
+                                  background: '#FFFFFF',
+                                  boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
+                                  transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
+                                }}
+                              />
+                            </button>
                           </div>
                         );
                       })}
