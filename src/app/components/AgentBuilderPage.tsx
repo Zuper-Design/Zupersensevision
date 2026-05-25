@@ -1250,7 +1250,7 @@ function MJCreateAgentForm({
         <div
           aria-hidden
           style={{
-            position: 'absolute', left: 0, right: 0, bottom: 0, height: '50%', zIndex: 30, pointerEvents: 'none',
+            position: 'fixed', left: 0, right: 0, bottom: 0, height: '50vh', zIndex: 30, pointerEvents: 'none',
             background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,237,213,0.65) 55%, rgba(254,205,170,0.85) 100%)',
             animation: 'mjDeployBgIn 700ms cubic-bezier(0.23,1,0.32,1) both',
           }}
