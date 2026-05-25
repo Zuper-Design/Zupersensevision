@@ -3489,7 +3489,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.22)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1), border-color 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.55)'; e.currentTarget.style.boxShadow = '0 0 0 4px rgba(124,58,237,0.16), 0 0 28px 0 rgba(167,139,250,0.45), 0 36px 64px -22px rgba(124,58,237,0.45)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.40)'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.08), 0 0 18px 0 rgba(167,139,250,0.22), 0 30px 56px -22px rgba(124,58,237,0.28)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.28)'; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.22)'; }}
               >
                 {/* Radial blooms */}
