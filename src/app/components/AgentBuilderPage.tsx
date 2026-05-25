@@ -828,18 +828,25 @@ function TriggerPicker({
   );
 }
 
-function AddPicker<T extends { key: string; label: string; desc: string; icon: any; tint?: string; iconColor?: string }>({
+type KbBadge = { label: string; tone: 'predefined' | 'web' | 'mcp' | 'neutral' };
+function AddPicker<T extends { key: string; label: string; desc: string; icon: any; tint?: string; iconColor?: string; url?: string; badges?: KbBadge[]; status?: 'connected' | 'ready' | 'pending' }>({
   buttonLabel,
   catalog,
   enabled,
   onToggle,
   renderConfig,
+  layout = 'grid',
+  createLabel,
+  onCreate,
 }: {
   buttonLabel: string;
   catalog: T[];
   enabled: Record<string, boolean>;
   onToggle: (key: string, on: boolean) => void;
   renderConfig?: (item: T) => React.ReactNode;
+  layout?: 'grid' | 'list';
+  createLabel?: string;
+  onCreate?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [detailKey, setDetailKey] = useState<string | null>(null);
@@ -942,13 +949,77 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                     </button>
                   </div>
                   <div className="px-6 pb-4 max-h-[520px] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-2.5">
+                    <div className={layout === 'list' ? 'rounded-xl border border-[#E6E8EC] overflow-hidden divide-y divide-[#F0F1F3]' : 'grid grid-cols-2 gap-2.5'}>
                       {catalog.map((c) => {
                         const Icon = c.icon;
                         const isOn = !!enabled[c.key];
                         const accent = c.iconColor || '#1C1E21';
                         const accentSoft = c.tint || '#F3F4F6';
                         const hasConfig = !!renderConfig?.(c);
+                        if (layout === 'list') {
+                          const toneMap: Record<KbBadge['tone'], { bg: string; color: string }> = {
+                            predefined: { bg: '#E0E7FF', color: '#4338CA' },
+                            web: { bg: '#F3F4F6', color: '#4B5563' },
+                            mcp: { bg: '#FEF3C7', color: '#92400E' },
+                            neutral: { bg: '#F3F4F6', color: '#4B5563' },
+                          };
+                          const statusMap: Record<NonNullable<T['status']>, { label: string; color: string }> = {
+                            connected: { label: 'Connected', color: '#059669' },
+                            ready: { label: 'Ready', color: '#059669' },
+                            pending: { label: 'Pending', color: '#A16207' },
+                          };
+                          const st = c.status ? statusMap[c.status] : null;
+                          return (
+                            <div key={c.key} className="flex items-center gap-3 px-4 py-3 bg-white">
+                              <span
+                                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                                style={{
+                                  background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
+                                  border: `1px solid ${accent}33`,
+                                  boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
+                                }}
+                              >
+                                <Icon className="w-[17px] h-[17px]" style={{ color: accent }} strokeWidth={2} />
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
+                                  {c.badges?.map((b) => {
+                                    const t = toneMap[b.tone];
+                                    return (
+                                      <span key={b.label} style={{ background: t.bg, color: t.color, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em', padding: '2px 7px', borderRadius: 6 }}>
+                                        {b.label.toUpperCase()}
+                                      </span>
+                                    );
+                                  })}
+                                  {st && (
+                                    <span className="inline-flex items-center gap-1 text-[12px] font-medium" style={{ color: st.color }}>
+                                      <CheckCircle2 className="w-3.5 h-3.5" />
+                                      {st.label}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[12.5px] text-[#6B7280] mt-0.5 truncate">{c.url || c.desc}</p>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  const next = !isOn;
+                                  onToggle(c.key, next);
+                                  if (next && hasConfig) setDetailKey(c.key);
+                                }}
+                                aria-label={isOn ? 'Disable' : 'Enable'}
+                                className="relative inline-flex items-center flex-shrink-0 active:scale-[0.96]"
+                                style={{
+                                  width: 32, height: 18, borderRadius: 999,
+                                  background: isOn ? '#1C1E21' : '#E6E8EC',
+                                  transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                                }}
+                              >
+                                <span style={{ position: 'absolute', top: 2, left: isOn ? 16 : 2, width: 14, height: 14, borderRadius: 999, background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.18)', transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)' }} />
+                              </button>
+                            </div>
+                          );
+                        }
                         return (
                           <div
                             key={c.key}
@@ -1009,6 +1080,21 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                         );
                       })}
                     </div>
+                    {createLabel && (
+                      <button
+                        onClick={() => onCreate?.()}
+                        className="mt-3 w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-white text-[13px] font-semibold text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
+                        style={{
+                          border: '1.25px dashed #D1D5DB',
+                          transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
+                        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
+                      >
+                        <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+                        {createLabel}
+                      </button>
+                    )}
                   </div>
                 </>
               )}
@@ -1104,7 +1190,7 @@ function MJCreateAgentForm({
   const avatar = avatars[avatarIdx % avatars.length];
   const avatarTint = avatarTints[avatarIdx % avatarTints.length];
 
-  type SkillDef = { key: string; label: string; desc: string; icon: any; tint: string; iconColor: string };
+  type SkillDef = { key: string; label: string; desc: string; icon: any; tint: string; iconColor: string; url?: string; badges?: KbBadge[]; status?: 'connected' | 'ready' | 'pending' };
   const skillCatalog: SkillDef[] = [
     { key: 'Read Zuper data', label: 'Read Zuper data', desc: 'Jobs, contacts, schedules', icon: Database, tint: '#DBEAFE', iconColor: '#2563EB' },
     { key: 'Send emails', label: 'Send emails', desc: 'Drafts on-brand, sends on approval', icon: Mail, tint: '#FFE0CC', iconColor: '#EA580C' },
@@ -1116,11 +1202,11 @@ function MJCreateAgentForm({
     { key: 'Analyze metrics', label: 'Analyze metrics', desc: 'Spot anomalies & trends', icon: BarChart3, tint: '#DBEAFE', iconColor: '#2563EB' },
   ];
   const kbCatalog: SkillDef[] = [
-    { key: 'Help Center', label: 'Help Center', desc: 'Public docs & guides', icon: BookOpen, tint: '#DBEAFE', iconColor: '#2563EB' },
-    { key: 'Internal SOPs', label: 'Internal SOPs', desc: 'Your private playbooks', icon: FileText, tint: '#FFE0CC', iconColor: '#EA580C' },
-    { key: 'Customer history', label: 'Customer history', desc: 'Past tickets & calls', icon: History, tint: '#D1FAE5', iconColor: '#059669' },
-    { key: 'Pricing book', label: 'Pricing book', desc: 'Quotes & rate cards', icon: FileText, tint: '#E9D5FF', iconColor: '#7C3AED' },
-    { key: 'Safety policies', label: 'Safety policies', desc: 'Crew & site checklists', icon: FileText, tint: '#FEF08A', iconColor: '#A16207' },
+    { key: 'Zuper Documentation', label: 'Zuper Documentation', desc: 'Public docs & guides', icon: Globe, tint: '#DBEAFE', iconColor: '#2563EB', url: 'https://docs.zuper.co', badges: [{ label: 'Predefined', tone: 'predefined' }, { label: 'MCP', tone: 'mcp' }], status: 'connected' },
+    { key: 'Quickbooks API Error', label: 'Quickbooks API Error', desc: 'Public docs & guides', icon: Globe, tint: '#DBEAFE', iconColor: '#2563EB', url: 'https://developer.intuit.com/app/developer/qbo/docs/develop/troubleshooting/error-codes', badges: [{ label: 'Web', tone: 'web' }], status: 'ready' },
+    { key: 'Internal SOPs', label: 'Internal SOPs', desc: 'Your private playbooks', icon: FileText, tint: '#FFE0CC', iconColor: '#EA580C', badges: [{ label: 'Predefined', tone: 'predefined' }], status: 'connected' },
+    { key: 'Customer history', label: 'Customer history', desc: 'Past tickets & calls', icon: History, tint: '#D1FAE5', iconColor: '#059669', badges: [{ label: 'Predefined', tone: 'predefined' }], status: 'connected' },
+    { key: 'Pricing book', label: 'Pricing book', desc: 'Quotes & rate cards', icon: FileText, tint: '#E9D5FF', iconColor: '#7C3AED', badges: [{ label: 'Web', tone: 'web' }], status: 'ready' },
   ];
   const triggerCatalog: { key: 'manual' | 'mention' | 'schedule' | 'webhook'; label: string; desc: string; icon: any; tint: string; iconColor: string }[] = [
     { key: 'manual', label: 'On demand', desc: 'You ask, it runs', icon: Play, tint: '#DBEAFE', iconColor: '#2563EB' },
@@ -1310,6 +1396,8 @@ function MJCreateAgentForm({
                   catalog={triggerItems}
                   enabled={triggers}
                   onToggle={(key, on) => setTriggers((p) => ({ ...p, [key]: on }))}
+                  createLabel="Create custom trigger"
+                  onCreate={() => {}}
                   renderConfig={(t) => {
                     const SurfaceRow = ({ title, sub, on, onToggle }: { title: string; sub: string; on: boolean; onToggle: () => void }) => (
                       <button
@@ -1502,10 +1590,7 @@ function MJCreateAgentForm({
             <p className="text-[14px] text-[#6B7280] mb-6">Pick the abilities and tools your agent can use to get work done.</p>
 
             <div className="mb-7">
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-[13px] font-medium text-[#1C1E21]">Skills</label>
-                <span className="text-[11px] text-[#9CA3AF]">{enabledSkills.length}/{skillCatalog.length}</span>
-              </div>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Skills</label>
               {enabledSkills.length > 0 && (
                 <div className="grid grid-cols-2 gap-2.5 mb-3">
                   {enabledSkills.map((s) => (
@@ -1522,6 +1607,8 @@ function MJCreateAgentForm({
                 catalog={skillCatalog}
                 enabled={skills}
                 onToggle={(key, on) => setSkills((p) => ({ ...p, [key]: on }))}
+                createLabel="Create custom skill"
+                onCreate={() => {}}
                 renderConfig={(s) => {
                   if (s.key === 'Send emails') {
                     return (
@@ -1581,10 +1668,7 @@ function MJCreateAgentForm({
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-[13px] font-medium text-[#1C1E21]">Tools</label>
-                <span className="text-[11px] text-[#9CA3AF]">{enabledTools.length}/{toolCatalog.length}</span>
-              </div>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Tools</label>
               {enabledTools.length > 0 && (
                 <div className="grid grid-cols-2 gap-2.5 mb-3">
                   {enabledTools.map((t) => (
@@ -1669,10 +1753,7 @@ function MJCreateAgentForm({
 
           {/* KNOWLEDGE */}
           <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
-            <div className="flex items-end justify-between mb-1.5">
-              <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21]">Knowledge base</h2>
-              <span className="text-[12px] text-[#9CA3AF] pb-1">{enabledKb.length}/{kbCatalog.length}</span>
-            </div>
+            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Knowledge base</h2>
             <p className="text-[14px] text-[#6B7280] mb-6">Connect data sources to give your agent domain knowledge.</p>
             {enabledKb.length > 0 && (
               <div className="space-y-2.5 mb-3">
@@ -1690,6 +1771,9 @@ function MJCreateAgentForm({
               catalog={kbCatalog}
               enabled={kb}
               onToggle={(key, on) => setKb((p) => ({ ...p, [key]: on }))}
+              layout="list"
+              createLabel="Create knowledge source"
+              onCreate={() => {}}
             />
           </section>
         </div>
