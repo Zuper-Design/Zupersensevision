@@ -3127,7 +3127,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               boxShadow: '0 4px 10px -4px rgba(124, 58, 237, 0.45)',
             }}
           >
-            <Sparkles className="w-[18px] h-[18px] text-white" fill="currentColor" />
+            <Wand2 className="w-[18px] h-[18px] text-white" strokeWidth={2.2} />
           </div>
           <div className="min-w-0 flex items-center gap-2">
             <h3 className="text-[14.5px] font-semibold tracking-tight text-[#1C1E21] leading-none">
