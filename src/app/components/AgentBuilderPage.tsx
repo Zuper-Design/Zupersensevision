@@ -943,7 +943,7 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                     </button>
                   </div>
                   <div
-                    className="px-6 pb-4 max-h-[520px] overflow-y-auto"
+                    className="px-6 pb-4 h-[520px] overflow-y-auto"
                     style={{ animation: 'detailIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}
                   >
                     <style>{`@keyframes detailIn { from { opacity: 0; transform: translateX(8px) } to { opacity: 1; transform: translateX(0) } }`}</style>
@@ -963,7 +963,7 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                       <X className="w-4 h-4" />
                     </button>
                   </div>
-                  <div className="px-6 pb-4 max-h-[520px] overflow-y-auto">
+                  <div className="px-6 pb-4 h-[520px] overflow-y-auto">
                     <div className={layout === 'list' ? 'rounded-xl border border-[#E6E8EC] overflow-hidden divide-y divide-[#F0F1F3]' : 'grid grid-cols-2 gap-2.5'}>
                       {catalog.map((c) => {
                         const Icon = c.icon;
