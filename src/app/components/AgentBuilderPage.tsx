@@ -3356,23 +3356,25 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-24 pb-16 overflow-hidden min-h-[calc(100vh-32px)]">
-            {/* Left + right edge gradient washes — contained inside the
-               chooser section (not the viewport) so they frame the cards. */}
+            {/* Left + right gradient orbs — peak at the vertical centre of
+               the section, fading to nothing toward the top and bottom. */}
             <div aria-hidden className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }}>
               <div
-                className="absolute inset-y-0 left-0"
+                className="absolute top-1/2 left-0 -translate-y-1/2"
                 style={{
-                  width: '22%',
+                  width: '16%',
+                  height: '70%',
                   background:
-                    'linear-gradient(to right, rgba(167,139,250,0.14) 0%, rgba(196,181,253,0.06) 55%, transparent 100%)',
+                    'radial-gradient(ellipse 100% 60% at 0% 50%, rgba(167,139,250,0.22) 0%, rgba(196,181,253,0.10) 45%, transparent 80%)',
                 }}
               />
               <div
-                className="absolute inset-y-0 right-0"
+                className="absolute top-1/2 right-0 -translate-y-1/2"
                 style={{
-                  width: '22%',
+                  width: '16%',
+                  height: '70%',
                   background:
-                    'linear-gradient(to left, rgba(244,114,182,0.12) 0%, rgba(244,114,182,0.05) 55%, transparent 100%)',
+                    'radial-gradient(ellipse 100% 60% at 100% 50%, rgba(244,114,182,0.20) 0%, rgba(244,114,182,0.08) 45%, transparent 80%)',
                 }}
               />
             </div>
