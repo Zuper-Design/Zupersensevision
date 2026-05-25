@@ -3356,38 +3356,29 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16 overflow-hidden min-h-[calc(100vh-80px)]">
-            {/* Twinkling particles — quiet decorative motion */}
+            {/* Left + right edge gradient washes — soft violet on the left,
+               soft pink on the right. Center column stays white so the
+               cards never blend into the backdrop. */}
             <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
-              {/* Twinkling particles — quiet movement, decorative only */}
-              {[
-                { top: '18%', left: '14%', size: 4, delay: 0,    color: 'rgba(167,139,250,0.55)' },
-                { top: '30%', left: '88%', size: 3, delay: 800,  color: 'rgba(244,114,182,0.55)' },
-                { top: '62%', left: '8%',  size: 3, delay: 1600, color: 'rgba(196,181,253,0.55)' },
-                { top: '70%', left: '92%', size: 4, delay: 2400, color: 'rgba(244,114,182,0.55)' },
-                { top: '12%', left: '52%', size: 2, delay: 3200, color: 'rgba(167,139,250,0.65)' },
-                { top: '88%', left: '46%', size: 2, delay: 4000, color: 'rgba(196,181,253,0.60)' },
-              ].map((p, i) => (
-                <span
-                  key={i}
-                  className="absolute rounded-full"
-                  style={{
-                    top: p.top,
-                    left: p.left,
-                    width: p.size,
-                    height: p.size,
-                    background: p.color,
-                    boxShadow: `0 0 6px ${p.color}`,
-                    animation: `chooserTwinkle 4.5s ease-in-out ${p.delay}ms infinite`,
-                  }}
-                />
-              ))}
+              <div
+                className="absolute top-0 bottom-0 left-0"
+                style={{
+                  width: '32%',
+                  background:
+                    'radial-gradient(ellipse 70% 70% at 0% 50%, rgba(167,139,250,0.32) 0%, rgba(196,181,253,0.16) 45%, transparent 80%)',
+                  filter: 'blur(20px)',
+                }}
+              />
+              <div
+                className="absolute top-0 bottom-0 right-0"
+                style={{
+                  width: '32%',
+                  background:
+                    'radial-gradient(ellipse 70% 70% at 100% 50%, rgba(244,114,182,0.28) 0%, rgba(244,114,182,0.14) 45%, transparent 80%)',
+                  filter: 'blur(20px)',
+                }}
+              />
             </div>
-            <style>{`
-              @keyframes chooserTwinkle {
-                0%, 100% { opacity: 0.2; transform: scale(0.9); }
-                50%      { opacity: 1;   transform: scale(1.1); }
-              }
-            `}</style>
 
             <div className="text-center mb-7 relative z-10">
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
@@ -4562,28 +4553,28 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
             </defs>
             <rect width="100%" height="100%" fill="url(#auMpHeroGrid)" />
           </svg>
-          {/* Animated gradient blobs — violet / fuchsia family */}
+          {/* Animated gradient blobs — softer violet / fuchsia */}
           <motion.div
             className="absolute"
-            style={{ top: '-30%', left: '-10%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(167,139,250,0.65), rgba(167,139,250,0.32) 45%, transparent 72%)', filter: 'blur(70px)' }}
+            style={{ top: '-30%', left: '-10%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(167,139,250,0.32), rgba(167,139,250,0.16) 45%, transparent 72%)', filter: 'blur(70px)' }}
             animate={{ x: [0, 40, -20, 0], y: [0, 30, 60, 0], scale: [1, 1.08, 0.95, 1] }}
             transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ bottom: '-40%', left: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(236,72,153,0.50), rgba(236,72,153,0.22) 50%, transparent 78%)', filter: 'blur(70px)' }}
+            style={{ bottom: '-40%', left: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(236,72,153,0.22), rgba(236,72,153,0.10) 50%, transparent 78%)', filter: 'blur(70px)' }}
             animate={{ x: [0, 30, -10, 0], y: [0, -20, -10, 0], scale: [1, 1.06, 0.92, 1] }}
             transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ top: '-30%', right: '-10%', width: 540, height: 540, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(196,181,253,0.60), rgba(196,181,253,0.30) 50%, transparent 75%)', filter: 'blur(75px)' }}
+            style={{ top: '-30%', right: '-10%', width: 540, height: 540, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(196,181,253,0.30), rgba(196,181,253,0.14) 50%, transparent 75%)', filter: 'blur(75px)' }}
             animate={{ x: [0, -30, 20, 0], y: [0, 30, 50, 0], scale: [1, 1.06, 0.95, 1] }}
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ bottom: '-40%', right: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.45), rgba(139,92,246,0.22) 50%, transparent 78%)', filter: 'blur(70px)' }}
+            style={{ bottom: '-40%', right: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.22), rgba(139,92,246,0.10) 50%, transparent 78%)', filter: 'blur(70px)' }}
             animate={{ x: [0, -30, 10, 0], y: [0, -20, -30, 0], scale: [1, 1.05, 0.93, 1] }}
             transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
           />
