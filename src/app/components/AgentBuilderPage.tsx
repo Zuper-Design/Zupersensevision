@@ -3316,7 +3316,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)' }} />
 
                 <span
-                  className="relative w-12 h-12 rounded-2xl flex items-center justify-center mb-auto overflow-hidden"
+                  className="relative w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden"
                   style={{
                     background: 'linear-gradient(160deg, #EDE9FE 0%, #FFFFFF 100%)',
                     border: '1px solid rgba(124,58,237,0.20)',
@@ -3325,6 +3325,35 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 >
                   <Plus className="w-5 h-5" style={{ color: '#6D28D9' }} strokeWidth={2.6} />
                 </span>
+
+                {/* Blank-canvas illustration */}
+                <div className="relative flex-1 flex items-center justify-center my-2">
+                  <div className="relative w-[200px] h-[140px]">
+                    {/* Floating skill chip — top left */}
+                    <div className="absolute left-0 top-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-5deg)' }}>
+                      <Zap className="w-3 h-3 text-[#7C3AED]" />
+                      <span className="text-[10px] font-semibold text-[#1C1E21]">Skill</span>
+                    </div>
+                    {/* Floating knowledge chip — top right */}
+                    <div className="absolute right-0 top-0 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(6deg)' }}>
+                      <Database className="w-3 h-3 text-[#7C3AED]" />
+                      <span className="text-[10px] font-semibold text-[#1C1E21]">Knowledge</span>
+                    </div>
+                    {/* Floating trigger chip — bottom right */}
+                    <div className="absolute right-2 bottom-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(4deg)' }}>
+                      <Clock className="w-3 h-3 text-[#7C3AED]" />
+                      <span className="text-[10px] font-semibold text-[#1C1E21]">Trigger</span>
+                    </div>
+                    {/* Center avatar placeholder */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[64px] h-[64px] rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1.5px dashed rgba(124,58,237,0.35)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 20px -10px rgba(124,58,237,0.30)' }}>
+                      <Bot className="w-7 h-7 text-[#7C3AED]" strokeWidth={1.8} />
+                    </div>
+                    {/* Sparkle accents */}
+                    <Sparkles className="absolute left-4 bottom-4 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" style={{ transform: 'rotate(-15deg)' }} />
+                    <Sparkles className="absolute right-12 top-12 w-2.5 h-2.5 text-[#DDD6FE]" fill="#DDD6FE" />
+                  </div>
+                </div>
+
                 <div className="relative">
                   <h3 className="text-[18px] font-semibold text-[#1C1E21] tracking-tight mb-1.5">Create your own</h3>
                   <p className="text-[12.5px] text-[#6B7280] leading-snug mb-4">Start from a blank canvas. Pick the avatar, triggers, skills, and knowledge.</p>
