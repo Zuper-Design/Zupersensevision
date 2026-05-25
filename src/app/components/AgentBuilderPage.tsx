@@ -3360,6 +3360,17 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-24 pb-16 overflow-hidden min-h-[calc(100vh-80px)]">
+            {/* Back to My agents — only when arriving from the populated grid */}
+            {!isEmpty && (
+              <button
+                onClick={() => { setChooserOpen(false); setFirstTime(false); }}
+                className="absolute top-6 left-8 z-20 inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1C1E21] hover:text-black transition active:scale-[0.97]"
+                aria-label="Back to My agents"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back to My agents
+              </button>
+            )}
             {/* Left + right gradient orbs — peak at the vertical centre of
                the section, fading to nothing toward the top and bottom. */}
             <div aria-hidden className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }}>
