@@ -1306,9 +1306,10 @@ function MJCreateAgentForm({
   // Prefer the seed's tint/accent (e.g. when hired from marketplace) so
   // the canvas keeps the marketplace's violet/pink palette.
   const baseTheme = avatarThemes[avatarIdx % avatarThemes.length];
-  // Violet default for blank Create Agent so the hero matches the rest
-  // of AI Studio out of the box.
-  const blankTheme = { tint: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)', accent: '#7C3AED', soft: '#DDD6FE' };
+  // Violet default for blank Create Agent — uses the same 3-stop fade
+  // (accent @ 12% -> accent @ 4% -> white) as marketplace-hired agents
+  // so every hero card across AI Studio reads in the same gentle tint.
+  const blankTheme = { tint: 'linear-gradient(180deg, #7C3AED1F 0%, #7C3AED0A 40%, #FFFFFF 80%)', accent: '#7C3AED', soft: '#DDD6FE' };
   const theme = (seedAgent?.tint && seedAgent?.accent)
     ? { tint: seedAgent.tint, accent: seedAgent.accent, soft: seedAgent.accent + '33' }
     : (!seedAgent ? blankTheme : baseTheme);
