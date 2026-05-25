@@ -3330,8 +3330,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                       <Zap className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Skill</span>
                     </div>
-                    {/* Floating tools chip — under skill */}
-                    <div className="absolute left-3 top-9 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-2deg)' }}>
+                    {/* Floating tools chip — bottom left, same baseline as Trigger */}
+                    <div className="absolute left-2 bottom-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-4deg)' }}>
                       <Wrench className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Tools</span>
                     </div>
