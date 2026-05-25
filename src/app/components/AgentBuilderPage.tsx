@@ -5842,9 +5842,8 @@ function KnowledgeBaseView() {
 
 function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: () => void }) {
   const [name, setName] = useState('');
-  const [desc, setDesc] = useState('');
+  const [instructions, setInstructions] = useState('');
   const [url, setUrl] = useState('');
-  const [urlOpen, setUrlOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -5864,6 +5863,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
       <style>{`
         @keyframes addKbOverlay { from { opacity: 0 } to { opacity: 1 } }
         @keyframes addKbModal { from { opacity: 0; transform: scale(0.96) translateY(8px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+        @keyframes addKbPreview { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: translateY(0) } }
       `}</style>
       <div
         className="fixed inset-0 z-[400] bg-black/40 backdrop-blur-sm"
@@ -5880,7 +5880,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
           <div className="flex items-center justify-between px-6 pt-5 pb-3">
             <div>
               <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">Add Knowledge</h3>
-              <p className="text-[12.5px] text-[#6B7280] mt-1">Attach a web URL or a file so your agents can answer from it.</p>
+              <p className="text-[12.5px] text-[#6B7280] mt-1">Give your agents a source — a web page or a file they can answer from.</p>
             </div>
             <button
               onClick={onClose}
@@ -5907,74 +5907,76 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
             </div>
 
             <div>
-              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Description <span className="text-[#9CA3AF] font-normal">(optional)</span></label>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions <span className="text-[#9CA3AF] font-normal">(optional)</span></label>
               <textarea
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="Brief description of this data source..."
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                placeholder="How should agents use this source? e.g., 'Cite specific sections and link back when answering.'"
                 rows={3}
                 className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
                 style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
               />
             </div>
 
-            {/* Icon-button row */}
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setUrlOpen((v) => !v)}
-                className={`w-9 h-9 rounded-md flex items-center justify-center active:scale-[0.94] ${urlOpen ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21]'}`}
-                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                aria-label="Add web URL"
-                title="Add web URL"
-              >
-                <Globe className="w-[16px] h-[16px]" />
-              </button>
-              <button
-                type="button"
-                onClick={triggerFile}
-                className={`w-9 h-9 rounded-md flex items-center justify-center active:scale-[0.94] ${file ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21]'}`}
-                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                aria-label="Upload file"
-                title="Upload file"
-              >
-                <Upload className="w-[16px] h-[16px]" />
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                accept=".pdf,.doc,.docx,.txt,.csv"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
-            </div>
-
-            {urlOpen && (
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://docs.example.com"
-                autoFocus
-                className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+            {/* Source — composed input (URL with inline upload button) */}
+            <div>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Source</label>
+              <div
+                className="flex items-center gap-1 pl-3 pr-1 h-10 rounded-lg bg-white border border-[#E6E8EC] focus-within:border-[#1C1E21]"
                 style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-              />
-            )}
-
-            {file && (
-              <div className="flex items-center gap-3 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-[#FAFAFB]">
-                <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1px solid rgba(124,58,237,0.20)' }}>
-                  <FileText className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[12.5px] font-medium text-[#1C1E21] truncate">{file.name}</div>
-                  <div className="text-[11px] text-[#9CA3AF]">{fileSize(file.size)}</div>
-                </div>
-                <button onClick={removeFile} className="p-1 rounded-md hover:bg-[#F3F4F6] transition flex-shrink-0" aria-label="Remove file">
-                  <X className="w-[14px] h-[14px] text-[#9CA3AF]" />
+              >
+                <Globe className="w-[15px] h-[15px] text-[#9CA3AF] flex-shrink-0" />
+                <input
+                  type="text"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="Paste a URL — or upload a file"
+                  disabled={!!file}
+                  className="flex-1 min-w-0 px-2 bg-transparent text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none disabled:text-[#9CA3AF] disabled:cursor-not-allowed"
+                />
+                <button
+                  type="button"
+                  onClick={triggerFile}
+                  className="inline-flex items-center gap-1 px-2 h-8 rounded-md text-[12px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.96]"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label="Upload file"
+                  title="Upload a file"
+                >
+                  <Upload className="w-[13px] h-[13px]" />
+                  Upload
                 </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.txt,.csv"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                />
               </div>
-            )}
+
+              {file && (
+                <div
+                  className="mt-2 flex items-center gap-3 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-[#FAFAFB]"
+                  style={{ animation: 'addKbPreview 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+                >
+                  <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1px solid rgba(124,58,237,0.20)' }}>
+                    <FileText className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[12.5px] font-medium text-[#1C1E21] truncate">{file.name}</div>
+                    <div className="text-[11px] text-[#9CA3AF]">{fileSize(file.size)}</div>
+                  </div>
+                  <button
+                    onClick={removeFile}
+                    className="p-1 rounded-md text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94] flex-shrink-0"
+                    style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    aria-label="Remove file"
+                  >
+                    <X className="w-[14px] h-[14px]" />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Footer */}
