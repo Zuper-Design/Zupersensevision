@@ -954,9 +954,9 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                             key={c.key}
                             className="flex items-start gap-3 px-3 py-3 rounded-xl"
                             style={{
-                              background: isOn ? accentSoft : '#FFFFFF',
-                              border: `1px solid ${isOn ? accent : '#E6E8EC'}`,
-                              transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1)',
+                              background: '#FFFFFF',
+                              border: `1px solid ${isOn ? '#1C1E21' : '#E6E8EC'}`,
+                              transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)',
                             }}
                           >
                             <span
@@ -1077,6 +1077,13 @@ function MJCreateAgentForm({
   const [schedHour, setSchedHour] = useState('09');
   const [schedMin, setSchedMin] = useState('00');
   const [mentionSurfaces, setMentionSurfaces] = useState({ chat: true, comments: true, dm: false });
+  const [emailFrom, setEmailFrom] = useState('agent@zuper.co');
+  const [emailSignature, setEmailSignature] = useState(true);
+  const [smsNumber, setSmsNumber] = useState('+1 (415) 555-0144');
+  const [slackChannel, setSlackChannel] = useState('#service-ops');
+  const [slackMentions, setSlackMentions] = useState('');
+  const [toolEmailTo, setToolEmailTo] = useState('');
+  const [toolEmailSubject, setToolEmailSubject] = useState('[Sense] ');
   const avatarMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!avatarOpen) return;
@@ -1515,6 +1522,61 @@ function MJCreateAgentForm({
                 catalog={skillCatalog}
                 enabled={skills}
                 onToggle={(key, on) => setSkills((p) => ({ ...p, [key]: on }))}
+                renderConfig={(s) => {
+                  if (s.key === 'Send emails') {
+                    return (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <div className="mb-4">
+                          <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">From address</p>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Drafts will be sent from this verified address.</p>
+                          <input
+                            value={emailFrom}
+                            onChange={(e) => setEmailFrom(e.target.value)}
+                            className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                            style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          />
+                        </div>
+                        <button
+                          onClick={() => setEmailSignature((v) => !v)}
+                          className="w-full flex items-center justify-between py-3 text-left"
+                        >
+                          <div>
+                            <p className="text-[14px] font-semibold text-[#1C1E21] leading-tight">Append signature</p>
+                            <p className="text-[12.5px] text-[#6B7280] mt-1 leading-snug">Adds the workspace footer to every outgoing draft.</p>
+                          </div>
+                          <span aria-hidden className="relative inline-flex items-center flex-shrink-0 mt-0.5" style={{ width: 36, height: 20, borderRadius: 999, background: emailSignature ? '#1C1E21' : '#E6E8EC', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                            <span style={{ position: 'absolute', top: 2, left: emailSignature ? 18 : 2, width: 16, height: 16, borderRadius: 999, background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.18)', transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)' }} />
+                          </span>
+                        </button>
+                        <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg mt-2" style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}>
+                          <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                          <p className="text-[12px] text-[#4B5563]">Drafts wait for human approval before sending.</p>
+                        </div>
+                      </div>
+                    );
+                  }
+                  if (s.key === 'Send SMS') {
+                    return (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <div>
+                          <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Sending number</p>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Use one of your verified SMS-enabled numbers.</p>
+                          <select
+                            value={smsNumber}
+                            onChange={(e) => setSmsNumber(e.target.value)}
+                            className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                            style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            <option>+1 (415) 555-0144</option>
+                            <option>+1 (628) 555-0177</option>
+                            <option>+44 20 7946 0958</option>
+                          </select>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
               />
             </div>
 
@@ -1539,6 +1601,68 @@ function MJCreateAgentForm({
                 catalog={toolCatalog}
                 enabled={tools}
                 onToggle={(key, on) => setTools((p) => ({ ...p, [key]: on }))}
+                renderConfig={(t) => {
+                  if (t.key === 'Send Email') {
+                    return (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <div className="mb-4">
+                          <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Default recipient</p>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Leave blank to let the agent fill the recipient from context.</p>
+                          <input
+                            value={toolEmailTo}
+                            onChange={(e) => setToolEmailTo(e.target.value)}
+                            placeholder="customer@example.com"
+                            className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                            style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          />
+                        </div>
+                        <div>
+                          <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Subject prefix</p>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Prepended to every subject line for easy filtering.</p>
+                          <input
+                            value={toolEmailSubject}
+                            onChange={(e) => setToolEmailSubject(e.target.value)}
+                            className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                            style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }
+                  if (t.key === 'Send Slack Message') {
+                    return (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <div className="mb-4">
+                          <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Channel</p>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Pick the Slack channel this agent should post to.</p>
+                          <select
+                            value={slackChannel}
+                            onChange={(e) => setSlackChannel(e.target.value)}
+                            className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                            style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            <option>#service-ops</option>
+                            <option>#dispatch</option>
+                            <option>#leads-inbound</option>
+                            <option>#alerts</option>
+                          </select>
+                        </div>
+                        <div>
+                          <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Mention on send</p>
+                          <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Comma-separated Slack handles to ping. Leave blank for none.</p>
+                          <input
+                            value={slackMentions}
+                            onChange={(e) => setSlackMentions(e.target.value)}
+                            placeholder="@oncall, @ops-lead"
+                            className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                            style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
               />
             </div>
           </section>
