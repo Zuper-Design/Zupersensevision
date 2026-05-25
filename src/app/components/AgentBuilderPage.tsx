@@ -3356,9 +3356,9 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-24 pb-16 overflow-hidden">
-            {/* Left + right edge gradient washes — narrow strips, low opacity,
-               sized to the natural chooser height so the page doesn't scroll. */}
-            <div aria-hidden className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }}>
+            {/* Left + right edge gradient washes — fixed to the viewport so
+               they bleed top to bottom regardless of content height. */}
+            <div aria-hidden className="pointer-events-none fixed inset-0" style={{ zIndex: 0 }}>
               <div
                 className="absolute inset-y-0 left-0"
                 style={{
