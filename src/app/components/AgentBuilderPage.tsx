@@ -3348,15 +3348,63 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
         isMJ ? (
           <div className="relative pt-16">
             <div className="text-center mb-7">
-              <img
-                src={emptyToolkit}
-                alt=""
+              <div
                 onClick={() => setFirstTime(false)}
                 title="Populate with starter agents"
-                className="relative h-[88px] w-auto object-contain mx-auto mb-3 drop-shadow-[0_10px_18px_rgba(0,0,0,0.10)] cursor-pointer hover:scale-105"
+                className="relative mx-auto mb-3 cursor-pointer h-[88px] w-[120px] flex items-center justify-center"
                 style={{ transition: 'transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
-                draggable={false}
-              />
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.04)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; }}
+              >
+                {/* Soft halo */}
+                <span
+                  aria-hidden
+                  className="absolute pointer-events-none"
+                  style={{
+                    width: 140,
+                    height: 88,
+                    borderRadius: '50%',
+                    background: 'radial-gradient(closest-side, rgba(196,181,253,0.55) 0%, rgba(244,114,182,0.18) 55%, transparent 80%)',
+                    filter: 'blur(20px)',
+                  }}
+                />
+                {/* Tile cluster — small "stack of agents" forming */}
+                <span
+                  aria-hidden
+                  className="relative inline-block w-12 h-12 rounded-xl"
+                  style={{
+                    background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)',
+                    border: '1px solid rgba(124,58,237,0.22)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 18px -10px rgba(124,58,237,0.35)',
+                    transform: 'rotate(-8deg) translate(-14px, 4px)',
+                  }}
+                />
+                <span
+                  aria-hidden
+                  className="relative inline-block w-14 h-14 rounded-2xl -ml-6 flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(160deg, #EDE9FE 0%, #FFFFFF 100%)',
+                    border: '1px solid rgba(124,58,237,0.30)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 22px -10px rgba(124,58,237,0.42)',
+                    zIndex: 2,
+                  }}
+                >
+                  <Sparkles className="w-6 h-6" style={{ color: '#7C3AED' }} fill="#C4B5FD" strokeWidth={1.8} />
+                </span>
+                <span
+                  aria-hidden
+                  className="relative inline-block w-12 h-12 rounded-xl -ml-3"
+                  style={{
+                    background: 'linear-gradient(160deg, #FCE7F3 0%, #FFFFFF 100%)',
+                    border: '1px solid rgba(236,72,153,0.22)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 18px -10px rgba(236,72,153,0.35)',
+                    transform: 'rotate(8deg) translate(2px, 4px)',
+                  }}
+                />
+                {/* Tiny sparkles around the cluster */}
+                <Sparkles className="absolute top-1 right-2 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" />
+                <Sparkles className="absolute bottom-2 left-3 w-2.5 h-2.5 text-[#F9A8D4]" fill="#F9A8D4" />
+              </div>
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
               <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
                 Spin up a custom agent or pick one from the marketplace.
