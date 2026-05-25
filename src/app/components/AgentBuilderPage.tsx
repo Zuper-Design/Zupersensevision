@@ -3362,50 +3362,6 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 }}
               />
 
-              {/* Scanning rings — concentric thin circles centred on the cards */}
-              <svg
-                className="absolute inset-x-0 mx-auto"
-                width="900"
-                height="900"
-                viewBox="0 0 900 900"
-                style={{
-                  top: '6%',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  WebkitMaskImage: 'radial-gradient(circle at center, #000 0%, rgba(0,0,0,0.7) 45%, transparent 75%)',
-                  maskImage: 'radial-gradient(circle at center, #000 0%, rgba(0,0,0,0.7) 45%, transparent 75%)',
-                }}
-              >
-                <g fill="none" stroke="rgba(124,58,237,0.14)" strokeWidth="1">
-                  <circle cx="450" cy="450" r="110" />
-                  <circle cx="450" cy="450" r="180" />
-                  <circle cx="450" cy="450" r="260" />
-                  <circle cx="450" cy="450" r="340" />
-                  <circle cx="450" cy="450" r="420" />
-                </g>
-                {/* Pulsing ring — soft pulse outward */}
-                <circle
-                  cx="450"
-                  cy="450"
-                  r="180"
-                  fill="none"
-                  stroke="rgba(124,58,237,0.30)"
-                  strokeWidth="1"
-                  style={{ animation: 'chooserRingPulse 4.5s cubic-bezier(0.23,1,0.32,1) infinite', transformOrigin: '450px 450px' }}
-                />
-              </svg>
-
-              {/* Dot grid — slightly bolder, radial-masked */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: 'radial-gradient(rgba(124,58,237,0.12) 1px, transparent 1px)',
-                  backgroundSize: '26px 26px',
-                  WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 90%)',
-                  maskImage: 'radial-gradient(ellipse 75% 65% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 90%)',
-                }}
-              />
-
               {/* Twinkling particles — quiet movement, decorative only */}
               {[
                 { top: '18%', left: '14%', size: 4, delay: 0,    color: 'rgba(167,139,250,0.55)' },
@@ -3431,11 +3387,6 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               ))}
             </div>
             <style>{`
-              @keyframes chooserRingPulse {
-                0%, 100% { transform: scale(0.95); opacity: 0; }
-                40%      { opacity: 0.8; }
-                100%     { transform: scale(1.55); opacity: 0; }
-              }
               @keyframes chooserTwinkle {
                 0%, 100% { opacity: 0.2; transform: scale(0.9); }
                 50%      { opacity: 1;   transform: scale(1.1); }
