@@ -5904,11 +5904,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
               <button
                 type="button"
                 onClick={() => setUrlOpen((v) => !v)}
-                className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-lg border text-[12.5px] font-medium transition active:scale-[0.98] ${
-                  urlOpen
-                    ? 'border-[#7C3AED]/40 bg-[#F5F3FF] text-[#7C3AED]'
-                    : 'border-[#E6E8EC] bg-white text-[#1C1E21] hover:border-[#7C3AED]/30'
-                }`}
+                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition active:scale-[0.98] hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
               >
                 <Globe className="w-[13px] h-[13px]" />
                 Add web URL
@@ -5916,11 +5912,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
               <button
                 type="button"
                 onClick={triggerFile}
-                className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-lg border text-[12.5px] font-medium transition active:scale-[0.98] ${
-                  file
-                    ? 'border-[#7C3AED]/40 bg-[#F5F3FF] text-[#7C3AED]'
-                    : 'border-[#E6E8EC] bg-white text-[#1C1E21] hover:border-[#7C3AED]/30'
-                }`}
+                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition active:scale-[0.98] hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
               >
                 <Upload className="w-[13px] h-[13px]" />
                 Upload file
@@ -5933,6 +5925,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
               />
             </div>
+            <p className="text-[11.5px] text-[#9CA3AF]">Supports PDF, DOCX, TXT, CSV up to 25 MB</p>
 
             {urlOpen && (
               <input
