@@ -3347,49 +3347,33 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16 overflow-hidden min-h-[calc(100vh-80px)]">
-            {/* Slow-drifting gradient blobs — anchored to the section bottom
-               so they bleed up from the bottom of the main content (never
-               into the sidebar). */}
-            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] overflow-hidden" style={{ zIndex: 0 }}>
-              <span
+            {/* Subtle AI ambient backdrop — faint dot grid + a single low
+               opacity radial wash. No moving parts, nothing jarring. */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+              {/* Soft radial wash, centred behind the cards */}
+              <div
                 className="absolute"
                 style={{
-                  bottom: '-70%',
-                  left: '-6%',
-                  width: 760,
-                  height: 760,
-                  borderRadius: '50%',
-                  background: 'radial-gradient(closest-side, rgba(167,139,250,0.55) 0%, rgba(196,181,253,0.30) 45%, rgba(196,181,253,0) 75%)',
-                  filter: 'blur(56px)',
-                  animation: 'chooserBlobA 22s ease-in-out infinite alternate',
+                  top: '15%',
+                  left: '50%',
+                  width: 1100,
+                  height: 600,
+                  transform: 'translateX(-50%)',
+                  background: 'radial-gradient(ellipse at center, rgba(167,139,250,0.12) 0%, rgba(244,114,182,0.06) 45%, transparent 70%)',
+                  filter: 'blur(40px)',
                 }}
               />
-              <span
-                className="absolute"
+              {/* Faint dot grid — fades to nothing at the edges */}
+              <div
+                className="absolute inset-0"
                 style={{
-                  bottom: '-75%',
-                  right: '-8%',
-                  width: 820,
-                  height: 820,
-                  borderRadius: '50%',
-                  background: 'radial-gradient(closest-side, rgba(244,114,182,0.45) 0%, rgba(244,114,182,0.22) 45%, rgba(244,114,182,0) 75%)',
-                  filter: 'blur(60px)',
-                  animation: 'chooserBlobB 26s ease-in-out infinite alternate',
+                  backgroundImage: 'radial-gradient(rgba(124,58,237,0.07) 1px, transparent 1px)',
+                  backgroundSize: '22px 22px',
+                  WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 85%)',
+                  maskImage: 'radial-gradient(ellipse 70% 60% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 85%)',
                 }}
               />
             </div>
-            <style>{`
-              @keyframes chooserBlobA {
-                0%   { transform: translate(0, 0) scale(1); }
-                50%  { transform: translate(140px, -40px) scale(1.08); }
-                100% { transform: translate(-60px, 20px) scale(0.95); }
-              }
-              @keyframes chooserBlobB {
-                0%   { transform: translate(0, 0) scale(1); }
-                50%  { transform: translate(-160px, -60px) scale(1.10); }
-                100% { transform: translate(80px, 30px) scale(0.92); }
-              }
-            `}</style>
 
             <div className="text-center mb-7 relative z-10">
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
@@ -3506,7 +3490,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
                 {/* Avatars — equal height, shared baseline */}
                 <div className="relative flex-1 min-h-0 flex items-center justify-center z-10 -mt-1">
-                  <div className="flex items-end -space-x-16" style={{ height: 200 }}>
+                  <div className="flex items-end justify-center -space-x-28" style={{ height: 200 }}>
                     <img src={agentMarketer} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 1 }} draggable={false} />
                     <img src={agentSupport} alt="" className="h-[200px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.26)]" style={{ zIndex: 3 }} draggable={false} />
                     <img src={agentReviews} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 2 }} draggable={false} />
