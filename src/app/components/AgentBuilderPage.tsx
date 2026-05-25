@@ -3987,6 +3987,7 @@ function Metric({ label, value, sub }: { label: string; value: string; sub?: str
 
 function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof catalogItems[number]; onBack: () => void; onHire?: (a: typeof myAgents[number]) => void; onChatWith?: (name: string) => void }) {
   const persona = catalogPersonas[agent.title] || hiredPersonas[agent.title] || { name: agent.title.split(' ')[0], pronouns: 'it/its' };
+  const agentShort = agent.title.replace(/\s+Agent$/i, '').trim();
   const rL = agent.role.toLowerCase();
   const catKey: keyof typeof categoryTint =
     /sales|closer/.test(rL) ? 'Sales' :
@@ -4039,11 +4040,11 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
   const businessQuote = quoteByCategory[catKey] || quoteByCategory.Operations;
 
   const greetingByCategory: Record<string, string> = {
-    Operations: `Hey — I'm ${persona.name}. I run while you sleep so your mornings start with a plan, not a fire. Ask me anything — how I'd handle a specific scenario, what I read, where I draw the line.`,
-    Sales: `Hey — I'm ${persona.name}. My job is to make sure no inbound lead ever sits cold. Ask me anything — how I qualify, where I hand off, what I'd say to a tough prospect.`,
-    Support: `Hey — I'm ${persona.name}. I'm here to be a calm voice when your customers need answers. Ask me anything — how I learn from your docs, when I escalate, what my replies sound like.`,
-    Finance: `Hey — I'm ${persona.name}. I keep your cash flow steady without you babysitting the books. Ask me anything — how I chase, when I escalate, what I never touch.`,
-    Compliance: `Hey — I'm ${persona.name}. I make sure every job closes clean and every step is logged. Ask me anything — what I check, when I flag, how I keep crews moving.`,
+    Operations: `Hey — I'm the ${agent.title}. I run while you sleep so your mornings start with a plan, not a fire. Ask me anything — how I'd handle a specific scenario, what I read, where I draw the line.`,
+    Sales: `Hey — I'm the ${agent.title}. My job is to make sure no inbound lead ever sits cold. Ask me anything — how I qualify, where I hand off, what I'd say to a tough prospect.`,
+    Support: `Hey — I'm the ${agent.title}. I'm here to be a calm voice when your customers need answers. Ask me anything — how I learn from your docs, when I escalate, what my replies sound like.`,
+    Finance: `Hey — I'm the ${agent.title}. I keep your cash flow steady without you babysitting the books. Ask me anything — how I chase, when I escalate, what I never touch.`,
+    Compliance: `Hey — I'm the ${agent.title}. I make sure every job closes clean and every step is logged. Ask me anything — what I check, when I flag, how I keep crews moving.`,
   };
 
   const [messages, setMessages] = useState<{ from: 'agent' | 'user'; text: string; rich?: string }[]>([
@@ -4149,7 +4150,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
           <button onClick={onBack} className="w-8 h-8 rounded-lg hover:bg-[#F3F4F6] flex items-center justify-center text-[#4B5563] transition" aria-label="Back">
             <ChevronLeft className="w-[18px] h-[18px]" />
           </button>
-          <h1 className="text-[14px] font-semibold text-[#1C1E21]">{persona.name}, {agent.title}</h1>
+          <h1 className="text-[14px] font-semibold text-[#1C1E21]">{agent.title}</h1>
           <span className="px-1.5 py-0.5 rounded-md bg-[#F3F4F6] text-[#4B5563] text-[10px] font-semibold uppercase tracking-wide">Preview</span>
         </div>
         <button onClick={onBack} className="w-8 h-8 rounded-lg hover:bg-[#F3F4F6] flex items-center justify-center text-[#4B5563] transition" aria-label="Close">
@@ -4192,7 +4193,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
 
             <div className="px-5 py-4 flex flex-col">
               <h2 className="text-[20px] font-semibold text-[#1C1E21] tracking-tight leading-[1.2] mb-1.5">
-                I'm <span style={{ color: tint.accent }}>{persona.name}</span> agent
+                I'm <span style={{ color: tint.accent }}>{agentShort}</span> Agent
               </h2>
               <p className="text-[13px] text-[#4B5563] leading-relaxed mb-3 max-w-[460px]">
                 {agent.desc}
@@ -4216,7 +4217,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                   className="inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
                 >
                   <Sparkles className="w-[13px] h-[13px]" fill="currentColor" />
-                  Hire {persona.name} — {price}
+                  Hire {agent.title} — {price}
                   <ArrowRight className="w-[13px] h-[13px]" />
                 </button>
               </div>
@@ -4228,8 +4229,8 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         <div className="rounded-2xl bg-white border border-[#E6E8EC] flex flex-col min-h-[620px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px -16px rgba(0,0,0,0.08)' }}>
           <div className="flex items-center justify-between gap-3 px-6 h-16 border-b border-[#F0F1F3]">
             <div className="min-w-0">
-              <div className="text-[15px] font-semibold text-[#1C1E21] tracking-tight leading-tight">Chat with {persona.name}</div>
-              <div className="text-[12px] text-[#6B7280] mt-0.5">Ask anything · {persona.name} replies in their own voice</div>
+              <div className="text-[15px] font-semibold text-[#1C1E21] tracking-tight leading-tight">Chat with {agent.title}</div>
+              <div className="text-[12px] text-[#6B7280] mt-0.5">Ask anything · the {agent.title} replies in their own voice</div>
             </div>
             <span className="text-[11px] text-[#9CA3AF]">No data saved · preview</span>
           </div>
@@ -4245,7 +4246,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                   transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
                   className="flex flex-col"
                 >
-                  <div className="text-[11px] font-medium uppercase tracking-[0.10em] mb-1.5" style={{ color: tint.accent }}>{persona.name}</div>
+                  <div className="text-[11px] font-medium uppercase tracking-[0.10em] mb-1.5" style={{ color: tint.accent }}>{agent.title}</div>
                   <p className="text-[14.5px] text-[#1C1E21] leading-[1.65]">{m.text}</p>
                   {m.rich && (
                     <div className="mt-3 rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-4 py-3 text-[12.5px] text-[#1C1E21] font-mono whitespace-pre-line leading-relaxed">
@@ -4272,7 +4273,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                   <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '120ms' }} />
                   <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '240ms' }} />
                 </span>
-                {persona.name} is typing
+                {agent.title} is typing
               </div>
             )}
             </div>
@@ -4308,7 +4309,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter' && input.trim()) { ask(input.trim()); setInput(''); } }}
-                    placeholder={`Ask ${persona.name} anything…`}
+                    placeholder={`Ask the ${agent.title} anything…`}
                     className="flex-1 bg-transparent text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none"
                   />
                   <button
@@ -4351,7 +4352,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
               "{businessQuote}"
             </p>
             <div className="mt-3 pt-3 border-t border-[#F0F1F3] text-[11px] text-[#6B7280]">
-              — {persona.name}, your {agent.title.toLowerCase()}
+              — {agent.title}
             </div>
           </div>
         </aside>
