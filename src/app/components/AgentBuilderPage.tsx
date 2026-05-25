@@ -1187,8 +1187,10 @@ function MJCreateAgentForm({
     'linear-gradient(180deg, #DCE9F5 0%, #EAF1F8 100%)',
     'linear-gradient(180deg, #FFE0EA 0%, #FFEBF1 100%)',
   ];
+  const avatarAccents = ['#DC2626', '#EA580C', '#059669', '#2563EB', '#DB2777'];
   const avatar = avatars[avatarIdx % avatars.length];
   const avatarTint = avatarTints[avatarIdx % avatarTints.length];
+  const avatarAccent = avatarAccents[avatarIdx % avatarAccents.length];
 
   type SkillDef = { key: string; label: string; desc: string; icon: any; tint: string; iconColor: string; url?: string; badges?: KbBadge[]; status?: 'connected' | 'ready' | 'pending' };
   const skillCatalog: SkillDef[] = [
@@ -1234,67 +1236,57 @@ function MJCreateAgentForm({
 
   const deploy = () => {
     if (!canDeploy || deployPhase !== 'idle') return;
-    const record: typeof myAgents[number] = {
-      name: name.trim(),
-      desc: instructions.trim().split('.')[0] || 'Custom agent.',
-      runs: 0, lastRun: '', users: 1, rating: 5.0, reviews: 0, price: 'Free',
-      skills: enabledSkills.length, tools: enabledKb.length,
-      status: 'Active', category: 'Operations', img: avatar,
-    };
     setDeployPhase('glow');
     setTimeout(() => setDeployPhase('success'), 1600);
-    setTimeout(() => onDeploy(record, false), 3000);
   };
 
   return (
     <div className="absolute inset-0 bg-white overflow-y-auto flex flex-col">
       {/* Deploy sequence overlays */}
       <style>{`
-        @keyframes mjDeployBg { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes mjDeployBgOut { from { opacity: 1 } to { opacity: 0 } }
-        @keyframes mjSuccessIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.92) } 60% { opacity: 1; transform: translate(-50%, -50%) scale(1.02) } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1) } }
-        @keyframes mjCheckIn { 0% { transform: scale(0.4); opacity: 0 } 60% { transform: scale(1.15); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
-        @keyframes mjPulse { 0%, 100% { transform: scale(1); opacity: 0.6 } 50% { transform: scale(1.18); opacity: 0 } }
+        @keyframes mjDeployBgIn { from { opacity: 0 } to { opacity: 1 } }
       `}</style>
       {deployPhase !== 'idle' && (
         <div
           aria-hidden
           style={{
-            position: 'absolute', inset: 0, zIndex: 30, pointerEvents: 'none',
-            background: 'radial-gradient(120% 80% at 50% 20%, rgba(253,80,0,0.22) 0%, rgba(251,191,36,0.16) 35%, rgba(255,255,255,0) 70%), linear-gradient(180deg, rgba(255,247,237,0.0) 0%, rgba(255,237,213,0.55) 100%)',
-            animation: 'mjDeployBg 600ms cubic-bezier(0.23,1,0.32,1) both',
+            position: 'absolute', left: 0, right: 0, bottom: 0, height: '50%', zIndex: 30, pointerEvents: 'none',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,237,213,0.65) 55%, rgba(254,205,170,0.85) 100%)',
+            animation: 'mjDeployBgIn 700ms cubic-bezier(0.23,1,0.32,1) both',
           }}
         />
       )}
-      {deployPhase === 'success' && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center pointer-events-none">
-          <div
-            className="pointer-events-auto bg-white rounded-2xl px-8 py-7 text-center"
-            style={{
-              position: 'absolute', left: '50%', top: '50%',
-              boxShadow: '0 24px 60px rgba(30,34,60,0.22), 0 0 0 1px rgba(28,30,33,0.06)',
-              animation: 'mjSuccessIn 480ms cubic-bezier(0.23,1,0.32,1) both',
-              minWidth: 340,
-            }}
-          >
-            <div className="relative mx-auto mb-3" style={{ width: 56, height: 56 }}>
-              <span aria-hidden style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'rgba(16,185,129,0.18)', animation: 'mjPulse 1.4s ease-out infinite' }} />
-              <div
-                className="absolute inset-0 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                  boxShadow: '0 8px 24px rgba(16,185,129,0.35)',
-                  animation: 'mjCheckIn 380ms cubic-bezier(0.23,1,0.32,1) both',
-                }}
-              >
-                <Check className="w-7 h-7 text-white" strokeWidth={3} />
-              </div>
-            </div>
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.015em' }}>Agent deployed</h3>
-            <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 6 }}>{name.trim() || 'New Agent'} is now live and ready to run.</p>
-          </div>
-        </div>
-      )}
+      <AgentReadyModal
+        open={deployPhase === 'success'}
+        name={name.trim() || 'Your agent'}
+        role="New agent"
+        avatar={avatar}
+        avatarTint={avatarTint}
+        accent={avatarAccent}
+        primaryLabel="Chat with"
+        secondaryLabel="Go to marketplace"
+        onChat={() => {
+          const record: typeof myAgents[number] = {
+            name: name.trim(),
+            desc: instructions.trim().split('.')[0] || 'Custom agent.',
+            runs: 0, lastRun: 'just now', users: 1, rating: 5.0, reviews: 0, price: 'Free',
+            skills: enabledSkills.length, tools: enabledKb.length,
+            status: 'Active', category: 'Operations', img: avatar,
+          };
+          onDeploy(record, true);
+        }}
+        onMarketplace={() => {
+          const record: typeof myAgents[number] = {
+            name: name.trim(),
+            desc: instructions.trim().split('.')[0] || 'Custom agent.',
+            runs: 0, lastRun: 'just now', users: 1, rating: 5.0, reviews: 0, price: 'Free',
+            skills: enabledSkills.length, tools: enabledKb.length,
+            status: 'Active', category: 'Operations', img: avatar,
+          };
+          onDeploy(record, false);
+        }}
+        onClose={() => setDeployPhase('idle')}
+      />
 
       {/* Header bar — Create agent + Deploy */}
       <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
@@ -1332,15 +1324,32 @@ function MJCreateAgentForm({
         <div className="max-w-[820px] mx-auto px-6 py-10">
           {/* Hero strip — peach background, avatar + name + instructions */}
           <div className="sticky top-14 z-20 bg-white pt-4 pb-4 mb-4 -mx-6 px-6">
-          <div className="relative rounded-2xl" style={{ padding: deployPhase === 'glow' ? 2 : 0, transition: 'padding 200ms cubic-bezier(0.23,1,0.32,1)' }}>
-          {deployPhase === 'glow' && (
+          <div className="relative rounded-2xl">
+          {deployPhase !== 'idle' && (
             <>
               <style>{`
-                @keyframes mjDeploySpin { to { transform: rotate(360deg) } }
                 @keyframes mjDeployFade { from { opacity: 0 } to { opacity: 1 } }
+                @keyframes mjGlowBreathe { 0%, 100% { opacity: 0.55 } 50% { opacity: 1 } }
               `}</style>
-              <span aria-hidden style={{ position: 'absolute', inset: -2, borderRadius: 18, padding: 2, background: 'conic-gradient(from 0deg, #FD5000, #F97316, #FBBF24, #FD5000)', WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', animation: 'mjDeploySpin 1.6s linear infinite, mjDeployFade 200ms cubic-bezier(0.23,1,0.32,1) both', pointerEvents: 'none', zIndex: 1 }} />
-              <span aria-hidden style={{ position: 'absolute', inset: -10, borderRadius: 24, background: 'radial-gradient(closest-side, rgba(253,80,0,0.35), rgba(253,80,0,0) 70%)', filter: 'blur(12px)', animation: 'mjDeployFade 240ms cubic-bezier(0.23,1,0.32,1) both', pointerEvents: 'none' }} />
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute', inset: -8, borderRadius: 22,
+                  background: 'radial-gradient(closest-side, rgba(253,80,0,0.45), rgba(253,80,0,0) 75%)',
+                  filter: 'blur(16px)',
+                  animation: 'mjDeployFade 280ms cubic-bezier(0.23,1,0.32,1) both, mjGlowBreathe 2.4s ease-in-out infinite',
+                  pointerEvents: 'none',
+                }}
+              />
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute', inset: -1, borderRadius: 17,
+                  boxShadow: '0 0 0 1.5px rgba(253,80,0,0.35), 0 0 24px rgba(253,80,0,0.25)',
+                  animation: 'mjDeployFade 200ms cubic-bezier(0.23,1,0.32,1) both',
+                  pointerEvents: 'none',
+                }}
+              />
             </>
           )}
           <div className="relative rounded-2xl px-8 py-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
