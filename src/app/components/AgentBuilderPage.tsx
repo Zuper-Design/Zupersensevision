@@ -4121,8 +4121,8 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
         <div className="flex flex-col gap-4 min-w-0">
         {/* Hero card — agent pitches itself */}
         <div className="relative rounded-3xl border border-[#E6E8EC] overflow-hidden bg-white">
-          <div className="grid grid-cols-[260px_1fr] items-stretch">
-            <div className="relative overflow-hidden flex items-end justify-center" style={{ background: tint.tint, minHeight: 280 }}>
+          <div className="grid grid-cols-[220px_1fr] items-stretch">
+            <div className="relative overflow-hidden flex items-end justify-center" style={{ background: tint.tint, minHeight: 220 }}>
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute" style={{ top: -60, left: -40, width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}55, transparent 70%)`, filter: 'blur(32px)' }} />
                 <div className="absolute" style={{ bottom: -80, right: -40, width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}33, transparent 72%)`, filter: 'blur(32px)' }} />
@@ -4141,7 +4141,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
               <motion.img
                 src={agent.img}
                 alt=""
-                className="relative h-[240px] w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
+                className="relative h-[180px] w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
@@ -4149,15 +4149,15 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
               />
             </div>
 
-            <div className="px-6 py-5 flex flex-col">
-              <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight leading-[1.2] mb-2">
+            <div className="px-5 py-4 flex flex-col">
+              <h2 className="text-[20px] font-semibold text-[#1C1E21] tracking-tight leading-[1.2] mb-1.5">
                 I'm <span style={{ color: tint.accent }}>{persona.name}</span> agent
               </h2>
-              <p className="text-[13.5px] text-[#4B5563] leading-relaxed mb-4 max-w-[460px]">
+              <p className="text-[13px] text-[#4B5563] leading-relaxed mb-3 max-w-[460px]">
                 {catalogOutcomes[agent.title] || agent.desc}
               </p>
 
-              <div className="flex items-center gap-4 mb-5 text-[12px] text-[#6B7280]">
+              <div className="flex items-center gap-3 mb-4 text-[11.5px] text-[#6B7280]">
                 <span className="inline-flex items-center gap-1">
                   <span className="font-semibold text-[#1C1E21]">{saves}</span>
                   saves
@@ -4172,11 +4172,11 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
               <div className="mt-auto">
                 <button
                   onClick={() => setHiredOpen(true)}
-                  className="inline-flex items-center justify-center gap-1.5 px-5 h-11 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
                 >
-                  <Sparkles className="w-[14px] h-[14px]" fill="currentColor" />
+                  <Sparkles className="w-[13px] h-[13px]" fill="currentColor" />
                   Hire {persona.name} — {price}
-                  <ArrowRight className="w-[14px] h-[14px]" />
+                  <ArrowRight className="w-[13px] h-[13px]" />
                 </button>
               </div>
             </div>
