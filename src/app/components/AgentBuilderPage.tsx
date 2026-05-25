@@ -4101,33 +4101,23 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
           <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">AI Studio</h1>
         </div>
         <nav className="flex-1 p-3 space-y-0.5">
+          <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium bg-[#F3F4F6] text-[#1C1E21] transition">
+            <Bot className="w-[15px] h-[15px] text-[#1C1E21]" />
+            <span className="flex-1 text-left">My agents</span>
+          </button>
           <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21] transition">
             <LayoutGrid className="w-[15px] h-[15px] text-[#6B7280]" />
-            <span className="flex-1 text-left">Overview</span>
+            <span className="flex-1 text-left">Marketplace</span>
           </button>
-          <div>
-            <div className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#1C1E21]">
-              <Bot className="w-[15px] h-[15px] text-[#6B7280]" />
-              <span className="flex-1 text-left">Agent</span>
-              <ChevronDown className="w-[14px] h-[14px] text-[#9CA3AF]" />
-            </div>
-            <div className="ml-7 space-y-0.5 mt-0.5">
-              <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-[#6B7280] hover:bg-[#F8F9FB] hover:text-[#1C1E21] transition">
-                <span className="flex-1 text-left">My agents</span>
-              </button>
-              <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[13px] font-medium bg-[#EFF6FF] text-[#2563EB] transition">
-                <span className="flex-1 text-left">Marketplace</span>
-              </button>
-            </div>
-          </div>
           <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21] transition">
             <Zap className="w-[15px] h-[15px] text-[#6B7280]" />
             <span className="flex-1 text-left">Skills</span>
           </button>
           <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21] transition">
             <Database className="w-[15px] h-[15px] text-[#6B7280]" />
-            <span className="flex-1 text-left">Knowledge Base</span>
+            <span className="flex-1 text-left">Knowledge base</span>
           </button>
+          <div className="my-2 border-t border-[#F0F1F3]" />
           <button disabled className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#C0C4CC] cursor-not-allowed">
             <BarChart3 className="w-[15px] h-[15px] text-[#C0C4CC]" />
             <span className="flex-1 text-left">Usage</span>
