@@ -1484,7 +1484,31 @@ function MJCreateAgentForm({
             </>
           )}
           <div className="relative rounded-2xl px-8 py-8" style={{ background: theme.tint }}>
-            <div className="flex items-center gap-6">
+            {/* Decorative layer — clipped to the card so it doesn't escape, but avatar popover stays visible */}
+            <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden">
+              {/* Soft secondary bloom for gradient depth */}
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute', top: -60, right: -40, width: 320, height: 240, borderRadius: '50%',
+                  background: `radial-gradient(closest-side, ${theme.accent}40, ${theme.accent}00 70%)`,
+                  filter: 'blur(36px)',
+                  opacity: 0.7,
+                  display: 'block',
+                }}
+              />
+              {/* Inner top highlight */}
+              <span aria-hidden style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }} />
+              {/* Grain texture */}
+              <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.22, mixBlendMode: 'overlay' }} xmlns="http://www.w3.org/2000/svg">
+                <filter id="mjHeroGrain">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" />
+                  <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0" />
+                </filter>
+                <rect width="100%" height="100%" filter="url(#mjHeroGrain)" />
+              </svg>
+            </span>
+            <div className="relative flex items-center gap-6">
               <div className="relative flex-shrink-0" ref={avatarMenuRef}>
                 <button
                   onClick={() => setAvatarOpen((v) => !v)}
