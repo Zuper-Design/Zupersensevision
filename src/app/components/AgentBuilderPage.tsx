@@ -3356,26 +3356,24 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16 overflow-hidden min-h-[calc(100vh-80px)]">
-            {/* Left + right edge gradient washes — soft violet on the left,
-               soft pink on the right. Center column stays white so the
-               cards never blend into the backdrop. */}
+            {/* Left + right edge gradient washes — anchor the radial centre
+               off-screen so the visible side reads as a flat colour wash
+               that fades inward, with no white sliver at the very edge. */}
             <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
               <div
-                className="absolute top-0 bottom-0 left-0"
+                className="absolute inset-y-0 left-0"
                 style={{
-                  width: '32%',
+                  width: '40%',
                   background:
-                    'radial-gradient(ellipse 70% 70% at 0% 50%, rgba(167,139,250,0.32) 0%, rgba(196,181,253,0.16) 45%, transparent 80%)',
-                  filter: 'blur(20px)',
+                    'linear-gradient(to right, rgba(167,139,250,0.34) 0%, rgba(196,181,253,0.18) 50%, transparent 100%)',
                 }}
               />
               <div
-                className="absolute top-0 bottom-0 right-0"
+                className="absolute inset-y-0 right-0"
                 style={{
-                  width: '32%',
+                  width: '40%',
                   background:
-                    'radial-gradient(ellipse 70% 70% at 100% 50%, rgba(244,114,182,0.28) 0%, rgba(244,114,182,0.14) 45%, transparent 80%)',
-                  filter: 'blur(20px)',
+                    'linear-gradient(to left, rgba(244,114,182,0.30) 0%, rgba(244,114,182,0.14) 55%, transparent 100%)',
                 }}
               />
             </div>
