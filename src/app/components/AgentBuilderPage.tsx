@@ -5904,7 +5904,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
               <button
                 type="button"
                 onClick={() => setUrlOpen((v) => !v)}
-                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition active:scale-[0.98] hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#1C1E21] text-[#1C1E21] text-[12.5px] font-semibold transition active:scale-[0.98] hover:bg-[#FAFAFB]"
               >
                 <Globe className="w-[13px] h-[13px]" />
                 Add web URL
@@ -5912,7 +5912,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
               <button
                 type="button"
                 onClick={triggerFile}
-                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition active:scale-[0.98] hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#1C1E21] text-[#1C1E21] text-[12.5px] font-semibold transition active:scale-[0.98] hover:bg-[#FAFAFB]"
               >
                 <Upload className="w-[13px] h-[13px]" />
                 Upload file
