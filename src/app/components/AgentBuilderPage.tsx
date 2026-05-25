@@ -4124,12 +4124,6 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
             <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5F3FF] text-[#7C3AED]">SOON</span>
           </button>
         </nav>
-        <div className="p-3 border-t border-[#F0F1F3]">
-          <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#4B5563] hover:bg-[#F8F9FB] transition">
-            <LifeBuoy className="w-[15px] h-[15px] text-[#6B7280]" />
-            <span>Support</span>
-          </button>
-        </div>
       </aside>
 
       {/* Main content */}
