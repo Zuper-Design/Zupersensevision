@@ -3294,12 +3294,12 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 className="relative rounded-2xl overflow-hidden text-left p-7 flex flex-col h-[460px] active:scale-[0.995] group"
                 style={{
                   background: '#FFFFFF',
-                  border: '1px solid rgba(124,58,237,0.22)',
+                  border: '1px solid #EEF0F3',
                   boxShadow: '0 1px 2px rgba(28,30,33,0.03)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1), border-color 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 8px rgba(28,30,33,0.04), 0 22px 44px -22px rgba(124,58,237,0.22)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.34)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.22)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 8px rgba(28,30,33,0.04), 0 22px 44px -22px rgba(124,58,237,0.22)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.32)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = '#EEF0F3'; }}
               >
                 {/* Blank-canvas grid — darker in centre, fades out at edges */}
                 <svg
