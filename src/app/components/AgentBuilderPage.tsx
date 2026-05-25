@@ -3355,7 +3355,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
-          <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-24 pb-16 overflow-hidden">
+          <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-24 pb-16 overflow-hidden min-h-[calc(100vh-80px)]">
             {/* Left + right edge gradient washes — contained inside the
                chooser section (not the viewport) so they frame the cards. */}
             <div aria-hidden className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }}>
