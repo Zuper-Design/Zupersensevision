@@ -4391,52 +4391,52 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
         className="relative overflow-hidden flex-shrink-0"
         style={{
           minHeight: 240,
-          background: '#FFF8F2',
+          background: '#F8F7FF',
         }}
       >
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Dot grid */}
-          <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.32 }} xmlns="http://www.w3.org/2000/svg">
+          {/* Line grid */}
+          <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.6 }} xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern id="auMpHeroDots" width="22" height="22" patternUnits="userSpaceOnUse">
-                <circle cx="1" cy="1" r="1" fill="#B8410E" opacity="0.22" />
+              <pattern id="auMpHeroGrid" width="26" height="26" patternUnits="userSpaceOnUse">
+                <path d="M26 0 L0 0 0 26" fill="none" stroke="#E0DCF0" strokeWidth="1" />
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="url(#auMpHeroDots)" />
+            <rect width="100%" height="100%" fill="url(#auMpHeroGrid)" />
           </svg>
-          {/* Animated gradient blobs — anchored to ends, middle stays clear */}
+          {/* Animated gradient blobs — violet / fuchsia family */}
           <motion.div
             className="absolute"
-            style={{ top: '-30%', left: '-10%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(255,150,110,0.75), rgba(255,120,90,0.40) 45%, transparent 72%)', filter: 'blur(70px)' }}
+            style={{ top: '-30%', left: '-10%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(167,139,250,0.65), rgba(167,139,250,0.32) 45%, transparent 72%)', filter: 'blur(70px)' }}
             animate={{ x: [0, 40, -20, 0], y: [0, 30, 60, 0], scale: [1, 1.08, 0.95, 1] }}
             transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ bottom: '-40%', left: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(244,120,150,0.60), rgba(244,140,170,0.30) 50%, transparent 78%)', filter: 'blur(70px)' }}
+            style={{ bottom: '-40%', left: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(236,72,153,0.50), rgba(236,72,153,0.22) 50%, transparent 78%)', filter: 'blur(70px)' }}
             animate={{ x: [0, 30, -10, 0], y: [0, -20, -10, 0], scale: [1, 1.06, 0.92, 1] }}
             transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ top: '-30%', right: '-10%', width: 540, height: 540, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(216,170,232,0.60), rgba(190,150,225,0.32) 50%, transparent 75%)', filter: 'blur(75px)' }}
+            style={{ top: '-30%', right: '-10%', width: 540, height: 540, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(196,181,253,0.60), rgba(196,181,253,0.30) 50%, transparent 75%)', filter: 'blur(75px)' }}
             animate={{ x: [0, -30, 20, 0], y: [0, 30, 50, 0], scale: [1, 1.06, 0.95, 1] }}
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ bottom: '-40%', right: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(255,170,140,0.55), rgba(255,140,120,0.30) 50%, transparent 78%)', filter: 'blur(70px)' }}
+            style={{ bottom: '-40%', right: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.45), rgba(139,92,246,0.22) 50%, transparent 78%)', filter: 'blur(70px)' }}
             animate={{ x: [0, -30, 10, 0], y: [0, -20, -30, 0], scale: [1, 1.05, 0.93, 1] }}
             transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
           />
-          {/* Sparkle accents */}
-          <svg className="absolute" style={{ top: 50, right: '8%', width: 18, height: 18 }} viewBox="0 0 24 24" fill="#E63946" opacity="0.7">
+          {/* Sparkle accents — violet/fuchsia */}
+          <svg className="absolute" style={{ top: 50, right: '8%', width: 18, height: 18 }} viewBox="0 0 24 24" fill="#7C3AED" opacity="0.65">
             <path d="M12 2 L13.5 9 L20 10.5 L13.5 12 L12 19 L10.5 12 L4 10.5 L10.5 9 Z" />
           </svg>
-          <svg className="absolute" style={{ top: '40%', right: '40%', width: 12, height: 12 }} viewBox="0 0 24 24" fill="#FFC857" opacity="0.65">
+          <svg className="absolute" style={{ top: '40%', right: '40%', width: 12, height: 12 }} viewBox="0 0 24 24" fill="#EC4899" opacity="0.6">
             <path d="M12 2 L13.5 9 L20 10.5 L13.5 12 L12 19 L10.5 12 L4 10.5 L10.5 9 Z" />
           </svg>
-          <svg className="absolute" style={{ bottom: 80, right: '15%', width: 14, height: 14 }} viewBox="0 0 24 24" fill="#FF8A4C" opacity="0.6">
+          <svg className="absolute" style={{ bottom: 80, right: '15%', width: 14, height: 14 }} viewBox="0 0 24 24" fill="#A78BFA" opacity="0.6">
             <path d="M12 2 L13.5 9 L20 10.5 L13.5 12 L12 19 L10.5 12 L4 10.5 L10.5 9 Z" />
           </svg>
         </div>
@@ -4621,6 +4621,15 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                             'transform 520ms cubic-bezier(0.23,1,0.32,1), opacity 360ms cubic-bezier(0.23,1,0.32,1), box-shadow 360ms cubic-bezier(0.23,1,0.32,1)',
                         }}
                       >
+                        {/* Subtle line grid pattern */}
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.5 }} xmlns="http://www.w3.org/2000/svg">
+                          <defs>
+                            <pattern id={`mpCardGrid-${i}`} width="22" height="22" patternUnits="userSpaceOnUse">
+                              <path d="M22 0 L0 0 0 22" fill="none" stroke="#F0F1F4" strokeWidth="1" />
+                            </pattern>
+                          </defs>
+                          <rect width="100%" height="100%" fill={`url(#mpCardGrid-${i})`} />
+                        </svg>
                         {/* Soft radial bloom behind avatar */}
                         <span
                           aria-hidden
