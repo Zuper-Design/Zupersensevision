@@ -4,7 +4,7 @@ import { SenseLogo } from './SenseLogo';
 import {
   LayoutGrid, Bot, BookOpen, MessageSquare, Zap, Database, BarChart3, LifeBuoy, Plus,
   Search, MoreHorizontal, Play, Pencil, List, LayoutGrid as GridIcon, Star, Users, Check, AlertTriangle,
-  Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Trash2, ChevronDown, X, Upload,
+  Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Loader2, Trash2, ChevronDown, X, Upload,
   AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText, Settings,
 } from 'lucide-react';
 import avatarBg from '../../imports/agents/avatar-bg.png';
@@ -1257,9 +1257,27 @@ function MJCreateAgentForm({
   const enabledTriggers = triggerItems.filter((t) => triggers[t.key]);
   const canDeploy = name.trim().length > 1 && (enabledSkills.length + enabledTools.length) > 0;
   const [deployPhase, setDeployPhase] = useState<'idle' | 'glow' | 'success'>('idle');
+  const isEdit = !!seedAgent;
+  const missingHint = !canDeploy
+    ? (name.trim().length <= 1
+        ? 'Give your agent a name to continue'
+        : 'Add at least one skill or tool')
+    : null;
+
+  const buildRecord = (): typeof myAgents[number] => ({
+    name: name.trim(),
+    desc: instructions.trim().split('.')[0] || 'Custom agent.',
+    runs: seedAgent?.runs ?? 0, lastRun: 'just now', users: seedAgent?.users ?? 1, rating: seedAgent?.rating ?? 5.0, reviews: seedAgent?.reviews ?? 0, price: seedAgent?.price ?? 'Free',
+    skills: enabledSkills.length, tools: enabledKb.length,
+    status: seedAgent?.status ?? 'Active', category: seedAgent?.category ?? 'Operations', img: avatar,
+  });
 
   const deploy = () => {
     if (!canDeploy || deployPhase !== 'idle') return;
+    if (isEdit) {
+      onDeploy(buildRecord(), false);
+      return;
+    }
     setDeployPhase('glow');
     setTimeout(() => setDeployPhase('success'), 1600);
   };
@@ -1289,26 +1307,8 @@ function MJCreateAgentForm({
         accent={avatarAccent}
         primaryLabel="Chat with"
         secondaryLabel="Go to marketplace"
-        onChat={() => {
-          const record: typeof myAgents[number] = {
-            name: name.trim(),
-            desc: instructions.trim().split('.')[0] || 'Custom agent.',
-            runs: 0, lastRun: 'just now', users: 1, rating: 5.0, reviews: 0, price: 'Free',
-            skills: enabledSkills.length, tools: enabledKb.length,
-            status: 'Active', category: 'Operations', img: avatar,
-          };
-          onDeploy(record, true);
-        }}
-        onMarketplace={() => {
-          const record: typeof myAgents[number] = {
-            name: name.trim(),
-            desc: instructions.trim().split('.')[0] || 'Custom agent.',
-            runs: 0, lastRun: 'just now', users: 1, rating: 5.0, reviews: 0, price: 'Free',
-            skills: enabledSkills.length, tools: enabledKb.length,
-            status: 'Active', category: 'Operations', img: avatar,
-          };
-          onDeploy(record, false);
-        }}
+        onChat={() => onDeploy(buildRecord(), true)}
+        onMarketplace={() => onDeploy(buildRecord(), false)}
         onClose={() => setDeployPhase('idle')}
       />
 
@@ -1325,23 +1325,35 @@ function MJCreateAgentForm({
           </button>
           <span className="text-[14px] font-semibold text-[#1C1E21] tracking-tight">{seedAgent ? (name.trim() || seedAgent.name) : 'Create agent'}</span>
         </div>
-        <button
-          onClick={deploy}
-          disabled={!canDeploy || deployPhase !== 'idle'}
-          className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
-        >
-          {deployPhase === 'idle' ? (
-            <>
-              <Play className="w-[11px] h-[11px]" fill="currentColor" />
-              Deploy
-            </>
-          ) : (
-            <>
-              <RefreshCw className="w-[11px] h-[11px] animate-spin" />
-              Deploying…
-            </>
+        <div className="flex items-center gap-3">
+          {missingHint && deployPhase === 'idle' && (
+            <span className="text-[11.5px] text-[#9CA3AF]">{missingHint}</span>
           )}
-        </button>
+          <button
+            onClick={deploy}
+            disabled={!canDeploy || deployPhase !== 'idle'}
+            className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+          >
+            {deployPhase === 'idle' ? (
+              isEdit ? (
+                <>
+                  <Check className="w-[12px] h-[12px]" strokeWidth={2.8} />
+                  Save changes
+                </>
+              ) : (
+                <>
+                  <Play className="w-[11px] h-[11px]" fill="currentColor" />
+                  Deploy
+                </>
+              )
+            ) : (
+              <>
+                <Loader2 className="w-[12px] h-[12px] animate-spin" />
+                Deploying…
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
