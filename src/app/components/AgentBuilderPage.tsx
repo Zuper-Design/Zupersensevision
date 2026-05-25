@@ -1350,7 +1350,7 @@ function MJCreateAgentForm({
               <div className="flex items-center justify-between px-6 pt-5 pb-3">
                 <div>
                   <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">Instructions</h3>
-                  <p className="text-[12.5px] text-[#6B7280] mt-1">Describe what this agent does — tone, constraints, examples. Paste freely.</p>
+                  <p className="text-[12.5px] text-[#6B7280] mt-1">Set the tone, rules, and examples.</p>
                 </div>
                 <button
                   onClick={() => setInstructionsOpen(false)}
