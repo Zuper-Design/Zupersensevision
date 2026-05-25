@@ -3022,24 +3022,20 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
         borderRadius: 18,
         padding: '20px 28px',
         minHeight: 150,
-        background: 'linear-gradient(135deg, #FFF0E2 0%, #FFE8D4 22%, #FFD9C2 50%, #FFE0CC 78%, #FFEEDB 100%)',
-        border: '1px solid rgba(255, 120, 80, 0.18)',
+        background: 'linear-gradient(135deg, #FFF6EF 0%, #FFEBDC 55%, #FFE2CE 100%)',
       }}
     >
         {/* Bg layers clipped to banner */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ borderRadius: 18, zIndex: 1 }}>
-          <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.45 }} xmlns="http://www.w3.org/2000/svg">
+          <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.22 }} xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="auMpDots" width="22" height="22" patternUnits="userSpaceOnUse">
-                <circle cx="1" cy="1" r="1" fill="#B8410E" opacity="0.22" />
+                <circle cx="1" cy="1" r="1" fill="#B8410E" opacity="0.16" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#auMpDots)" />
           </svg>
-          <div className="absolute" style={{ top: -40, left: -20, width: 220, height: 180, borderRadius: '50%', background: 'radial-gradient(circle, #FFFAF3 0%, #FFF1E5 50%, transparent 75%)', opacity: 0.85, filter: 'blur(20px)' }} />
-          <div className="absolute" style={{ bottom: -60, left: -50, width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(circle, #FFD089 0%, #FFC56B 40%, transparent 72%)', opacity: 0.5, filter: 'blur(32px)' }} />
-          <div className="absolute" style={{ bottom: -80, left: '18%', width: 460, height: 380, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, #FFB5A0 0%, #FF9E8E 35%, #FFAFA0 60%, transparent 78%)', opacity: 0.55, filter: 'blur(40px)' }} />
-          <div className="absolute" style={{ top: -80, right: -160, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle at 35% 40%, #FFB68C 0%, #FF9968 35%, #FF8455 55%, transparent 75%)', opacity: 0.55, filter: 'blur(44px)' }} />
+          <div className="absolute" style={{ top: -80, right: -160, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle at 35% 40%, #FFC6A6 0%, #FFB388 45%, transparent 75%)', opacity: 0.35, filter: 'blur(48px)' }} />
         </div>
 
         <div className="relative flex items-center justify-between gap-6" style={{ zIndex: 10 }}>
