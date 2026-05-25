@@ -1231,6 +1231,7 @@ function MJCreateAgentForm({
 
   const [name, setName] = useState(seedAgent?.name ?? '');
   const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
+  const [activeTab, setActiveTab] = useState<'details' | 'activity'>('details');
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [instructionsDraft, setInstructionsDraft] = useState('');
   const [instructionsEnhancing, setInstructionsEnhancing] = useState(false);
@@ -1703,6 +1704,29 @@ function MJCreateAgentForm({
           </div>
           </div>
           </div>
+
+          {/* TAB SWITCHER — Details / Activity */}
+          <div className="flex items-center gap-6 border-b border-[#E6E8EC] mb-7">
+            {(['details', 'activity'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setActiveTab(t)}
+                className={`relative pb-3 text-[13px] font-medium ${
+                  activeTab === t ? 'text-[#1C1E21]' : 'text-[#6B7280] hover:text-[#1C1E21]'
+                }`}
+                style={{ transition: 'color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                {t === 'details' ? 'Details' : 'Activity'}
+                {activeTab === t && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1C1E21] rounded-full" />
+                )}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'activity' ? (
+            <MJAgentActivityFeed agentName={seedAgent?.name || name || 'this agent'} accent={theme.accent} />
+          ) : (<>
 
           {/* IDENTITY */}
           <section className="mb-10">
@@ -2293,9 +2317,95 @@ function MJCreateAgentForm({
               </div>
             )}
           </section>
+          </>)}
         </div>
       </div>
     </div>
+  );
+}
+
+function MJAgentActivityFeed({ agentName, accent }: { agentName: string; accent: string }) {
+  // Build a small synthetic activity log scoped to this agent so the feed
+  // feels populated. New agents (name placeholder) get the empty state.
+  const isPlaceholder = !agentName || agentName === 'this agent' || /^new agent/i.test(agentName);
+  const runs = isPlaceholder ? [] : [
+    { kind: 'SCHEDULE', when: '3 minutes ago', task: 'Scheduled run', tokens: '21,769', duration: '22.7s', status: 'Completed' as const },
+    { kind: 'MENTION', when: 'about 1 hour ago', task: 'Triggered by @mention in #service-ops', tokens: '6,124', duration: '8.4s', status: 'Completed' as const },
+    { kind: 'SCHEDULE', when: '4 hours ago', task: 'Scheduled run', tokens: '18,402', duration: '17.1s', status: 'Completed' as const },
+    { kind: 'WEBHOOK', when: 'about 22 hours ago', task: 'Webhook from Zuper', tokens: '25,811', duration: '3579.2s', status: 'Failed' as const },
+    { kind: 'SCHEDULE', when: '2 days ago', task: 'Scheduled run', tokens: '—', duration: '6574.4s', status: 'Failed' as const },
+  ];
+
+  const statusStyle: Record<'Completed' | 'Failed', { bg: string; color: string; dot: string }> = {
+    Completed: { bg: '#DCFCE7', color: '#15803D', dot: '#10B981' },
+    Failed:    { bg: '#FEE2E2', color: '#B91C1C', dot: '#EF4444' },
+  };
+  const kindIcon: Record<string, any> = { SCHEDULE: Clock, MENTION: AtSign, WEBHOOK: Webhook };
+
+  if (isPlaceholder) {
+    return (
+      <div className="rounded-2xl border border-dashed border-[#E6E8EC] bg-white px-8 py-14 text-center">
+        <div className="mx-auto mb-4 w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `${accent}1A`, border: `1px solid ${accent}33` }}>
+          <Clock className="w-5 h-5" style={{ color: accent }} strokeWidth={2} />
+        </div>
+        <h3 className="text-[15px] font-semibold text-[#1C1E21] mb-1">No activity yet</h3>
+        <p className="text-[13px] text-[#6B7280] max-w-[360px] mx-auto leading-relaxed">
+          Once this agent runs, you'll see triggered jobs, completion status, and tokens used here.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <section className="mb-10">
+      <div className="flex items-end justify-between mb-3">
+        <div>
+          <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Activity</h2>
+          <p className="text-[14px] text-[#6B7280]">Every time this agent runs — what triggered it, what happened, and how long it took.</p>
+        </div>
+        <span className="text-[11.5px] font-semibold tracking-[0.10em] uppercase text-[#9CA3AF]">{runs.length} runs</span>
+      </div>
+
+      <div className="rounded-2xl bg-white border border-[#E6E8EC] overflow-hidden">
+        {runs.map((r, i) => {
+          const Icon = kindIcon[r.kind] || Clock;
+          const status = statusStyle[r.status];
+          return (
+            <div
+              key={i}
+              className={`flex items-center gap-4 px-5 py-4 ${i !== runs.length - 1 ? 'border-b border-[#F0F1F3]' : ''} hover:bg-[#FAFAFB]`}
+              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+            >
+              <div
+                className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0"
+                style={{ background: `${accent}14`, border: `1px solid ${accent}26` }}
+              >
+                <Icon className="w-[15px] h-[15px]" style={{ color: accent }} strokeWidth={2} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10.5px] font-semibold tracking-[0.10em] uppercase text-[#9CA3AF]">{r.kind}</span>
+                  <span className="text-[12px] text-[#C0C4CC]">·</span>
+                  <span className="text-[12px] text-[#9CA3AF]">{r.when}</span>
+                </div>
+                <div className="text-[13.5px] font-medium text-[#1C1E21] mt-0.5 truncate">{r.task}</div>
+              </div>
+              <div className="hidden md:flex items-center gap-5 text-[12.5px] text-[#6B7280] flex-shrink-0">
+                <span><span className="font-medium text-[#1C1E21]">{r.tokens}</span> tokens</span>
+                <span><span className="font-medium text-[#1C1E21]">{r.duration}</span></span>
+              </div>
+              <span
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-bold tracking-wide uppercase flex-shrink-0"
+                style={{ background: status.bg, color: status.color }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: status.dot }} />
+                {r.status}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
