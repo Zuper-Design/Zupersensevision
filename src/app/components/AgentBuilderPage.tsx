@@ -3351,59 +3351,65 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               <div
                 onClick={() => setFirstTime(false)}
                 title="Populate with starter agents"
-                className="relative mx-auto mb-3 cursor-pointer h-[88px] w-[120px] flex items-center justify-center"
+                className="relative mx-auto mb-3 cursor-pointer h-[96px] w-[160px] flex items-center justify-center"
                 style={{ transition: 'transform 200ms cubic-bezier(0.23,1,0.32,1)' }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.04)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; }}
               >
-                {/* Soft halo */}
+                {/* Soft violet-pink halo */}
                 <span
                   aria-hidden
                   className="absolute pointer-events-none"
                   style={{
-                    width: 140,
-                    height: 88,
-                    borderRadius: '50%',
-                    background: 'radial-gradient(closest-side, rgba(196,181,253,0.55) 0%, rgba(244,114,182,0.18) 55%, transparent 80%)',
-                    filter: 'blur(20px)',
+                    inset: 0,
+                    background: 'radial-gradient(ellipse 60% 75% at center, rgba(196,181,253,0.55) 0%, rgba(244,114,182,0.18) 55%, transparent 80%)',
+                    filter: 'blur(18px)',
                   }}
                 />
-                {/* Tile cluster — small "stack of agents" forming */}
-                <span
-                  aria-hidden
-                  className="relative inline-block w-12 h-12 rounded-xl"
-                  style={{
-                    background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)',
-                    border: '1px solid rgba(124,58,237,0.22)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 18px -10px rgba(124,58,237,0.35)',
-                    transform: 'rotate(-8deg) translate(-14px, 4px)',
-                  }}
-                />
-                <span
-                  aria-hidden
-                  className="relative inline-block w-14 h-14 rounded-2xl -ml-6 flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(160deg, #EDE9FE 0%, #FFFFFF 100%)',
-                    border: '1px solid rgba(124,58,237,0.30)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9), 0 10px 22px -10px rgba(124,58,237,0.42)',
-                    zIndex: 2,
-                  }}
-                >
-                  <Sparkles className="w-6 h-6" style={{ color: '#7C3AED' }} fill="#C4B5FD" strokeWidth={1.8} />
-                </span>
-                <span
-                  aria-hidden
-                  className="relative inline-block w-12 h-12 rounded-xl -ml-3"
-                  style={{
-                    background: 'linear-gradient(160deg, #FCE7F3 0%, #FFFFFF 100%)',
-                    border: '1px solid rgba(236,72,153,0.22)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 18px -10px rgba(236,72,153,0.35)',
-                    transform: 'rotate(8deg) translate(2px, 4px)',
-                  }}
-                />
-                {/* Tiny sparkles around the cluster */}
-                <Sparkles className="absolute top-1 right-2 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" />
-                <Sparkles className="absolute bottom-2 left-3 w-2.5 h-2.5 text-[#F9A8D4]" fill="#F9A8D4" />
+                {/* Constellation — thin links between dots, a glowing centre */}
+                <svg viewBox="0 0 160 96" className="relative w-full h-full">
+                  <defs>
+                    <linearGradient id="constLink" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.85" />
+                      <stop offset="100%" stopColor="#F9A8D4" stopOpacity="0.85" />
+                    </linearGradient>
+                    <radialGradient id="constCore" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#7C3AED" />
+                      <stop offset="60%" stopColor="#A78BFA" />
+                      <stop offset="100%" stopColor="#EC4899" />
+                    </radialGradient>
+                    <radialGradient id="constCoreGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#C4B5FD" stopOpacity="0.55" />
+                      <stop offset="100%" stopColor="#C4B5FD" stopOpacity="0" />
+                    </radialGradient>
+                  </defs>
+
+                  {/* Links */}
+                  <g stroke="url(#constLink)" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.85">
+                    <line x1="80" y1="48" x2="30" y2="28" />
+                    <line x1="80" y1="48" x2="22" y2="64" />
+                    <line x1="80" y1="48" x2="132" y2="22" />
+                    <line x1="80" y1="48" x2="138" y2="62" />
+                    <line x1="80" y1="48" x2="60" y2="80" />
+                    <line x1="80" y1="48" x2="100" y2="14" />
+                  </g>
+
+                  {/* Outer nodes */}
+                  <circle cx="30" cy="28" r="4" fill="#FFFFFF" stroke="#A78BFA" strokeWidth="1.4" />
+                  <circle cx="22" cy="64" r="3.5" fill="#FFFFFF" stroke="#F472B6" strokeWidth="1.4" />
+                  <circle cx="132" cy="22" r="3.5" fill="#FFFFFF" stroke="#A78BFA" strokeWidth="1.4" />
+                  <circle cx="138" cy="62" r="4" fill="#FFFFFF" stroke="#F472B6" strokeWidth="1.4" />
+                  <circle cx="60" cy="80" r="3" fill="#FFFFFF" stroke="#C4B5FD" strokeWidth="1.4" />
+                  <circle cx="100" cy="14" r="3" fill="#FFFFFF" stroke="#F9A8D4" strokeWidth="1.4" />
+
+                  {/* Centre glow + core */}
+                  <circle cx="80" cy="48" r="20" fill="url(#constCoreGlow)" />
+                  <circle cx="80" cy="48" r="9" fill="url(#constCore)" />
+                  <circle cx="80" cy="48" r="9" fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth="1" opacity="0.7" />
+                </svg>
+                {/* Tiny sparkles for delight */}
+                <Sparkles className="absolute top-1 right-3 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" />
+                <Sparkles className="absolute bottom-3 left-3 w-2.5 h-2.5 text-[#F9A8D4]" fill="#F9A8D4" />
               </div>
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
               <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
