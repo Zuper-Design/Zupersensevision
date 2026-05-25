@@ -3149,7 +3149,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
   return (
     <>
-      {isEmpty && <div className="mb-8">{marketplaceBanner}</div>}
+      {isEmpty && !isMJ && <div className="mb-8">{marketplaceBanner}</div>}
 
       {/* My Agents header + search + create */}
       <div className="flex items-start justify-between gap-4 mb-5">
@@ -3159,7 +3159,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             <h1 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight">My Agents</h1>
             {!isEmpty && <span className="px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#4B5563] text-[11.5px] font-semibold">{visibleCount}</span>}
           </div>
-          <p className="text-[13px] text-[#6B7280]">Manage and monitor your deployed AI agents.</p>
+          <p className="text-[13px] text-[#6B7280]">{isEmpty && isMJ ? 'Spin up your first agent — or hire one from the marketplace.' : 'Manage and monitor your deployed AI agents.'}</p>
         </div>
         {!isEmpty && (
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -3185,55 +3185,126 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
 
       {isEmpty ? (
-        <div className="relative flex flex-col items-center text-center pt-16 pb-16">
-          {/* Soft halo */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: 20,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 520,
-              height: 260,
-              borderRadius: '50%',
-              background: 'radial-gradient(ellipse at center, rgba(255,180,140,0.22) 0%, rgba(255,180,140,0.10) 40%, transparent 70%)',
-              filter: 'blur(20px)',
-            }}
-          />
+        isMJ ? (
+          <div className="relative pt-6">
+            <div className="text-center mb-7">
+              <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
+              <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
+                Spin up a custom agent or pick one from the marketplace.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-4 max-w-[760px] mx-auto">
+              {/* Create — primary */}
+              <button
+                onClick={() => setCreating(true)}
+                className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[260px] active:scale-[0.995]"
+                style={{
+                  background: 'linear-gradient(160deg, #1C1E21 0%, #0a0b0c 100%)',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.04), 0 18px 40px -20px rgba(28,30,33,0.35)',
+                  transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1)',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 12px -2px rgba(0,0,0,0.10), 0 28px 56px -22px rgba(28,30,33,0.50)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.04), 0 18px 40px -20px rgba(28,30,33,0.35)'; }}
+              >
+                <span aria-hidden className="pointer-events-none absolute" style={{ top: -60, right: -40, width: 280, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.30), rgba(253,80,0,0) 70%)', filter: 'blur(28px)' }} />
+                <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)' }} />
+                <span
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-auto relative"
+                  style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.14)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.14)' }}
+                >
+                  <Plus className="w-5 h-5 text-white" strokeWidth={2.4} />
+                </span>
+                <div className="relative">
+                  <h3 className="text-[18px] font-semibold text-white tracking-tight mb-1.5">Create your own</h3>
+                  <p className="text-[12.5px] text-white/65 leading-snug mb-4">Start from a blank canvas. Pick the avatar, triggers, skills, and knowledge.</p>
+                  <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-white">
+                    Create agent
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </button>
 
-          {/* Toolkit illustration — click to populate agents */}
-          <motion.img
-            src={emptyToolkit}
-            alt=""
-            onClick={() => setFirstTime(false)}
-            title="Populate with starter agents"
-            className="relative h-[110px] w-auto object-contain mx-auto mb-4 drop-shadow-[0_12px_20px_rgba(0,0,0,0.10)] cursor-pointer hover:scale-105 transition-transform duration-200"
-            initial={{ y: 16, opacity: 0, scale: 0.94 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            draggable={false}
-          />
+              {/* Marketplace */}
+              <button
+                onClick={onEnterMarketplace}
+                className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[260px] active:scale-[0.995]"
+                style={{
+                  background: 'linear-gradient(160deg, #FFF6EF 0%, #FFEBDC 60%, #FFE2CE 100%)',
+                  boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 18px 40px -20px rgba(234,88,12,0.20)',
+                  transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1)',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 12px -2px rgba(28,30,33,0.06), 0 28px 56px -22px rgba(234,88,12,0.32)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 18px 40px -20px rgba(234,88,12,0.20)'; }}
+              >
+                <span aria-hidden className="pointer-events-none absolute" style={{ top: -60, right: -50, width: 320, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.30), rgba(253,80,0,0) 70%)', filter: 'blur(32px)' }} />
+                <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }} />
+                <div className="relative flex items-end -space-x-5 mb-auto">
+                  <img src={agentMarketer} alt="" className="h-[64px] w-auto object-contain drop-shadow-[0_6px_12px_rgba(234,88,12,0.25)]" style={{ zIndex: 1 }} draggable={false} />
+                  <img src={agentReviews} alt="" className="h-[72px] w-auto object-contain drop-shadow-[0_6px_12px_rgba(234,88,12,0.25)]" style={{ zIndex: 2 }} draggable={false} />
+                  <img src={agentSupport} alt="" className="h-[64px] w-auto object-contain drop-shadow-[0_6px_12px_rgba(234,88,12,0.25)]" style={{ zIndex: 1 }} draggable={false} />
+                </div>
+                <div className="relative">
+                  <h3 className="text-[18px] font-semibold text-[#1C1E21] tracking-tight mb-1.5">Browse marketplace</h3>
+                  <p className="text-[12.5px] text-[#6B4A2B] leading-snug mb-4">13+ pre-built agents ready to deploy in minutes.</p>
+                  <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#1C1E21]">
+                    Enter marketplace
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="relative flex flex-col items-center text-center pt-16 pb-16">
+            {/* Soft halo */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: 20,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 520,
+                height: 260,
+                borderRadius: '50%',
+                background: 'radial-gradient(ellipse at center, rgba(255,180,140,0.22) 0%, rgba(255,180,140,0.10) 40%, transparent 70%)',
+                filter: 'blur(20px)',
+              }}
+            />
 
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.32 }}
-            className="relative"
-          >
-            <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight mb-2">Build your AI workforce</h2>
-            <p className="text-[13.5px] text-[#6B7280] max-w-[440px] mx-auto leading-relaxed mb-6">
-              Create your first Sense Agent — an autonomous teammate that plugs into Zuper and handles work in the background.
-            </p>
+            {/* Toolkit illustration — click to populate agents */}
+            <motion.img
+              src={emptyToolkit}
+              alt=""
+              onClick={() => setFirstTime(false)}
+              title="Populate with starter agents"
+              className="relative h-[110px] w-auto object-contain mx-auto mb-4 drop-shadow-[0_12px_20px_rgba(0,0,0,0.10)] cursor-pointer hover:scale-105 transition-transform duration-200"
+              initial={{ y: 16, opacity: 0, scale: 0.94 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+              draggable={false}
+            />
 
-            <button
-              onClick={() => setCreating(true)}
-              className="inline-flex items-center gap-1.5 px-5 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.32 }}
+              className="relative"
             >
-              <Plus className="w-4 h-4" strokeWidth={2.5} />
-              Create Agent
-            </button>
-          </motion.div>
-        </div>
+              <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight mb-2">Build your AI workforce</h2>
+              <p className="text-[13.5px] text-[#6B7280] max-w-[440px] mx-auto leading-relaxed mb-6">
+                Create your first Sense Agent — an autonomous teammate that plugs into Zuper and handles work in the background.
+              </p>
+
+              <button
+                onClick={() => setCreating(true)}
+                className="inline-flex items-center gap-1.5 px-5 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+              >
+                <Plus className="w-4 h-4" strokeWidth={2.5} />
+                Create Agent
+              </button>
+            </motion.div>
+          </div>
+        )
       ) : view === 'grid' ? (
         (() => {
             const seedAgents = filtered.slice(0, 6).map((a, i) => ({ ...a, runs: [7, 4, 9, 12, 5, 18][i] ?? a.runs }));
