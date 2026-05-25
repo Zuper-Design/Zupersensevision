@@ -3347,33 +3347,100 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16 overflow-hidden min-h-[calc(100vh-80px)]">
-            {/* Subtle AI ambient backdrop — faint dot grid + a single low
-               opacity radial wash. No moving parts, nothing jarring. */}
+            {/* AI workspace backdrop — mesh wash, scanning rings, dot grid,
+               and a few twinkling particles. Sits behind the cards so they
+               feel lifted off a living surface. */}
             <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
-              {/* Soft radial wash, centred behind the cards */}
-              <div
-                className="absolute"
-                style={{
-                  top: '15%',
-                  left: '50%',
-                  width: 1100,
-                  height: 600,
-                  transform: 'translateX(-50%)',
-                  background: 'radial-gradient(ellipse at center, rgba(167,139,250,0.12) 0%, rgba(244,114,182,0.06) 45%, transparent 70%)',
-                  filter: 'blur(40px)',
-                }}
-              />
-              {/* Faint dot grid — fades to nothing at the edges */}
+              {/* Mesh gradient — multi-stop radial wash */}
               <div
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: 'radial-gradient(rgba(124,58,237,0.07) 1px, transparent 1px)',
-                  backgroundSize: '22px 22px',
-                  WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 85%)',
-                  maskImage: 'radial-gradient(ellipse 70% 60% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 85%)',
+                  background:
+                    'radial-gradient(ellipse 55% 45% at 28% 32%, rgba(167,139,250,0.22) 0%, transparent 60%),' +
+                    'radial-gradient(ellipse 50% 40% at 78% 70%, rgba(244,114,182,0.18) 0%, transparent 60%),' +
+                    'radial-gradient(ellipse 60% 50% at 50% 110%, rgba(196,181,253,0.20) 0%, transparent 65%)',
                 }}
               />
+
+              {/* Scanning rings — concentric thin circles centred on the cards */}
+              <svg
+                className="absolute inset-x-0 mx-auto"
+                width="900"
+                height="900"
+                viewBox="0 0 900 900"
+                style={{
+                  top: '6%',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  WebkitMaskImage: 'radial-gradient(circle at center, #000 0%, rgba(0,0,0,0.7) 45%, transparent 75%)',
+                  maskImage: 'radial-gradient(circle at center, #000 0%, rgba(0,0,0,0.7) 45%, transparent 75%)',
+                }}
+              >
+                <g fill="none" stroke="rgba(124,58,237,0.14)" strokeWidth="1">
+                  <circle cx="450" cy="450" r="110" />
+                  <circle cx="450" cy="450" r="180" />
+                  <circle cx="450" cy="450" r="260" />
+                  <circle cx="450" cy="450" r="340" />
+                  <circle cx="450" cy="450" r="420" />
+                </g>
+                {/* Pulsing ring — soft pulse outward */}
+                <circle
+                  cx="450"
+                  cy="450"
+                  r="180"
+                  fill="none"
+                  stroke="rgba(124,58,237,0.30)"
+                  strokeWidth="1"
+                  style={{ animation: 'chooserRingPulse 4.5s cubic-bezier(0.23,1,0.32,1) infinite', transformOrigin: '450px 450px' }}
+                />
+              </svg>
+
+              {/* Dot grid — slightly bolder, radial-masked */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: 'radial-gradient(rgba(124,58,237,0.12) 1px, transparent 1px)',
+                  backgroundSize: '26px 26px',
+                  WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 90%)',
+                  maskImage: 'radial-gradient(ellipse 75% 65% at center, #000 0%, rgba(0,0,0,0.55) 55%, transparent 90%)',
+                }}
+              />
+
+              {/* Twinkling particles — quiet movement, decorative only */}
+              {[
+                { top: '18%', left: '14%', size: 4, delay: 0,    color: 'rgba(167,139,250,0.55)' },
+                { top: '30%', left: '88%', size: 3, delay: 800,  color: 'rgba(244,114,182,0.55)' },
+                { top: '62%', left: '8%',  size: 3, delay: 1600, color: 'rgba(196,181,253,0.55)' },
+                { top: '70%', left: '92%', size: 4, delay: 2400, color: 'rgba(244,114,182,0.55)' },
+                { top: '12%', left: '52%', size: 2, delay: 3200, color: 'rgba(167,139,250,0.65)' },
+                { top: '88%', left: '46%', size: 2, delay: 4000, color: 'rgba(196,181,253,0.60)' },
+              ].map((p, i) => (
+                <span
+                  key={i}
+                  className="absolute rounded-full"
+                  style={{
+                    top: p.top,
+                    left: p.left,
+                    width: p.size,
+                    height: p.size,
+                    background: p.color,
+                    boxShadow: `0 0 6px ${p.color}`,
+                    animation: `chooserTwinkle 4.5s ease-in-out ${p.delay}ms infinite`,
+                  }}
+                />
+              ))}
             </div>
+            <style>{`
+              @keyframes chooserRingPulse {
+                0%, 100% { transform: scale(0.95); opacity: 0; }
+                40%      { opacity: 0.8; }
+                100%     { transform: scale(1.55); opacity: 0; }
+              }
+              @keyframes chooserTwinkle {
+                0%, 100% { opacity: 0.2; transform: scale(0.9); }
+                50%      { opacity: 1;   transform: scale(1.1); }
+              }
+            `}</style>
 
             <div className="text-center mb-7 relative z-10">
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
