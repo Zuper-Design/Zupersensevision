@@ -4451,20 +4451,20 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
             <div
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-4"
               style={{
-                background: 'rgba(255, 255, 255, 0.6)',
-                border: '1px solid rgba(230, 107, 82, 0.22)',
+                background: 'rgba(255, 255, 255, 0.65)',
+                border: '1px solid rgba(124, 58, 237, 0.22)',
                 backdropFilter: 'blur(6px)',
               }}
             >
-              <Bot className="w-[12px] h-[12px] text-[#E66B52]" strokeWidth={2.2} />
-              <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#9C5340]">
+              <Bot className="w-[12px] h-[12px] text-[#7C3AED]" strokeWidth={2.2} />
+              <span className="text-[10.5px] font-semibold tracking-[0.18em] uppercase text-[#6D28D9]">
                 Sense Agents Marketplace
               </span>
             </div>
             <h1 className="text-[40px] font-semibold tracking-tight leading-[1.05] text-[#1C1E21] mb-3">
-              Hire the <span style={{ color: '#E66B52' }}>agents</span> doing the work for you.
+              Hire the <span style={{ color: '#6D28D9' }}>agents</span> doing the work for you.
             </h1>
-            <p className="text-[14.5px] text-[#3C2A1F] leading-relaxed max-w-[560px] mx-auto mb-5">
+            <p className="text-[14.5px] text-[#4C2A8F] leading-relaxed max-w-[560px] mx-auto mb-5">
               Pre-built AI teammates that plug into Zuper. Pick one, deploy in minutes — they handle the work, you keep control.
             </p>
             <button className="inline-flex items-center gap-1.5 px-5 h-10 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]">
