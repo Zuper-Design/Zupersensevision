@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SenseLogo } from './SenseLogo';
 import {
@@ -98,8 +98,8 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
       {!(isMJ && mjCreating && !auActiveAgent) && (
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
-          <div className="w-7 h-7 rounded-md bg-[#FFF4ED] border border-[#FFE2D1] flex items-center justify-center">
-            <Wand2 className="w-[15px] h-[15px] text-[#FD5000]" strokeWidth={2} />
+          <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
+            <Wand2 className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
           </div>
           <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">AI Studio</h1>
         </div>
@@ -151,7 +151,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
             >
               <BarChart3 className="w-[15px] h-[15px] text-[#C0C4CC]" />
               <span className="flex-1 text-left">Usage</span>
-              <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#FFF4ED] text-[#FD5000]">SOON</span>
+              <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5F3FF] text-[#7C3AED]">SOON</span>
             </button>
           </nav>
         ) : isAU ? (
@@ -228,7 +228,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
             >
               <BarChart3 className="w-[15px] h-[15px] text-[#C0C4CC]" />
               <span className="flex-1 text-left">Usage</span>
-              <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#FFF4ED] text-[#FD5000]">SOON</span>
+              <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5F3FF] text-[#7C3AED]">SOON</span>
             </button>
           </nav>
         ) : (
@@ -252,7 +252,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
                 <Icon className={`w-[15px] h-[15px] ${isActive ? 'text-[#2563EB]' : item.soon ? 'text-[#C0C4CC]' : 'text-[#6B7280]'}`} />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.soon && (
-                  <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#FFF4ED] text-[#FD5000]">SOON</span>
+                  <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5F3FF] text-[#7C3AED]">SOON</span>
                 )}
               </button>
             );
@@ -1174,24 +1174,6 @@ function MJCreateAgentForm({
     ? [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews].findIndex((a) => a === seedAgent.img)
     : 0;
 
-  // Per-creation theme — cycles each time the form opens fresh.
-  const themePalette = [
-    { tint: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)', accent: '#EA580C', soft: '#FFE0CC' },
-    { tint: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', accent: '#DB2777', soft: '#FBCFE8' },
-    { tint: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', accent: '#2563EB', soft: '#BFDBFE' },
-    { tint: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', accent: '#059669', soft: '#A7F3D0' },
-    { tint: 'linear-gradient(135deg, #E9D5FF 0%, #DDD6FE 100%)', accent: '#7C3AED', soft: '#DDD6FE' },
-    { tint: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', accent: '#A16207', soft: '#FDE68A' },
-  ];
-  const themeIdx = useMemo(() => {
-    if (seedAgent?.accent) {
-      const found = themePalette.findIndex((p) => p.accent === seedAgent.accent);
-      if (found >= 0) return found;
-    }
-    return Math.floor(Math.random() * themePalette.length);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const theme = themePalette[themeIdx];
 
   const [name, setName] = useState(seedAgent?.name ?? '');
   const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
@@ -1242,6 +1224,15 @@ function MJCreateAgentForm({
     'linear-gradient(180deg, #FFE0EA 0%, #FFEBF1 100%)',
   ];
   const avatarAccents = ['#DC2626', '#EA580C', '#059669', '#2563EB', '#DB2777'];
+  // Theme follows the selected avatar so the hero matches the character.
+  const avatarThemes = [
+    { tint: 'linear-gradient(135deg, #FCE4E6 0%, #FBCFE8 100%)', accent: '#DB2777', soft: '#FBCFE8' },
+    { tint: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)', accent: '#EA580C', soft: '#FFE0CC' },
+    { tint: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', accent: '#059669', soft: '#A7F3D0' },
+    { tint: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', accent: '#2563EB', soft: '#BFDBFE' },
+    { tint: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', accent: '#DB2777', soft: '#FBCFE8' },
+  ];
+  const theme = avatarThemes[avatarIdx % avatarThemes.length];
   const avatar = avatars[avatarIdx % avatars.length];
   const avatarTint = avatarTints[avatarIdx % avatarTints.length];
   const avatarAccent = avatarAccents[avatarIdx % avatarAccents.length];
@@ -1538,7 +1529,7 @@ function MJCreateAgentForm({
                   >
                     <style>{`@keyframes avatarMenuIn { from { opacity: 0; transform: scale(0.95) translateY(-4px) } to { opacity: 1; transform: scale(1) translateY(0) } }`}</style>
                     <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>Choose avatar</p>
-                    <div className="grid grid-cols-3 gap-3 mb-3">
+                    <div className="grid grid-cols-3 gap-3">
                       {avatars.map((src, i) => {
                         const active = i === avatarIdx;
                         return (
@@ -1563,18 +1554,6 @@ function MJCreateAgentForm({
                         );
                       })}
                     </div>
-                    <button
-                      className="w-full h-10 rounded-xl flex items-center justify-center gap-2 text-[12.5px] font-medium text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
-                      style={{
-                        border: '1.25px dashed #D1D5DB',
-                        transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
-                      onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
-                    >
-                      <Upload className="w-3.5 h-3.5" strokeWidth={2.2} />
-                      Upload custom
-                    </button>
                   </div>
                 )}
               </div>
@@ -3199,7 +3178,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             </div>
             <button
               onClick={() => setCreating(true)}
-              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(124,58,237,0.30)]"
             >
               <Plus className="w-4 h-4" strokeWidth={2.5} />
               Create Agent
@@ -3369,7 +3348,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
               <button
                 onClick={() => setCreating(true)}
-                className="inline-flex items-center gap-1.5 px-5 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                className="inline-flex items-center gap-1.5 px-5 h-10 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(124,58,237,0.30)]"
               >
                 <Plus className="w-4 h-4" strokeWidth={2.5} />
                 Create Agent
@@ -3991,8 +3970,8 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
       {/* AI Studio left sidebar */}
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
-          <div className="w-7 h-7 rounded-md bg-[#FFF4ED] border border-[#FFE2D1] flex items-center justify-center">
-            <Wand2 className="w-[15px] h-[15px] text-[#FD5000]" strokeWidth={2} />
+          <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
+            <Wand2 className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
           </div>
           <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">AI Studio</h1>
         </div>
@@ -4027,7 +4006,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
           <button disabled className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#C0C4CC] cursor-not-allowed">
             <BarChart3 className="w-[15px] h-[15px] text-[#C0C4CC]" />
             <span className="flex-1 text-left">Usage</span>
-            <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#FFF4ED] text-[#FD5000]">SOON</span>
+            <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5F3FF] text-[#7C3AED]">SOON</span>
           </button>
         </nav>
         <div className="p-3 border-t border-[#F0F1F3]">
@@ -5849,7 +5828,7 @@ function SkillsView() {
           </div>
           <button
             onClick={() => setCreating(true)}
-            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(124,58,237,0.30)]"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />
             New Skill
