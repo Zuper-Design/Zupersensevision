@@ -1306,9 +1306,12 @@ function MJCreateAgentForm({
   // Prefer the seed's tint/accent (e.g. when hired from marketplace) so
   // the canvas keeps the marketplace's violet/pink palette.
   const baseTheme = avatarThemes[avatarIdx % avatarThemes.length];
+  // Violet default for blank Create Agent so the hero matches the rest
+  // of AI Studio out of the box.
+  const blankTheme = { tint: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)', accent: '#7C3AED', soft: '#DDD6FE' };
   const theme = (seedAgent?.tint && seedAgent?.accent)
     ? { tint: seedAgent.tint, accent: seedAgent.accent, soft: seedAgent.accent + '33' }
-    : baseTheme;
+    : (!seedAgent ? blankTheme : baseTheme);
   const avatar = avatars[avatarIdx % avatars.length];
   const avatarTint = (seedAgent?.tint && seedAgent?.accent)
     ? seedAgent.tint
