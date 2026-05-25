@@ -3267,12 +3267,11 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       className="relative overflow-hidden"
       style={{
         borderRadius: 14,
-        background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 35%, #DDD6FE 70%, #EEF2FF 100%)',
-        border: '1px solid rgba(124, 58, 237, 0.20)',
+        background: 'linear-gradient(135deg, #F7F5FF 0%, #F0EBFE 30%, #E5DCFC 60%, #D8CBF8 100%)',
       }}
     >
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
-        <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.6 }} xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.45 }} xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="auMpGridCompact" width="22" height="22" patternUnits="userSpaceOnUse">
               <path d="M22 0 L0 0 0 22" fill="none" stroke="#E0DCF0" strokeWidth="1" />
@@ -3280,27 +3279,16 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
           </defs>
           <rect width="100%" height="100%" fill="url(#auMpGridCompact)" />
         </svg>
-        <div className="absolute" style={{ top: -40, right: -60, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(167,139,250,0.55) 0%, rgba(167,139,250,0.30) 45%, transparent 75%)', opacity: 0.7, filter: 'blur(30px)' }} />
-        <div className="absolute" style={{ bottom: -60, left: -40, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.32) 0%, transparent 70%)', opacity: 0.6, filter: 'blur(28px)' }} />
+        <div className="absolute" style={{ top: -40, right: -60, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(167,139,250,0.28) 0%, rgba(167,139,250,0.14) 45%, transparent 75%)', filter: 'blur(30px)' }} />
+        <div className="absolute" style={{ bottom: -60, left: -40, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.16) 0%, transparent 70%)', filter: 'blur(28px)' }} />
       </div>
 
       <div className="relative flex items-center justify-between gap-4 px-5 py-4" style={{ zIndex: 10 }}>
-        <div className="flex items-center gap-3.5 min-w-0">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{
-              background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
-              boxShadow: '0 4px 10px -4px rgba(124, 58, 237, 0.45)',
-            }}
-          >
-            <Wand2 className="w-[18px] h-[18px] text-white" strokeWidth={2.2} />
-          </div>
-          <div className="min-w-0 flex items-center gap-2">
-            <h3 className="text-[14.5px] font-semibold tracking-tight text-[#1C1E21] leading-none">
-              Sense Agents Marketplace
-            </h3>
-            <span className="px-1.5 py-0.5 rounded bg-white/70 text-[#6D28D9] text-[9.5px] font-bold tracking-wide uppercase">New</span>
-          </div>
+        <div className="flex items-center gap-2 min-w-0">
+          <h3 className="text-[14.5px] font-semibold tracking-tight text-[#1C1E21] leading-none">
+            Sense Agents Marketplace
+          </h3>
+          <span className="px-1.5 py-0.5 rounded bg-white/70 text-[#6D28D9] text-[9.5px] font-bold tracking-wide uppercase">New</span>
         </div>
         <button
           onClick={onEnterMarketplace}
