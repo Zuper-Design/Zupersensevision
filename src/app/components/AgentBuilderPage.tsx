@@ -528,6 +528,7 @@ function AgentReadyModal({
   onClose,
   primaryLabel = 'Chat with',
   secondaryLabel = 'Go to marketplace',
+  loading = false,
 }: {
   open: boolean;
   name: string;
@@ -540,6 +541,7 @@ function AgentReadyModal({
   onClose: () => void;
   primaryLabel?: string;
   secondaryLabel?: string;
+  loading?: boolean;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -628,60 +630,105 @@ function AgentReadyModal({
             draggable={false}
           />
 
-          {/* On duty pill */}
+          {/* Status pill — Booting (loading) or On duty (ready) */}
           <div
-            className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[#15803D] text-[10.5px] font-bold uppercase tracking-wide"
-            style={{ animation: 'agentReadyChip 280ms cubic-bezier(0.23,1,0.32,1) 320ms both' }}
+            className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white text-[10.5px] font-bold uppercase tracking-wide"
+            style={{ animation: 'agentReadyChip 280ms cubic-bezier(0.23,1,0.32,1) 320ms both', color: loading ? accent : '#15803D' }}
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-70 bg-[#10B981]" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]" />
-            </span>
-            On duty
+            {loading ? (
+              <>
+                <Loader2 className="w-3 h-3 animate-spin" style={{ color: accent }} />
+                Booting
+              </>
+            ) : (
+              <>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-70 bg-[#10B981]" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]" />
+                </span>
+                On duty
+              </>
+            )}
           </div>
         </div>
 
         {/* Content */}
         <div className="px-7 pt-6 pb-7 text-center">
-          <div
-            className="text-[11.5px] font-medium uppercase tracking-[0.12em] mb-2"
-            style={{ color: accent, animation: 'agentReadyText 320ms cubic-bezier(0.23,1,0.32,1) 380ms both' }}
-          >
-            {role || 'New agent'}
-          </div>
-          <h2
-            className="text-[26px] font-semibold text-[#1C1E21] tracking-tight leading-[1.15] mb-2"
-            style={{ animation: 'agentReadyText 360ms cubic-bezier(0.23,1,0.32,1) 440ms both' }}
-          >
-            <span style={{ color: accent }}>{name || 'Your agent'}</span> is ready
-          </h2>
-          <p
-            className="text-[13.5px] text-[#6B7280] leading-relaxed mb-6 max-w-[340px] mx-auto"
-            style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 520ms both' }}
-          >
-            Deployed and standing by. {name?.split(' ')[0] || 'They'}'ll start handling work the moment you say go.
-          </p>
+          {loading ? (
+            <>
+              <div
+                className="text-[11.5px] font-medium uppercase tracking-[0.12em] mb-2"
+                style={{ color: accent, animation: 'agentReadyText 320ms cubic-bezier(0.23,1,0.32,1) 380ms both' }}
+              >
+                Preparing your agent
+              </div>
+              <h2
+                className="text-[24px] font-semibold text-[#1C1E21] tracking-tight leading-[1.2] mb-2"
+                style={{ animation: 'agentReadyText 360ms cubic-bezier(0.23,1,0.32,1) 440ms both' }}
+              >
+                <span style={{ color: accent }}>{name || 'Your agent'}</span> is getting ready
+              </h2>
+              <p
+                className="text-[13.5px] text-[#6B7280] leading-relaxed mb-5 max-w-[340px] mx-auto"
+                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 520ms both' }}
+              >
+                Wiring up skills, tools, and knowledge. We'll take you to the build canvas in a moment.
+              </p>
+              <div
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#F8F9FB] border border-[#F0F1F3]"
+                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 600ms both' }}
+              >
+                <span className="inline-flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: accent }} />
+                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: accent, animationDelay: '120ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: accent, animationDelay: '240ms' }} />
+                </span>
+                <span className="text-[12px] font-medium text-[#6B7280]">Hold tight</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                className="text-[11.5px] font-medium uppercase tracking-[0.12em] mb-2"
+                style={{ color: accent, animation: 'agentReadyText 320ms cubic-bezier(0.23,1,0.32,1) 380ms both' }}
+              >
+                {role || 'New agent'}
+              </div>
+              <h2
+                className="text-[26px] font-semibold text-[#1C1E21] tracking-tight leading-[1.15] mb-2"
+                style={{ animation: 'agentReadyText 360ms cubic-bezier(0.23,1,0.32,1) 440ms both' }}
+              >
+                <span style={{ color: accent }}>{name || 'Your agent'}</span> is ready
+              </h2>
+              <p
+                className="text-[13.5px] text-[#6B7280] leading-relaxed mb-6 max-w-[340px] mx-auto"
+                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 520ms both' }}
+              >
+                Deployed and standing by. {name?.split(' ')[0] || 'They'}'ll start handling work the moment you say go.
+              </p>
 
-          <div
-            className="flex items-stretch gap-2.5"
-            style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 600ms both' }}
-          >
-            <button
-              onClick={onMarketplace}
-              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl bg-white border border-[#E6E8EC] text-[#1C1E21] text-[13px] font-semibold hover:border-[#1C1E21]/30 active:scale-[0.98]"
-            >
-              {secondaryLabel}
-            </button>
-            <button
-              onClick={onChat}
-              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold active:scale-[0.98] hover:shadow-[0_8px_22px_-8px_rgba(0,0,0,0.30)]"
-            >
-              <MessageSquare className="w-[14px] h-[14px]" />
-              {primaryLabel} {name?.split(' ')[0] || 'them'}
-            </button>
-          </div>
+              <div
+                className="flex items-stretch gap-2.5"
+                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 600ms both' }}
+              >
+                <button
+                  onClick={onMarketplace}
+                  style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl bg-white border border-[#E6E8EC] text-[#1C1E21] text-[13px] font-semibold hover:border-[#1C1E21]/30 active:scale-[0.98]"
+                >
+                  {secondaryLabel}
+                </button>
+                <button
+                  onClick={onChat}
+                  style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold active:scale-[0.98] hover:shadow-[0_8px_22px_-8px_rgba(0,0,0,0.30)]"
+                >
+                  <MessageSquare className="w-[14px] h-[14px]" />
+                  {primaryLabel} {name?.split(' ')[0] || 'them'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
 
         <style>{`
@@ -1291,10 +1338,21 @@ function MJCreateAgentForm({
   ];
   const triggerItems = triggerCatalog.map((t) => ({ key: t.key, label: t.label, desc: t.desc, icon: t.icon, tint: t.tint, iconColor: t.iconColor }));
 
-  const [skills, setSkills] = useState<Record<string, boolean>>({});
-  const [tools, setTools] = useState<Record<string, boolean>>({});
-  const [kb, setKb] = useState<Record<string, boolean>>({});
-  const [triggers, setTriggers] = useState<Record<string, boolean>>({});
+  // Category-driven presets — when an agent is hired from the marketplace
+  // it should land in the canvas with sensible defaults already enabled.
+  const categoryPresets: Record<string, { skills: string[]; tools: string[]; kb: string[]; triggers: string[] }> = {
+    Operations: { skills: ['Read Zuper data', 'Schedule jobs', 'Trigger workflows'], tools: ['Send Email'], kb: ['Internal SOPs'], triggers: ['schedule'] },
+    Sales: { skills: ['Read Zuper data', 'Send emails', 'Send SMS'], tools: ['Send Email'], kb: ['Pricing book', 'Customer history'], triggers: ['webhook', 'manual'] },
+    Support: { skills: ['Read Zuper data', 'Send emails', 'Summarize threads'], tools: ['Send Email'], kb: ['Zuper Documentation', 'Customer history'], triggers: ['mention', 'manual'] },
+    Finance: { skills: ['Read Zuper data', 'Send emails', 'Analyze metrics'], tools: ['Send Email'], kb: ['Pricing book'], triggers: ['schedule'] },
+    Compliance: { skills: ['Read Zuper data', 'Schedule jobs'], tools: ['Send Slack Message'], kb: ['Internal SOPs'], triggers: ['mention', 'schedule'] },
+  };
+  const preset = seedAgent ? categoryPresets[seedAgent.category] : null;
+  const toMap = (keys: string[] | undefined) => Object.fromEntries((keys ?? []).map((k) => [k, true]));
+  const [skills, setSkills] = useState<Record<string, boolean>>(toMap(preset?.skills));
+  const [tools, setTools] = useState<Record<string, boolean>>(toMap(preset?.tools));
+  const [kb, setKb] = useState<Record<string, boolean>>(toMap(preset?.kb));
+  const [triggers, setTriggers] = useState<Record<string, boolean>>(toMap(preset?.triggers));
   const enabledSkills = skillCatalog.filter((s) => skills[s.key]);
   const enabledTools = toolCatalog.filter((t) => tools[t.key]);
   const enabledKb = kbCatalog.filter((k) => kb[k.key]);
@@ -4093,6 +4151,35 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
   const price = agent.featured ? 'Free' : '$12/mo';
   const saves = agent.saves.replace('Saves ', '');
   const tools = ['Zuper', 'Gmail', 'Slack', 'Webhooks'];
+
+  // After the loading modal opens, give it ~2s for the boot animation and
+  // then send the user straight into the Create Agent canvas with the
+  // catalog agent as the seed.
+  useEffect(() => {
+    if (!hiredOpen) return;
+    const t = setTimeout(() => {
+      const record: typeof myAgents[number] = {
+        name: agent.title,
+        desc: agent.desc,
+        runs: 0,
+        lastRun: 'just now',
+        users: 1,
+        rating: agent.rating,
+        reviews: 0,
+        price,
+        skills: 0,
+        tools: 0,
+        status: 'Active',
+        category: catKey === 'Compliance' ? 'Compliance' : catKey === 'Support' ? 'Support' : catKey === 'Finance' ? 'Finance' : catKey === 'Operations' ? 'Operations' : 'Sales',
+        img: agent.img,
+      };
+      onHire?.(record);
+      onChatWith?.(record.name);
+      setHiredOpen(false);
+    }, 2000);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hiredOpen]);
   const suggestions = [
     'What exactly do you do?',
     'How long is setup?',
@@ -4351,53 +4438,14 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
 
       <AgentReadyModal
         open={hiredOpen}
-        name={persona.name}
+        loading
+        name={agent.title}
         role={agent.role}
         avatar={agent.img}
         avatarTint={tint.tint}
         accent={tint.accent}
-        primaryLabel="Chat with"
-        secondaryLabel="Back to marketplace"
-        onChat={() => {
-          setHiredOpen(false);
-          const record: typeof myAgents[number] = {
-            name: `${persona.name} — ${agent.title}`,
-            desc: agent.desc,
-            runs: 0,
-            lastRun: 'just now',
-            users: 1,
-            rating: agent.rating,
-            reviews: 0,
-            price,
-            skills: skillsCount,
-            tools: 0,
-            status: 'Active',
-            category: catKey === 'Compliance' ? 'Compliance' : catKey === 'Support' ? 'Support' : catKey === 'Finance' ? 'Finance' : catKey === 'Operations' ? 'Operations' : 'Sales',
-            img: agent.img,
-          };
-          onHire?.(record);
-          onChatWith?.(record.name);
-        }}
-        onMarketplace={() => {
-          setHiredOpen(false);
-          const record: typeof myAgents[number] = {
-            name: `${persona.name} — ${agent.title}`,
-            desc: agent.desc,
-            runs: 0,
-            lastRun: 'just now',
-            users: 1,
-            rating: agent.rating,
-            reviews: 0,
-            price,
-            skills: skillsCount,
-            tools: 0,
-            status: 'Active',
-            category: catKey === 'Compliance' ? 'Compliance' : catKey === 'Support' ? 'Support' : catKey === 'Finance' ? 'Finance' : catKey === 'Operations' ? 'Operations' : 'Sales',
-            img: agent.img,
-          };
-          onHire?.(record);
-          onBack();
-        }}
+        onChat={() => {}}
+        onMarketplace={() => {}}
         onClose={() => setHiredOpen(false)}
       />
     </div>
