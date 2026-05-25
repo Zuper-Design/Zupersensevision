@@ -5840,11 +5840,21 @@ function KnowledgeBaseView() {
 }
 
 function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: () => void }) {
-  const [tab, setTab] = useState<'url' | 'file'>('url');
   const [name, setName] = useState('');
-  const [url, setUrl] = useState('');
   const [desc, setDesc] = useState('');
+  const [url, setUrl] = useState('');
+  const [urlOpen, setUrlOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const triggerFile = () => fileInputRef.current?.click();
+  const removeFile = () => { setFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; };
+
+  const fileSize = (b: number) => {
+    if (b < 1024) return `${b} B`;
+    if (b < 1024 * 1024) return `${Math.round(b / 1024)} KB`;
+    return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
@@ -5856,39 +5866,15 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
         <div className="flex items-start justify-between px-6 pt-6 pb-4">
           <div>
             <h2 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">Add Knowledge</h2>
-            <p className="text-[12.5px] text-[#6B7280] mt-1">Add a web URL or upload a file to create a new knowledge base.</p>
+            <p className="text-[12.5px] text-[#6B7280] mt-1">Attach a web URL or a file so your agents can answer from it.</p>
           </div>
           <button onClick={onClose} className="p-1 rounded-md hover:bg-[#F3F4F6] transition flex-shrink-0" aria-label="Close">
             <X className="w-[16px] h-[16px] text-[#9CA3AF]" />
           </button>
         </div>
 
-        {/* Tab switcher */}
-        <div className="px-6">
-          <div className="grid grid-cols-2 gap-1 p-1 rounded-lg bg-[#F3F4F6]">
-            <button
-              onClick={() => setTab('url')}
-              className={`inline-flex items-center justify-center gap-1.5 h-8 rounded-md text-[12.5px] font-medium transition ${
-                tab === 'url' ? 'bg-white text-[#1C1E21] shadow-[0_1px_3px_rgba(0,0,0,0.08)]' : 'text-[#6B7280] hover:text-[#1C1E21]'
-              }`}
-            >
-              <Globe className="w-[13px] h-[13px]" />
-              Web URL
-            </button>
-            <button
-              onClick={() => setTab('file')}
-              className={`inline-flex items-center justify-center gap-1.5 h-8 rounded-md text-[12.5px] font-medium transition ${
-                tab === 'file' ? 'bg-white text-[#1C1E21] shadow-[0_1px_3px_rgba(0,0,0,0.08)]' : 'text-[#6B7280] hover:text-[#1C1E21]'
-              }`}
-            >
-              <Upload className="w-[13px] h-[13px]" />
-              File Upload
-            </button>
-          </div>
-        </div>
-
         {/* Body */}
-        <div className="px-6 pt-5 pb-5 space-y-4">
+        <div className="px-6 pt-2 pb-5 space-y-4">
           <div>
             <label className="block text-[12.5px] font-medium text-[#1C1E21] mb-1.5">Name</label>
             <input
@@ -5896,37 +5882,9 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Product Documentation"
-              className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition"
+              className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition"
             />
           </div>
-
-          {tab === 'url' ? (
-            <div>
-              <label className="block text-[12.5px] font-medium text-[#1C1E21] mb-1.5">URL</label>
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://docs.example.com"
-                className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition"
-              />
-            </div>
-          ) : (
-            <div>
-              <label className="block text-[12.5px] font-medium text-[#1C1E21] mb-1.5">File</label>
-              <label className="flex flex-col items-center justify-center h-[140px] rounded-lg border border-dashed border-[#D1D5DB] hover:border-[#1C1E21]/30 hover:bg-[#FAFAFB] transition cursor-pointer">
-                <input
-                  type="file"
-                  className="hidden"
-                  accept=".pdf,.doc,.docx,.txt,.csv"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                />
-                <Upload className="w-5 h-5 text-[#9CA3AF] mb-2" />
-                <span className="text-[12.5px] text-[#1C1E21] font-medium">{file ? file.name : 'Click or drag a file here'}</span>
-                <span className="text-[11px] text-[#9CA3AF] mt-1">PDF, DOCX, TXT, CSV up to 25 MB</span>
-              </label>
-            </div>
-          )}
 
           <div>
             <label className="block text-[12.5px] font-medium text-[#1C1E21] mb-1.5">Description <span className="text-[#9CA3AF] font-normal">(optional)</span></label>
@@ -5935,8 +5893,71 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
               onChange={(e) => setDesc(e.target.value)}
               placeholder="Brief description of this data source..."
               rows={3}
-              className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#FF6B35]/40 focus:ring-2 focus:ring-[#FF6B35]/10 transition resize-y leading-relaxed"
+              className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition resize-y leading-relaxed"
             />
+          </div>
+
+          {/* Attach actions */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setUrlOpen((v) => !v)}
+                className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-lg border text-[12.5px] font-medium transition active:scale-[0.98] ${
+                  urlOpen
+                    ? 'border-[#7C3AED]/40 bg-[#F5F3FF] text-[#7C3AED]'
+                    : 'border-[#E6E8EC] bg-white text-[#1C1E21] hover:border-[#7C3AED]/30'
+                }`}
+              >
+                <Globe className="w-[13px] h-[13px]" />
+                Add web URL
+              </button>
+              <button
+                type="button"
+                onClick={triggerFile}
+                className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-lg border text-[12.5px] font-medium transition active:scale-[0.98] ${
+                  file
+                    ? 'border-[#7C3AED]/40 bg-[#F5F3FF] text-[#7C3AED]'
+                    : 'border-[#E6E8EC] bg-white text-[#1C1E21] hover:border-[#7C3AED]/30'
+                }`}
+              >
+                <Upload className="w-[13px] h-[13px]" />
+                Upload file
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".pdf,.doc,.docx,.txt,.csv"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
+            </div>
+
+            {urlOpen && (
+              <input
+                type="text"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://docs.example.com"
+                autoFocus
+                className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition"
+              />
+            )}
+
+            {file && (
+              <div className="flex items-center gap-3 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-[#FAFAFB]">
+                <div className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(160deg, #F5F3FF 0%, #FFFFFF 100%)', border: '1px solid rgba(124,58,237,0.20)' }}>
+                  <FileText className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[12.5px] font-medium text-[#1C1E21] truncate">{file.name}</div>
+                  <div className="text-[11px] text-[#9CA3AF]">{fileSize(file.size)}</div>
+                </div>
+                <button onClick={removeFile} className="p-1 rounded-md hover:bg-[#F3F4F6] transition flex-shrink-0" aria-label="Remove file">
+                  <X className="w-[14px] h-[14px] text-[#9CA3AF]" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -5944,9 +5965,14 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
         <div className="px-6 pb-6">
           <button
             onClick={onSave || onClose}
-            className="w-full inline-flex items-center justify-center gap-1.5 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+            disabled={!name.trim() || (!url.trim() && !file)}
+            className={`w-full inline-flex items-center justify-center gap-1.5 h-10 rounded-lg text-white text-[13.5px] font-semibold transition-all ${
+              name.trim() && (url.trim() || file)
+                ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]'
+                : 'bg-[#9CA3AF] cursor-not-allowed'
+            }`}
           >
-            {tab === 'url' ? 'Add Source' : 'Upload & Index'}
+            Add Source
           </button>
         </div>
       </div>
