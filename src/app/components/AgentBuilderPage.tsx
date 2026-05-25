@@ -1585,13 +1585,13 @@ function MJCreateAgentForm({
                 <button
                   type="button"
                   onClick={() => setInstructionsOpen(true)}
-                  className="w-full text-left px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] hover:border-[#1C1E21]/40 active:scale-[0.997]"
+                  className="w-full flex flex-col items-start text-left px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] hover:border-[#1C1E21]/40 active:scale-[0.997]"
                   style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)', minHeight: 84 }}
                 >
                   {instructions.trim() ? (
-                    <span className="block text-[#1C1E21] leading-snug whitespace-pre-wrap line-clamp-3">{instructions}</span>
+                    <span className="block text-[14px] font-normal text-[#1C1E21] leading-snug whitespace-pre-wrap line-clamp-3">{instructions}</span>
                   ) : (
-                    <span className="block text-[#6B7280] leading-snug">What should this agent do? Tone, constraints, anything else worth knowing.</span>
+                    <span className="block text-[14px] font-normal text-[#C0C4CC] leading-snug">What should this agent do? Tone, constraints, anything else worth knowing.</span>
                   )}
                 </button>
               </div>
