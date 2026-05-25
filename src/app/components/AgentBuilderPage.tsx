@@ -1201,6 +1201,17 @@ function MJCreateAgentForm({
 
   const [name, setName] = useState(seedAgent?.name ?? '');
   const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
+  const [instructionsOpen, setInstructionsOpen] = useState(false);
+  const [instructionsDraft, setInstructionsDraft] = useState('');
+  const instructionsTextareaRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!instructionsOpen) return;
+    setInstructionsDraft(instructions);
+    const t = setTimeout(() => instructionsTextareaRef.current?.focus(), 60);
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setInstructionsOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => { clearTimeout(t); document.removeEventListener('keydown', onKey); };
+  }, [instructionsOpen, instructions]);
   const [avatarIdx, setAvatarIdx] = useState(seedAvatarIdx === -1 ? 0 : seedAvatarIdx);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [schedFreq, setSchedFreq] = useState<'hour' | 'day' | 'week' | 'month' | 'weekdays' | 'custom'>('week');
@@ -1318,6 +1329,70 @@ function MJCreateAgentForm({
             animation: 'mjDeployBgIn 700ms cubic-bezier(0.23,1,0.32,1) both',
           }}
         />
+      )}
+      {instructionsOpen && (
+        <>
+          <style>{`
+            @keyframes mjInstOverlay { from { opacity: 0 } to { opacity: 1 } }
+            @keyframes mjInstModal { from { opacity: 0; transform: scale(0.96) translateY(8px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+          `}</style>
+          <div
+            className="fixed inset-0 z-[400] bg-black/40 backdrop-blur-sm"
+            style={{ animation: 'mjInstOverlay 180ms cubic-bezier(0.23,1,0.32,1) both' }}
+            onClick={() => setInstructionsOpen(false)}
+          />
+          <div className="fixed inset-0 z-[410] flex items-center justify-center p-4 pointer-events-none">
+            <div
+              className="pointer-events-auto bg-white w-full max-w-[640px] rounded-2xl overflow-hidden"
+              style={{ boxShadow: '0 24px 60px rgba(30,34,60,0.22)', animation: 'mjInstModal 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-6 pt-5 pb-3">
+                <div>
+                  <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">Instructions</h3>
+                  <p className="text-[12.5px] text-[#6B7280] mt-1">Describe what this agent does — tone, constraints, examples. Paste freely.</p>
+                </div>
+                <button
+                  onClick={() => setInstructionsOpen(false)}
+                  className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="px-6 pb-4">
+                <textarea
+                  ref={instructionsTextareaRef}
+                  value={instructionsDraft}
+                  onChange={(e) => setInstructionsDraft(e.target.value)}
+                  placeholder="e.g. You're a friendly dispatcher. Acknowledge each customer by name, summarize the issue, and offer the next available appointment."
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
+                  style={{ minHeight: 320, transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                />
+              </div>
+              <div className="px-6 py-3 border-t border-[#F0F1F3] flex items-center justify-between">
+                <span className="text-[11.5px] text-[#9CA3AF]">{instructionsDraft.trim().length} characters</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setInstructionsOpen(false)}
+                    className="px-3 h-9 rounded-lg text-[13px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] active:scale-[0.98]"
+                    style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => { setInstructions(instructionsDraft); setInstructionsOpen(false); }}
+                    className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] active:scale-[0.98]"
+                    style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
       <AgentReadyModal
         open={deployPhase === 'success'}
@@ -1507,14 +1582,19 @@ function MJCreateAgentForm({
               </div>
               <div>
                 <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
-                <textarea
-                  value={instructions}
-                  onChange={(e) => setInstructions(e.target.value)}
-                  rows={5}
-                  placeholder="What should this agent do? Tone, constraints, anything else worth knowing."
-                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                  className="w-full px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none"
-                />
+                <button
+                  type="button"
+                  onClick={() => setInstructionsOpen(true)}
+                  className="w-full text-left px-3 py-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[14px] hover:border-[#1C1E21]/40 active:scale-[0.997]"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)', minHeight: 84 }}
+                >
+                  {instructions.trim() ? (
+                    <span className="block text-[#1C1E21] leading-snug whitespace-pre-wrap line-clamp-3">{instructions}</span>
+                  ) : (
+                    <span className="block text-[#C0C4CC] leading-snug">What should this agent do? Tone, constraints, anything else worth knowing.</span>
+                  )}
+                  <span className="block mt-2 text-[11.5px] text-[#9CA3AF]">Click to {instructions.trim() ? 'edit' : 'write'} — opens a larger editor.</span>
+                </button>
               </div>
               <div>
                 <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Triggers</label>
