@@ -973,7 +973,11 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                               <div className="flex items-start justify-between gap-2">
                                 <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
                                 <button
-                                  onClick={() => onToggle(c.key, !isOn)}
+                                  onClick={() => {
+                                    const next = !isOn;
+                                    onToggle(c.key, next);
+                                    if (next && hasConfig) setDetailKey(c.key);
+                                  }}
                                   aria-label={isOn ? 'Disable' : 'Enable'}
                                   className="relative inline-flex items-center flex-shrink-0 mt-0.5 active:scale-[0.96]"
                                   style={{
@@ -1000,16 +1004,6 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                                 </button>
                               </div>
                               <p className="text-[11.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
-                              {isOn && hasConfig && (
-                                <button
-                                  onClick={() => setDetailKey(c.key)}
-                                  className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-semibold text-[#1C1E21] hover:text-black active:scale-[0.97]"
-                                  style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                                >
-                                  Configure
-                                  <ChevronRight className="w-3 h-3" />
-                                </button>
-                              )}
                             </div>
                           </div>
                         );
@@ -1083,7 +1077,6 @@ function MJCreateAgentForm({
   const [schedHour, setSchedHour] = useState('09');
   const [schedMin, setSchedMin] = useState('00');
   const [mentionSurfaces, setMentionSurfaces] = useState({ chat: true, comments: true, dm: false });
-  const [manualSurfaces, setManualSurfaces] = useState({ slash: true, button: true, suggestions: false });
   const avatarMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!avatarOpen) return;
@@ -1358,21 +1351,6 @@ function MJCreateAgentForm({
                             <SurfaceRow title="Chat threads" sub="In any chat where the agent is added" on={mentionSurfaces.chat} onToggle={() => setMentionSurfaces((p) => ({ ...p, chat: !p.chat }))} />
                             <SurfaceRow title="Comments on jobs & tasks" sub="Mentions inside record comments" on={mentionSurfaces.comments} onToggle={() => setMentionSurfaces((p) => ({ ...p, comments: !p.comments }))} />
                             <SurfaceRow title="Direct messages" sub="When users DM the agent directly" on={mentionSurfaces.dm} onToggle={() => setMentionSurfaces((p) => ({ ...p, dm: !p.dm }))} />
-                          </div>
-                        </div>
-                      );
-                    }
-                    if (t.key === 'manual') {
-                      return (
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <div className="mb-3">
-                            <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">How to invoke</p>
-                            <p className="text-[12.5px] text-[#6B7280] leading-snug">Pick where users can launch this agent manually.</p>
-                          </div>
-                          <div className="divide-y divide-[#F0F1F3]">
-                            <SurfaceRow title="Slash command" sub="Type /agent in any chat" on={manualSurfaces.slash} onToggle={() => setManualSurfaces((p) => ({ ...p, slash: !p.slash }))} />
-                            <SurfaceRow title="Quick action button" sub="Pinned in the workspace toolbar" on={manualSurfaces.button} onToggle={() => setManualSurfaces((p) => ({ ...p, button: !p.button }))} />
-                            <SurfaceRow title="Smart suggestions" sub="Surface this agent when relevant" on={manualSurfaces.suggestions} onToggle={() => setManualSurfaces((p) => ({ ...p, suggestions: !p.suggestions }))} />
                           </div>
                         </div>
                       );
