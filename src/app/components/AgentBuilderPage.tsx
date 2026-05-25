@@ -2358,12 +2358,9 @@ function MJAgentActivityFeed({ agentName, accent }: { agentName: string; accent:
 
   return (
     <section className="mb-10">
-      <div className="flex items-end justify-between mb-3">
-        <div>
-          <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Activity</h2>
-          <p className="text-[14px] text-[#6B7280]">Every time this agent runs — what triggered it, what happened, and how long it took.</p>
-        </div>
-        <span className="text-[11.5px] font-semibold tracking-[0.10em] uppercase text-[#9CA3AF]">{runs.length} runs</span>
+      <div className="mb-3">
+        <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Activity</h2>
+        <p className="text-[14px] text-[#6B7280]">Every run — what triggered it and how long it took.</p>
       </div>
 
       <div className="rounded-2xl bg-white border border-[#E6E8EC] overflow-hidden">
@@ -2373,27 +2370,20 @@ function MJAgentActivityFeed({ agentName, accent }: { agentName: string; accent:
           return (
             <div
               key={i}
-              className={`flex items-center gap-4 px-5 py-4 ${i !== runs.length - 1 ? 'border-b border-[#F0F1F3]' : ''} hover:bg-[#FAFAFB]`}
+              className={`flex items-center gap-3 px-5 py-3 ${i !== runs.length - 1 ? 'border-b border-[#F0F1F3]' : ''} hover:bg-[#FAFAFB]`}
               style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
             >
               <div
-                className="w-9 h-9 rounded-md flex items-center justify-center flex-shrink-0"
+                className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
                 style={{ background: `${accent}14`, border: `1px solid ${accent}26` }}
               >
-                <Icon className="w-[15px] h-[15px]" style={{ color: accent }} strokeWidth={2} />
+                <Icon className="w-[12px] h-[12px]" style={{ color: accent }} strokeWidth={2} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10.5px] font-semibold tracking-[0.10em] uppercase text-[#9CA3AF]">{r.kind}</span>
-                  <span className="text-[12px] text-[#C0C4CC]">·</span>
-                  <span className="text-[12px] text-[#9CA3AF]">{r.when}</span>
-                </div>
-                <div className="text-[13.5px] font-medium text-[#1C1E21] mt-0.5 truncate">{r.task}</div>
+                <div className="text-[13.5px] font-medium text-[#1C1E21] truncate">{r.task}</div>
+                <div className="text-[11.5px] text-[#9CA3AF] mt-0.5">{r.when}</div>
               </div>
-              <div className="hidden md:flex items-center gap-5 text-[12.5px] text-[#6B7280] flex-shrink-0">
-                <span><span className="font-medium text-[#1C1E21]">{r.tokens}</span> tokens</span>
-                <span><span className="font-medium text-[#1C1E21]">{r.duration}</span></span>
-              </div>
+              <span className="text-[12px] text-[#6B7280] flex-shrink-0 tabular-nums">{r.duration}</span>
               <span
                 className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-bold tracking-wide uppercase flex-shrink-0"
                 style={{ background: status.bg, color: status.color }}
