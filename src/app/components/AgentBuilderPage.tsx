@@ -1093,29 +1093,24 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                         );
                       })}
                     </div>
-                    {createLabel && (
-                      <button
-                        onClick={() => onCreate?.()}
-                        className="mt-3 w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-white text-[13px] font-semibold text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
-                        style={{
-                          border: '1.25px dashed #D1D5DB',
-                          transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
-                        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#D1D5DB')}
-                      >
-                        <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
-                        {createLabel}
-                      </button>
-                    )}
                   </div>
                 </>
               )}
-              <div className="px-5 py-3 border-t border-[#F0F1F3] flex items-center justify-end">
+              <div className="px-5 py-3 border-t border-[#F0F1F3] flex items-center justify-between">
+                {createLabel && !detailKey ? (
+                  <button
+                    onClick={() => onCreate?.()}
+                    className="inline-flex items-center gap-1.5 h-9 text-[13px] font-medium text-[#1C1E21] hover:text-black active:scale-[0.98]"
+                    style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  >
+                    <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
+                    {createLabel}
+                  </button>
+                ) : <span />}
                 <button
                   onClick={() => setOpen(false)}
-                  className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] active:scale-[0.98]"
-                  style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  className="px-4 h-9 rounded-lg text-[13px] font-semibold text-white bg-[#1C1E21] hover:bg-black active:scale-[0.98]"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                 >
                   Done
                 </button>
