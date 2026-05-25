@@ -3278,12 +3278,12 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   <p className="text-[12.5px] text-[#4C2A8F] leading-snug max-w-[260px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
                 </div>
 
-                {/* Avatars */}
-                <div className="relative flex-1 min-h-0 flex items-end justify-center pt-2 z-10">
-                  <div className="flex items-end -space-x-12" style={{ height: 156 }}>
-                    <img src={agentMarketer} alt="" className="h-[140px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.32)]" style={{ zIndex: 1, transform: 'translateY(4px)' }} draggable={false} />
-                    <img src={agentSupport} alt="" className="h-[156px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.36)]" style={{ zIndex: 3 }} draggable={false} />
-                    <img src={agentReviews} alt="" className="h-[140px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.32)]" style={{ zIndex: 2, transform: 'translateY(4px)' }} draggable={false} />
+                {/* Avatars — equal height, shared baseline */}
+                <div className="relative flex-1 min-h-0 flex items-end justify-center z-10">
+                  <div className="flex items-end -space-x-10" style={{ height: 152 }}>
+                    <img src={agentMarketer} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.32)]" style={{ zIndex: 1 }} draggable={false} />
+                    <img src={agentSupport} alt="" className="h-[152px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.38)]" style={{ zIndex: 3 }} draggable={false} />
+                    <img src={agentReviews} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.32)]" style={{ zIndex: 2 }} draggable={false} />
                   </div>
                 </div>
 
