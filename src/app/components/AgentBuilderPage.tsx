@@ -1230,9 +1230,10 @@ function MJCreateAgentForm({
   const enabledKb = kbCatalog.filter((k) => kb[k.key]);
   const enabledTriggers = triggerItems.filter((t) => triggers[t.key]);
   const canDeploy = name.trim().length > 1 && (enabledSkills.length + enabledTools.length) > 0;
+  const [deployPhase, setDeployPhase] = useState<'idle' | 'glow' | 'success'>('idle');
 
   const deploy = () => {
-    if (!canDeploy) return;
+    if (!canDeploy || deployPhase !== 'idle') return;
     const record: typeof myAgents[number] = {
       name: name.trim(),
       desc: instructions.trim().split('.')[0] || 'Custom agent.',
@@ -1240,11 +1241,61 @@ function MJCreateAgentForm({
       skills: enabledSkills.length, tools: enabledKb.length,
       status: 'Active', category: 'Operations', img: avatar,
     };
-    onDeploy(record, false);
+    setDeployPhase('glow');
+    setTimeout(() => setDeployPhase('success'), 1600);
+    setTimeout(() => onDeploy(record, false), 3000);
   };
 
   return (
     <div className="absolute inset-0 bg-white overflow-y-auto flex flex-col">
+      {/* Deploy sequence overlays */}
+      <style>{`
+        @keyframes mjDeployBg { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes mjDeployBgOut { from { opacity: 1 } to { opacity: 0 } }
+        @keyframes mjSuccessIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.92) } 60% { opacity: 1; transform: translate(-50%, -50%) scale(1.02) } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1) } }
+        @keyframes mjCheckIn { 0% { transform: scale(0.4); opacity: 0 } 60% { transform: scale(1.15); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+        @keyframes mjPulse { 0%, 100% { transform: scale(1); opacity: 0.6 } 50% { transform: scale(1.18); opacity: 0 } }
+      `}</style>
+      {deployPhase !== 'idle' && (
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute', inset: 0, zIndex: 30, pointerEvents: 'none',
+            background: 'radial-gradient(120% 80% at 50% 20%, rgba(253,80,0,0.22) 0%, rgba(251,191,36,0.16) 35%, rgba(255,255,255,0) 70%), linear-gradient(180deg, rgba(255,247,237,0.0) 0%, rgba(255,237,213,0.55) 100%)',
+            animation: 'mjDeployBg 600ms cubic-bezier(0.23,1,0.32,1) both',
+          }}
+        />
+      )}
+      {deployPhase === 'success' && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center pointer-events-none">
+          <div
+            className="pointer-events-auto bg-white rounded-2xl px-8 py-7 text-center"
+            style={{
+              position: 'absolute', left: '50%', top: '50%',
+              boxShadow: '0 24px 60px rgba(30,34,60,0.22), 0 0 0 1px rgba(28,30,33,0.06)',
+              animation: 'mjSuccessIn 480ms cubic-bezier(0.23,1,0.32,1) both',
+              minWidth: 340,
+            }}
+          >
+            <div className="relative mx-auto mb-3" style={{ width: 56, height: 56 }}>
+              <span aria-hidden style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: 'rgba(16,185,129,0.18)', animation: 'mjPulse 1.4s ease-out infinite' }} />
+              <div
+                className="absolute inset-0 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                  boxShadow: '0 8px 24px rgba(16,185,129,0.35)',
+                  animation: 'mjCheckIn 380ms cubic-bezier(0.23,1,0.32,1) both',
+                }}
+              >
+                <Check className="w-7 h-7 text-white" strokeWidth={3} />
+              </div>
+            </div>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.015em' }}>Agent deployed</h3>
+            <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 6 }}>{name.trim() || 'New Agent'} is now live and ready to run.</p>
+          </div>
+        </div>
+      )}
+
       {/* Header bar — Create agent + Deploy */}
       <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
         <div className="flex items-center gap-2">
@@ -1260,11 +1311,20 @@ function MJCreateAgentForm({
         </div>
         <button
           onClick={deploy}
-          disabled={!canDeploy}
-          className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+          disabled={!canDeploy || deployPhase !== 'idle'}
+          className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
         >
-          <Play className="w-[11px] h-[11px]" fill="currentColor" />
-          Deploy
+          {deployPhase === 'idle' ? (
+            <>
+              <Play className="w-[11px] h-[11px]" fill="currentColor" />
+              Deploy
+            </>
+          ) : (
+            <>
+              <RefreshCw className="w-[11px] h-[11px] animate-spin" />
+              Deploying…
+            </>
+          )}
         </button>
       </div>
 
@@ -1272,7 +1332,18 @@ function MJCreateAgentForm({
         <div className="max-w-[820px] mx-auto px-6 py-10">
           {/* Hero strip — peach background, avatar + name + instructions */}
           <div className="sticky top-14 z-20 bg-white pt-4 pb-4 mb-4 -mx-6 px-6">
-          <div className="rounded-2xl px-8 py-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
+          <div className="relative rounded-2xl" style={{ padding: deployPhase === 'glow' ? 2 : 0, transition: 'padding 200ms cubic-bezier(0.23,1,0.32,1)' }}>
+          {deployPhase === 'glow' && (
+            <>
+              <style>{`
+                @keyframes mjDeploySpin { to { transform: rotate(360deg) } }
+                @keyframes mjDeployFade { from { opacity: 0 } to { opacity: 1 } }
+              `}</style>
+              <span aria-hidden style={{ position: 'absolute', inset: -2, borderRadius: 18, padding: 2, background: 'conic-gradient(from 0deg, #FD5000, #F97316, #FBBF24, #FD5000)', WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)', WebkitMaskComposite: 'xor', maskComposite: 'exclude', animation: 'mjDeploySpin 1.6s linear infinite, mjDeployFade 200ms cubic-bezier(0.23,1,0.32,1) both', pointerEvents: 'none', zIndex: 1 }} />
+              <span aria-hidden style={{ position: 'absolute', inset: -10, borderRadius: 24, background: 'radial-gradient(closest-side, rgba(253,80,0,0.35), rgba(253,80,0,0) 70%)', filter: 'blur(12px)', animation: 'mjDeployFade 240ms cubic-bezier(0.23,1,0.32,1) both', pointerEvents: 'none' }} />
+            </>
+          )}
+          <div className="relative rounded-2xl px-8 py-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
             <div className="flex items-center gap-6">
               <div className="relative flex-shrink-0" ref={avatarMenuRef}>
                 <button
@@ -1348,6 +1419,7 @@ function MJCreateAgentForm({
                 <p className="text-[15px] text-[#6B7280] mt-2 leading-snug line-clamp-2">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
               </div>
             </div>
+          </div>
           </div>
           </div>
 
