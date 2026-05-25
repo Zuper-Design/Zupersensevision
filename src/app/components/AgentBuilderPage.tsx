@@ -5690,12 +5690,19 @@ function KnowledgeBaseView() {
               <tr key={i} className={`${i !== kbSources.length - 1 ? 'border-b border-[#F0F1F3]' : ''} hover:bg-[#FAFAFB] transition`}>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-[#EFF6FF] flex items-center justify-center flex-shrink-0">
-                      <Globe className="w-[16px] h-[16px] text-[#3B82F6]" />
-                    </div>
+                    <span
+                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(160deg, #DBEAFE 0%, #FFFFFF 100%)',
+                        border: '1px solid rgba(37,99,235,0.20)',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px rgba(37,99,235,0.10)',
+                      }}
+                    >
+                      <Globe className="w-[17px] h-[17px]" style={{ color: '#2563EB' }} strokeWidth={2} />
+                    </span>
                     <div className="min-w-0">
-                      <div className="text-[13.5px] font-semibold text-[#1C1E21]">{s.name}</div>
-                      <div className="text-[12px] text-[#9CA3AF] truncate max-w-[280px]">{s.url}</div>
+                      <div className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{s.name}</div>
+                      <div className="text-[12.5px] text-[#6B7280] truncate max-w-[280px] mt-1">{s.url}</div>
                     </div>
                   </div>
                 </td>
