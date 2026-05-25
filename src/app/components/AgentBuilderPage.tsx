@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SenseLogo } from './SenseLogo';
 import {
@@ -395,7 +395,7 @@ const statusStyles: Record<AgentStatus, { bg: string; border: string; color: str
   Error: { bg: '#FEE2E2', border: 'transparent', color: '#B91C1C', dot: '#EF4444' },
 };
 
-const myAgents: Array<{ name: string; desc: string; runs: number; lastRun: string; users: number; rating: number; reviews: number; price: string; skills: number; tools: number; status: AgentStatus; category: AgentCategory; img?: string }> = [
+const myAgents: Array<{ name: string; desc: string; runs: number; lastRun: string; users: number; rating: number; reviews: number; price: string; skills: number; tools: number; status: AgentStatus; category: AgentCategory; img?: string; tint?: string; accent?: string }> = [
   { name: 'Sales Coach Agent', desc: 'Reviews call transcripts and interaction logs, surfacing coaching moments.', runs: 412, lastRun: '1d ago', users: 7, rating: 4.4, reviews: 4, price: 'Free', skills: 3, tools: 2, status: 'Active', category: 'Sales', img: agentCreator },
   { name: 'Finance Agent', desc: 'Tracks job costs, generates invoices, and surfaces margin anomalies.', runs: 0, lastRun: '', users: 3, rating: 5.0, reviews: 1, price: '$25/mo', skills: 0, tools: 1, status: 'Draft', category: 'Finance', img: agentReviews },
   { name: 'Support Agent', desc: 'Answers user questions by searching and scraping Zuper documentation.', runs: 1872, lastRun: '8m ago', users: 32, rating: 4.7, reviews: 17, price: 'Free', skills: 4, tools: 3, status: 'Active', category: 'Support', img: agentSupport },
@@ -1179,6 +1179,26 @@ function MJCreateAgentForm({
   const seedAvatarIdx = seedAgent
     ? [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews].findIndex((a) => a === seedAgent.img)
     : 0;
+
+  // Per-creation theme — cycles each time the form opens fresh.
+  const themePalette = [
+    { tint: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)', accent: '#EA580C', soft: '#FFE0CC' },
+    { tint: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)', accent: '#DB2777', soft: '#FBCFE8' },
+    { tint: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)', accent: '#2563EB', soft: '#BFDBFE' },
+    { tint: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)', accent: '#059669', soft: '#A7F3D0' },
+    { tint: 'linear-gradient(135deg, #E9D5FF 0%, #DDD6FE 100%)', accent: '#7C3AED', soft: '#DDD6FE' },
+    { tint: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)', accent: '#A16207', soft: '#FDE68A' },
+  ];
+  const themeIdx = useMemo(() => {
+    if (seedAgent?.accent) {
+      const found = themePalette.findIndex((p) => p.accent === seedAgent.accent);
+      if (found >= 0) return found;
+    }
+    return Math.floor(Math.random() * themePalette.length);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const theme = themePalette[themeIdx];
+
   const [name, setName] = useState(seedAgent?.name ?? '');
   const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
   const [avatarIdx, setAvatarIdx] = useState(seedAvatarIdx === -1 ? 0 : seedAvatarIdx);
@@ -1270,6 +1290,7 @@ function MJCreateAgentForm({
     runs: seedAgent?.runs ?? 0, lastRun: 'just now', users: seedAgent?.users ?? 1, rating: seedAgent?.rating ?? 5.0, reviews: seedAgent?.reviews ?? 0, price: seedAgent?.price ?? 'Free',
     skills: enabledSkills.length, tools: enabledKb.length,
     status: seedAgent?.status ?? 'Active', category: seedAgent?.category ?? 'Operations', img: avatar,
+    tint: theme.tint, accent: theme.accent,
   });
 
   const deploy = () => {
@@ -1293,7 +1314,7 @@ function MJCreateAgentForm({
           aria-hidden
           style={{
             position: 'fixed', left: 0, right: 0, bottom: 0, height: '50vh', zIndex: 30, pointerEvents: 'none',
-            background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,237,213,0.65) 55%, rgba(254,205,170,0.85) 100%)',
+            background: `linear-gradient(180deg, rgba(255,255,255,0) 0%, ${theme.soft}A0 55%, ${theme.accent}55 100%)`,
             animation: 'mjDeployBgIn 700ms cubic-bezier(0.23,1,0.32,1) both',
           }}
         />
@@ -1303,8 +1324,8 @@ function MJCreateAgentForm({
         name={name.trim() || 'Your agent'}
         role="New agent"
         avatar={avatar}
-        avatarTint={avatarTint}
-        accent={avatarAccent}
+        avatarTint={theme.tint}
+        accent={theme.accent}
         primaryLabel="Chat with"
         secondaryLabel="Go to marketplace"
         onChat={() => onDeploy(buildRecord(), true)}
@@ -1371,7 +1392,7 @@ function MJCreateAgentForm({
                 aria-hidden
                 style={{
                   position: 'absolute', inset: -8, borderRadius: 22,
-                  background: 'radial-gradient(closest-side, rgba(253,80,0,0.45), rgba(253,80,0,0) 75%)',
+                  background: `radial-gradient(closest-side, ${theme.accent}73, ${theme.accent}00 75%)`,
                   filter: 'blur(16px)',
                   animation: 'mjDeployFade 280ms cubic-bezier(0.23,1,0.32,1) both, mjGlowBreathe 2.4s ease-in-out infinite',
                   pointerEvents: 'none',
@@ -1381,14 +1402,14 @@ function MJCreateAgentForm({
                 aria-hidden
                 style={{
                   position: 'absolute', inset: -1, borderRadius: 17,
-                  boxShadow: '0 0 0 1.5px rgba(253,80,0,0.35), 0 0 24px rgba(253,80,0,0.25)',
+                  boxShadow: `0 0 0 1.5px ${theme.accent}59, 0 0 24px ${theme.accent}40`,
                   animation: 'mjDeployFade 200ms cubic-bezier(0.23,1,0.32,1) both',
                   pointerEvents: 'none',
                 }}
               />
             </>
           )}
-          <div className="relative rounded-2xl px-8 py-8" style={{ background: 'linear-gradient(135deg, #FFF1E5 0%, #FFE7D8 100%)' }}>
+          <div className="relative rounded-2xl px-8 py-8" style={{ background: theme.tint }}>
             <div className="flex items-center gap-6">
               <div className="relative flex-shrink-0" ref={avatarMenuRef}>
                 <button
@@ -3053,7 +3074,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number]; onOpen?: () => void }) {
   const status = agent.status;
   const statusStyle = statusStyles[status];
-  const tint = categoryTint[agent.category] || { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' };
+  const fallback = categoryTint[agent.category] || { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' };
+  const tint = { tint: agent.tint || fallback.tint, accent: agent.accent || fallback.accent };
   const accent = tint.accent;
 
   return (
