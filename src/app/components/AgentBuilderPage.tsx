@@ -1368,7 +1368,7 @@ function MJCreateAgentForm({
                   onChange={(e) => setInstructionsDraft(e.target.value)}
                   placeholder="e.g. You're a friendly dispatcher. Acknowledge each customer by name, summarize the issue, and offer the next available appointment."
                   className="w-full px-4 py-3 rounded-xl bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
-                  style={{ minHeight: 320, transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  style={{ minHeight: 520, transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
                 />
               </div>
               <div className="px-6 py-3 border-t border-[#F0F1F3] flex items-center justify-between">
@@ -1591,9 +1591,8 @@ function MJCreateAgentForm({
                   {instructions.trim() ? (
                     <span className="block text-[#1C1E21] leading-snug whitespace-pre-wrap line-clamp-3">{instructions}</span>
                   ) : (
-                    <span className="block text-[#C0C4CC] leading-snug">What should this agent do? Tone, constraints, anything else worth knowing.</span>
+                    <span className="block text-[#6B7280] leading-snug">What should this agent do? Tone, constraints, anything else worth knowing.</span>
                   )}
-                  <span className="block mt-2 text-[11.5px] text-[#9CA3AF]">Click to {instructions.trim() ? 'edit' : 'write'} — opens a larger editor.</span>
                 </button>
               </div>
               <div>
