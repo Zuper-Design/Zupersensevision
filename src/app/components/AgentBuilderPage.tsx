@@ -842,13 +842,20 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
   renderConfig?: (item: T) => React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [detailKey, setDetailKey] = useState<string | null>(null);
+  const detailItem = detailKey ? catalog.find((c) => c.key === detailKey) ?? null : null;
 
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    if (!open) { setDetailKey(null); return; }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (detailKey) setDetailKey(null);
+        else setOpen(false);
+      }
+    };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [open, detailKey]);
 
   return (
     <div className="relative">
@@ -890,92 +897,127 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
                 @keyframes addPickerOverlayIn { from { opacity: 0 } to { opacity: 1 } }
                 @keyframes addPickerModalIn { from { opacity: 0; transform: scale(0.96) translateY(6px) } to { opacity: 1; transform: scale(1) translateY(0) } }
               `}</style>
-              <div className="flex items-center justify-between px-6 pt-5 pb-4">
-                <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">{buttonLabel}</h3>
-                <button
-                  onClick={() => setOpen(false)}
-                  className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
-                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                  aria-label="Close"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="px-6 pb-4 max-h-[520px] overflow-y-auto">
-                <div className="grid grid-cols-2 gap-2.5">
-                  {catalog.map((c) => {
-                    const Icon = c.icon;
-                    const isOn = !!enabled[c.key];
-                    const accent = c.iconColor || '#1C1E21';
-                    const accentSoft = c.tint || '#F3F4F6';
-                    const configNode = isOn ? renderConfig?.(c) : null;
-                    return (
-                      <div key={c.key} className={configNode ? 'col-span-2' : ''}>
-                        <button
-                          onClick={() => onToggle(c.key, !isOn)}
-                          className="w-full flex items-start gap-3 px-3 py-3 rounded-xl text-left active:scale-[0.995]"
-                          style={{
-                            background: isOn ? accentSoft : '#FFFFFF',
-                            border: `1px solid ${isOn ? accent : '#E6E8EC'}`,
-                            transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
-                          }}
-                        >
-                          <span
-                            className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+              {detailItem ? (
+                <>
+                  <div className="flex items-center justify-between px-6 pt-5 pb-4">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setDetailKey(null)}
+                        className="w-8 h-8 -ml-2 rounded-md flex items-center justify-center text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+                        style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        aria-label="Back"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">{detailItem.label}</h3>
+                    </div>
+                    <button
+                      onClick={() => setOpen(false)}
+                      className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+                      style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      aria-label="Close"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div
+                    className="px-6 pb-4 max-h-[520px] overflow-y-auto"
+                    style={{ animation: 'detailIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+                  >
+                    <style>{`@keyframes detailIn { from { opacity: 0; transform: translateX(8px) } to { opacity: 1; transform: translateX(0) } }`}</style>
+                    {renderConfig?.(detailItem)}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between px-6 pt-5 pb-4">
+                    <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">{buttonLabel}</h3>
+                    <button
+                      onClick={() => setOpen(false)}
+                      className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+                      style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      aria-label="Close"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="px-6 pb-4 max-h-[520px] overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {catalog.map((c) => {
+                        const Icon = c.icon;
+                        const isOn = !!enabled[c.key];
+                        const accent = c.iconColor || '#1C1E21';
+                        const accentSoft = c.tint || '#F3F4F6';
+                        const hasConfig = !!renderConfig?.(c);
+                        return (
+                          <div
+                            key={c.key}
+                            className="flex items-start gap-3 px-3 py-3 rounded-xl"
                             style={{
-                              background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
-                              border: `1px solid ${accent}33`,
-                              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
+                              background: isOn ? accentSoft : '#FFFFFF',
+                              border: `1px solid ${isOn ? accent : '#E6E8EC'}`,
+                              transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1)',
                             }}
                           >
-                            <Icon className="w-[16px] h-[16px]" style={{ color: accent }} strokeWidth={2} />
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
-                              <span
-                                aria-hidden
-                                className="relative inline-flex items-center flex-shrink-0 mt-0.5"
-                                style={{
-                                  width: 28,
-                                  height: 16,
-                                  borderRadius: 999,
-                                  background: isOn ? '#1C1E21' : '#E6E8EC',
-                                  transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)',
-                                }}
-                              >
-                                <span
+                            <span
+                              className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+                              style={{
+                                background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
+                                border: `1px solid ${accent}33`,
+                                boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
+                              }}
+                            >
+                              <Icon className="w-[16px] h-[16px]" style={{ color: accent }} strokeWidth={2} />
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between gap-2">
+                                <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{c.label}</h4>
+                                <button
+                                  onClick={() => onToggle(c.key, !isOn)}
+                                  aria-label={isOn ? 'Disable' : 'Enable'}
+                                  className="relative inline-flex items-center flex-shrink-0 mt-0.5 active:scale-[0.96]"
                                   style={{
-                                    position: 'absolute',
-                                    top: 2,
-                                    left: isOn ? 14 : 2,
-                                    width: 12,
-                                    height: 12,
+                                    width: 28,
+                                    height: 16,
                                     borderRadius: 999,
-                                    background: '#FFFFFF',
-                                    boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
-                                    transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
+                                    background: isOn ? '#1C1E21' : '#E6E8EC',
+                                    transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
                                   }}
-                                />
-                              </span>
+                                >
+                                  <span
+                                    style={{
+                                      position: 'absolute',
+                                      top: 2,
+                                      left: isOn ? 14 : 2,
+                                      width: 12,
+                                      height: 12,
+                                      borderRadius: 999,
+                                      background: '#FFFFFF',
+                                      boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
+                                      transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
+                                    }}
+                                  />
+                                </button>
+                              </div>
+                              <p className="text-[11.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
+                              {isOn && hasConfig && (
+                                <button
+                                  onClick={() => setDetailKey(c.key)}
+                                  className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-semibold text-[#1C1E21] hover:text-black active:scale-[0.97]"
+                                  style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                                >
+                                  Configure
+                                  <ChevronRight className="w-3 h-3" />
+                                </button>
+                              )}
                             </div>
-                            <p className="text-[11.5px] text-[#6B7280] leading-snug mt-1">{c.desc}</p>
                           </div>
-                        </button>
-                        {configNode && (
-                          <div
-                            className="mt-2 px-4 py-4 rounded-xl bg-white"
-                            style={{ border: '1px solid #EDEFF2', animation: 'configIn 200ms cubic-bezier(0.23,1,0.32,1) both' }}
-                          >
-                            <style>{`@keyframes configIn { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
-                            {configNode}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
               <div className="px-5 py-3 border-t border-[#F0F1F3] flex items-center justify-end">
                 <button
                   onClick={() => setOpen(false)}
@@ -1040,6 +1082,8 @@ function MJCreateAgentForm({
   const [schedFreq, setSchedFreq] = useState<'hour' | 'day' | 'week' | 'month' | 'weekdays' | 'custom'>('week');
   const [schedHour, setSchedHour] = useState('09');
   const [schedMin, setSchedMin] = useState('00');
+  const [mentionSurfaces, setMentionSurfaces] = useState({ chat: true, comments: true, dm: false });
+  const [manualSurfaces, setManualSurfaces] = useState({ slash: true, button: true, suggestions: false });
   const avatarMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!avatarOpen) return;
@@ -1078,10 +1122,11 @@ function MJCreateAgentForm({
     { key: 'Pricing book', label: 'Pricing book', desc: 'Quotes & rate cards', icon: FileText, tint: '#E9D5FF', iconColor: '#7C3AED' },
     { key: 'Safety policies', label: 'Safety policies', desc: 'Crew & site checklists', icon: FileText, tint: '#FEF08A', iconColor: '#A16207' },
   ];
-  const triggerCatalog: { key: 'manual' | 'mention' | 'schedule'; label: string; desc: string; icon: any; tint: string; iconColor: string }[] = [
+  const triggerCatalog: { key: 'manual' | 'mention' | 'schedule' | 'webhook'; label: string; desc: string; icon: any; tint: string; iconColor: string }[] = [
     { key: 'manual', label: 'On demand', desc: 'You ask, it runs', icon: Play, tint: '#DBEAFE', iconColor: '#2563EB' },
     { key: 'mention', label: '@mention', desc: 'Pings the agent in Zuper', icon: AtSign, tint: '#FFE0CC', iconColor: '#EA580C' },
     { key: 'schedule', label: 'Scheduled', desc: 'Daily at a set time', icon: Clock, tint: '#D1FAE5', iconColor: '#059669' },
+    { key: 'webhook', label: 'Webhook', desc: 'POST events to a URL', icon: Webhook, tint: '#E9D5FF', iconColor: '#7C3AED' },
   ];
 
   const toolCatalog: SkillDef[] = [
@@ -1266,96 +1311,200 @@ function MJCreateAgentForm({
                   enabled={triggers}
                   onToggle={(key, on) => setTriggers((p) => ({ ...p, [key]: on }))}
                   renderConfig={(t) => {
-                    if (t.key !== 'schedule') return null;
-                    const freqs: { key: typeof schedFreq; label: string }[] = [
-                      { key: 'hour', label: 'Every hour' },
-                      { key: 'day', label: 'Every day' },
-                      { key: 'week', label: 'Every week' },
-                      { key: 'month', label: 'Every month' },
-                      { key: 'weekdays', label: 'Weekdays' },
-                      { key: 'custom', label: 'Custom' },
-                    ];
-                    const summaryMap: Record<typeof schedFreq, string> = {
-                      hour: 'every hour',
-                      day: 'every day',
-                      week: 'every Monday',
-                      month: 'on the 1st of every month',
-                      weekdays: 'Mon–Fri',
-                      custom: 'a custom schedule',
-                    };
-                    return (
-                      <div onClick={(e) => e.stopPropagation()}>
-                        <div className="mb-4">
-                          <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Frequency</p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {freqs.map((f) => {
-                              const active = schedFreq === f.key;
-                              return (
-                                <button
-                                  key={f.key}
-                                  onClick={() => setSchedFreq(f.key)}
-                                  className="px-3 h-8 rounded-full text-[12.5px] font-medium active:scale-[0.97]"
-                                  style={{
-                                    background: active ? '#1C1E21' : '#FFFFFF',
-                                    color: active ? '#FFFFFF' : '#1C1E21',
-                                    border: `1px solid ${active ? '#1C1E21' : '#E6E8EC'}`,
-                                    transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
-                                  }}
-                                >
-                                  {f.label}
-                                </button>
-                              );
-                            })}
-                          </div>
+                    const SurfaceRow = ({ title, sub, on, onToggle }: { title: string; sub: string; on: boolean; onToggle: () => void }) => (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onToggle(); }}
+                        className="w-full flex items-center justify-between py-3 text-left"
+                      >
+                        <div className="min-w-0 pr-3">
+                          <p className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{title}</p>
+                          <p className="text-[12.5px] text-[#6B7280] mt-1 leading-snug">{sub}</p>
                         </div>
-                        <div className="mb-4">
-                          <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Time</p>
-                          <div className="flex items-center gap-1.5">
-                            <select
-                              value={schedHour}
-                              onChange={(e) => setSchedHour(e.target.value)}
-                              className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
-                              style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                            >
-                              {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((h) => (
-                                <option key={h} value={h}>{h}</option>
-                              ))}
-                            </select>
-                            <span className="text-[13px] text-[#9CA3AF]">:</span>
-                            <select
-                              value={schedMin}
-                              onChange={(e) => setSchedMin(e.target.value)}
-                              className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
-                              style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                            >
-                              {['00', '15', '30', '45'].map((m) => (
-                                <option key={m} value={m}>{m}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                        <div
-                          className="flex items-center gap-2 px-3 py-2.5 rounded-lg mb-3"
-                          style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}
+                        <span
+                          aria-hidden
+                          className="relative inline-flex items-center flex-shrink-0"
+                          style={{
+                            width: 36,
+                            height: 20,
+                            borderRadius: 999,
+                            background: on ? '#1C1E21' : '#E6E8EC',
+                            transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                          }}
                         >
-                          <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
-                          <p className="text-[12px] text-[#4B5563]">
-                            Runs <span className="font-semibold text-[#1C1E21]">{summaryMap[schedFreq]}</span> at <span className="font-semibold text-[#1C1E21]">{schedHour}:{schedMin}</span>
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5 text-[12px] text-[#6B7280]">
-                            <Globe className="w-3.5 h-3.5" />
-                            <span>Timezone:</span>
-                            <span className="font-semibold text-[#1C1E21]">Asia/Calcutta</span>
-                          </div>
-                          <button className="text-[12px] font-medium text-[#1C1E21] hover:text-black inline-flex items-center gap-1">
-                            Advanced cron expression
-                            <ChevronDown className="w-3 h-3" />
-                          </button>
-                        </div>
-                      </div>
+                          <span
+                            style={{
+                              position: 'absolute',
+                              top: 2,
+                              left: on ? 18 : 2,
+                              width: 16,
+                              height: 16,
+                              borderRadius: 999,
+                              background: '#FFFFFF',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.18)',
+                              transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)',
+                            }}
+                          />
+                        </span>
+                      </button>
                     );
+                    if (t.key === 'mention') {
+                      return (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <div className="mb-3">
+                            <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Where to listen</p>
+                            <p className="text-[12.5px] text-[#6B7280] leading-snug">By default the agent responds to <span className="font-mono text-[11.5px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#1C1E21]">@agent</span> across these surfaces.</p>
+                          </div>
+                          <div className="divide-y divide-[#F0F1F3]">
+                            <SurfaceRow title="Chat threads" sub="In any chat where the agent is added" on={mentionSurfaces.chat} onToggle={() => setMentionSurfaces((p) => ({ ...p, chat: !p.chat }))} />
+                            <SurfaceRow title="Comments on jobs & tasks" sub="Mentions inside record comments" on={mentionSurfaces.comments} onToggle={() => setMentionSurfaces((p) => ({ ...p, comments: !p.comments }))} />
+                            <SurfaceRow title="Direct messages" sub="When users DM the agent directly" on={mentionSurfaces.dm} onToggle={() => setMentionSurfaces((p) => ({ ...p, dm: !p.dm }))} />
+                          </div>
+                        </div>
+                      );
+                    }
+                    if (t.key === 'manual') {
+                      return (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <div className="mb-3">
+                            <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">How to invoke</p>
+                            <p className="text-[12.5px] text-[#6B7280] leading-snug">Pick where users can launch this agent manually.</p>
+                          </div>
+                          <div className="divide-y divide-[#F0F1F3]">
+                            <SurfaceRow title="Slash command" sub="Type /agent in any chat" on={manualSurfaces.slash} onToggle={() => setManualSurfaces((p) => ({ ...p, slash: !p.slash }))} />
+                            <SurfaceRow title="Quick action button" sub="Pinned in the workspace toolbar" on={manualSurfaces.button} onToggle={() => setManualSurfaces((p) => ({ ...p, button: !p.button }))} />
+                            <SurfaceRow title="Smart suggestions" sub="Surface this agent when relevant" on={manualSurfaces.suggestions} onToggle={() => setManualSurfaces((p) => ({ ...p, suggestions: !p.suggestions }))} />
+                          </div>
+                        </div>
+                      );
+                    }
+                    if (t.key === 'webhook') {
+                      return (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <div className="mb-4">
+                            <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Endpoint</p>
+                            <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">POST a JSON payload to this URL. Include the signing secret in <span className="font-mono text-[11.5px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#1C1E21]">X-Zuper-Signature</span>.</p>
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
+                                https://hooks.zuper.co/v1/agent/9f3a-mia
+                              </div>
+                              <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                                Copy
+                              </button>
+                            </div>
+                          </div>
+                          <div className="mb-3">
+                            <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Signing secret</p>
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
+                                whsec_••••••••••••••3f7a
+                              </div>
+                              <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                                Rotate
+                              </button>
+                            </div>
+                          </div>
+                          <div
+                            className="flex items-center gap-2 px-3 py-2.5 rounded-lg"
+                            style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}
+                          >
+                            <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                            <p className="text-[12px] text-[#4B5563]">Requests over 2 MB or with invalid signatures are rejected.</p>
+                          </div>
+                        </div>
+                      );
+                    }
+                    if (t.key === 'schedule') {
+                      const freqs: { key: typeof schedFreq; label: string }[] = [
+                        { key: 'hour', label: 'Every hour' },
+                        { key: 'day', label: 'Every day' },
+                        { key: 'week', label: 'Every week' },
+                        { key: 'month', label: 'Every month' },
+                        { key: 'weekdays', label: 'Weekdays' },
+                        { key: 'custom', label: 'Custom' },
+                      ];
+                      const summaryMap: Record<typeof schedFreq, string> = {
+                        hour: 'every hour',
+                        day: 'every day',
+                        week: 'every Monday',
+                        month: 'on the 1st of every month',
+                        weekdays: 'Mon–Fri',
+                        custom: 'a custom schedule',
+                      };
+                      return (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <div className="mb-4">
+                            <p className="text-[14px] font-semibold text-[#1C1E21] mb-2">Frequency</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {freqs.map((f) => {
+                                const active = schedFreq === f.key;
+                                return (
+                                  <button
+                                    key={f.key}
+                                    onClick={() => setSchedFreq(f.key)}
+                                    className="px-3 h-8 rounded-full text-[12.5px] font-medium active:scale-[0.97]"
+                                    style={{
+                                      background: active ? '#1C1E21' : '#FFFFFF',
+                                      color: active ? '#FFFFFF' : '#1C1E21',
+                                      border: `1px solid ${active ? '#1C1E21' : '#E6E8EC'}`,
+                                      transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                                    }}
+                                  >
+                                    {f.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          <div className="mb-4">
+                            <p className="text-[14px] font-semibold text-[#1C1E21] mb-2">Time</p>
+                            <div className="flex items-center gap-1.5">
+                              <select
+                                value={schedHour}
+                                onChange={(e) => setSchedHour(e.target.value)}
+                                className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                                style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                              >
+                                {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((h) => (
+                                  <option key={h} value={h}>{h}</option>
+                                ))}
+                              </select>
+                              <span className="text-[13px] text-[#9CA3AF]">:</span>
+                              <select
+                                value={schedMin}
+                                onChange={(e) => setSchedMin(e.target.value)}
+                                className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                                style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                              >
+                                {['00', '15', '30', '45'].map((m) => (
+                                  <option key={m} value={m}>{m}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div
+                            className="flex items-center gap-2 px-3 py-2.5 rounded-lg mb-3"
+                            style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}
+                          >
+                            <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                            <p className="text-[12px] text-[#4B5563]">
+                              Runs <span className="font-semibold text-[#1C1E21]">{summaryMap[schedFreq]}</span> at <span className="font-semibold text-[#1C1E21]">{schedHour}:{schedMin}</span>
+                            </p>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 text-[12px] text-[#6B7280]">
+                              <Globe className="w-3.5 h-3.5" />
+                              <span>Timezone:</span>
+                              <span className="font-semibold text-[#1C1E21]">Asia/Calcutta</span>
+                            </div>
+                            <button className="text-[12px] font-medium text-[#1C1E21] hover:text-black inline-flex items-center gap-1">
+                              Advanced cron expression
+                              <ChevronDown className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
                   }}
                 />
               </div>
