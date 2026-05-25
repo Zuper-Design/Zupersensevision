@@ -3355,17 +3355,17 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
-          <div className="relative pt-16 overflow-hidden min-h-[calc(100vh-80px)]">
+          <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-24 pb-12 overflow-hidden min-h-screen">
             {/* Left + right edge gradient washes — anchor the radial centre
                off-screen so the visible side reads as a flat colour wash
                that fades inward, with no white sliver at the very edge. */}
-            <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+            <div aria-hidden className="pointer-events-none absolute inset-0" style={{ zIndex: 0 }}>
               <div
                 className="absolute inset-y-0 left-0"
                 style={{
                   width: '40%',
                   background:
-                    'linear-gradient(to right, rgba(167,139,250,0.34) 0%, rgba(196,181,253,0.18) 50%, transparent 100%)',
+                    'linear-gradient(to right, rgba(167,139,250,0.22) 0%, rgba(196,181,253,0.10) 55%, transparent 100%)',
                 }}
               />
               <div
@@ -3373,7 +3373,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 style={{
                   width: '40%',
                   background:
-                    'linear-gradient(to left, rgba(244,114,182,0.30) 0%, rgba(244,114,182,0.14) 55%, transparent 100%)',
+                    'linear-gradient(to left, rgba(244,114,182,0.18) 0%, rgba(244,114,182,0.08) 55%, transparent 100%)',
                 }}
               />
             </div>
