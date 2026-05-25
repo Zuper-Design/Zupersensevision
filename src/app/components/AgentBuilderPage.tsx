@@ -4554,28 +4554,28 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
             </defs>
             <rect width="100%" height="100%" fill="url(#auMpHeroGrid)" />
           </svg>
-          {/* Animated gradient blobs — softer violet / fuchsia */}
+          {/* Animated gradient blobs — vibrant violet / fuchsia */}
           <motion.div
             className="absolute"
-            style={{ top: '-30%', left: '-10%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(167,139,250,0.32), rgba(167,139,250,0.16) 45%, transparent 72%)', filter: 'blur(70px)' }}
+            style={{ top: '-30%', left: '-10%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(167,139,250,0.48), rgba(167,139,250,0.24) 45%, transparent 72%)', filter: 'blur(70px)' }}
             animate={{ x: [0, 40, -20, 0], y: [0, 30, 60, 0], scale: [1, 1.08, 0.95, 1] }}
             transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ bottom: '-40%', left: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(236,72,153,0.22), rgba(236,72,153,0.10) 50%, transparent 78%)', filter: 'blur(70px)' }}
+            style={{ bottom: '-40%', left: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(236,72,153,0.36), rgba(236,72,153,0.16) 50%, transparent 78%)', filter: 'blur(70px)' }}
             animate={{ x: [0, 30, -10, 0], y: [0, -20, -10, 0], scale: [1, 1.06, 0.92, 1] }}
             transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ top: '-30%', right: '-10%', width: 540, height: 540, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(196,181,253,0.30), rgba(196,181,253,0.14) 50%, transparent 75%)', filter: 'blur(75px)' }}
+            style={{ top: '-30%', right: '-10%', width: 540, height: 540, borderRadius: '50%', background: 'radial-gradient(circle at 50% 50%, rgba(196,181,253,0.45), rgba(196,181,253,0.22) 50%, transparent 75%)', filter: 'blur(75px)' }}
             animate={{ x: [0, -30, 20, 0], y: [0, 30, 50, 0], scale: [1, 1.06, 0.95, 1] }}
             transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
           />
           <motion.div
             className="absolute"
-            style={{ bottom: '-40%', right: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.22), rgba(139,92,246,0.10) 50%, transparent 78%)', filter: 'blur(70px)' }}
+            style={{ bottom: '-40%', right: '-12%', width: 460, height: 420, borderRadius: '50%', background: 'radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.34), rgba(139,92,246,0.16) 50%, transparent 78%)', filter: 'blur(70px)' }}
             animate={{ x: [0, -30, 10, 0], y: [0, -20, -30, 0], scale: [1, 1.05, 0.93, 1] }}
             transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
           />
