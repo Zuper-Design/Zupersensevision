@@ -3049,20 +3049,20 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
       onClick={onOpen}
       className="group relative rounded-2xl cursor-pointer overflow-hidden flex flex-col"
       style={{
-        background: `linear-gradient(180deg, ${accent}26 0%, ${accent}10 38%, #FFFFFF 78%)`,
-        border: `1px solid ${accent}33`,
-        boxShadow: `0 1px 2px rgba(28,30,33,0.04), 0 12px 28px -16px ${accent}33`,
+        background: `linear-gradient(180deg, ${accent}1F 0%, ${accent}0A 40%, #FFFFFF 80%)`,
+        border: `1px solid #EEF0F3`,
+        boxShadow: '0 1px 2px rgba(28,30,33,0.03)',
         transition: 'transform 240ms cubic-bezier(0.23,1,0.32,1), box-shadow 240ms cubic-bezier(0.23,1,0.32,1), border-color 240ms cubic-bezier(0.23,1,0.32,1)',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = `0 4px 12px -2px rgba(28,30,33,0.06), 0 28px 48px -22px ${accent}55, 0 0 0 1px ${accent}44`;
-        e.currentTarget.style.borderColor = `${accent}66`;
+        e.currentTarget.style.transform = 'translateY(-1px)';
+        e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 14px 28px -18px rgba(28,30,33,0.18)';
+        e.currentTarget.style.borderColor = '#E1E4E8';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = '';
-        e.currentTarget.style.boxShadow = `0 1px 2px rgba(28,30,33,0.04), 0 12px 28px -16px ${accent}33`;
-        e.currentTarget.style.borderColor = `${accent}33`;
+        e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)';
+        e.currentTarget.style.borderColor = '#EEF0F3';
       }}
     >
       {/* Soft radial bloom behind avatar — adds AI/glass feel */}
