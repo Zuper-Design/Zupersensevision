@@ -3347,15 +3347,16 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
           <div className="relative pt-16 overflow-hidden">
-            {/* Slow-drifting gradient blobs — bleed up from the bottom */}
-            <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Slow-drifting gradient blobs — fixed to viewport bottom so they
+               always bleed up from the bottom edge regardless of page height. */}
+            <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 h-[60vh] overflow-hidden" style={{ zIndex: 0 }}>
               <span
                 className="absolute"
                 style={{
-                  bottom: '-40%',
-                  left: '-8%',
-                  width: 720,
-                  height: 720,
+                  bottom: '-55%',
+                  left: '-6%',
+                  width: 760,
+                  height: 760,
                   borderRadius: '50%',
                   background: 'radial-gradient(closest-side, rgba(167,139,250,0.55) 0%, rgba(196,181,253,0.30) 45%, rgba(196,181,253,0) 75%)',
                   filter: 'blur(56px)',
@@ -3365,10 +3366,10 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               <span
                 className="absolute"
                 style={{
-                  bottom: '-45%',
-                  right: '-10%',
-                  width: 780,
-                  height: 780,
+                  bottom: '-60%',
+                  right: '-8%',
+                  width: 820,
+                  height: 820,
                   borderRadius: '50%',
                   background: 'radial-gradient(closest-side, rgba(244,114,182,0.45) 0%, rgba(244,114,182,0.22) 45%, rgba(244,114,182,0) 75%)',
                   filter: 'blur(60px)',
@@ -3389,13 +3390,13 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               }
             `}</style>
 
-            <div className="text-center mb-7 relative">
+            <div className="text-center mb-7 relative z-10">
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
               <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
                 Spin up a custom agent or pick one from the marketplace.
               </p>
             </div>
-            <div className="relative grid grid-cols-2 gap-5 max-w-[920px] mx-auto">
+            <div className="relative z-10 grid grid-cols-2 gap-5 max-w-[920px] mx-auto">
               {/* Create — blank-canvas card, violet hint */}
               <button
                 onClick={() => { setChooserOpen(false); setCreating(true); }}
