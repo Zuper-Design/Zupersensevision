@@ -3301,11 +3301,18 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 8px rgba(28,30,33,0.04), 0 22px 44px -22px rgba(124,58,237,0.22)'; e.currentTarget.style.borderColor = '#E4E6EB'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = '#EEF0F3'; }}
               >
-                {/* Blank-canvas grid */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+                {/* Blank-canvas grid — darker in centre, fades out at edges */}
+                <svg
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{
+                    WebkitMaskImage: 'radial-gradient(ellipse 55% 50% at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.18) 100%)',
+                    maskImage: 'radial-gradient(ellipse 55% 50% at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.18) 100%)',
+                  }}
+                >
                   <defs>
                     <pattern id="mjCreateGrid" width="22" height="22" patternUnits="userSpaceOnUse">
-                      <path d="M22 0 L0 0 0 22" fill="none" stroke="#E2E4EA" strokeWidth="1" />
+                      <path d="M22 0 L0 0 0 22" fill="none" stroke="#D1D5DB" strokeWidth="1" />
                     </pattern>
                   </defs>
                   <rect width="100%" height="100%" fill="url(#mjCreateGrid)" />
