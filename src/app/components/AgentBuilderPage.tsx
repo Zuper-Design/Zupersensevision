@@ -5857,65 +5857,88 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
     return `${(b / (1024 * 1024)).toFixed(1)} MB`;
   };
 
+  const canSave = !!name.trim() && (!!url.trim() || !!file);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={onClose}>
+    <>
+      <style>{`
+        @keyframes addKbOverlay { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes addKbModal { from { opacity: 0; transform: scale(0.96) translateY(8px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+      `}</style>
       <div
-        onClick={(e) => e.stopPropagation()}
-        className="w-[480px] max-w-[92vw] max-h-[90vh] overflow-y-auto rounded-2xl bg-white border border-[#E6E8EC] shadow-[0_24px_60px_rgba(0,0,0,0.16)]"
-      >
-        {/* Header */}
-        <div className="flex items-start justify-between px-6 pt-6 pb-4">
-          <div>
-            <h2 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">Add Knowledge</h2>
-            <p className="text-[12.5px] text-[#6B7280] mt-1">Attach a web URL or a file so your agents can answer from it.</p>
-          </div>
-          <button onClick={onClose} className="p-1 rounded-md hover:bg-[#F3F4F6] transition flex-shrink-0" aria-label="Close">
-            <X className="w-[16px] h-[16px] text-[#9CA3AF]" />
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="px-6 pt-2 pb-5 space-y-4">
-          <div>
-            <label className="block text-[12.5px] font-medium text-[#1C1E21] mb-1.5">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Product Documentation"
-              className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition"
-            />
-          </div>
-
-          <div>
-            <label className="block text-[12.5px] font-medium text-[#1C1E21] mb-1.5">Description <span className="text-[#9CA3AF] font-normal">(optional)</span></label>
-            <textarea
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              placeholder="Brief description of this data source..."
-              rows={3}
-              className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition resize-y leading-relaxed"
-            />
+        className="fixed inset-0 z-[400] bg-black/40 backdrop-blur-sm"
+        style={{ animation: 'addKbOverlay 180ms cubic-bezier(0.23,1,0.32,1) both' }}
+        onClick={onClose}
+      />
+      <div className="fixed inset-0 z-[410] flex items-center justify-center p-4 pointer-events-none">
+        <div
+          className="pointer-events-auto bg-white w-full max-w-[640px] rounded-2xl overflow-hidden"
+          style={{ boxShadow: '0 24px 60px rgba(30,34,60,0.22)', animation: 'addKbModal 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 pt-5 pb-3">
+            <div>
+              <h3 className="text-[17px] font-semibold text-[#1C1E21] tracking-tight">Add Knowledge</h3>
+              <p className="text-[12.5px] text-[#6B7280] mt-1">Attach a web URL or a file so your agents can answer from it.</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-8 h-8 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+              style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          {/* Attach actions */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
+          {/* Body */}
+          <div className="px-6 pb-4 space-y-4">
+            <div>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Product Documentation"
+                className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              />
+            </div>
+
+            <div>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Description <span className="text-[#9CA3AF] font-normal">(optional)</span></label>
+              <textarea
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="Brief description of this data source..."
+                rows={3}
+                className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21] resize-none leading-relaxed"
+                style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              />
+            </div>
+
+            {/* Icon-button row */}
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={() => setUrlOpen((v) => !v)}
-                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#1C1E21] text-[#1C1E21] text-[12.5px] font-semibold transition active:scale-[0.98] hover:bg-[#FAFAFB]"
+                className={`w-9 h-9 rounded-md flex items-center justify-center active:scale-[0.94] ${urlOpen ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21]'}`}
+                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                aria-label="Add web URL"
+                title="Add web URL"
               >
-                <Globe className="w-[13px] h-[13px]" />
-                Add web URL
+                <Globe className="w-[16px] h-[16px]" />
               </button>
               <button
                 type="button"
                 onClick={triggerFile}
-                className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#1C1E21] text-[#1C1E21] text-[12.5px] font-semibold transition active:scale-[0.98] hover:bg-[#FAFAFB]"
+                className={`w-9 h-9 rounded-md flex items-center justify-center active:scale-[0.94] ${file ? 'bg-[#F3F4F6] text-[#1C1E21]' : 'text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21]'}`}
+                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                aria-label="Upload file"
+                title="Upload file"
               >
-                <Upload className="w-[13px] h-[13px]" />
-                Upload file
+                <Upload className="w-[16px] h-[16px]" />
               </button>
               <input
                 ref={fileInputRef}
@@ -5925,7 +5948,6 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
               />
             </div>
-            <p className="text-[11.5px] text-[#9CA3AF]">Supports PDF, DOCX, TXT, CSV up to 25 MB</p>
 
             {urlOpen && (
               <input
@@ -5934,7 +5956,8 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://docs.example.com"
                 autoFocus
-                className="w-full px-3 py-2 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition"
+                className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
               />
             )}
 
@@ -5953,24 +5976,31 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
               </div>
             )}
           </div>
-        </div>
 
-        {/* Footer CTA */}
-        <div className="px-6 pb-6">
-          <button
-            onClick={onSave || onClose}
-            disabled={!name.trim() || (!url.trim() && !file)}
-            className={`w-full inline-flex items-center justify-center gap-1.5 h-10 rounded-lg text-white text-[13.5px] font-semibold transition-all ${
-              name.trim() && (url.trim() || file)
-                ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]'
-                : 'bg-[#9CA3AF] cursor-not-allowed'
-            }`}
-          >
-            Add Source
-          </button>
+          {/* Footer */}
+          <div className="px-6 py-3 border-t border-[#F0F1F3] flex items-center justify-between gap-4">
+            <p className="text-[11.5px] text-[#9CA3AF]">PDF, DOCX, TXT, CSV up to 25 MB</p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onClose}
+                className="px-3 h-9 rounded-lg text-[13px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] active:scale-[0.98]"
+                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => canSave && (onSave || onClose)()}
+                disabled={!canSave}
+                className={`px-4 h-9 rounded-lg text-[13px] font-semibold text-white active:scale-[0.98] ${canSave ? 'bg-[#1C1E21] hover:bg-black' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                Add Source
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
