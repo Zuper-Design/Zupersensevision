@@ -3250,36 +3250,22 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 12px -2px rgba(28,30,33,0.06), 0 36px 64px -22px rgba(124,58,237,0.48)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.35)'; }}
               >
-                {/* Decorative grain dots */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.18 }} xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <pattern id="mjMpDots" width="18" height="18" patternUnits="userSpaceOnUse">
-                      <circle cx="1" cy="1" r="1" fill="#4C1D95" opacity="0.55" />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#mjMpDots)" />
-                </svg>
                 {/* Radial blooms */}
                 <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 360, height: 300, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(168,85,247,0.55), rgba(168,85,247,0) 70%)', filter: 'blur(36px)' }} />
                 <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -40, width: 280, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.40), rgba(236,72,153,0) 70%)', filter: 'blur(40px)' }} />
                 {/* Top inset highlight */}
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent)' }} />
 
-                {/* Top — eyebrow + headline */}
+                {/* Top — eyebrow */}
                 <div className="relative px-6 pt-6 z-10">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3" style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)', boxShadow: '0 4px 12px -4px rgba(124,58,237,0.45)' }}>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)', boxShadow: '0 4px 12px -4px rgba(124,58,237,0.45)' }}>
                     <Sparkles className="w-[11px] h-[11px] text-white" fill="currentColor" />
                     <span className="text-[10.5px] font-bold tracking-[0.10em] uppercase text-white">Sense Marketplace</span>
                   </span>
-                  <h3 className="text-[22px] font-semibold tracking-tight leading-[1.15] mb-1">
-                    <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
-                    <span style={{ color: '#6D28D9' }}>agents.</span>
-                  </h3>
-                  <p className="text-[12.5px] text-[#4C2A8F] leading-snug max-w-[260px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
                 </div>
 
                 {/* Avatars — equal height, shared baseline */}
-                <div className="relative flex-1 min-h-0 flex items-end justify-center z-10">
+                <div className="relative flex-1 min-h-0 flex items-center justify-center z-10 -mt-1">
                   <div className="flex items-end -space-x-10" style={{ height: 152 }}>
                     <img src={agentMarketer} alt="" className="h-[148px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.32)]" style={{ zIndex: 1 }} draggable={false} />
                     <img src={agentSupport} alt="" className="h-[152px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.38)]" style={{ zIndex: 3 }} draggable={false} />
@@ -3287,8 +3273,13 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   </div>
                 </div>
 
-                {/* Bottom — CTA */}
+                {/* Bottom — title + subtext + CTA */}
                 <div className="relative px-6 pb-5 z-10">
+                  <h3 className="text-[20px] font-semibold tracking-tight leading-[1.15] mb-1">
+                    <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
+                    <span style={{ color: '#6D28D9' }}>agents.</span>
+                  </h3>
+                  <p className="text-[12.5px] text-[#4C2A8F] leading-snug mb-3 max-w-[280px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
                   <span className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg bg-[#1C1E21] text-white text-[12.5px] font-semibold" style={{ boxShadow: '0 6px 16px -6px rgba(28,30,33,0.4)' }}>
                     Enter marketplace
                     <ArrowRight className="w-3.5 h-3.5" />
