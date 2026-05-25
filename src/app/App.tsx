@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, Wand2 } from 'lucide-react';
 import { SenseLogo } from './components/SenseLogo';
 import { ReleasesModal } from './components/ReleasesModal';
 import { WhatsNewFloater } from './components/WhatsNewFloater';
@@ -276,6 +276,15 @@ function AppContent() {
                   <button onClick={() => { setSidebarSearchOpen(true); setTimeout(() => sidebarSearchRef.current?.focus(), 50); }} className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
                     <Search className="w-3.5 h-3.5 text-[#9CA3AF]" />
                     <span className="text-[14px] font-normal text-[#9CA3AF]">Search</span>
+                  </button>
+                )}
+                {currentUser === 'MJ' && (
+                  <button
+                    onClick={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors"
+                  >
+                    <Wand2 className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <span className="text-[14px] font-normal text-[#1C1E21]">AI Studio</span>
                   </button>
                 )}
                 <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">

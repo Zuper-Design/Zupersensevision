@@ -189,7 +189,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
   const mjRadarModules = ['Work', 'CRM', 'Finance'];
 
   // Merge published pages into navigation items
-  const navigationItems = baseNavigationItems.map(item => {
+  const navigationItems = baseNavigationItems.filter((item) => !(currentUser === 'MJ' && item.label === 'AI Studio')).map(item => {
     let mergedItem = { ...item, dividerAfter: undefined as number | undefined };
 
     // Add published pages

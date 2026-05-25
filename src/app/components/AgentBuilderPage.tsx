@@ -3178,7 +3178,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
             </div>
             <button
               onClick={() => setCreating(true)}
-              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(124,58,237,0.30)]"
+              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
             >
               <Plus className="w-4 h-4" strokeWidth={2.5} />
               Create Agent
@@ -3348,7 +3348,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
               <button
                 onClick={() => setCreating(true)}
-                className="inline-flex items-center gap-1.5 px-5 h-10 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(124,58,237,0.30)]"
+                className="inline-flex items-center gap-1.5 px-5 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
               >
                 <Plus className="w-4 h-4" strokeWidth={2.5} />
                 Create Agent
@@ -5828,7 +5828,7 @@ function SkillsView() {
           </div>
           <button
             onClick={() => setCreating(true)}
-            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(124,58,237,0.30)]"
+            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
           >
             <Plus className="w-4 h-4" strokeWidth={2.5} />
             New Skill
