@@ -4592,16 +4592,9 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                     const dist = Math.abs(offset);
                     const sc = isActive ? 1 : 0.92;
                     const isAdded = i === 0;
-                    const rL = c.role.toLowerCase();
-                    const catKey: keyof typeof categoryTint =
-                      /sales|closer/.test(rL) ? 'Sales' :
-                      /operations/.test(rL) ? 'Operations' :
-                      /customer|support/.test(rL) ? 'Support' :
-                      /finance|collection/.test(rL) ? 'Finance' :
-                      /field|coordinator/.test(rL) ? 'Compliance' :
-                      'Sales';
-                    const tintInfo = categoryTint[catKey];
-                    const accent = tintInfo.accent;
+                    // Violet/pink family palette — keeps the marketplace voice, each card stays distinct
+                    const mpPalette = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
+                    const accent = mpPalette[i % mpPalette.length];
                     return (
                       <article
                         key={c.title}
