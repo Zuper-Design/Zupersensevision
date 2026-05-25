@@ -4092,40 +4092,6 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
 
   return (
     <div className="flex h-full w-full bg-white">
-      {/* AI Studio left sidebar */}
-      <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
-        <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
-          <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
-            <Wand2 className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
-          </div>
-          <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">AI Studio</h1>
-        </div>
-        <nav className="flex-1 p-3 space-y-0.5">
-          <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium bg-[#F3F4F6] text-[#1C1E21] transition">
-            <Bot className="w-[15px] h-[15px] text-[#1C1E21]" />
-            <span className="flex-1 text-left">My agents</span>
-          </button>
-          <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21] transition">
-            <LayoutGrid className="w-[15px] h-[15px] text-[#6B7280]" />
-            <span className="flex-1 text-left">Marketplace</span>
-          </button>
-          <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21] transition">
-            <Zap className="w-[15px] h-[15px] text-[#6B7280]" />
-            <span className="flex-1 text-left">Skills</span>
-          </button>
-          <button onClick={onBack} className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#4B5563] hover:bg-[#F8F9FB] hover:text-[#1C1E21] transition">
-            <Database className="w-[15px] h-[15px] text-[#6B7280]" />
-            <span className="flex-1 text-left">Knowledge base</span>
-          </button>
-          <div className="my-2 border-t border-[#F0F1F3]" />
-          <button disabled className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-[#C0C4CC] cursor-not-allowed">
-            <BarChart3 className="w-[15px] h-[15px] text-[#C0C4CC]" />
-            <span className="flex-1 text-left">Usage</span>
-            <span className="text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#F5F3FF] text-[#7C3AED]">SOON</span>
-          </button>
-        </nav>
-      </aside>
-
       {/* Main content */}
       <div className="flex-1 flex flex-col bg-[#FAFAFB] overflow-y-auto">
       {/* Top header */}
