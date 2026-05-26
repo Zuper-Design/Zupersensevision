@@ -211,9 +211,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               /* Trial / trial-ended — bigger card, Plan includes inline + full-width Subscribe */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
                 <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 14 }}>
-                  {isVp
-                    ? 'Your trial has ended — subscribe to restore access to Sense.'
-                    : 'You\'re on a free trial until May 21, 2026. Subscribe anytime to keep access.'}
+                  Your trial ends on <span style={{ color: '#1C1E21', fontWeight: 600 }}>May 21, 2026</span>.
                 </p>
                 <div className="flex items-center gap-2.5 mb-3">
                   <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
