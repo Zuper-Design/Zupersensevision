@@ -177,22 +177,22 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               /* Active paid (RG) — single unified surface, Manus-style heading + detail rows + inline billing history */
               <>
                 <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                  {/* Plan heading row — name + prominent price line */}
-                  <div className="px-7 pt-7 pb-6 flex items-start justify-between gap-4">
-                    <div>
-                      <h2 style={{ fontSize: 24, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 6 }}>Zuper Sense</h2>
-                      <div className="flex items-baseline gap-1">
-                        <span style={{ fontSize: 22, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1 }}>$399</span>
-                        <span style={{ fontSize: 14, fontWeight: 500, color: '#6B7280' }}>USD / month</span>
-                      </div>
+                  {/* Plan heading — name + pill inline, price below */}
+                  <div className="px-7 pt-7 pb-6">
+                    <div className="flex items-center gap-2.5 mb-1.5">
+                      <h2 style={{ fontSize: 24, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                      >
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
+                        ACTIVE
+                      </span>
                     </div>
-                    <span
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0 mt-1.5"
-                      style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                    >
-                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
-                      ACTIVE
-                    </span>
+                    <div className="flex items-baseline gap-1">
+                      <span style={{ fontSize: 22, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1 }}>$399</span>
+                      <span style={{ fontSize: 14, fontWeight: 500, color: '#6B7280' }}>USD / month</span>
+                    </div>
                   </div>
 
                   {/* Detail rows — stacked label/value */}
