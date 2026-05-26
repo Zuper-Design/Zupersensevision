@@ -130,7 +130,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
           <ChevronLeft className="w-4 h-4" />
           Back
         </button>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 22 }}>Subscription & billing</h1>
+        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em', marginBottom: 22 }}>Subscription & billing</h1>
 
         {/* Tabs — subtle pill segmented control */}
         <div className="flex items-center gap-0.5 p-1 rounded-lg" style={{ background: '#F8F9FB', width: 'fit-content' }}>
