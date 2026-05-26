@@ -308,9 +308,11 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Zuper Sense plan card — white, polished, with Subscribe CTA */}
-                <div className="mt-4 rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                  <div className="px-6 pt-6 pb-5">
+                {/* Zuper Sense plan card — white surface, Sense orange accent */}
+                <div className="mt-4 rounded-xl bg-white overflow-hidden relative" style={{ border: '1px solid #E6E8EC' }}>
+                  {/* Soft orange bloom in the top-right corner */}
+                  <span aria-hidden style={{ position: 'absolute', top: -50, right: -40, width: 180, height: 160, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.10), transparent 70%)', filter: 'blur(28px)', pointerEvents: 'none' }} />
+                  <div className="relative px-6 pt-6 pb-5">
                     {/* Plan name + price */}
                     <div className="flex items-baseline justify-between gap-4 mb-1">
                       <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h3>
@@ -321,29 +323,39 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     </div>
                     <p style={{ fontSize: 12.5, color: '#9CA3AF', marginBottom: 18 }}>Everything in Sense, billed monthly. Cancel anytime.</p>
 
-                    {/* Feature list */}
-                    <ul className="space-y-3 mb-6">
+                    {/* Feature list — orange accent on checks */}
+                    <ul className="space-y-2.5 mb-5">
                       {PLAN_FEATURES.map(f => (
                         <li key={f} className="flex items-start gap-2.5">
-                          <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0 mt-0.5" style={{ background: '#1C1E21' }}>
-                            <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                          <span
+                            className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0 mt-0.5"
+                            style={{ background: 'rgba(253,80,0,0.10)', border: '1px solid rgba(253,80,0,0.30)' }}
+                          >
+                            <Check className="w-2.5 h-2.5" style={{ color: '#FD5000' }} strokeWidth={3} />
                           </span>
                           <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
                         </li>
                       ))}
                     </ul>
 
-                    {/* Subscribe CTA */}
-                    <button
-                      onClick={onUpgrade}
-                      className="w-full inline-flex items-center justify-center gap-1.5 h-11 rounded-lg text-[14px] font-semibold text-white active:scale-[0.99]"
-                      style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1), box-shadow 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 22px rgba(0,0,0,0.22)'; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 18px rgba(0,0,0,0.18)'; }}
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Subscribe to Sense
-                    </button>
+                    {/* Footer row: Subscribe CTA (compact orange) + cancel-anytime helper */}
+                    <div className="flex items-center justify-between gap-3 pt-4" style={{ borderTop: '1px solid #F0F1F3' }}>
+                      <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
+                      <button
+                        onClick={onUpgrade}
+                        className="inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
+                        style={{
+                          background: 'linear-gradient(135deg, #FD5000 0%, #FF6F1A 100%)',
+                          boxShadow: '0 4px 14px rgba(253,80,0,0.32)',
+                          transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1), box-shadow 140ms cubic-bezier(0.23,1,0.32,1)',
+                        }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 22px rgba(253,80,0,0.42)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(253,80,0,0.32)'; }}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" fill="currentColor" />
+                        Subscribe to Sense
+                      </button>
+                    </div>
                   </div>
                 </div>
               </>
