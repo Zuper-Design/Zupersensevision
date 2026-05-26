@@ -307,7 +307,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Plan card — Glide-style: white, iconographic features, full-width CTA */}
+                {/* Plan card — Glide-style: white, iconographic features, compact CTA */}
                 <div
                   className="mt-4 rounded-2xl bg-white overflow-hidden relative"
                   style={{ border: '1px solid #E6E8EC' }}
@@ -315,12 +315,22 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   {/* Soft sense-orange bloom (top-right) */}
                   <span aria-hidden style={{ position: 'absolute', top: -70, right: -60, width: 260, height: 220, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.14), transparent 70%)', filter: 'blur(36px)', pointerEvents: 'none' }} />
 
-                  <div className="relative px-6 pt-6 pb-6">
+                  <div className="relative px-7 pt-7 pb-6">
                     {/* Title */}
                     <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
-                      Subscribe to Zuper Sense for <span style={{ color: '#FD5000' }}>$399 / mo</span>
+                      Subscribe to Zuper Sense for{' '}
+                      <span
+                        style={{
+                          background: 'linear-gradient(135deg, #FD5000 0%, #F97316 60%, #F59E0B 100%)',
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        $399 / mo
+                      </span>
                     </h3>
-                    <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 20, lineHeight: 1.6 }}>
+                    <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 22, lineHeight: 1.6 }}>
                       Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
                     </p>
 
@@ -330,7 +340,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     </p>
 
                     {/* 2x2 feature grid */}
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-6">
+                    <div className="grid grid-cols-2 gap-x-5 gap-y-3.5 mb-7">
                       {[
                         { icon: MessageSquare, label: 'Ask in plain English' },
                         { icon: BarChart3, label: 'Charts & summaries' },
@@ -339,8 +349,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       ].map(({ icon: Icon, label }) => (
                         <div key={label} className="flex items-center gap-2.5">
                           <span
-                            className="inline-flex items-center justify-center w-7 h-7 rounded-lg flex-shrink-0"
-                            style={{ background: 'rgba(253,80,0,0.10)', border: '1px solid rgba(253,80,0,0.18)' }}
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-[10px] flex-shrink-0"
+                            style={{ background: 'rgba(253,80,0,0.10)', border: '1px solid rgba(253,80,0,0.22)' }}
                           >
                             <Icon className="w-3.5 h-3.5" style={{ color: '#FD5000' }} strokeWidth={2.2} />
                           </span>
@@ -349,19 +359,19 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       ))}
                     </div>
 
-                    {/* Full-width Subscribe CTA */}
-                    <button
-                      onClick={onUpgrade}
-                      className="w-full inline-flex items-center justify-center h-11 rounded-xl text-[14px] font-semibold text-white active:scale-[0.99]"
-                      style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
-                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
-                    >
-                      Subscribe to Sense
-                    </button>
-                    <p style={{ fontSize: 12, color: '#9CA3AF', textAlign: 'center', marginTop: 12 }}>
-                      Cancel anytime · No hidden fees
-                    </p>
+                    {/* Footer row — trust line + compact CTA */}
+                    <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid #F0F1F3' }}>
+                      <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
+                      <button
+                        onClick={onUpgrade}
+                        className="inline-flex items-center justify-center px-5 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
+                        style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
+                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
+                      >
+                        Subscribe to Sense
+                      </button>
+                    </div>
                   </div>
                 </div>
               </>
