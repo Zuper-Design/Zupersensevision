@@ -210,6 +210,11 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
             ) : isAU || isVp ? (
               /* Trial / trial-ended — bigger card, Plan includes inline + full-width Subscribe */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
+                <p style={{ fontSize: 14, color: isVp ? '#B3261E' : '#6D28D9', fontWeight: 500, lineHeight: 1.55, marginBottom: 14 }}>
+                  {isVp
+                    ? 'Your trial has ended — subscribe to restore access to Sense.'
+                    : 'You\'re on a free trial until May 21, 2026. Subscribe anytime to keep access.'}
+                </p>
                 <div className="flex items-center gap-2.5 mb-3">
                   <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
                   {isVp ? (
@@ -230,15 +235,10 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     </span>
                   )}
                 </div>
-                <div className="flex items-baseline gap-1.5 mb-3">
+                <div className="flex items-baseline gap-1.5 mb-6">
                   <span style={{ fontSize: 36, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
                   <span style={{ fontSize: 15, color: '#9CA3AF' }}>/ month</span>
                 </div>
-                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 22 }}>
-                  {isVp
-                    ? 'Your trial has ended — subscribe to restore access to Sense.'
-                    : 'You\'re on a free trial until May 21, 2026. Subscribe anytime to keep access.'}
-                </p>
 
                 {/* Plan includes — inline list */}
                 <div className="pt-5" style={{ borderTop: '1px solid #F0F1F3' }}>
