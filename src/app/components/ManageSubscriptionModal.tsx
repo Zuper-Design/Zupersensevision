@@ -192,18 +192,29 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     </span>
                   </div>
 
-                  {/* Detail rows */}
-                  <div className="px-7 h-12 flex items-center justify-between border-t" style={{ borderColor: '#F0F1F3' }}>
-                    <span style={{ fontSize: 13, color: '#6B7280' }}>Next billing</span>
-                    <span style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21' }}>May 21, 2026</span>
+                  {/* Detail rows — stacked label/value */}
+                  <div className="px-7 py-5 border-t" style={{ borderColor: '#F0F1F3' }}>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', marginBottom: 4 }}>Next billing date</p>
+                    <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.5 }}>
+                      Your plan renews on <span style={{ color: '#1C1E21', fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span>
+                    </p>
                   </div>
-                  <div className="px-7 h-12 flex items-center justify-between border-t" style={{ borderColor: '#F0F1F3' }}>
-                    <span style={{ fontSize: 13, color: '#6B7280' }}>Payment method</span>
+                  <div className="px-7 py-5 border-t" style={{ borderColor: '#F0F1F3' }}>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', marginBottom: 6 }}>Payment method</p>
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-[18px] rounded-[3px] flex items-center justify-center flex-shrink-0" style={{ background: '#1A1F71' }}>
-                        <span style={{ fontSize: 6, fontWeight: 700, color: '#fff', fontFamily: 'Arial' }}>VISA</span>
+                      <div className="w-8 h-[20px] rounded-[3px] flex items-center justify-center flex-shrink-0" style={{ background: '#1A1F71' }}>
+                        <span style={{ fontSize: 7, fontWeight: 700, color: '#fff', fontFamily: 'Arial' }}>VISA</span>
                       </div>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', fontFamily: 'monospace', letterSpacing: '0.04em' }}>••••{cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                      <span style={{ fontSize: 13.5, color: '#6B7280' }}>
+                        Visa ending in <span style={{ color: '#1C1E21', fontWeight: 500 }}>{cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                      </span>
+                      <button
+                        className="ml-2 inline-flex items-center px-2 h-7 rounded-md text-[12px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] active:scale-[0.98]"
+                        style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        onClick={() => setTab('payment')}
+                      >
+                        Change
+                      </button>
                     </div>
                   </div>
 
