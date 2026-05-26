@@ -178,8 +178,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               <>
                 <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
                   <div className="px-6 py-6">
-                    {/* Header row: name + pill | Cancel stroke button */}
-                    <div className="flex items-center justify-between gap-4 mb-5">
+                    {/* Row 1: name + pill (left) | Cancel subscription stroke button (right) */}
+                    <div className="flex items-center justify-between gap-4 mb-4">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
                         <span
@@ -201,27 +201,17 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       </button>
                     </div>
 
-                    {/* Definition rows — simple label/value pairs */}
-                    <dl className="space-y-3">
-                      <div className="flex items-baseline gap-4">
-                        <dt style={{ fontSize: 13, color: '#9CA3AF', minWidth: 132 }}>Next billing on</dt>
-                        <dd style={{ fontSize: 13.5, color: '#1C1E21' }}>
-                          <span style={{ fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF', fontWeight: 400 }}>(in 31 days)</span>
-                        </dd>
-                      </div>
-                      <div className="flex items-baseline gap-4">
-                        <dt style={{ fontSize: 13, color: '#9CA3AF', minWidth: 132 }}>Amount</dt>
-                        <dd style={{ fontSize: 13.5, color: '#1C1E21' }}>
-                          <span style={{ fontWeight: 500 }}>$399.00</span> <span style={{ color: '#9CA3AF', fontWeight: 400 }}>USD / month</span>
-                        </dd>
-                      </div>
-                      <div className="flex items-baseline gap-4">
-                        <dt style={{ fontSize: 13, color: '#9CA3AF', minWidth: 132 }}>Payment method</dt>
-                        <dd style={{ fontSize: 13.5, color: '#1C1E21' }}>
-                          Visa <span style={{ color: '#9CA3AF', fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span>
-                        </dd>
-                      </div>
-                    </dl>
+                    {/* Row 2: price + renewal date on one line */}
+                    <div className="flex items-baseline gap-2 flex-wrap" style={{ fontSize: 13.5, color: '#6B7280' }}>
+                      <span><span style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em' }}>$399</span> <span style={{ fontWeight: 500 }}>USD / month</span></span>
+                      <span style={{ color: '#C0C4CC' }}>·</span>
+                      <span>Renews <span style={{ color: '#1C1E21', fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span></span>
+                    </div>
+
+                    {/* Row 3: payment method, minimal */}
+                    <p style={{ fontSize: 12.5, color: '#9CA3AF', marginTop: 14 }}>
+                      Paid with <span style={{ color: '#6B7280', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                    </p>
                   </div>
                 </div>
 
