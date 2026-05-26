@@ -177,60 +177,41 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               /* Active paid (RG) — single unified surface, Manus-style heading + detail rows + inline billing history */
               <>
                 <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                  {/* Plan heading — name + pill inline, price below */}
-                  <div className="px-7 pt-7 pb-6">
-                    <div className="flex items-center gap-2.5 mb-1.5">
-                      <h2 style={{ fontSize: 24, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
-                      <span
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                      >
-                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
-                        ACTIVE
-                      </span>
-                    </div>
-                    <div className="flex items-baseline gap-1">
-                      <span style={{ fontSize: 22, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1 }}>$399</span>
-                      <span style={{ fontSize: 14, fontWeight: 500, color: '#6B7280' }}>USD / month</span>
-                    </div>
-                  </div>
-
-                  {/* Detail rows — stacked label/value */}
-                  <div className="px-7 py-5 border-t" style={{ borderColor: '#F0F1F3' }}>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', marginBottom: 4 }}>Next billing date</p>
-                    <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.5 }}>
-                      Your plan renews on <span style={{ color: '#1C1E21', fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span>
-                    </p>
-                  </div>
-                  <div className="px-7 py-5 border-t" style={{ borderColor: '#F0F1F3' }}>
-                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', marginBottom: 6 }}>Payment method</p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-[20px] rounded-[3px] flex items-center justify-center flex-shrink-0" style={{ background: '#1A1F71' }}>
-                        <span style={{ fontSize: 7, fontWeight: 700, color: '#fff', fontFamily: 'Arial' }}>VISA</span>
+                  <div className="px-6 py-5">
+                    {/* Row 1: name + pill (left) | Cancel subscription stroke button (right) */}
+                    <div className="flex items-center justify-between gap-4 mb-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
+                          style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                        >
+                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
+                          ACTIVE
+                        </span>
                       </div>
-                      <span style={{ fontSize: 13.5, color: '#6B7280' }}>
-                        Visa ending in <span style={{ color: '#1C1E21', fontWeight: 500 }}>{cards.find(c => c.isDefault)?.last4 || '0965'}</span>
-                      </span>
                       <button
-                        className="ml-2 inline-flex items-center px-2 h-7 rounded-md text-[12px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] active:scale-[0.98]"
-                        style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                        onClick={() => setTab('payment')}
+                        onClick={() => setConfirmCancel(true)}
+                        className="inline-flex items-center px-3 h-8 rounded-md text-[12.5px] font-medium text-[#4B5563] flex-shrink-0 active:scale-[0.98]"
+                        style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#DC2626'; (e.currentTarget as HTMLElement).style.color = '#DC2626'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
                       >
-                        Change
+                        Cancel subscription
                       </button>
                     </div>
-                  </div>
 
-                  {/* Cancel row */}
-                  <div className="px-7 h-12 flex items-center justify-end border-t" style={{ borderColor: '#F0F1F3' }}>
-                    <button
-                      onClick={() => setConfirmCancel(true)}
-                      style={{ fontSize: 13, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#DC2626')}
-                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF')}
-                    >
-                      Cancel subscription
-                    </button>
+                    {/* Row 2: price + renewal date on one line */}
+                    <div className="flex items-baseline gap-2 flex-wrap" style={{ fontSize: 13.5, color: '#6B7280' }}>
+                      <span><span style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em' }}>$399</span> <span style={{ fontWeight: 500 }}>USD / month</span></span>
+                      <span style={{ color: '#C0C4CC' }}>·</span>
+                      <span>Renews <span style={{ color: '#1C1E21', fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span></span>
+                    </div>
+
+                    {/* Row 3: payment method, minimal */}
+                    <p style={{ fontSize: 12.5, color: '#9CA3AF', marginTop: 8 }}>
+                      Paid with <span style={{ color: '#6B7280', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                    </p>
                   </div>
                 </div>
 
