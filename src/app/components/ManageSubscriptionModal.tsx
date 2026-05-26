@@ -307,8 +307,16 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Plan card — subtle white marketing card with orange check accents */}
-                <div className="mt-4 rounded-2xl bg-white overflow-hidden relative" style={{ border: '1px solid #E6E8EC' }}>
+                {/* Plan card — subtle white marketing card with shiny gradient border */}
+                <div
+                  className="mt-4 rounded-2xl overflow-hidden relative"
+                  style={{
+                    border: '1px solid transparent',
+                    background:
+                      'linear-gradient(#FFFFFF, #FFFFFF) padding-box, ' +
+                      'linear-gradient(135deg, rgba(253,80,0,0.55) 0%, rgba(251,191,36,0.35) 18%, #E6E8EC 38%, #E6E8EC 62%, rgba(251,191,36,0.35) 82%, rgba(253,80,0,0.55) 100%) border-box',
+                  }}
+                >
                   {/* Very faint orange bloom — barely there */}
                   <span aria-hidden style={{ position: 'absolute', top: -60, right: -50, width: 220, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.06), transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
 
