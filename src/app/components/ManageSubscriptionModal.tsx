@@ -323,11 +323,11 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                 <div className="mt-10 pt-8" style={{ borderTop: '1px solid #E6E8EC' }}>
                   {/* Title */}
                   <div className="flex items-baseline gap-2">
-                    <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em', lineHeight: 1.25 }}>
                       Zuper Sense plan
                     </h3>
-                    <span style={{ fontSize: 13, color: '#9CA3AF' }}>·</span>
-                    <span style={{ fontSize: 13, color: '#FD5000', fontWeight: 600 }}>$399 / mo</span>
+                    <span style={{ fontSize: 14, color: '#9CA3AF' }}>·</span>
+                    <span style={{ fontSize: 14, color: '#FD5000', fontWeight: 600 }}>$399 / mo</span>
                   </div>
                   <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 6, marginBottom: 22, lineHeight: 1.6 }}>
                     Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
