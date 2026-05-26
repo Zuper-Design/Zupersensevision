@@ -174,39 +174,93 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
           <div className={`pt-8 grid ${paymentFailed && !isAU && !isVp ? 'grid-cols-[1fr_360px] gap-8' : 'grid-cols-1 max-w-[560px] gap-4'} items-stretch`}>
             {/* ── Left: Plan hero + billing info ── */}
             {!isAU && !isVp && !paymentFailed && !cancelled ? (
-              /* Active paid (RG) — compact, balanced for a non-decision state */
-              <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                <div className="px-7 pt-7 pb-6">
-                  <div className="flex items-center gap-2.5 mb-2.5">
-                    <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
+              /* Active paid (RG) — single unified surface, Manus-style heading + detail rows + inline billing history */
+              <>
+                <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
+                  {/* Plan heading row — Manus-style: name + muted price line */}
+                  <div className="px-7 pt-7 pb-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h2 style={{ fontSize: 24, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 4 }}>Zuper Sense</h2>
+                      <p style={{ fontSize: 14, color: '#9CA3AF' }}>$399 USD / month</p>
+                    </div>
                     <span
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0 mt-1.5"
                       style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
                     >
                       <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
                       ACTIVE
                     </span>
                   </div>
-                  <div className="flex items-baseline gap-1.5">
-                    <span style={{ fontSize: 36, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
-                    <span style={{ fontSize: 15, color: '#9CA3AF' }}>/ month</span>
-                  </div>
-                </div>
-                <div className="px-7 h-12 flex items-center justify-between border-t" style={{ borderColor: '#F0F1F3' }}>
-                  <div className="flex items-center gap-2.5">
+
+                  {/* Detail rows */}
+                  <div className="px-7 h-12 flex items-center justify-between border-t" style={{ borderColor: '#F0F1F3' }}>
                     <span style={{ fontSize: 13, color: '#6B7280' }}>Next billing</span>
                     <span style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21' }}>May 21, 2026</span>
                   </div>
-                  <button
-                    onClick={() => setConfirmCancel(true)}
-                    style={{ fontSize: 13, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#DC2626')}
-                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF')}
-                  >
-                    Cancel subscription
-                  </button>
+                  <div className="px-7 h-12 flex items-center justify-between border-t" style={{ borderColor: '#F0F1F3' }}>
+                    <span style={{ fontSize: 13, color: '#6B7280' }}>Payment method</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-[18px] rounded-[3px] flex items-center justify-center flex-shrink-0" style={{ background: '#1A1F71' }}>
+                        <span style={{ fontSize: 6, fontWeight: 700, color: '#fff', fontFamily: 'Arial' }}>VISA</span>
+                      </div>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', fontFamily: 'monospace', letterSpacing: '0.04em' }}>••••{cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                    </div>
+                  </div>
+
+                  {/* Cancel row */}
+                  <div className="px-7 h-12 flex items-center justify-end border-t" style={{ borderColor: '#F0F1F3' }}>
+                    <button
+                      onClick={() => setConfirmCancel(true)}
+                      style={{ fontSize: 13, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#DC2626')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF')}
+                    >
+                      Cancel subscription
+                    </button>
+                  </div>
                 </div>
-              </div>
+
+                {/* Billing history — inline section */}
+                <div className="mt-7">
+                  <div className="flex items-end justify-between mb-3">
+                    <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>Billing history</h3>
+                    <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
+                  </div>
+                  <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
+                    {INVOICES.slice(0, 6).map((inv, i) => {
+                      const style = STATUS_STYLE[inv.status];
+                      return (
+                        <div
+                          key={inv.id}
+                          className={`px-5 h-12 flex items-center justify-between gap-3 hover:bg-[#FAFBFC] ${i !== Math.min(5, INVOICES.length - 1) ? 'border-b' : ''}`}
+                          style={{ borderColor: '#F0F1F3', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span style={{ fontSize: 12.5, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace' }}>{inv.id}</span>
+                            <span style={{ fontSize: 12, color: '#9CA3AF' }}>· {inv.created.split(',')[0]}</span>
+                          </div>
+                          <div className="flex items-center gap-3 flex-shrink-0">
+                            <span
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md"
+                              style={{ background: style.bg, color: style.color, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                            >
+                              {style.label.toUpperCase()}
+                            </span>
+                            <span style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', fontVariantNumeric: 'tabular-nums' }}>{inv.amount}</span>
+                            <button
+                              className="p-1 -mr-1 rounded-md hover:bg-[#F3F4F6]"
+                              style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                              aria-label="Download invoice"
+                            >
+                              <Download className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
             ) : isAU || isVp ? (
               /* Trial / trial-ended — bigger card, Plan includes inline + full-width Subscribe */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
