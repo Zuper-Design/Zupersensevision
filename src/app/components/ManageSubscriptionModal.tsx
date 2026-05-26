@@ -321,7 +321,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                         <span style={{ fontSize: 13, color: '#9CA3AF' }}>/ month</span>
                       </div>
                     </div>
-                    <p style={{ fontSize: 12.5, color: '#9CA3AF', marginBottom: 18 }}>Everything in Sense, billed monthly. Cancel anytime.</p>
+                    <p style={{ fontSize: 13, color: '#4B5563', marginBottom: 18, lineHeight: 1.55 }}>
+                      Subscribe to <span style={{ color: '#1C1E21', fontWeight: 500 }}>Zuper Sense</span> to get full access — billed monthly, cancel anytime.
+                    </p>
 
                     {/* Feature list — orange accent on checks */}
                     <ul className="space-y-2.5 mb-5">
@@ -338,19 +340,19 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       ))}
                     </ul>
 
-                    {/* Footer row: Subscribe CTA (compact orange) + cancel-anytime helper */}
+                    {/* Footer row: Subscribe CTA (compact black) + trust line */}
                     <div className="flex items-center justify-between gap-3 pt-4" style={{ borderTop: '1px solid #F0F1F3' }}>
                       <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
                       <button
                         onClick={onUpgrade}
                         className="inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
                         style={{
-                          background: 'linear-gradient(135deg, #FD5000 0%, #FF6F1A 100%)',
-                          boxShadow: '0 4px 14px rgba(253,80,0,0.32)',
+                          background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)',
+                          boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
                           transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1), box-shadow 140ms cubic-bezier(0.23,1,0.32,1)',
                         }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 22px rgba(253,80,0,0.42)'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(253,80,0,0.32)'; }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 22px rgba(0,0,0,0.24)'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
                       >
                         <Sparkles className="w-3.5 h-3.5" fill="currentColor" />
                         Subscribe to Sense
