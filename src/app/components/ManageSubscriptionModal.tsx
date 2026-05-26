@@ -215,64 +215,62 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Billing history — full table */}
-                <div className="mt-7">
-                  <div className="flex items-end justify-between mb-3">
+                {/* Billing history — open table, hairline rows only (no card chrome) */}
+                <div className="mt-8">
+                  <div className="flex items-end justify-between mb-4">
                     <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>Billing history</h3>
                     <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
                   </div>
-                  <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                    {/* Column headers */}
-                    <div className="px-5 h-10 flex items-center gap-4 border-b bg-[#FAFBFC]" style={{ borderColor: '#F0F1F3' }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 150px' }}>Invoice</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 110px' }}>Status</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 90px' }}>Amount</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: 1 }}>Created</span>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 120px', textAlign: 'right' }}>Actions</span>
-                    </div>
-                    {/* Rows */}
-                    {INVOICES.slice(0, 8).map((inv, i) => {
-                      const style = STATUS_STYLE[inv.status];
-                      const needsPay = inv.status === 'unpaid' || inv.status === 'overdue';
-                      return (
-                        <div
-                          key={inv.id}
-                          className={`px-5 h-11 flex items-center gap-4 hover:bg-[#FAFBFC] ${i !== Math.min(7, INVOICES.length - 1) ? 'border-b' : ''}`}
-                          style={{ borderColor: '#F0F1F3', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                        >
-                          <span style={{ fontSize: 12.5, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
-                          <div style={{ flex: '0 0 110px' }}>
-                            <span
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                              style={{ background: style.bg, color: style.color, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}
-                            >
-                              <span style={{ width: 4, height: 4, borderRadius: '50%', background: style.color }} />
-                              {style.label.toUpperCase()}
-                            </span>
-                          </div>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
-                          <span style={{ fontSize: 12.5, color: '#6B7280', flex: 1 }}>{inv.created}</span>
-                          <div className="flex items-center gap-1 flex-shrink-0 justify-end" style={{ flex: '0 0 120px' }}>
-                            {needsPay && (
-                              <button
-                                className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
-                                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                              >
-                                Pay now
-                              </button>
-                            )}
-                            <button
-                              className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#9CA3AF] hover:text-[#1C1E21] active:scale-[0.94]"
-                              style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                              aria-label="Download invoice"
-                            >
-                              <Download className="w-[13px] h-[13px]" />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  {/* Column headers */}
+                  <div className="px-1 h-9 flex items-center gap-4 border-b" style={{ borderColor: '#E6E8EC' }}>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 150px' }}>Invoice</span>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 110px' }}>Status</span>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 90px' }}>Amount</span>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: 1 }}>Created</span>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 120px', textAlign: 'right' }}>Actions</span>
                   </div>
+                  {/* Rows */}
+                  {INVOICES.slice(0, 8).map((inv) => {
+                    const style = STATUS_STYLE[inv.status];
+                    const needsPay = inv.status === 'unpaid' || inv.status === 'overdue';
+                    return (
+                      <div
+                        key={inv.id}
+                        className="px-1 h-12 flex items-center gap-4 border-b"
+                        style={{ borderColor: '#F0F1F3' }}
+                      >
+                        <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
+                        <div style={{ flex: '0 0 110px' }}>
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                            style={{ background: style.bg, color: style.color, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}
+                          >
+                            <span style={{ width: 4, height: 4, borderRadius: '50%', background: style.color }} />
+                            {style.label.toUpperCase()}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
+                        <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
+                        <div className="flex items-center gap-1 flex-shrink-0 justify-end" style={{ flex: '0 0 120px' }}>
+                          {needsPay && (
+                            <button
+                              className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
+                              style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                            >
+                              Pay now
+                            </button>
+                          )}
+                          <button
+                            className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#9CA3AF] hover:text-[#1C1E21] active:scale-[0.94]"
+                            style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                            aria-label="Download invoice"
+                          >
+                            <Download className="w-[13px] h-[13px]" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </>
             ) : isAU || isVp ? (
