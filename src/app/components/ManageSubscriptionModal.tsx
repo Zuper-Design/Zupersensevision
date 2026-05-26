@@ -183,7 +183,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               </div>
             </div>
           )}
-          <div className={`pt-8 grid ${cancelled || (!isAU && !isVp && !paymentFailed) ? 'grid-cols-1' : 'grid-cols-[1fr_360px]'} gap-8 items-stretch`}>
+          <div className={`pt-8 grid ${cancelled || isVp || (!isAU && !paymentFailed) ? 'grid-cols-1' : 'grid-cols-[1fr_360px]'} ${isVp ? 'gap-4 max-w-[640px]' : 'gap-8'} items-stretch`}>
             {/* ── Left: Plan hero + billing info ── */}
             {!isAU && !isVp && !paymentFailed && !cancelled ? (
               /* Compact active-paid card — Claude/OpenAI billing style */
@@ -218,6 +218,41 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF')}
                   >
                     Cancel subscription
+                  </button>
+                </div>
+              </div>
+            ) : isVp ? (
+              /* Compact trial-ended card — same shape as RG, with subscribe CTA */
+              <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
+                <div className="px-6 pt-6 pb-5 flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                      >
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
+                        TRIAL ENDED
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-1.5">
+                      <span style={{ fontSize: 32, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
+                      <span style={{ fontSize: 14, color: '#9CA3AF' }}>/ month</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-6 h-14 flex items-center justify-between gap-3 border-t" style={{ borderColor: '#F0F1F3' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Subscribe to restore access</span>
+                  <button
+                    onClick={onUpgrade}
+                    className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg text-[13px] font-semibold text-white"
+                    style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Subscribe to Sense
                   </button>
                 </div>
               </div>
