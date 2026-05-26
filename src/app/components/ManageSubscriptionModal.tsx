@@ -274,93 +274,94 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 </div>
               </>
             ) : isAU || isVp ? (
-              <>
-                {/* Status card — Free trial / Trial ended only, no plan name or price */}
-                <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                  <div className="px-6 py-6">
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>
-                        {isVp ? 'Trial ended' : 'Free trial'}
-                      </h2>
-                      {isVp ? (
-                        <span
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                          style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                        >
-                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
-                          EXPIRED
-                        </span>
-                      ) : (
-                        <span
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                          style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                        >
-                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
-                          ACTIVE
-                        </span>
-                      )}
-                    </div>
-                    <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
-                      {isVp
-                        ? <>Your trial ended on <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>. Subscribe to restore access to Sense.</>
-                        : <>Full access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span>. Subscribe anytime to keep going.</>}
-                    </p>
-                  </div>
-                </div>
+              /* Trial / trial-ended — one card, status section + plan section divided by a hairline */
+              <div className="rounded-xl bg-white overflow-hidden relative" style={{ border: '1px solid #E6E8EC' }}>
+                {/* Soft orange bloom in the plan section */}
+                <span aria-hidden style={{ position: 'absolute', top: 100, right: -40, width: 180, height: 160, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.10), transparent 70%)', filter: 'blur(28px)', pointerEvents: 'none' }} />
 
-                {/* Zuper Sense plan card — white surface, Sense orange accent */}
-                <div className="mt-4 rounded-xl bg-white overflow-hidden relative" style={{ border: '1px solid #E6E8EC' }}>
-                  {/* Soft orange bloom in the top-right corner */}
-                  <span aria-hidden style={{ position: 'absolute', top: -50, right: -40, width: 180, height: 160, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.10), transparent 70%)', filter: 'blur(28px)', pointerEvents: 'none' }} />
-                  <div className="relative px-6 pt-6 pb-5">
-                    {/* Plan name + price */}
-                    <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h3>
-                      <div className="flex items-baseline gap-1">
-                        <span style={{ fontSize: 26, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', lineHeight: 1 }}>$399</span>
-                        <span style={{ fontSize: 13, color: '#9CA3AF' }}>/ month</span>
-                      </div>
-                    </div>
-                    <p style={{ fontSize: 13, color: '#4B5563', marginBottom: 18, lineHeight: 1.55 }}>
-                      Subscribe to <span style={{ color: '#1C1E21', fontWeight: 500 }}>Zuper Sense</span> to get full access — billed monthly, cancel anytime.
-                    </p>
-
-                    {/* Feature list — orange accent on checks */}
-                    <ul className="space-y-2.5 mb-5">
-                      {PLAN_FEATURES.map(f => (
-                        <li key={f} className="flex items-start gap-2.5">
-                          <span
-                            className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0 mt-0.5"
-                            style={{ background: 'rgba(253,80,0,0.10)', border: '1px solid rgba(253,80,0,0.30)' }}
-                          >
-                            <Check className="w-2.5 h-2.5" style={{ color: '#FD5000' }} strokeWidth={3} />
-                          </span>
-                          <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Footer row: Subscribe CTA (compact black) + trust line */}
-                    <div className="flex items-center justify-between gap-3 pt-4" style={{ borderTop: '1px solid #F0F1F3' }}>
-                      <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
-                      <button
-                        onClick={onUpgrade}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
-                        style={{
-                          background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)',
-                          boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
-                          transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1), box-shadow 140ms cubic-bezier(0.23,1,0.32,1)',
-                        }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 22px rgba(0,0,0,0.24)'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
+                {/* Status section */}
+                <div className="relative px-6 py-6">
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>
+                      {isVp ? 'Trial ended' : 'Free trial'}
+                    </h2>
+                    {isVp ? (
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
+                        style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
                       >
-                        <Sparkles className="w-3.5 h-3.5" fill="currentColor" />
-                        Subscribe to Sense
-                      </button>
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
+                        EXPIRED
+                      </span>
+                    ) : (
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
+                        style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                      >
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
+                        ACTIVE
+                      </span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
+                    {isVp
+                      ? <>Your trial ended on <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>. Subscribe to restore access to Sense.</>
+                      : <>Full access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span>. Subscribe anytime to keep going.</>}
+                  </p>
+                </div>
+
+                {/* Separator */}
+                <div style={{ borderTop: '1px solid #F0F1F3' }} />
+
+                {/* Plan section */}
+                <div className="relative px-6 pt-6 pb-5">
+                  {/* Plan name + price */}
+                  <div className="flex items-baseline justify-between gap-4 mb-1">
+                    <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h3>
+                    <div className="flex items-baseline gap-1">
+                      <span style={{ fontSize: 26, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', lineHeight: 1 }}>$399</span>
+                      <span style={{ fontSize: 13, color: '#9CA3AF' }}>/ month</span>
                     </div>
                   </div>
+                  <p style={{ fontSize: 13, color: '#4B5563', marginBottom: 18, lineHeight: 1.55 }}>
+                    Subscribe to <span style={{ color: '#1C1E21', fontWeight: 500 }}>Zuper Sense</span> to get full access — billed monthly, cancel anytime.
+                  </p>
+
+                  {/* Feature list — orange accent on checks */}
+                  <ul className="space-y-2.5 mb-5">
+                    {PLAN_FEATURES.map(f => (
+                      <li key={f} className="flex items-start gap-2.5">
+                        <span
+                          className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0 mt-0.5"
+                          style={{ background: 'rgba(253,80,0,0.10)', border: '1px solid rgba(253,80,0,0.30)' }}
+                        >
+                          <Check className="w-2.5 h-2.5" style={{ color: '#FD5000' }} strokeWidth={3} />
+                        </span>
+                        <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Footer row: Subscribe CTA (compact black) + trust line */}
+                  <div className="flex items-center justify-between gap-3 pt-4" style={{ borderTop: '1px solid #F0F1F3' }}>
+                    <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
+                    <button
+                      onClick={onUpgrade}
+                      className="inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
+                      style={{
+                        background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)',
+                        boxShadow: '0 4px 14px rgba(0,0,0,0.18)',
+                        transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1), box-shadow 140ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 22px rgba(0,0,0,0.24)'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)'; }}
+                    >
+                      <Sparkles className="w-3.5 h-3.5" fill="currentColor" />
+                      Subscribe to Sense
+                    </button>
+                  </div>
                 </div>
-              </>
+              </div>
             ) : cancelled ? (
               /* Cancelled — state copy on top, CANCELLED pill, full-width Reactivate CTA */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
