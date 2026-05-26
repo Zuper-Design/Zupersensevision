@@ -129,7 +129,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
           <ChevronLeft className="w-4 h-4" />
           Back
         </button>
-        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 22 }}>My subscription</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 22 }}>Subscription & billing</h1>
 
         {/* Tabs */}
         <div className="flex items-center gap-7 border-b" style={{ borderColor: '#E6E8EC' }}>
@@ -237,25 +237,25 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       return (
                         <div
                           key={inv.id}
-                          className={`px-5 h-14 flex items-center gap-4 hover:bg-[#FAFBFC] ${i !== Math.min(7, INVOICES.length - 1) ? 'border-b' : ''}`}
+                          className={`px-5 h-11 flex items-center gap-4 hover:bg-[#FAFBFC] ${i !== Math.min(7, INVOICES.length - 1) ? 'border-b' : ''}`}
                           style={{ borderColor: '#F0F1F3', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
                         >
-                          <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
+                          <span style={{ fontSize: 12.5, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
                           <div style={{ flex: '0 0 110px' }}>
                             <span
                               className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                              style={{ background: style.bg, color: style.color, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                              style={{ background: style.bg, color: style.color, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}
                             >
                               <span style={{ width: 4, height: 4, borderRadius: '50%', background: style.color }} />
                               {style.label.toUpperCase()}
                             </span>
                           </div>
-                          <span style={{ fontSize: 13.5, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
-                          <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
+                          <span style={{ fontSize: 12.5, color: '#6B7280', flex: 1 }}>{inv.created}</span>
                           <div className="flex items-center gap-1 flex-shrink-0 justify-end" style={{ flex: '0 0 120px' }}>
                             {needsPay && (
                               <button
-                                className="inline-flex items-center px-3 h-8 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold active:scale-[0.98]"
+                                className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
                                 style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                               >
                                 Pay now
@@ -266,7 +266,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                               style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                               aria-label="Download invoice"
                             >
-                              <Download className="w-[14px] h-[14px]" />
+                              <Download className="w-[13px] h-[13px]" />
                             </button>
                           </div>
                         </div>
