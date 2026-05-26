@@ -267,8 +267,11 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 </button>
               </div>
             ) : cancelled ? (
-              /* Cancelled — same compact template as RG, with CANCELLED pill + Reactivate CTA */
+              /* Cancelled — state copy on top, CANCELLED pill, full-width Reactivate CTA */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
+                <p style={{ fontSize: 14, color: '#B45309', fontWeight: 500, lineHeight: 1.55, marginBottom: 14 }}>
+                  Your plan has been cancelled. You'll keep access until <span style={{ fontWeight: 600 }}>May 21, 2026</span>.
+                </p>
                 <div className="flex items-center gap-2.5 mb-3">
                   <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
                   <span
@@ -279,13 +282,10 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     CANCELLED
                   </span>
                 </div>
-                <div className="flex items-baseline gap-1.5 mb-3">
+                <div className="flex items-baseline gap-1.5 mb-6">
                   <span style={{ fontSize: 36, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
                   <span style={{ fontSize: 15, color: '#9CA3AF' }}>/ month</span>
                 </div>
-                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 22 }}>
-                  Your plan has been cancelled. You'll keep access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>.
-                </p>
                 <button
                   onClick={() => setCancelled(false)}
                   className="w-full inline-flex items-center justify-center gap-1.5 h-11 rounded-lg text-[14px] font-semibold text-white"
