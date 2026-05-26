@@ -183,7 +183,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               </div>
             </div>
           )}
-          <div className={`pt-8 grid ${cancelled ? 'grid-cols-1' : 'grid-cols-[1fr_360px]'} gap-8 items-stretch`}>
+          <div className={`pt-8 grid ${cancelled || (!isAU && !isVp && !paymentFailed) ? 'grid-cols-1' : 'grid-cols-[1fr_360px]'} gap-8 items-stretch`}>
             {/* ── Left: Plan hero + billing info ── */}
             <div
               className="rounded-2xl p-7"
@@ -247,24 +247,13 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
               ) : cancelled ? null : (
-                <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #EEF0F3', background: '#FAFBFC' }}>
-                  <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: '1px solid #EEF0F3' }}>
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff', border: '1px solid #E6E8EC' }}>
-                      <Calendar className="w-4 h-4 text-[#6B7280]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Next billing date</p>
-                      <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</p>
-                    </div>
+                <div className="rounded-xl flex items-center gap-3 px-5 py-4" style={{ border: '1px solid #EEF0F3', background: '#FAFBFC' }}>
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff', border: '1px solid #E6E8EC' }}>
+                    <Calendar className="w-4 h-4 text-[#6B7280]" />
                   </div>
-                  <div className="flex items-center gap-3 px-5 py-4">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff', border: '1px solid #E6E8EC' }}>
-                      <Clock className="w-4 h-4 text-[#6B7280]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Subscription started on</p>
-                      <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>Mar 20, 2025</p>
-                    </div>
+                  <div className="flex-1 min-w-0">
+                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 2 }}>Next billing date</p>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</p>
                   </div>
                 </div>
               )}
@@ -328,8 +317,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               </div>
             </div>
 
-            {/* ── Right: Plan includes card ── */}
-            {!cancelled && (
+            {/* ── Right: Plan includes card ── hidden for active paid users */}
+            {!cancelled && (isAU || isVp || paymentFailed) && (
             <div
               className="rounded-2xl p-6 relative overflow-hidden"
               style={{ background: 'linear-gradient(160deg, #FFF7F0 0%, #FFF1E6 100%)', border: '1px solid #F5E0CF' }}
