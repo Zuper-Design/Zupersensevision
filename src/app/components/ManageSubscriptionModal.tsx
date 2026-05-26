@@ -1,4 +1,4 @@
-import { CreditCard, ChevronDown, Check, Calendar, Building2, Sparkles, Plus, Download, ChevronLeft, AlertTriangle, CheckCircle2, RotateCcw, Clock, MessageSquare, BarChart3, RefreshCw } from 'lucide-react';
+import { CreditCard, ChevronDown, Check, Calendar, Building2, Sparkles, Plus, Download, ChevronLeft, AlertTriangle, CheckCircle2, RotateCcw, Clock, MessageSquare, BarChart3, RefreshCw, Gauge } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -307,58 +307,61 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Plan card — soft warm gradient */}
+                {/* Plan card — Glide-style: white, iconographic features, full-width CTA */}
                 <div
-                  className="mt-4 rounded-xl overflow-hidden relative"
-                  style={{
-                    border: '1px solid rgba(253,80,0,0.18)',
-                    background: 'linear-gradient(135deg, #FFFBF6 0%, #FFF3E6 55%, #FFE4CC 100%)',
-                  }}
+                  className="mt-4 rounded-2xl bg-white overflow-hidden relative"
+                  style={{ border: '1px solid #E6E8EC' }}
                 >
-                  {/* Soft blooms for depth */}
-                  <span aria-hidden style={{ position: 'absolute', top: -60, right: -50, width: 240, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.22), transparent 70%)', filter: 'blur(34px)', pointerEvents: 'none' }} />
-                  <span aria-hidden style={{ position: 'absolute', bottom: -70, left: -40, width: 220, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.12), transparent 70%)', filter: 'blur(38px)', pointerEvents: 'none' }} />
-                  <div className="relative px-6 pt-6 pb-5">
-                    {/* Plan name + price */}
-                    <div className="flex items-baseline justify-between gap-4 mb-1">
-                      <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h3>
-                      <div className="flex items-baseline gap-1">
-                        <span style={{ fontSize: 26, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', lineHeight: 1 }}>$399</span>
-                        <span style={{ fontSize: 13, color: '#9CA3AF' }}>/ month</span>
-                      </div>
-                    </div>
-                    <p style={{ fontSize: 13, color: '#4B5563', marginBottom: 18, lineHeight: 1.55 }}>
-                      Subscribe to <span style={{ color: '#1C1E21', fontWeight: 500 }}>Zuper Sense</span> to get full access — billed monthly.
+                  {/* Soft sense-orange bloom (top-right) */}
+                  <span aria-hidden style={{ position: 'absolute', top: -70, right: -60, width: 260, height: 220, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.14), transparent 70%)', filter: 'blur(36px)', pointerEvents: 'none' }} />
+
+                  <div className="relative px-6 pt-6 pb-6">
+                    {/* Title */}
+                    <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
+                      Subscribe to Zuper Sense for <span style={{ color: '#FD5000' }}>$399 / mo</span>
+                    </h3>
+                    <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 20, lineHeight: 1.6 }}>
+                      Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
                     </p>
 
-                    {/* Feature list — orange accent on checks */}
-                    <ul className="space-y-2.5 mb-5">
-                      {PLAN_FEATURES.map(f => (
-                        <li key={f} className="flex items-start gap-2.5">
-                          <span
-                            className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0 mt-0.5"
-                            style={{ background: 'rgba(253,80,0,0.10)', border: '1px solid rgba(253,80,0,0.30)' }}
-                          >
-                            <Check className="w-2.5 h-2.5" style={{ color: '#FD5000' }} strokeWidth={3} />
-                          </span>
-                          <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Includes label */}
+                    <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: '#9CA3AF', marginBottom: 12 }}>
+                      INCLUDES
+                    </p>
 
-                    {/* Footer row: Subscribe CTA (flat black, no icon, no shadow) + trust line */}
-                    <div className="flex items-center justify-between gap-3 pt-4" style={{ borderTop: '1px solid rgba(253,80,0,0.18)' }}>
-                      <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
-                      <button
-                        onClick={onUpgrade}
-                        className="inline-flex items-center justify-center px-4 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
-                        style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
-                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
-                      >
-                        Subscribe to Sense
-                      </button>
+                    {/* 2x2 feature grid */}
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-6">
+                      {[
+                        { icon: MessageSquare, label: 'Ask in plain English' },
+                        { icon: BarChart3, label: 'Charts & summaries' },
+                        { icon: Gauge, label: 'Radar dashboards' },
+                        { icon: RefreshCw, label: 'Daily JobNimbus sync' },
+                      ].map(({ icon: Icon, label }) => (
+                        <div key={label} className="flex items-center gap-2.5">
+                          <span
+                            className="inline-flex items-center justify-center w-7 h-7 rounded-lg flex-shrink-0"
+                            style={{ background: 'rgba(253,80,0,0.10)', border: '1px solid rgba(253,80,0,0.18)' }}
+                          >
+                            <Icon className="w-3.5 h-3.5" style={{ color: '#FD5000' }} strokeWidth={2.2} />
+                          </span>
+                          <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500 }}>{label}</span>
+                        </div>
+                      ))}
                     </div>
+
+                    {/* Full-width Subscribe CTA */}
+                    <button
+                      onClick={onUpgrade}
+                      className="w-full inline-flex items-center justify-center h-11 rounded-xl text-[14px] font-semibold text-white active:scale-[0.99]"
+                      style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
+                    >
+                      Subscribe to Sense
+                    </button>
+                    <p style={{ fontSize: 12, color: '#9CA3AF', textAlign: 'center', marginTop: 12 }}>
+                      Cancel anytime · No hidden fees
+                    </p>
                   </div>
                 </div>
               </>
