@@ -178,8 +178,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               <>
                 <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
                   <div className="px-6 py-6">
-                    {/* Row 1: name + pill (left) | Cancel subscription stroke button (right) */}
-                    <div className="flex items-center justify-between gap-4 mb-4">
+                    {/* Header row: name + pill | Cancel stroke button */}
+                    <div className="flex items-center justify-between gap-4 mb-5">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
                         <span
@@ -201,53 +201,82 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       </button>
                     </div>
 
-                    {/* Row 2: price + renewal date on one line */}
-                    <div className="flex items-baseline gap-2 flex-wrap" style={{ fontSize: 13.5, color: '#6B7280' }}>
-                      <span><span style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em' }}>$399</span> <span style={{ fontWeight: 500 }}>USD / month</span></span>
-                      <span style={{ color: '#C0C4CC' }}>·</span>
-                      <span>Renews <span style={{ color: '#1C1E21', fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span></span>
-                    </div>
-
-                    {/* Row 3: payment method, minimal */}
-                    <p style={{ fontSize: 12.5, color: '#9CA3AF', marginTop: 14 }}>
-                      Paid with <span style={{ color: '#6B7280', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span>
-                    </p>
+                    {/* Definition rows — simple label/value pairs */}
+                    <dl className="space-y-3">
+                      <div className="flex items-baseline gap-4">
+                        <dt style={{ fontSize: 13, color: '#9CA3AF', minWidth: 132 }}>Next billing on</dt>
+                        <dd style={{ fontSize: 13.5, color: '#1C1E21' }}>
+                          <span style={{ fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF', fontWeight: 400 }}>(in 31 days)</span>
+                        </dd>
+                      </div>
+                      <div className="flex items-baseline gap-4">
+                        <dt style={{ fontSize: 13, color: '#9CA3AF', minWidth: 132 }}>Amount</dt>
+                        <dd style={{ fontSize: 13.5, color: '#1C1E21' }}>
+                          <span style={{ fontWeight: 500 }}>$399.00</span> <span style={{ color: '#9CA3AF', fontWeight: 400 }}>USD / month</span>
+                        </dd>
+                      </div>
+                      <div className="flex items-baseline gap-4">
+                        <dt style={{ fontSize: 13, color: '#9CA3AF', minWidth: 132 }}>Payment method</dt>
+                        <dd style={{ fontSize: 13.5, color: '#1C1E21' }}>
+                          Visa <span style={{ color: '#9CA3AF', fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                        </dd>
+                      </div>
+                    </dl>
                   </div>
                 </div>
 
-                {/* Billing history — inline section */}
+                {/* Billing history — full table */}
                 <div className="mt-7">
                   <div className="flex items-end justify-between mb-3">
                     <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>Billing history</h3>
                     <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
                   </div>
                   <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                    {INVOICES.slice(0, 6).map((inv, i) => {
+                    {/* Column headers */}
+                    <div className="px-5 h-10 flex items-center gap-4 border-b bg-[#FAFBFC]" style={{ borderColor: '#F0F1F3' }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 150px' }}>Invoice</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 110px' }}>Status</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 90px' }}>Amount</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: 1 }}>Created</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', flex: '0 0 120px', textAlign: 'right' }}>Actions</span>
+                    </div>
+                    {/* Rows */}
+                    {INVOICES.slice(0, 8).map((inv, i) => {
                       const style = STATUS_STYLE[inv.status];
+                      const needsPay = inv.status === 'unpaid' || inv.status === 'overdue';
                       return (
                         <div
                           key={inv.id}
-                          className={`px-5 h-12 flex items-center justify-between gap-3 hover:bg-[#FAFBFC] ${i !== Math.min(5, INVOICES.length - 1) ? 'border-b' : ''}`}
+                          className={`px-5 h-14 flex items-center gap-4 hover:bg-[#FAFBFC] ${i !== Math.min(7, INVOICES.length - 1) ? 'border-b' : ''}`}
                           style={{ borderColor: '#F0F1F3', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
                         >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <span style={{ fontSize: 12.5, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace' }}>{inv.id}</span>
-                            <span style={{ fontSize: 12, color: '#9CA3AF' }}>· {inv.created.split(',')[0]}</span>
-                          </div>
-                          <div className="flex items-center gap-3 flex-shrink-0">
+                          <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
+                          <div style={{ flex: '0 0 110px' }}>
                             <span
-                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md"
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
                               style={{ background: style.bg, color: style.color, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
                             >
+                              <span style={{ width: 4, height: 4, borderRadius: '50%', background: style.color }} />
                               {style.label.toUpperCase()}
                             </span>
-                            <span style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', fontVariantNumeric: 'tabular-nums' }}>{inv.amount}</span>
+                          </div>
+                          <span style={{ fontSize: 13.5, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
+                          <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
+                          <div className="flex items-center gap-1 flex-shrink-0 justify-end" style={{ flex: '0 0 120px' }}>
+                            {needsPay && (
+                              <button
+                                className="inline-flex items-center px-3 h-8 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold active:scale-[0.98]"
+                                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                              >
+                                Pay now
+                              </button>
+                            )}
                             <button
-                              className="p-1 -mr-1 rounded-md hover:bg-[#F3F4F6]"
-                              style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                              className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#9CA3AF] hover:text-[#1C1E21] active:scale-[0.94]"
+                              style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                               aria-label="Download invoice"
                             >
-                              <Download className="w-3.5 h-3.5 text-[#9CA3AF]" />
+                              <Download className="w-[14px] h-[14px]" />
                             </button>
                           </div>
                         </div>
