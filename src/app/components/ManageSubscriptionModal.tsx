@@ -231,7 +231,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                     <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 110px' }}>Status</span>
                     <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 100px' }}>Amount</span>
                     <span style={{ fontSize: 12, color: '#9CA3AF', flex: 1 }}>Created</span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 180px', textAlign: 'right' }}>Actions</span>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 200px', textAlign: 'right' }}>Actions</span>
                   </div>
                   {/* Rows */}
                   {INVOICES.slice(0, 8).map((inv) => {
@@ -255,7 +255,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                         </div>
                         <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 100px' }}>{inv.amount}</span>
                         <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
-                        <div className="flex items-center gap-1.5 flex-shrink-0 justify-end" style={{ flex: '0 0 180px' }}>
+                        <div className="flex items-center gap-3 flex-shrink-0 justify-end" style={{ flex: '0 0 200px' }}>
                           {needsPay && (
                             <button
                               className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
@@ -746,7 +746,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
               <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 110px' }}>Status</span>
               <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 100px' }}>Amount</span>
               <span style={{ fontSize: 12, color: '#9CA3AF', flex: 1 }}>Created</span>
-              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 180px', textAlign: 'right' }}>Actions</span>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 200px', textAlign: 'right' }}>Actions</span>
             </div>
             {/* Rows */}
             {INVOICES.map((inv) => {
@@ -770,7 +770,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                   </div>
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 100px' }}>{inv.amount}</span>
                   <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
-                  <div className="flex items-center gap-1.5 flex-shrink-0 justify-end" style={{ flex: '0 0 180px' }}>
+                  <div className="flex items-center gap-3 flex-shrink-0 justify-end" style={{ flex: '0 0 200px' }}>
                     {needsPay && (
                       <button
                         className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
