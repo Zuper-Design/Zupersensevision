@@ -307,77 +307,44 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Plan card — dark marketing card with Sense-orange accent */}
-                <div
-                  className="mt-4 rounded-2xl overflow-hidden relative"
-                  style={{
-                    background: 'linear-gradient(135deg, #0A0A0B 0%, #1C1E21 55%, #2A1810 100%)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    boxShadow: '0 1px 0 rgba(255,255,255,0.04) inset, 0 12px 32px rgba(0,0,0,0.18)',
-                  }}
-                >
-                  {/* Orange bloom — top-right */}
-                  <span aria-hidden style={{ position: 'absolute', top: -90, right: -70, width: 320, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.32), transparent 70%)', filter: 'blur(44px)', pointerEvents: 'none' }} />
-                  {/* Amber bloom — bottom-left */}
-                  <span aria-hidden style={{ position: 'absolute', bottom: -100, left: -60, width: 280, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(245,158,11,0.14), transparent 70%)', filter: 'blur(42px)', pointerEvents: 'none' }} />
+                {/* Plan card — subtle white marketing card with orange check accents */}
+                <div className="mt-4 rounded-2xl bg-white overflow-hidden relative" style={{ border: '1px solid #E6E8EC' }}>
+                  {/* Very faint orange bloom — barely there */}
+                  <span aria-hidden style={{ position: 'absolute', top: -60, right: -50, width: 220, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.06), transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
 
                   <div className="relative px-7 pt-7 pb-6">
                     {/* Title */}
-                    <h3 style={{ fontSize: 20, fontWeight: 700, color: '#FFFFFF', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
-                      Subscribe to Zuper Sense for{' '}
-                      <span
-                        style={{
-                          background: 'linear-gradient(135deg, #FD5000 0%, #F97316 60%, #FBBF24 100%)',
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
-                      >
-                        $399 / mo
-                      </span>
+                    <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
+                      Subscribe to Zuper Sense for <span style={{ color: '#FD5000' }}>$399 / mo</span>
                     </h3>
-                    <p style={{ fontSize: 13.5, color: '#9CA3AF', marginTop: 8, marginBottom: 22, lineHeight: 1.6 }}>
+                    <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 20, lineHeight: 1.6 }}>
                       Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
                     </p>
 
-                    {/* Includes label */}
-                    <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: '#6B7280', marginBottom: 12 }}>
-                      INCLUDES
-                    </p>
-
-                    {/* 2x2 feature grid */}
-                    <div className="grid grid-cols-2 gap-x-5 gap-y-3.5 mb-7">
-                      {[
-                        { icon: MessageSquare, label: 'Ask in plain English' },
-                        { icon: BarChart3, label: 'Charts & summaries' },
-                        { icon: Gauge, label: 'Radar dashboards' },
-                        { icon: RefreshCw, label: 'Daily JobNimbus sync' },
-                      ].map(({ icon: Icon, label }) => (
-                        <div key={label} className="flex items-center gap-2.5">
+                    {/* Vertical check list — orange ring checks */}
+                    <ul className="space-y-2.5 mb-6">
+                      {PLAN_FEATURES.map(f => (
+                        <li key={f} className="flex items-center gap-3">
                           <span
-                            className="inline-flex items-center justify-center w-8 h-8 rounded-[10px] flex-shrink-0"
-                            style={{ background: 'rgba(253,80,0,0.14)', border: '1px solid rgba(253,80,0,0.32)' }}
+                            className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0"
+                            style={{ border: '1.5px solid #FD5000' }}
                           >
-                            <Icon className="w-3.5 h-3.5" style={{ color: '#FF7A33' }} strokeWidth={2.2} />
+                            <Check className="w-2.5 h-2.5" style={{ color: '#FD5000' }} strokeWidth={3} />
                           </span>
-                          <span style={{ fontSize: 13, color: '#E5E7EB', fontWeight: 500 }}>{label}</span>
-                        </div>
+                          <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
 
                     {/* Footer row — trust line + compact CTA */}
-                    <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                      <p style={{ fontSize: 12, color: '#6B7280' }}>Cancel anytime · No hidden fees</p>
+                    <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid #F0F1F3' }}>
+                      <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
                       <button
                         onClick={onUpgrade}
                         className="inline-flex items-center justify-center px-5 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
-                        style={{
-                          background: 'linear-gradient(135deg, #FD5000 0%, #F97316 100%)',
-                          boxShadow: '0 6px 18px rgba(253,80,0,0.32), 0 1px 0 rgba(255,255,255,0.18) inset',
-                          transition: 'box-shadow 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
-                        }}
-                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.boxShadow = '0 10px 24px rgba(253,80,0,0.40), 0 1px 0 rgba(255,255,255,0.22) inset')}
-                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.boxShadow = '0 6px 18px rgba(253,80,0,0.32), 0 1px 0 rgba(255,255,255,0.18) inset')}
+                        style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
+                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
                       >
                         Subscribe to Sense
                       </button>
