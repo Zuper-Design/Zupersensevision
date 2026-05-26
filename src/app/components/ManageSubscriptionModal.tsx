@@ -828,72 +828,78 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
         )}
 
         {tab === 'billing' && !isAU && (
-          <div className="pt-8 max-w-[720px]">
+          <div className="pt-8">
             <p style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.6, marginBottom: 28 }}>
               Changes to these preferences will apply to future invoices only. If you need a past invoice reissued, please contact{' '}
               <a href="mailto:billing@zuper.co" style={{ color: '#FD5000', textDecoration: 'underline' }}>billing@zuper.co</a>.
             </p>
 
-            <div className="space-y-7">
-              <div>
-                <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Company name</label>
-                <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>If specified, this name will appear on invoices instead of your organization name.</p>
-                <input defaultValue="Zuper Inc" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
-              </div>
+            <div className="grid grid-cols-2 gap-x-10 gap-y-7">
+              {/* Left column */}
+              <div className="space-y-7">
+                <div>
+                  <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Company name</label>
+                  <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>If specified, this name will appear on invoices instead of your organization name.</p>
+                  <input defaultValue="Zuper Inc" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
+                </div>
 
-              <div>
-                <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Purchase order (PO) number</label>
-                <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>Your PO number will be displayed on future invoices.</p>
-                <input className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
-              </div>
+                <div>
+                  <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Purchase order (PO) number</label>
+                  <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>Your PO number will be displayed on future invoices.</p>
+                  <input className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
+                </div>
 
-              <div>
-                <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Billing email</label>
-                <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>Invoices and other billing notifications will be sent here (in addition to being sent to the owners of your organization).</p>
-                <input defaultValue="finance@zuper.co" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
-              </div>
-
-              <div>
-                <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Primary business address</label>
-                <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>This is the physical address of the company purchasing Sense services and is used to calculate any applicable sales tax.</p>
-                <div className="space-y-2.5">
-                  <div className="relative">
-                    <select defaultValue="United States of America" className="w-full appearance-none px-3.5 py-2.5 rounded-lg text-[14px] outline-none pr-9" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }}>
-                      <option>United States of America</option>
-                      <option>Canada</option>
-                      <option>United Kingdom</option>
-                      <option>Australia</option>
-                      <option>India</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
-                  </div>
-                  <input defaultValue="24754 NE 3RD PL" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
-                  <input placeholder="Address line 2" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <input defaultValue="SAMMAMISH" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
-                    <input defaultValue="98074" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
-                  </div>
-                  <div className="relative">
-                    <select defaultValue="Washington" className="w-full appearance-none px-3.5 py-2.5 rounded-lg text-[14px] outline-none pr-9" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }}>
-                      <option>Washington</option>
-                      <option>California</option>
-                      <option>New York</option>
-                      <option>Texas</option>
-                      <option>Florida</option>
-                    </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
-                  </div>
+                <div>
+                  <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Billing email</label>
+                  <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>Invoices and other billing notifications will be sent here (in addition to being sent to the owners of your organization).</p>
+                  <input defaultValue="finance@zuper.co" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
                 </div>
               </div>
 
-              <div className="flex justify-end pt-2">
-                <button
-                  className="px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white transition-all"
-                  style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 4px 14px rgba(0,0,0,0.18)' }}
-                >
-                  Save changes
-                </button>
+              {/* Right column */}
+              <div className="space-y-7">
+                <div>
+                  <label style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', display: 'block', marginBottom: 4 }}>Primary business address</label>
+                  <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 10 }}>This is the physical address of the company purchasing Sense services and is used to calculate any applicable sales tax.</p>
+                  <div className="space-y-2.5">
+                    <div className="relative">
+                      <select defaultValue="United States of America" className="w-full appearance-none px-3.5 py-2.5 rounded-lg text-[14px] outline-none pr-9" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }}>
+                        <option>United States of America</option>
+                        <option>Canada</option>
+                        <option>United Kingdom</option>
+                        <option>Australia</option>
+                        <option>India</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
+                    </div>
+                    <input defaultValue="24754 NE 3RD PL" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
+                    <input placeholder="Address line 2" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <input defaultValue="SAMMAMISH" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
+                      <input defaultValue="98074" className="w-full px-3.5 py-2.5 rounded-lg text-[14px] outline-none" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }} />
+                    </div>
+                    <div className="relative">
+                      <select defaultValue="Washington" className="w-full appearance-none px-3.5 py-2.5 rounded-lg text-[14px] outline-none pr-9" style={{ background: '#fff', border: '1px solid #E6E8EC', color: '#1C1E21' }}>
+                        <option>Washington</option>
+                        <option>California</option>
+                        <option>New York</option>
+                        <option>Texas</option>
+                        <option>Florida</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            <div className="flex justify-end pt-8">
+              <button
+                className="px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white transition-all"
+                style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 4px 14px rgba(0,0,0,0.18)' }}
+              >
+                Save changes
+              </button>
             </div>
           </div>
         )}
