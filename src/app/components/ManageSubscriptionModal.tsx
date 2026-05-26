@@ -311,50 +311,32 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                   </div>
                 </div>
 
-                {/* Plan card — subtle white marketing card with gradient border that lights up on hover */}
-                <style>{`
-                  .plan-shine-card {
-                    border: 1px solid transparent;
-                    background:
-                      linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                      linear-gradient(135deg, rgba(253,80,0,0.55) 0%, rgba(251,191,36,0.35) 18%, #E6E8EC 38%, #E6E8EC 62%, rgba(251,191,36,0.35) 82%, rgba(253,80,0,0.55) 100%) border-box;
-                  }
-                  .plan-shine-card:hover {
-                    background:
-                      linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                      linear-gradient(135deg, #FD5000 0%, #F97316 30%, #FBBF24 50%, #F97316 70%, #FD5000 100%) border-box;
-                  }
-                `}</style>
-                <div className="plan-shine-card mt-4 rounded-2xl overflow-hidden relative">
-                  {/* Very faint orange bloom — barely there */}
-                  <span aria-hidden style={{ position: 'absolute', top: -60, right: -50, width: 220, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.06), transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
-
-                  <div className="relative px-7 pt-7 pb-6">
+                {/* Plan card — Vercel-style grey card, subtle accent, bare check list */}
+                <div
+                  className="mt-4 rounded-2xl overflow-hidden relative"
+                  style={{ background: '#F8F9FB', border: '1px solid #E6E8EC' }}
+                >
+                  <div className="px-7 pt-7 pb-6">
                     {/* Title */}
                     <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
                       Subscribe to Zuper Sense for <span style={{ color: '#FD5000' }}>$399 / mo</span>
                     </h3>
-                    <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 20, lineHeight: 1.6 }}>
+                    <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 22, lineHeight: 1.6 }}>
                       Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
                     </p>
 
-                    {/* Vertical check list — orange ring checks */}
-                    <ul className="space-y-2.5 mb-6">
+                    {/* Bare check list — no ring, just orange stroke */}
+                    <ul className="space-y-3 mb-7">
                       {PLAN_FEATURES.map(f => (
                         <li key={f} className="flex items-center gap-3">
-                          <span
-                            className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0"
-                            style={{ border: '1.5px solid #FD5000' }}
-                          >
-                            <Check className="w-2.5 h-2.5" style={{ color: '#FD5000' }} strokeWidth={3} />
-                          </span>
+                          <Check className="w-[15px] h-[15px] flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.5} />
                           <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
                         </li>
                       ))}
                     </ul>
 
                     {/* Footer row — trust line + compact CTA */}
-                    <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid #F0F1F3' }}>
+                    <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid #E6E8EC' }}>
                       <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
                       <button
                         onClick={onUpgrade}
