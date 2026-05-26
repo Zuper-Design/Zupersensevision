@@ -311,43 +311,38 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                   </div>
                 </div>
 
-                {/* Plan card — Vercel-style grey card, subtle accent, bare check list */}
-                <div
-                  className="mt-4 rounded-2xl overflow-hidden relative"
-                  style={{ background: '#F8F9FB', border: '1px solid #E6E8EC' }}
-                >
-                  <div className="px-7 pt-7 pb-6">
-                    {/* Title */}
-                    <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
-                      Subscribe to Zuper Sense for <span style={{ color: '#FD5000' }}>$399 / mo</span>
-                    </h3>
-                    <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 22, lineHeight: 1.6 }}>
-                      Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
-                    </p>
+                {/* Plan section — open layout, hairline separators (no card chrome) */}
+                <div className="mt-10 pt-8" style={{ borderTop: '1px solid #E6E8EC' }}>
+                  {/* Title */}
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.25 }}>
+                    Subscribe to Zuper Sense for <span style={{ color: '#FD5000' }}>$399 / mo</span>
+                  </h3>
+                  <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 8, marginBottom: 22, lineHeight: 1.6 }}>
+                    Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
+                  </p>
 
-                    {/* Bare check list — no ring, just orange stroke */}
-                    <ul className="space-y-3 mb-7">
-                      {PLAN_FEATURES.map(f => (
-                        <li key={f} className="flex items-center gap-3">
-                          <Check className="w-[15px] h-[15px] flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.5} />
-                          <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Bare check list — no ring, just orange stroke */}
+                  <ul className="space-y-3 mb-8">
+                    {PLAN_FEATURES.map(f => (
+                      <li key={f} className="flex items-center gap-3">
+                        <Check className="w-[15px] h-[15px] flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.5} />
+                        <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                    {/* Footer row — trust line + compact CTA */}
-                    <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid #E6E8EC' }}>
-                      <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
-                      <button
-                        onClick={onUpgrade}
-                        className="inline-flex items-center justify-center px-5 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
-                        style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
-                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
-                      >
-                        Subscribe to Sense
-                      </button>
-                    </div>
+                  {/* Footer row — trust line + compact CTA */}
+                  <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid #E6E8EC' }}>
+                    <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
+                    <button
+                      onClick={onUpgrade}
+                      className="inline-flex items-center justify-center px-5 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
+                      style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
+                    >
+                      Subscribe to Sense
+                    </button>
                   </div>
                 </div>
               </>
