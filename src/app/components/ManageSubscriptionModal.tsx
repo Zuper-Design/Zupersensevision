@@ -266,6 +266,37 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   Subscribe to Sense
                 </button>
               </div>
+            ) : cancelled ? (
+              /* Cancelled — same compact template as RG, with CANCELLED pill + Reactivate CTA */
+              <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(180,83,9,0.10)', color: '#B45309', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                  >
+                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#D97706' }} />
+                    CANCELLED
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1.5 mb-3">
+                  <span style={{ fontSize: 36, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
+                  <span style={{ fontSize: 15, color: '#9CA3AF' }}>/ month</span>
+                </div>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 22 }}>
+                  Your plan has been cancelled. You'll keep access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>.
+                </p>
+                <button
+                  onClick={() => setCancelled(false)}
+                  className="w-full inline-flex items-center justify-center gap-1.5 h-11 rounded-lg text-[14px] font-semibold text-white"
+                  style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
+                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  Reactivate subscription
+                </button>
+              </div>
             ) : (
             <div
               className="rounded-2xl p-7"
