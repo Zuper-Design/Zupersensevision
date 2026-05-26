@@ -274,47 +274,35 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               </>
             ) : isAU || isVp ? (
               <>
-                {/* Status card — matches RG: name + pill + stroke CTA, price + date row */}
+                {/* Status card */}
                 <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
                   <div className="px-6 py-6">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>
-                          Zuper Sense
-                        </h2>
-                        {isVp ? (
-                          <span
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                            style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                          >
-                            <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
-                            TRIAL ENDED
-                          </span>
-                        ) : (
-                          <span
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                            style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                          >
-                            <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
-                            FREE TRIAL
-                          </span>
-                        )}
-                      </div>
-                      <button
-                        onClick={onUpgrade}
-                        className="inline-flex items-center px-3 h-8 rounded-md text-[12.5px] font-medium text-[#4B5563] flex-shrink-0 active:scale-[0.98]"
-                        style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
-                      >
-                        Subscribe to Sense
-                      </button>
+                    <div className="flex items-center gap-2.5 min-w-0 mb-2">
+                      <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>
+                        {isVp ? 'Trial ended' : 'Free trial'}
+                      </h2>
+                      {isVp ? (
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
+                          style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                        >
+                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
+                          EXPIRED
+                        </span>
+                      ) : (
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
+                          style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                        >
+                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
+                          ACTIVE
+                        </span>
+                      )}
                     </div>
-                    <p className="mt-3" style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
-                      <span style={{ color: '#1C1E21', fontWeight: 600 }}>$399</span> USD / month <span style={{ color: '#D1D5DB' }}>·</span>{' '}
+                    <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
                       {isVp
-                        ? <>Trial ended <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span></>
-                        : <>Trial ends <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span></>}
+                        ? <>Your trial ended on <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>. Subscribe to restore access to Sense.</>
+                        : <>Full access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span>. Subscribe anytime to keep going.</>}
                     </p>
                   </div>
                 </div>
