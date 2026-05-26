@@ -329,7 +329,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       </div>
                     </div>
                     <p style={{ fontSize: 13, color: '#4B5563', marginBottom: 18, lineHeight: 1.55 }}>
-                      Subscribe to <span style={{ color: '#1C1E21', fontWeight: 500 }}>Zuper Sense</span> to get full access — billed monthly, cancel anytime.
+                      Subscribe to <span style={{ color: '#1C1E21', fontWeight: 500 }}>Zuper Sense</span> to get full access — billed monthly.
                     </p>
 
                     {/* Feature list — orange accent on checks */}
