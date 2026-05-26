@@ -177,9 +177,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
               /* Active paid (RG) — single unified surface, Manus-style heading + detail rows + inline billing history */
               <>
                 <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                  <div className="px-6 py-5">
+                  <div className="px-6 py-6">
                     {/* Row 1: name + pill (left) | Cancel subscription stroke button (right) */}
-                    <div className="flex items-center justify-between gap-4 mb-2.5">
+                    <div className="flex items-center justify-between gap-4 mb-4">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
                         <span
@@ -209,7 +209,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     </div>
 
                     {/* Row 3: payment method, minimal */}
-                    <p style={{ fontSize: 12.5, color: '#9CA3AF', marginTop: 8 }}>
+                    <p style={{ fontSize: 12.5, color: '#9CA3AF', marginTop: 14 }}>
                       Paid with <span style={{ color: '#6B7280', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span>
                     </p>
                   </div>
