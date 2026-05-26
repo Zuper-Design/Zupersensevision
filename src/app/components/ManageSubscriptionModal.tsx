@@ -159,18 +159,6 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
 
         {tab === 'overview' && (
           <>
-          {isVp && (
-            <div
-              className="mt-6 flex items-start gap-3 rounded-xl p-4"
-              style={{ background: '#FDECEC', border: '1px solid #F5C6C6' }}
-            >
-              <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#B3261E' }} />
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: '#7A1D1A' }}>Your trial has ended</p>
-                <p style={{ fontSize: 13, color: '#9A302C', marginTop: 2 }}>Subscribe to restore access to Sense.</p>
-              </div>
-            </div>
-          )}
           {paymentFailed && !isVp && (
             <div
               className="mt-6 flex items-start gap-3 rounded-xl p-4"
@@ -222,39 +210,33 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 </div>
               </div>
             ) : isVp ? (
-              /* Compact trial-ended card — same shape as RG, with subscribe CTA */
-              <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                <div className="px-6 pt-6 pb-5 flex items-start justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2.5 mb-2">
-                      <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
-                      <span
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                      >
-                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
-                        TRIAL ENDED
-                      </span>
-                    </div>
-                    <div className="flex items-baseline gap-1.5">
-                      <span style={{ fontSize: 32, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
-                      <span style={{ fontSize: 14, color: '#9CA3AF' }}>/ month</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="px-6 h-14 flex items-center justify-between gap-3 border-t" style={{ borderColor: '#F0F1F3' }}>
-                  <span style={{ fontSize: 13, color: '#6B7280' }}>Subscribe to restore access</span>
-                  <button
-                    onClick={onUpgrade}
-                    className="inline-flex items-center gap-1.5 px-3.5 h-9 rounded-lg text-[13px] font-semibold text-white"
-                    style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
-                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+              /* Compact trial-ended card — single flowing surface, no internal dividers */
+              <div className="rounded-xl bg-white px-6 py-6" style={{ border: '1px solid #E6E8EC' }}>
+                <div className="flex items-center gap-2.5 mb-2">
+                  <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Subscribe to Sense
-                  </button>
+                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
+                    TRIAL ENDED
+                  </span>
                 </div>
+                <div className="flex items-baseline gap-1.5 mb-1">
+                  <span style={{ fontSize: 32, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
+                  <span style={{ fontSize: 14, color: '#9CA3AF' }}>/ month</span>
+                </div>
+                <p style={{ fontSize: 13, color: '#6B7280', marginTop: 14 }}>Your trial has ended — subscribe to restore access to Sense.</p>
+                <button
+                  onClick={onUpgrade}
+                  className="mt-5 inline-flex items-center gap-1.5 px-4 h-10 rounded-lg text-[13.5px] font-semibold text-white"
+                  style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
+                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Subscribe to Sense
+                </button>
               </div>
             ) : (
             <div
