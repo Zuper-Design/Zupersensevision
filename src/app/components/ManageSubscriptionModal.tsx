@@ -185,6 +185,43 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
           )}
           <div className={`pt-8 grid ${cancelled || (!isAU && !isVp && !paymentFailed) ? 'grid-cols-1' : 'grid-cols-[1fr_360px]'} gap-8 items-stretch`}>
             {/* ── Left: Plan hero + billing info ── */}
+            {!isAU && !isVp && !paymentFailed && !cancelled ? (
+              /* Compact active-paid card — Claude/OpenAI billing style */
+              <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
+                <div className="px-5 py-4 flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em' }}>Zuper Sense</h2>
+                      <span
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full"
+                        style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}
+                      >
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
+                        ACTIVE
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.1 }}>$399</span>
+                      <span style={{ fontSize: 13, color: '#9CA3AF' }}>/ month</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="px-5 h-11 flex items-center justify-between border-t" style={{ borderColor: '#F0F1F3' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Next billing date</span>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21' }}>May 21, 2026</span>
+                </div>
+                <div className="px-5 h-11 flex items-center justify-end border-t" style={{ borderColor: '#F0F1F3' }}>
+                  <button
+                    onClick={() => setConfirmCancel(true)}
+                    style={{ fontSize: 13, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#DC2626')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9CA3AF')}
+                  >
+                    Cancel subscription
+                  </button>
+                </div>
+              </div>
+            ) : (
             <div
               className="rounded-2xl p-7"
               style={{ border: '1px solid #E6E8EC', background: '#FFFFFF' }}
@@ -316,6 +353,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 )}
               </div>
             </div>
+            )}
 
             {/* ── Right: Plan includes card ── hidden for active paid users */}
             {!cancelled && (isAU || isVp || paymentFailed) && (
