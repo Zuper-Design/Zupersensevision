@@ -226,12 +226,12 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                     <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
                   </div>
                   {/* Column headers */}
-                  <div className="px-1 h-9 flex items-center gap-4 border-b" style={{ borderColor: '#E6E8EC' }}>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 150px' }}>Invoice</span>
+                  <div className="px-1 h-9 flex items-center gap-8 border-b" style={{ borderColor: '#E6E8EC' }}>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 170px' }}>Invoice</span>
                     <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 110px' }}>Status</span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 90px' }}>Amount</span>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 100px' }}>Amount</span>
                     <span style={{ fontSize: 12, color: '#9CA3AF', flex: 1 }}>Created</span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 120px', textAlign: 'right' }}>Actions</span>
+                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 180px', textAlign: 'right' }}>Actions</span>
                   </div>
                   {/* Rows */}
                   {INVOICES.slice(0, 8).map((inv) => {
@@ -240,10 +240,10 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                     return (
                       <div
                         key={inv.id}
-                        className="px-1 h-12 flex items-center gap-4 border-b"
+                        className="px-1 h-12 flex items-center gap-8 border-b"
                         style={{ borderColor: '#F0F1F3' }}
                       >
-                        <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
+                        <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 170px' }}>{inv.id}</span>
                         <div style={{ flex: '0 0 110px' }}>
                           <span
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
@@ -253,9 +253,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                             {style.label.toUpperCase()}
                           </span>
                         </div>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 100px' }}>{inv.amount}</span>
                         <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
-                        <div className="flex items-center gap-1 flex-shrink-0 justify-end" style={{ flex: '0 0 120px' }}>
+                        <div className="flex items-center gap-1.5 flex-shrink-0 justify-end" style={{ flex: '0 0 180px' }}>
                           {needsPay && (
                             <button
                               className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
@@ -264,6 +264,12 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                               Pay now
                             </button>
                           )}
+                          <button
+                            className="inline-flex items-center px-2.5 h-7 rounded-md text-[#4B5563] hover:text-[#1C1E21] hover:bg-[#F3F4F6] text-[12.5px] font-medium active:scale-[0.98]"
+                            style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            View
+                          </button>
                           <button
                             className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#9CA3AF] hover:text-[#1C1E21] active:scale-[0.94]"
                             style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
@@ -735,12 +741,12 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
               <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
             </div>
             {/* Column headers */}
-            <div className="px-1 h-9 flex items-center gap-4 border-b" style={{ borderColor: '#E6E8EC' }}>
-              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 150px' }}>Invoice</span>
+            <div className="px-1 h-9 flex items-center gap-8 border-b" style={{ borderColor: '#E6E8EC' }}>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 170px' }}>Invoice</span>
               <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 110px' }}>Status</span>
-              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 90px' }}>Amount</span>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 100px' }}>Amount</span>
               <span style={{ fontSize: 12, color: '#9CA3AF', flex: 1 }}>Created</span>
-              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 120px', textAlign: 'right' }}>Actions</span>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 180px', textAlign: 'right' }}>Actions</span>
             </div>
             {/* Rows */}
             {INVOICES.map((inv) => {
@@ -749,10 +755,10 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
               return (
                 <div
                   key={inv.id}
-                  className="px-1 h-12 flex items-center gap-4 border-b"
+                  className="px-1 h-12 flex items-center gap-8 border-b"
                   style={{ borderColor: '#F0F1F3' }}
                 >
-                  <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
+                  <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 170px' }}>{inv.id}</span>
                   <div style={{ flex: '0 0 110px' }}>
                     <span
                       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
@@ -762,9 +768,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                       {style.label.toUpperCase()}
                     </span>
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 100px' }}>{inv.amount}</span>
                   <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
-                  <div className="flex items-center gap-1 flex-shrink-0 justify-end" style={{ flex: '0 0 120px' }}>
+                  <div className="flex items-center gap-1.5 flex-shrink-0 justify-end" style={{ flex: '0 0 180px' }}>
                     {needsPay && (
                       <button
                         className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
@@ -773,6 +779,12 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                         Pay now
                       </button>
                     )}
+                    <button
+                      className="inline-flex items-center px-2.5 h-7 rounded-md text-[#4B5563] hover:text-[#1C1E21] hover:bg-[#F3F4F6] text-[12.5px] font-medium active:scale-[0.98]"
+                      style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    >
+                      View
+                    </button>
                     <button
                       className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#9CA3AF] hover:text-[#1C1E21] active:scale-[0.94]"
                       style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
