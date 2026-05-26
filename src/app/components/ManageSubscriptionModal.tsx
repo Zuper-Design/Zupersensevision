@@ -274,62 +274,89 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                 </div>
               </>
             ) : isAU || isVp ? (
-              /* Trial / trial-ended — bigger card, Plan includes inline + full-width Subscribe */
-              <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
-                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 14 }}>
-                  Your trial ends on <span style={{ color: '#1C1E21', fontWeight: 600 }}>May 21, 2026</span>.
-                </p>
-                <div className="flex items-center gap-2.5 mb-3">
-                  <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
-                  {isVp ? (
-                    <span
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                      style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                    >
-                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
-                      TRIAL ENDED
-                    </span>
-                  ) : (
-                    <span
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                      style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                    >
-                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
-                      FREE TRIAL
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-baseline gap-1.5 mb-6">
-                  <span style={{ fontSize: 36, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
-                  <span style={{ fontSize: 15, color: '#9CA3AF' }}>/ month</span>
+              <>
+                {/* Trial / trial-ended — compact 3-line card matching RG */}
+                <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
+                  <div className="px-6 py-6">
+                    {/* Row 1: name + pill (left) | Subscribe filled button (right) */}
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
+                        {isVp ? (
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
+                            style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                          >
+                            <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
+                            TRIAL ENDED
+                          </span>
+                        ) : (
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
+                            style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                          >
+                            <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
+                            FREE TRIAL
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={onUpgrade}
+                        className="inline-flex items-center gap-1.5 px-3.5 h-8 rounded-md text-[12.5px] font-semibold text-white flex-shrink-0 active:scale-[0.98]"
+                        style={{ background: '#1C1E21', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
+                        onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Subscribe to Sense
+                      </button>
+                    </div>
+
+                    {/* Row 2: price + trial date on one line */}
+                    <div className="flex items-baseline gap-2 flex-wrap" style={{ fontSize: 13.5, color: '#6B7280' }}>
+                      <span><span style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em' }}>$399</span> <span style={{ fontWeight: 500 }}>USD / month</span></span>
+                      <span style={{ color: '#C0C4CC' }}>·</span>
+                      <span>{isVp ? 'Trial ended ' : 'Trial ends '}<span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>{!isVp && <span style={{ color: '#9CA3AF' }}> (in 31 days)</span>}</span>
+                    </div>
+
+                    {/* Row 3: helper line */}
+                    <p style={{ fontSize: 12.5, color: '#9CA3AF', marginTop: 14 }}>
+                      {isVp ? 'Add a payment method to restore access.' : 'No payment method on file. Subscribe to keep access after the trial ends.'}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Plan includes — inline list */}
-                <div className="pt-5" style={{ borderTop: '1px solid #F0F1F3' }}>
-                  <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>What's included</p>
-                  <ul className="space-y-2.5 mb-6">
-                    {PLAN_FEATURES.map(f => (
-                      <li key={f} className="flex items-start gap-2.5">
-                        <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full flex-shrink-0 mt-0.5" style={{ background: '#F3F4F6' }}>
-                          <Check className="w-2.5 h-2.5" style={{ color: '#1C1E21' }} strokeWidth={3} />
-                        </span>
-                        <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <button
-                  onClick={onUpgrade}
-                  className="w-full inline-flex items-center justify-center gap-1.5 h-11 rounded-lg text-[14px] font-semibold text-white"
-                  style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+                {/* Plan includes — gradient feature card */}
+                <div
+                  className="mt-4 rounded-xl overflow-hidden relative"
+                  style={{
+                    background: 'linear-gradient(135deg, #F5F3FF 0%, #FAF5FF 35%, #FDF2F8 100%)',
+                    border: '1px solid #EEE8FF',
+                  }}
                 >
-                  <Sparkles className="w-4 h-4" />
-                  Subscribe to Sense
-                </button>
-              </div>
+                  {/* Decorative bloom */}
+                  <span aria-hidden style={{ position: 'absolute', top: -60, right: -40, width: 220, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(167,139,250,0.30), transparent 70%)', filter: 'blur(28px)', pointerEvents: 'none' }} />
+                  <span aria-hidden style={{ position: 'absolute', bottom: -80, left: -40, width: 220, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(244,114,182,0.22), transparent 70%)', filter: 'blur(32px)', pointerEvents: 'none' }} />
+                  <div className="relative px-6 py-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(124,58,237,0.12)' }}>
+                        <Sparkles className="w-3 h-3" style={{ color: '#7C3AED' }} />
+                      </div>
+                      <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>What's included</h3>
+                    </div>
+                    <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+                      {PLAN_FEATURES.map(f => (
+                        <li key={f} className="flex items-start gap-2">
+                          <span className="inline-flex items-center justify-center w-[16px] h-[16px] rounded-full flex-shrink-0 mt-0.5" style={{ background: 'rgba(124,58,237,0.14)' }}>
+                            <Check className="w-2.5 h-2.5" style={{ color: '#7C3AED' }} strokeWidth={3} />
+                          </span>
+                          <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </>
             ) : cancelled ? (
               /* Cancelled — state copy on top, CANCELLED pill, full-width Reactivate CTA */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
