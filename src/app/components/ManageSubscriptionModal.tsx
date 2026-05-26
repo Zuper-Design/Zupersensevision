@@ -7,6 +7,7 @@ interface ManageSubscriptionModalProps {
   onClose: () => void;
   isVp?: boolean;
   isAU?: boolean;
+  isMJ?: boolean;
   paymentFailed?: boolean;
   onUpgrade?: () => void;
 }
@@ -65,7 +66,7 @@ const PLAN_FEATURES = [
 
 type Tab = 'overview' | 'payment' | 'history' | 'billing';
 
-export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFailed, onUpgrade }: ManageSubscriptionModalProps) {
+export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, paymentFailed, onUpgrade }: ManageSubscriptionModalProps) {
   const [tab, setTab] = useState<Tab>('overview');
   const [editingCard, setEditingCard] = useState(false);
   const [cards, setCards] = useState<{ id: string; brand: 'visa' | 'mc'; last4: string; exp: string; isDefault: boolean }[]>([
@@ -114,6 +115,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
   const TABS: { id: Tab; label: string }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'payment', label: 'Payment methods' },
+    ...(!isMJ ? [{ id: 'history' as Tab, label: 'Billing history' }] : []),
     { id: 'billing', label: 'Billing information' },
   ];
 
@@ -214,7 +216,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Billing history — open table, hairline rows only (no card chrome) */}
+                {/* Billing history inline — MJ only (RG sees this in the Billing history tab) */}
+                {isMJ && (
                 <div className="mt-8">
                   <div className="flex items-end justify-between mb-4">
                     <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>Billing history</h3>
@@ -271,6 +274,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                     );
                   })}
                 </div>
+                )}
               </>
             ) : isAU || isVp ? (
               <>
@@ -747,75 +751,60 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
 
         {tab === 'history' && !isAU && (
           <div className="pt-8">
-            <p style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 14 }}>Showing invoices within the past 12 months</p>
-            <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #E6E8EC', background: '#fff' }}>
-              <div
-                className="grid items-center px-6 py-3"
-                style={{ gridTemplateColumns: 'minmax(150px, 1.3fr) minmax(90px, 0.7fr) minmax(90px, 0.7fr) minmax(180px, 1.4fr) 80px 110px', columnGap: 16, background: '#FAFBFC', borderBottom: '1px solid #EDEFF2' }}
-              >
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.09em', textAlign: 'left' }}>Invoice</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.09em', textAlign: 'left' }}>Status</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.09em', textAlign: 'left' }}>Amount</span>
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.09em', textAlign: 'left' }}>Created</span>
-                <span />
-                <span style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.09em', textAlign: 'right' }}>Actions</span>
-              </div>
-              {INVOICES.map((inv, i) => {
-                const s = STATUS_STYLE[inv.status];
-                return (
-                  <div
-                    key={inv.id}
-                    className="grid items-center px-6 py-2.5 transition-colors"
-                    style={{
-                      gridTemplateColumns: 'minmax(150px, 1.3fr) minmax(90px, 0.7fr) minmax(90px, 0.7fr) minmax(180px, 1.4fr) 100px 110px',
-                      columnGap: 24,
-                      borderBottom: i === INVOICES.length - 1 ? 'none' : '1px solid #F2F3F5',
-                    }}
-                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#FAFBFC')}
-                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = 'transparent')}
-                  >
-                    <span style={{ fontSize: 13, color: '#1C1E21', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>{inv.id}</span>
-                    <span className="flex">
-                      <span
-                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
-                        style={{ background: s.bg, color: s.color, fontSize: 11, fontWeight: 600 }}
-                      >
-                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: s.color, opacity: 0.8 }} />
-                        {s.label}
-                      </span>
-                    </span>
-                    <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{inv.amount}</span>
-                    <span style={{ fontSize: 13, color: '#6B7280', whiteSpace: 'nowrap' }}>{inv.created}</span>
-                    <span className="flex">
-                      {(inv.status === 'unpaid' || inv.status === 'overdue') && (
-                        <button
-                          className="px-3 py-1 rounded-lg text-[12px] font-semibold text-white transition-colors"
-                          style={{ background: '#1C1E21' }}
-                          onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
-                          onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
-                        >
-                          Pay now
-                        </button>
-                      )}
-                    </span>
-                    <span className="flex items-center gap-1 justify-end">
-                      <button
-                        className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
-                        title="Download invoice"
-                      >
-                        <Download className="w-3.5 h-3.5 text-[#6B7280]" />
-                      </button>
-                      <button
-                        className="px-2.5 py-1 rounded-lg text-[13px] font-medium text-[#1C1E21] hover:bg-[#F3F4F6] transition-colors"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                      >
-                        View
-                      </button>
+            <div className="flex items-end justify-between mb-4">
+              <p style={{ fontSize: 13, color: '#9CA3AF' }}>Showing invoices within the past 12 months</p>
+              <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
+            </div>
+            {/* Column headers */}
+            <div className="px-1 h-9 flex items-center gap-4 border-b" style={{ borderColor: '#E6E8EC' }}>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 150px' }}>Invoice</span>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 110px' }}>Status</span>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 90px' }}>Amount</span>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: 1 }}>Created</span>
+              <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 120px', textAlign: 'right' }}>Actions</span>
+            </div>
+            {/* Rows */}
+            {INVOICES.map((inv) => {
+              const style = STATUS_STYLE[inv.status];
+              const needsPay = inv.status === 'unpaid' || inv.status === 'overdue';
+              return (
+                <div
+                  key={inv.id}
+                  className="px-1 h-12 flex items-center gap-4 border-b"
+                  style={{ borderColor: '#F0F1F3' }}
+                >
+                  <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 150px' }}>{inv.id}</span>
+                  <div style={{ flex: '0 0 110px' }}>
+                    <span
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
+                      style={{ background: style.bg, color: style.color, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}
+                    >
+                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: style.color }} />
+                      {style.label.toUpperCase()}
                     </span>
                   </div>
-                );
-              })}
-            </div>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 90px' }}>{inv.amount}</span>
+                  <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
+                  <div className="flex items-center gap-1 flex-shrink-0 justify-end" style={{ flex: '0 0 120px' }}>
+                    {needsPay && (
+                      <button
+                        className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
+                        style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      >
+                        Pay now
+                      </button>
+                    )}
+                    <button
+                      className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#9CA3AF] hover:text-[#1C1E21] active:scale-[0.94]"
+                      style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      aria-label="Download invoice"
+                    >
+                      <Download className="w-[13px] h-[13px]" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 

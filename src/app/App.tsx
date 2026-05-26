@@ -590,7 +590,7 @@ function AppContent() {
               </div>
             ) : manageSubOpen ? (
               <div className="flex-1 overflow-hidden">
-                <ManageSubscriptionModal isOpen={true} onClose={() => { setManageSubOpen(false); setActiveView('chat'); setActiveSubPage(null); setActivePage(null); }} isVp={currentUser === 'VP'} isAU={currentUser === 'AU'} paymentFailed={paymentFailed} onUpgrade={() => { setManageSubOpen(false); setPurchaseSuccess(false); setCheckoutPageOpen(true); }} />
+                <ManageSubscriptionModal isOpen={true} onClose={() => { setManageSubOpen(false); setActiveView('chat'); setActiveSubPage(null); setActivePage(null); }} isVp={currentUser === 'VP'} isAU={currentUser === 'AU'} isMJ={currentUser === 'MJ'} paymentFailed={paymentFailed} onUpgrade={() => { setManageSubOpen(false); setPurchaseSuccess(false); setCheckoutPageOpen(true); }} />
               </div>
             ) : (
               <>
