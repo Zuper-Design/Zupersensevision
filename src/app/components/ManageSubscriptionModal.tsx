@@ -114,7 +114,6 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
   const TABS: { id: Tab; label: string }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'payment', label: 'Payment methods' },
-    { id: 'history', label: 'Billing history' },
     { id: 'billing', label: 'Billing information' },
   ];
 
