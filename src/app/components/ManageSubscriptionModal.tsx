@@ -132,17 +132,17 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
         </button>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 22 }}>Subscription & billing</h1>
 
-        {/* Tabs — pill style, no underline */}
-        <div className="flex items-center gap-1 p-1 rounded-lg" style={{ background: '#F3F4F6', width: 'fit-content' }}>
+        {/* Tabs — subtle pill segmented control */}
+        <div className="flex items-center gap-0.5 p-1 rounded-lg" style={{ background: '#F8F9FB', width: 'fit-content' }}>
           {TABS.map(t => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className="relative px-3.5 h-8 inline-flex items-center rounded-md"
+              className="relative px-3 h-7 inline-flex items-center rounded-md"
               style={{
-                fontSize: 13,
+                fontSize: 12.5,
                 fontWeight: tab === t.id ? 600 : 500,
-                color: tab === t.id ? '#1C1E21' : '#6B7280',
+                color: tab === t.id ? '#1C1E21' : '#9CA3AF',
                 opacity: isAU && t.id !== 'overview' ? 0.45 : 1,
                 transition: 'color 140ms cubic-bezier(0.23,1,0.32,1)',
               }}
@@ -151,7 +151,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                 <motion.span
                   layoutId="sub-tab-pill"
                   className="absolute inset-0 rounded-md"
-                  style={{ background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)' }}
+                  style={{ background: '#FFFFFF', boxShadow: '0 1px 2px rgba(28,30,33,0.05)' }}
                   transition={{ type: 'spring', duration: 0.32, bounce: 0.18 }}
                 />
               )}
