@@ -307,7 +307,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   </div>
                 </div>
 
-                {/* Plan card — subtle white marketing card with shiny gradient border + hover shine */}
+                {/* Plan card — subtle white marketing card with gradient border that lights up on hover */}
                 <style>{`
                   .plan-shine-card {
                     border: 1px solid transparent;
@@ -320,24 +320,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                       linear-gradient(#FFFFFF, #FFFFFF) padding-box,
                       linear-gradient(135deg, #FD5000 0%, #F97316 30%, #FBBF24 50%, #F97316 70%, #FD5000 100%) border-box;
                   }
-                  .plan-shine-sweep {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 100%;
-                    width: 40%;
-                    background: linear-gradient(120deg, transparent 0%, rgba(253,80,0,0.22) 50%, transparent 100%);
-                    transform: translateX(-180%) skewX(-15deg);
-                    transition: transform 900ms cubic-bezier(0.23, 1, 0.32, 1);
-                    pointer-events: none;
-                  }
-                  .plan-shine-card:hover .plan-shine-sweep {
-                    transform: translateX(420%) skewX(-15deg);
-                  }
                 `}</style>
                 <div className="plan-shine-card mt-4 rounded-2xl overflow-hidden relative">
-                  {/* Sweeping shine on hover */}
-                  <span aria-hidden className="plan-shine-sweep" />
                   {/* Very faint orange bloom — barely there */}
                   <span aria-hidden style={{ position: 'absolute', top: -60, right: -50, width: 220, height: 200, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(253,80,0,0.06), transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
 
