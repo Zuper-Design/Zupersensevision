@@ -210,7 +210,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
             ) : isAU || isVp ? (
               /* Trial / trial-ended — bigger card, Plan includes inline + full-width Subscribe */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
-                <p style={{ fontSize: 14, color: isVp ? '#B3261E' : '#6D28D9', fontWeight: 500, lineHeight: 1.55, marginBottom: 14 }}>
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 14 }}>
                   {isVp
                     ? 'Your trial has ended — subscribe to restore access to Sense.'
                     : 'You\'re on a free trial until May 21, 2026. Subscribe anytime to keep access.'}
@@ -228,9 +228,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
                   ) : (
                     <span
                       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                      style={{ background: 'rgba(124,58,237,0.10)', color: '#6D28D9', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                      style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
                     >
-                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#7C3AED' }} />
+                      <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
                       FREE TRIAL
                     </span>
                   )}
@@ -269,8 +269,8 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, paymentFa
             ) : cancelled ? (
               /* Cancelled — state copy on top, CANCELLED pill, full-width Reactivate CTA */
               <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
-                <p style={{ fontSize: 14, color: '#B45309', fontWeight: 500, lineHeight: 1.55, marginBottom: 14 }}>
-                  Your plan has been cancelled. You'll keep access until <span style={{ fontWeight: 600 }}>May 21, 2026</span>.
+                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 14 }}>
+                  Your plan has been cancelled. You'll keep access until <span style={{ color: '#1C1E21', fontWeight: 600 }}>May 21, 2026</span>.
                 </p>
                 <div className="flex items-center gap-2.5 mb-3">
                   <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
