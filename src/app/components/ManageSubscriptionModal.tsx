@@ -132,28 +132,30 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
         </button>
         <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 22 }}>Subscription & billing</h1>
 
-        {/* Tabs */}
-        <div className="flex items-center gap-7 border-b" style={{ borderColor: '#E6E8EC' }}>
+        {/* Tabs — pill style, no underline */}
+        <div className="flex items-center gap-1 p-1 rounded-lg" style={{ background: '#F3F4F6', width: 'fit-content' }}>
           {TABS.map(t => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className="relative pb-3 pt-1 transition-colors"
+              className="relative px-3.5 h-8 inline-flex items-center rounded-md"
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: tab === t.id ? 600 : 500,
-                color: tab === t.id ? '#1C1E21' : '#9CA3AF',
+                color: tab === t.id ? '#1C1E21' : '#6B7280',
                 opacity: isAU && t.id !== 'overview' ? 0.45 : 1,
+                transition: 'color 140ms cubic-bezier(0.23,1,0.32,1)',
               }}
             >
-              {t.label}
               {tab === t.id && (
-                <motion.div
-                  layoutId="sub-tab-underline"
-                  className="absolute left-0 right-0 -bottom-px h-[2px]"
-                  style={{ background: '#1C1E21' }}
+                <motion.span
+                  layoutId="sub-tab-pill"
+                  className="absolute inset-0 rounded-md"
+                  style={{ background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04)' }}
+                  transition={{ type: 'spring', duration: 0.32, bounce: 0.18 }}
                 />
               )}
+              <span className="relative">{t.label}</span>
             </button>
           ))}
         </div>
