@@ -182,40 +182,33 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
               /* Active paid (RG) — open layout, content flows on page */
               <>
                 <div>
-                  {/* Row 1: name + pill (left) | Cancel subscription stroke button (right) */}
-                  <div className="flex items-center justify-between gap-4 mb-4">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>Zuper Sense</h2>
-                      <span
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                        style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                      >
-                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
-                        ACTIVE
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => setConfirmCancel(true)}
-                      className="inline-flex items-center px-3 h-8 rounded-md text-[12.5px] font-medium text-[#4B5563] flex-shrink-0 active:scale-[0.98]"
-                      style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#DC2626'; (e.currentTarget as HTMLElement).style.color = '#DC2626'; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
-                    >
-                      Cancel subscription
-                    </button>
-                  </div>
+                  {/* Title */}
+                  <h2 style={{ fontSize: 18, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em', marginBottom: 10 }}>
+                    You have subscribed to Zuper Sense
+                  </h2>
 
-                  {/* Row 2: price + renewal date on one line */}
-                  <div className="flex items-baseline gap-2 flex-wrap" style={{ fontSize: 13.5, color: '#6B7280' }}>
-                    <span><span style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em' }}>$399</span> <span style={{ fontWeight: 500 }}>USD / month</span></span>
-                    <span style={{ color: '#C0C4CC' }}>·</span>
-                    <span>Renews <span style={{ color: '#1C1E21', fontWeight: 500 }}>Jun 26, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span></span>
-                  </div>
-
-                  {/* Row 3: payment method, minimal */}
-                  <p style={{ fontSize: 12.5, color: '#9CA3AF', marginTop: 14 }}>
-                    Paid with <span style={{ color: '#6B7280', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                  {/* Price + next billing date — single rhythm, uniform size */}
+                  <p style={{ fontSize: 13.5, color: '#4B5563', lineHeight: 1.6, marginBottom: 4 }}>
+                    <span style={{ color: '#1C1E21', fontWeight: 500 }}>$399 / month</span>
+                    <span style={{ color: '#C0C4CC', margin: '0 8px' }}>·</span>
+                    Your next billing date is <span style={{ color: '#1C1E21', fontWeight: 500 }}>Wed, Jun 26, 2026</span>
                   </p>
+
+                  {/* Paid with */}
+                  <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.6, marginBottom: 18 }}>
+                    Paid with card ending <span style={{ color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>{cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                  </p>
+
+                  {/* Cancel CTA */}
+                  <button
+                    onClick={() => setConfirmCancel(true)}
+                    className="inline-flex items-center px-3 h-8 rounded-md text-[12.5px] font-medium text-[#4B5563] active:scale-[0.98]"
+                    style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#DC2626'; (e.currentTarget as HTMLElement).style.color = '#DC2626'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                  >
+                    Cancel subscription
+                  </button>
                 </div>
 
                 {/* Billing history inline — MJ only (RG sees this in the Billing history tab) */}
