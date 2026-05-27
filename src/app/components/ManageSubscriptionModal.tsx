@@ -179,28 +179,14 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
           <div className={`pt-8 grid ${paymentFailed && !isAU && !isVp ? 'grid-cols-[1fr_360px] gap-8' : 'grid-cols-1 gap-4'} items-stretch`}>
             {/* ── Left: Plan hero + billing info ── */}
             {!isAU && !isVp && !paymentFailed && !cancelled ? (
-              /* Active paid (RG) — OpenAI/Claude-style hierarchy: eyebrow → name+pill → detail rows */
+              /* Active paid (RG) — original copy, refined hierarchy */
               <>
                 <div>
-                  {/* Header row: eyebrow + name + pill | Cancel CTA */}
-                  <div className="flex items-start justify-between gap-4 mb-5">
-                    <div className="min-w-0">
-                      <p style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', color: '#9CA3AF', marginBottom: 6 }}>
-                        CURRENT PLAN
-                      </p>
-                      <div className="flex items-center gap-2.5">
-                        <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.022em', lineHeight: 1.1 }}>
-                          Zuper Sense
-                        </h2>
-                        <span
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                          style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                        >
-                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#10B981' }} />
-                          ACTIVE
-                        </span>
-                      </div>
-                    </div>
+                  {/* Title row — sentence + Cancel CTA aligned right */}
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+                      You have subscribed to Zuper Sense
+                    </h2>
                     <button
                       onClick={() => setConfirmCancel(true)}
                       className="inline-flex items-center px-3 h-8 rounded-md text-[12.5px] font-medium text-[#4B5563] flex-shrink-0 active:scale-[0.98]"
@@ -212,19 +198,17 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                     </button>
                   </div>
 
-                  {/* Hairline + detail rows (definition list) */}
-                  <dl className="pt-5" style={{ borderTop: '1px solid #F0F1F3' }}>
-                    {[
-                      { label: 'Price', value: <><span style={{ color: '#1C1E21', fontWeight: 500 }}>$399</span> <span style={{ color: '#6B7280' }}>/ month</span></> },
-                      { label: 'Next billing date', value: <span style={{ color: '#1C1E21', fontWeight: 500 }}>Wed, Jun 26, 2026</span> },
-                      { label: 'Payment method', value: <span className="inline-flex items-center gap-2"><span style={{ color: '#1C1E21', fontWeight: 500 }}>Visa</span><span style={{ color: '#6B7280', fontFamily: 'monospace', letterSpacing: '0.04em' }}>•••• {cards.find(c => c.isDefault)?.last4 || '0965'}</span></span> },
-                    ].map(row => (
-                      <div key={row.label} className="flex items-center py-2.5" style={{ fontSize: 13.5 }}>
-                        <dt style={{ flex: '0 0 160px', color: '#9CA3AF', fontWeight: 500 }}>{row.label}</dt>
-                        <dd style={{ color: '#1C1E21' }}>{row.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
+                  {/* Billing line */}
+                  <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6 }}>
+                    <span style={{ color: '#1C1E21', fontWeight: 600 }}>$399 / month</span>
+                    <span style={{ color: '#D1D5DB', margin: '0 10px' }}>·</span>
+                    Your next billing date is <span style={{ color: '#1C1E21', fontWeight: 500 }}>Wed, Jun 26, 2026</span>
+                  </p>
+
+                  {/* Paid with */}
+                  <p className="mt-1.5" style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6 }}>
+                    Paid with card ending <span style={{ color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>{cards.find(c => c.isDefault)?.last4 || '0965'}</span>
+                  </p>
                 </div>
 
                 {/* Billing history inline — MJ only (RG sees this in the Billing history tab) */}
