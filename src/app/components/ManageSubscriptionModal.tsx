@@ -122,15 +122,17 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
   return (
     <div className="w-full h-full overflow-y-auto bg-white rounded-xl border border-[#E6E8EC]">
       <div className="mx-auto w-full px-10 py-8" style={{ maxWidth: 1040 }}>
-        <button
-          onClick={onClose}
-          className="inline-flex items-center gap-1 mb-5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1E21] transition-colors"
-          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Back
-        </button>
-        <h1 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em', marginBottom: 22 }}>Subscription & billing</h1>
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={onClose}
+            aria-label="Back"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#F3F4F6] active:scale-[0.95]"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <h1 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em' }}>Subscription & billing</h1>
+        </div>
 
         {/* Tabs — subtle pill segmented control */}
         <div className="flex items-center gap-0.5 p-1 rounded-lg" style={{ background: '#F8F9FB', width: 'fit-content' }}>
