@@ -257,6 +257,12 @@ function AppContent() {
 
               {/* Actions */}
               <div className="px-2 pb-0.5 flex flex-col">
+                {currentUser === 'MJ' && (
+                  <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
+                    <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
+                  </button>
+                )}
                 {sidebarSearchOpen ? (
                   <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-md border border-[#E6E8EC]">
                     <Search className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
@@ -274,8 +280,8 @@ function AppContent() {
                   </div>
                 ) : (
                   <button onClick={() => { setSidebarSearchOpen(true); setTimeout(() => sidebarSearchRef.current?.focus(), 50); }} className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                    <Search className="w-3.5 h-3.5 text-[#9CA3AF]" />
-                    <span className="text-[14px] font-normal text-[#9CA3AF]">Search</span>
+                    <Search className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <span className="text-[14px] font-normal text-[#1C1E21]">Search</span>
                   </button>
                 )}
                 {currentUser === 'MJ' && (
@@ -287,23 +293,28 @@ function AppContent() {
                     <span className="text-[14px] font-normal text-[#1C1E21]">AI Studio</span>
                   </button>
                 )}
-                <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                  <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
-                  <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
-                </button>
+                {currentUser !== 'MJ' && (
+                  <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
+                    <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
+                  </button>
+                )}
               </div>
 
-              <div className="mx-2 my-1.5 border-t border-[#E6E8EC]" />
+              {currentUser !== 'MJ' && <div className="mx-2 my-1.5 border-t border-[#E6E8EC]" />}
 
               {/* Thread list */}
               <div className="flex-1 overflow-y-auto scrollbar-auto-hide px-2 pb-2">
+                {currentUser === 'MJ' && (
+                  <p className="px-2 pt-4 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent threads</p>
+                )}
                 {threadHistory
                   .filter((t) => !sidebarSearch || t.title.toLowerCase().includes(sidebarSearch.toLowerCase()))
                   .slice(0, demoMode ? 3 : undefined)
                   .map((thread) => (
                   <button
                     key={thread.id}
-                    className={`w-full px-2 py-1.5 text-left rounded-md transition-colors mb-0.5 ${
+                    className={`w-full px-2 py-1.5 text-left rounded-md transition-colors ${currentUser === 'MJ' ? 'mb-1' : 'mb-0.5'} ${
                       thread.active ? 'bg-[#E8E8E8]' : 'hover:bg-[#EEEEEE]'
                     }`}
                   >

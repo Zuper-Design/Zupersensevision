@@ -236,45 +236,45 @@ export function CheckoutModal({ isOpen, onClose, onSuccess, onCancelVerification
             <div>
               <div
                 className="rounded-[16px] p-5"
-                style={{ background: '#FBF5EC', border: '1px solid #EFE3D2' }}
+                style={{ background: '#F7F8FA', border: '1px solid #EAECEF' }}
               >
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>Order summary</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}>Order summary</p>
 
-                <div className="flex items-start gap-3 mb-4">
+                <div className="flex items-start gap-3 mb-5">
                   <div
                     className="w-10 h-10 rounded-[10px] flex items-center justify-center flex-shrink-0"
-                    style={{ background: '#FFF1E6', border: '1px solid #F5E0CF' }}
+                    style={{ background: '#FFFFFF', border: '1px solid #E6E8EC' }}
                   >
                     <SenseLogo size={18} animated={false} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21' }}>Zuper Sense</p>
-                    <p style={{ fontSize: 12, color: '#6B7280', marginTop: 1 }}>Monthly subscription</p>
+                    <p style={{ fontSize: 14.5, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>Zuper Sense</p>
+                    <p style={{ fontSize: 12.5, color: '#6B7280', marginTop: 2 }}>Monthly subscription</p>
                   </div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21' }}>$399.00</p>
+                  <p style={{ fontSize: 14.5, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums' }}>$399.00</p>
                 </div>
 
-                <div className="h-px" style={{ background: '#EFE3D2' }} />
+                <div className="h-px" style={{ background: '#EAECEF' }} />
 
-                <div className="py-4 space-y-2">
+                <div className="py-4 space-y-2.5">
                   <div className="flex justify-between">
                     <span style={{ fontSize: 13, color: '#6B7280' }}>Subtotal</span>
-                    <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500 }}>$399.00</span>
+                    <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>$399.00</span>
                   </div>
                   <div className="flex justify-between">
                     <span style={{ fontSize: 13, color: '#6B7280' }}>Tax (est.)</span>
-                    <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500 }}>$0.00</span>
+                    <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>$0.00</span>
                   </div>
                 </div>
 
-                <div className="h-px" style={{ background: '#EFE3D2' }} />
+                <div className="h-px" style={{ background: '#EAECEF' }} />
 
-                <div className="flex justify-between items-center pt-4">
-                  <span style={{ fontSize: 15, fontWeight: 700, color: '#1C1E21' }}>Due today</span>
-                  <span style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em' }}>$399.00</span>
+                <div className="flex justify-between items-baseline pt-4">
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#1C1E21' }}>Due today</span>
+                  <span style={{ fontSize: 22, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.025em', fontVariantNumeric: 'tabular-nums' }}>$399.00</span>
                 </div>
 
-                <p style={{ fontSize: 12, color: '#6B7280', lineHeight: 1.5, marginTop: 12 }}>
+                <p style={{ fontSize: 12, color: '#9CA3AF', lineHeight: 1.55, marginTop: 14 }}>
                   Renews monthly at $399.00. Cancel anytime from Subscription settings.
                 </p>
               </div>

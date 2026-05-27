@@ -5,13 +5,18 @@ import {
   LayoutGrid, Bot, BookOpen, MessageSquare, Zap, Database, BarChart3, LifeBuoy, Plus,
   Search, MoreHorizontal, Play, Pencil, List, LayoutGrid as GridIcon, Star, Users, Check, AlertTriangle,
   Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Loader2, Trash2, ChevronDown, X, Upload,
-  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText, Settings, Quote,
+  AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText, Settings, Quote, Calendar,
 } from 'lucide-react';
 import avatarBg from '../../imports/agents/avatar-bg.png';
 import agentClassic1 from '../../imports/agents/agent-1.png';
 import agentClassic2 from '../../imports/agents/agent-2.png';
 import agentClassic3 from '../../imports/agents/agent-3.png';
 import emptyToolkit from '../../imports/agents/empty-toolkit.png';
+import agentWeatherLead from '../../imports/agents/weather-lead.png';
+import agentReviewSales from '../../imports/agents/review-sales.png';
+import agentCollection from '../../imports/agents/collection.png';
+import agentReviewGirl from '../../imports/agents/review-girl.png';
+import agentDispatch from '../../imports/agents/dispatch.png';
 const agentDetective = '/agent-detective.png';
 const agentCreator = '/agent-creator.png';
 const agentMarketer = '/agent-marketer.png';
@@ -56,11 +61,18 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
   const [mjChooserOpen, setMjChooserOpen] = useState(false);
   const [customAgents, setCustomAgents] = useState<typeof myAgents>([]);
   const [agentVisits, setAgentVisits] = useState<Record<string, number>>({});
+  const [topToast, setTopToast] = useState<string | null>(null);
+  const fireToast = (msg: string) => {
+    setTopToast(msg);
+    setTimeout(() => setTopToast(null), 2400);
+  };
   const addCustomAgent = (a: typeof myAgents[number]) => {
     setCustomAgents((prev) => [a, ...prev.filter((x) => x.name !== a.name)]);
   };
-  const openAgent = (name: string) => {
+  const [auActiveFromHire, setAuActiveFromHire] = useState(false);
+  const openAgent = (name: string, fromHire = false) => {
     setAgentVisits((prev) => ({ ...prev, [name]: (prev[name] || 0) + 1 }));
+    setAuActiveFromHire(fromHire);
     setAuActiveAgent(name);
   };
   const visibleNavItems = isVP
@@ -85,9 +97,10 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
         className="h-full w-full bg-white"
       >
         <AUMarketplaceView
+          isMJ={isMJ}
           onBack={() => setSection('agents')}
           onHire={(a) => { addCustomAgent(a); setSection('agents'); }}
-          onChatWith={(name) => { setSection('agents'); openAgent(name); }}
+          onChatWith={(name) => { setSection('agents'); openAgent(name, true); }}
         />
       </motion.div>
     );
@@ -281,8 +294,9 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
         >
           {isMJ ? (
             <MJCreateAgentForm
+              fromMyAgents={!auActiveFromHire}
               seedAgent={[...customAgents, ...myAgents].find((a) => a.name === auActiveAgent)!}
-              onCancel={() => setAuActiveAgent(null)}
+              onCancel={() => { setAuActiveAgent(null); setAuActiveFromHire(false); }}
               onDeploy={(record) => {
                 if (record) {
                   setCustomAgents((prev) => {
@@ -293,7 +307,10 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
                     return [record, ...prev];
                   });
                 }
+                const liveName = record?.name || auActiveAgent;
                 setAuActiveAgent(null);
+                setAuActiveFromHire(false);
+                fireToast(liveName ? `${liveName} is now live` : 'Agent is now live');
               }}
             />
           ) : (
@@ -353,6 +370,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
         </div>
       </main>
       )}
+      <Toast message={topToast} />
     </div>
   );
 }
@@ -657,27 +675,15 @@ function AgentReadyModal({
         <div className="px-7 pt-6 pb-7 text-center">
           {loading ? (
             <>
-              <div
-                className="text-[11.5px] font-medium uppercase tracking-[0.12em] mb-2"
-                style={{ color: accent, animation: 'agentReadyText 320ms cubic-bezier(0.23,1,0.32,1) 380ms both' }}
-              >
-                Preparing your agent
-              </div>
               <h2
-                className="text-[24px] font-semibold text-[#1C1E21] tracking-tight leading-[1.2] mb-2"
-                style={{ animation: 'agentReadyText 360ms cubic-bezier(0.23,1,0.32,1) 440ms both' }}
+                className="text-[20px] font-semibold text-[#1C1E21] tracking-tight leading-[1.25] mb-4"
+                style={{ animation: 'agentReadyText 360ms cubic-bezier(0.23,1,0.32,1) 380ms both' }}
               >
-                <span style={{ color: accent }}>{name || 'Your agent'}</span> is getting ready
+                Setting up <span style={{ color: accent }}>{name || 'your agent'}</span>
               </h2>
-              <p
-                className="text-[13.5px] text-[#6B7280] leading-relaxed mb-5 max-w-[340px] mx-auto"
-                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 520ms both' }}
-              >
-                Wiring up skills, tools, and knowledge. We'll take you to the build canvas in a moment.
-              </p>
               <div
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#F8F9FB] border border-[#F0F1F3]"
-                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 600ms both' }}
+                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 480ms both' }}
               >
                 <span className="inline-flex gap-1">
                   <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: accent }} />
@@ -935,15 +941,15 @@ function AddPicker<T extends { key: string; label: string; desc: string; icon: a
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-center gap-2 h-12 rounded-xl bg-white text-[13.5px] font-semibold text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.995]"
+        className="inline-flex items-center gap-1.5 px-3 h-8 rounded-md bg-white text-[12.5px] font-medium text-[#1C1E21] hover:bg-[#FAFAFB] active:scale-[0.97]"
         style={{
-          border: '1.5px dashed #B3B8C0',
+          border: '1px dashed #C0C4CC',
           transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)',
         }}
         onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#1C1E21')}
-        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#B3B8C0')}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#C0C4CC')}
       >
-        <Plus className="w-4 h-4" strokeWidth={2.6} />
+        <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
         {buttonLabel}
       </button>
 
@@ -1175,42 +1181,46 @@ function AddedItem({
   item,
   onRemove,
   detail,
+  readOnly,
 }: {
   item: { key: string; label: string; desc: string; icon: any; tint?: string; iconColor?: string };
   onRemove: () => void;
   detail?: string | null;
+  readOnly?: boolean;
 }) {
   const Icon = item.icon;
   const accent = item.iconColor || '#4B5563';
   const accentSoft = item.tint || '#F3F4F6';
   return (
     <div
-      className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl border border-[#EEF0F3] bg-white"
+      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-[#EEF0F3] bg-white"
       style={{ animation: 'addedItemIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}
     >
       <style>{`@keyframes addedItemIn { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
       <span
-        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 relative overflow-hidden"
+        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 relative overflow-hidden"
         style={{
           background: `linear-gradient(160deg, ${accentSoft} 0%, #FFFFFF 100%)`,
           border: `1px solid ${accent}33`,
           boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${accent}1A`,
         }}
       >
-        <Icon className="w-[17px] h-[17px]" style={{ color: accent }} strokeWidth={2} />
+        <Icon className="w-[14px] h-[14px]" style={{ color: accent }} strokeWidth={2} />
       </span>
       <div className="flex-1 min-w-0">
-        <h4 className="text-[14px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
-        <p className="text-[12.5px] text-[#6B7280] leading-snug mt-1">{detail || item.desc}</p>
+        <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
+        <p className="text-[12px] text-[#6B7280] leading-snug mt-0.5">{detail || item.desc}</p>
       </div>
-      <button
-        onClick={onRemove}
-        className="w-7 h-7 -mr-1 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
-        style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-        aria-label={`Remove ${item.label}`}
-      >
-        <X className="w-4 h-4" />
-      </button>
+      {!readOnly && (
+        <button
+          onClick={onRemove}
+          className="w-6 h-6 -mr-0.5 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+          style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+          aria-label={`Remove ${item.label}`}
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      )}
     </div>
   );
 }
@@ -1219,10 +1229,12 @@ function MJCreateAgentForm({
   onCancel,
   onDeploy,
   seedAgent,
+  fromMyAgents = false,
 }: {
   onCancel: () => void;
   onDeploy: (record?: typeof myAgents[number], openChat?: boolean) => void;
   seedAgent?: typeof myAgents[number];
+  fromMyAgents?: boolean;
 }) {
   const seedAvatarIdx = seedAgent
     ? [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews].findIndex((a) => a === seedAgent.img)
@@ -1231,7 +1243,64 @@ function MJCreateAgentForm({
 
   const [name, setName] = useState(seedAgent?.name ?? '');
   const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
-  const [activeTab, setActiveTab] = useState<'details' | 'activity'>('details');
+  const [activeTab, setActiveTab] = useState<'setup' | 'capabilities' | 'activity'>(fromMyAgents ? 'activity' : 'setup');
+  const [editingName, setEditingName] = useState(false);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (editingName) nameInputRef.current?.focus(); }, [editingName]);
+
+  // Template setup fields (Daily Weather Forecast)
+  const isWeatherForecast = (seedAgent?.name || '').toLowerCase().includes('weather forecast');
+  const isGoogleReviewDigest = (seedAgent?.name || '').toLowerCase().includes('google review');
+  const capabilitiesReadOnly = isWeatherForecast || isGoogleReviewDigest;
+  const isExistingWeatherAgent = isWeatherForecast && !!seedAgent;
+  const isExistingGoogleReviewAgent = isGoogleReviewDigest && !!seedAgent;
+  const [agentMenuOpen, setAgentMenuOpen] = useState(false);
+  const agentMenuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!agentMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (agentMenuRef.current && !agentMenuRef.current.contains(e.target as Node)) setAgentMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [agentMenuOpen]);
+  const [forecastEmail, setForecastEmail] = useState(isExistingWeatherAgent ? 'ops@zuper.co' : '');
+  const [forecastCities, setForecastCities] = useState<string[]>(isExistingWeatherAgent ? ['Austin, TX', 'Dallas, TX', 'Houston, TX'] : []);
+  const [cityInput, setCityInput] = useState('');
+  const [cityFocused, setCityFocused] = useState(false);
+  const cityInputRef = useRef<HTMLInputElement>(null);
+  const [forecastAudience, setForecastAudience] = useState(isExistingWeatherAgent ? 'roofing crews' : '');
+  const [forecastDeliverAt, setForecastDeliverAt] = useState('07:00');
+  const [forecastUnits, setForecastUnits] = useState<'imperial' | 'metric'>('imperial');
+
+  // Google Review Digest fields
+  const [digestEmail, setDigestEmail] = useState(isExistingGoogleReviewAgent ? 'success@zuper.co' : '');
+  const [googlePlace, setGooglePlace] = useState(isExistingGoogleReviewAgent ? 'Zuper HQ — Bellevue, WA' : '');
+  const [digestDeliverAt, setDigestDeliverAt] = useState('08:00');
+
+  const CITY_LIST = [
+    'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX', 'Phoenix, AZ',
+    'Philadelphia, PA', 'San Antonio, TX', 'San Diego, CA', 'Dallas, TX', 'San Jose, CA',
+    'Austin, TX', 'Jacksonville, FL', 'Fort Worth, TX', 'Columbus, OH', 'Charlotte, NC',
+    'Indianapolis, IN', 'San Francisco, CA', 'Seattle, WA', 'Denver, CO', 'Washington, DC',
+    'Boston, MA', 'Nashville, TN', 'Portland, OR', 'Las Vegas, NV', 'Atlanta, GA',
+    'Miami, FL', 'Minneapolis, MN', 'Tampa, FL', 'Sacramento, CA', 'Pittsburgh, PA',
+    'Cincinnati, OH', 'Kansas City, MO', 'Orlando, FL', 'Raleigh, NC', 'St. Louis, MO',
+  ];
+  const citySuggestions = cityInput.trim().length > 0
+    ? CITY_LIST.filter(c => c.toLowerCase().includes(cityInput.trim().toLowerCase()) && !forecastCities.includes(c)).slice(0, 6)
+    : [];
+
+  const addCity = (city: string) => {
+    const trimmed = city.trim();
+    if (!trimmed || forecastCities.includes(trimmed)) return;
+    setForecastCities(prev => [...prev, trimmed]);
+    setCityInput('');
+    cityInputRef.current?.focus();
+  };
+  const removeCity = (city: string) => {
+    setForecastCities(prev => prev.filter(c => c !== city));
+  };
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [instructionsDraft, setInstructionsDraft] = useState('');
   const [instructionsEnhancing, setInstructionsEnhancing] = useState(false);
@@ -1373,7 +1442,12 @@ function MJCreateAgentForm({
   const enabledTools = toolCatalog.filter((t) => tools[t.key]);
   const enabledKb = kbCatalog.filter((k) => kb[k.key]);
   const enabledTriggers = triggerItems.filter((t) => triggers[t.key]);
-  const canDeploy = name.trim().length > 1 && (enabledSkills.length + enabledTools.length) > 0;
+  const templateMandatoryOk = isWeatherForecast
+    ? (forecastCities.length > 0 && forecastAudience.trim().length > 0 && forecastUnits.length > 0)
+    : isGoogleReviewDigest
+    ? (googlePlace.trim().length > 0)
+    : true;
+  const canDeploy = name.trim().length > 1 && (enabledSkills.length + enabledTools.length) > 0 && templateMandatoryOk;
   const [deployPhase, setDeployPhase] = useState<'idle' | 'glow' | 'success'>('idle');
   const isEdit = !!seedAgent;
 
@@ -1550,41 +1624,76 @@ function MJCreateAgentForm({
           </button>
           <span className="text-[14px] font-semibold text-[#1C1E21] tracking-tight">{seedAgent ? (name.trim() || seedAgent.name) : 'Create agent'}</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {missingHint && deployPhase === 'idle' && (
-            <span className="text-[11.5px] text-[#9CA3AF]">{missingHint}</span>
+            <span className="text-[11.5px] text-[#9CA3AF] mr-1">{missingHint}</span>
           )}
-          <button
-            onClick={deploy}
-            disabled={!canDeploy || deployPhase !== 'idle' || (isEdit && !isDirty)}
-            className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' && (!isEdit || isDirty) ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
-          >
-            {deployPhase === 'idle' ? (
-              isEdit ? (
-                <>
-                  <Check className="w-[12px] h-[12px]" strokeWidth={2.8} />
-                  Save changes
-                </>
-              ) : (
-                <>
-                  <Play className="w-[11px] h-[11px]" fill="currentColor" />
-                  Deploy
-                </>
-              )
-            ) : (
-              <>
-                <Loader2 className="w-[12px] h-[12px] animate-spin" />
-                Deploying…
-              </>
-            )}
-          </button>
+          {fromMyAgents ? (
+            <>
+              <button
+                onClick={() => {}}
+                className="inline-flex items-center gap-1.5 px-3 h-8 rounded-lg text-[12.5px] font-medium text-[#4B5563] active:scale-[0.98]"
+                style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+              >
+                <Clock className="w-[11px] h-[11px]" strokeWidth={2.2} />
+                Pause agent
+              </button>
+              <button
+                onClick={deploy}
+                disabled={!isDirty || deployPhase !== 'idle'}
+                className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${isDirty && deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+              >
+                {deployPhase === 'idle' ? (
+                  <>
+                    <Check className="w-[12px] h-[12px]" strokeWidth={2.8} />
+                    Save changes
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="w-[12px] h-[12px] animate-spin" />
+                    Saving…
+                  </>
+                )}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={onCancel}
+                disabled={deployPhase !== 'idle'}
+                className="inline-flex items-center px-3 h-8 rounded-lg text-[12.5px] font-medium text-[#4B5563] hover:text-[#1C1E21] hover:bg-[#F3F4F6] active:scale-[0.98]"
+                style={{ background: 'transparent', border: 'none', cursor: deployPhase !== 'idle' ? 'not-allowed' : 'pointer', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                Skip for now
+              </button>
+              <button
+                onClick={deploy}
+                disabled={!canDeploy || deployPhase !== 'idle' || (isEdit && !isDirty)}
+                className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' && (!isEdit || isDirty) ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+              >
+                {deployPhase === 'idle' ? (
+                  <>
+                    <Play className="w-[11px] h-[11px]" fill="currentColor" />
+                    Run agent
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="w-[12px] h-[12px] animate-spin" />
+                    Deploying…
+                  </>
+                )}
+              </button>
+            </>
+          )}
         </div>
       </div>
 
       <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
         <div className="max-w-[820px] mx-auto px-6 py-10">
           {/* Hero strip — peach background, avatar + name + instructions */}
-          <div className="sticky top-14 z-20 bg-white pt-4 pb-4 mb-4 -mx-6 px-6">
+          <div className="sticky top-14 z-20 bg-white pt-4 pb-0 mb-7 -mx-6 px-6">
           <div className="relative rounded-2xl">
           {deployPhase !== 'idle' && (
             <>
@@ -1614,6 +1723,55 @@ function MJCreateAgentForm({
             </>
           )}
           <div className="relative rounded-2xl px-8 py-8" style={{ background: theme.tint }}>
+            {/* Status pill + kebab menu — top right (only when opened from My Agents) */}
+            {fromMyAgents && seedAgent && (() => {
+              const sStyle = statusStyles[seedAgent.status];
+              return (
+                <div className="absolute top-4 right-4 z-20 flex items-center gap-2" ref={agentMenuRef}>
+                  <span
+                    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                    style={{ background: sStyle.bg, color: sStyle.color, border: `1px solid ${sStyle.border}`, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}
+                  >
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: sStyle.dot }} />
+                    {seedAgent.status}
+                  </span>
+                  <div className="relative">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setAgentMenuOpen(v => !v); }}
+                      className="w-7 h-7 rounded-md flex items-center justify-center text-[#4B5563] hover:text-[#1C1E21] active:scale-[0.94]"
+                      style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #E6E8EC', backdropFilter: 'blur(4px)', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#FFFFFF'; }}
+                      onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; }}
+                      aria-label="Agent options"
+                    >
+                      <MoreHorizontal className="w-[14px] h-[14px]" strokeWidth={2.2} />
+                    </button>
+                    {agentMenuOpen && (
+                      <div
+                        className="absolute right-0 top-full mt-1.5 min-w-[160px] rounded-lg bg-white py-1"
+                        style={{ border: '1px solid #E6E8EC', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)' }}
+                      >
+                        {[
+                          { label: 'Pause', icon: Clock, color: '#1C1E21' },
+                          { label: 'Deactivate', icon: AlertTriangle, color: '#1C1E21' },
+                          { label: 'Remove', icon: Trash2, color: '#DC2626' },
+                        ].map(({ label, icon: ItemIcon, color }) => (
+                          <button
+                            key={label}
+                            onClick={() => setAgentMenuOpen(false)}
+                            className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-left hover:bg-[#F3F4F6] active:scale-[0.99]"
+                            style={{ color, transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            <ItemIcon className="w-[13px] h-[13px]" strokeWidth={2} />
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
             {/* Decorative layer — clipped to the card so it doesn't escape, but avatar popover stays visible */}
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden">
               {/* Soft secondary bloom for gradient depth */}
@@ -1643,18 +1801,16 @@ function MJCreateAgentForm({
                 <button
                   onClick={() => setAvatarOpen((v) => !v)}
                   className="relative w-[112px] h-[112px] rounded-full overflow-hidden active:scale-[0.96]"
-                  style={{ background: avatarTint, boxShadow: '0 0 0 1px rgba(0,0,0,0.06)', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  style={{
+                    background: avatarTint,
+                    boxShadow: avatarOpen ? '0 0 0 2px #1C1E21' : '0 0 0 1px rgba(0,0,0,0.06)',
+                    transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                  onMouseEnter={e => { if (!avatarOpen) (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 2px #D1D5DB'; }}
+                  onMouseLeave={e => { if (!avatarOpen) (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 1px rgba(0,0,0,0.06)'; }}
                   aria-label="Change avatar"
                 >
                   <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-1 h-[126px] w-auto object-contain" draggable={false} />
-                </button>
-                <button
-                  onClick={() => setAvatarOpen((v) => !v)}
-                  className="absolute -bottom-0.5 -right-0.5 w-8 h-8 rounded-full bg-white border border-[#E6E8EC] flex items-center justify-center active:scale-[0.92]"
-                  style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.08)', transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                  aria-label="Edit avatar"
-                >
-                  <Pencil className="w-[13px] h-[13px] text-[#1C1E21]" />
                 </button>
                 {avatarOpen && (
                   <div
@@ -1697,17 +1853,153 @@ function MJCreateAgentForm({
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-[26px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate">{name.trim() || 'New Agent'}</h2>
-                <p className="text-[15px] text-[#6B7280] mt-2 leading-snug line-clamp-2">{instructions.trim() || 'Add a short instruction to describe what this agent does.'}</p>
+                {editingName ? (
+                  <input
+                    ref={nameInputRef}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onBlur={() => setEditingName(false)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === 'Escape') { (e.currentTarget as HTMLInputElement).blur(); } }}
+                    placeholder="New Agent"
+                    className="text-[22px] font-semibold text-[#1C1E21] leading-tight tracking-tight outline-none"
+                    style={{
+                      padding: '3px 9px',
+                      marginLeft: -9,
+                      width: 320,
+                      maxWidth: '100%',
+                      borderRadius: 8,
+                      border: '1px solid #1C1E21',
+                      background: '#FFFFFF',
+                    }}
+                  />
+                ) : (
+                  <button
+                    onClick={() => setEditingName(true)}
+                    className="text-[22px] font-semibold text-[#1C1E21] leading-tight tracking-tight truncate max-w-full text-left"
+                    style={{
+                      padding: '3px 9px',
+                      marginLeft: -9,
+                      borderRadius: 8,
+                      border: '1px solid transparent',
+                      background: 'transparent',
+                      cursor: 'text',
+                      transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'transparent'; }}
+                    aria-label="Edit name"
+                  >
+                    {name.trim() || 'New Agent'}
+                  </button>
+                )}
+                {enabledSkills.length > 0 ? (
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                    {enabledSkills.slice(0, 3).map((s) => {
+                      const Icon = s.icon;
+                      return (
+                        <button
+                          key={s.key}
+                          onClick={() => {
+                            setActiveTab('capabilities');
+                            setTimeout(() => {
+                              const el = document.getElementById('skills');
+                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 60);
+                          }}
+                          className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-[12px] font-medium text-[#1C1E21] active:scale-[0.96]"
+                          style={{
+                            border: '1px solid #E6E8EC',
+                            background: '#FFFFFF',
+                            transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                          }}
+                        >
+                          {Icon && <Icon className="w-[12px] h-[12px] text-[#6B7280]" />}
+                          {s.label || s.key}
+                        </button>
+                      );
+                    })}
+                    {enabledSkills.length > 3 && (
+                      <div className="relative group">
+                        <button
+                          onClick={() => {
+                            setActiveTab('capabilities');
+                            setTimeout(() => {
+                              const el = document.getElementById('skills');
+                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 60);
+                          }}
+                          className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[12px] font-medium text-[#4B5563] active:scale-[0.96]"
+                          style={{
+                            border: '1px solid #E6E8EC',
+                            background: '#FFFFFF',
+                            transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                          }}
+                          aria-label={`${enabledSkills.length - 3} more skills`}
+                        >
+                          <Plus className="w-[11px] h-[11px]" />
+                          {enabledSkills.length - 3}
+                        </button>
+                        <div
+                          className="absolute left-0 top-full mt-1.5 z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                          style={{
+                            transition: 'opacity 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                            transformOrigin: 'top left',
+                          }}
+                        >
+                          <div
+                            className="rounded-lg bg-white py-1.5 min-w-[180px]"
+                            style={{
+                              border: '1px solid #E6E8EC',
+                              boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)',
+                            }}
+                          >
+                            {enabledSkills.slice(3).map((s) => {
+                              const Icon = s.icon;
+                              return (
+                                <div
+                                  key={s.key}
+                                  className="flex items-center gap-2 px-3 py-1.5 text-[12.5px] text-[#1C1E21]"
+                                >
+                                  {Icon && <Icon className="w-[12px] h-[12px] text-[#6B7280] flex-shrink-0" />}
+                                  <span className="truncate">{s.label || s.key}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setActiveTab('capabilities');
+                      setTimeout(() => {
+                        const el = document.getElementById('skills');
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 60);
+                    }}
+                    className="inline-flex items-center gap-1.5 h-7 px-2.5 mt-2.5 rounded-full text-[12px] font-medium text-[#6B7280] active:scale-[0.96]"
+                    style={{
+                      border: '1px dashed #D1D5DB',
+                      background: 'transparent',
+                      transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB'; (e.currentTarget as HTMLElement).style.color = '#6B7280'; }}
+                  >
+                    <Plus className="w-[12px] h-[12px]" />
+                    Add skill
+                  </button>
+                )}
               </div>
             </div>
           </div>
           </div>
-          </div>
 
-          {/* TAB SWITCHER — Details / Activity */}
-          <div className="flex items-center gap-6 border-b border-[#E6E8EC] mb-7">
-            {(['details', 'activity'] as const).map((t) => (
+          {/* TAB SWITCHER — Setup / Capabilities / Activity (sticky with hero) */}
+          <div className="flex items-center gap-6 border-b border-[#E6E8EC] mt-4">
+            {(fromMyAgents ? (['setup', 'capabilities', 'activity'] as const) : (['setup', 'capabilities'] as const)).map((t) => (
               <button
                 key={t}
                 onClick={() => setActiveTab(t)}
@@ -1716,34 +2008,26 @@ function MJCreateAgentForm({
                 }`}
                 style={{ transition: 'color 160ms cubic-bezier(0.23,1,0.32,1)' }}
               >
-                {t === 'details' ? 'Details' : 'Activity'}
+                {t === 'setup' ? 'Setup' : t === 'capabilities' ? 'Capabilities' : 'Activity'}
                 {activeTab === t && (
                   <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1C1E21] rounded-full" />
                 )}
               </button>
             ))}
           </div>
+          </div>
 
-          {activeTab === 'activity' ? (
+          {activeTab === 'activity' && fromMyAgents ? (
             <MJAgentActivityFeed agentName={seedAgent?.name || name || 'this agent'} accent={theme.accent} />
           ) : (<>
 
-          {/* IDENTITY */}
+          {activeTab === 'setup' && <>
+          {/* CONFIGURATION */}
           <section className="mb-10">
-            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Identity</h2>
-            <p className="text-[14px] text-[#6B7280] mb-6">Give your agent a name, tell it how to behave, and decide when it should jump in.</p>
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Configuration</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">Tell your agent how to behave, what to use, and when to run.</p>
 
             <div className="space-y-5">
-              <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Mia, Lead Concierge"
-                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                  className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
-                />
-              </div>
               <div>
                 <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
                 <button
@@ -1759,6 +2043,156 @@ function MJCreateAgentForm({
                   )}
                 </button>
               </div>
+
+              {isWeatherForecast && (
+              <div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Send forecast to</label>
+                <input
+                  value={forecastEmail}
+                  onChange={(e) => setForecastEmail(e.target.value)}
+                  placeholder="ops@example.com"
+                  type="email"
+                  className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                />
+              </div>
+              )}
+
+              {isGoogleReviewDigest && (
+              <>
+                <div>
+                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Send digest to</label>
+                  <input
+                    value={digestEmail}
+                    onChange={(e) => setDigestEmail(e.target.value)}
+                    placeholder="reviews@example.com"
+                    type="email"
+                    className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                    style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                    Your business on Google Maps <span style={{ color: '#FD5000' }}>*</span>
+                  </label>
+                  <input
+                    value={googlePlace}
+                    onChange={(e) => setGooglePlace(e.target.value)}
+                    placeholder="Search for a place…"
+                    className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                    style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  />
+                </div>
+              </>
+              )}
+
+              {isWeatherForecast && (<>
+              {/* Cities to forecast */}
+              <div>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                  Cities to forecast <span style={{ color: '#FD5000' }}>*</span>
+                </label>
+                <div className="relative">
+                  <div
+                    className="w-full px-2 py-1.5 rounded-lg bg-white border border-[#E6E8EC] focus-within:border-[#1C1E21] flex flex-wrap items-center gap-1.5 min-h-[40px]"
+                    style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                    onClick={() => cityInputRef.current?.focus()}
+                  >
+                    {forecastCities.map(c => (
+                      <span
+                        key={c}
+                        className="inline-flex items-center gap-1 h-7 pl-2.5 pr-1 rounded-full text-[12.5px] font-medium text-[#1C1E21]"
+                        style={{ background: '#F3F4F6' }}
+                      >
+                        {c}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); removeCity(c); }}
+                          className="w-4 h-4 rounded-full flex items-center justify-center text-[#6B7280] hover:bg-[#E5E7EB] hover:text-[#1C1E21] active:scale-[0.94]"
+                          style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          aria-label={`Remove ${c}`}
+                        >
+                          <X className="w-[10px] h-[10px]" strokeWidth={2.5} />
+                        </button>
+                      </span>
+                    ))}
+                    <input
+                      ref={cityInputRef}
+                      value={cityInput}
+                      onChange={(e) => setCityInput(e.target.value)}
+                      onFocus={() => setCityFocused(true)}
+                      onBlur={() => setTimeout(() => setCityFocused(false), 120)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (citySuggestions[0]) addCity(citySuggestions[0]);
+                          else if (cityInput.trim()) addCity(cityInput);
+                        } else if (e.key === 'Backspace' && cityInput === '' && forecastCities.length > 0) {
+                          removeCity(forecastCities[forecastCities.length - 1]);
+                        }
+                      }}
+                      placeholder={forecastCities.length === 0 ? 'Add a city…' : ''}
+                      className="flex-1 min-w-[120px] px-1.5 h-7 bg-transparent text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none"
+                    />
+                  </div>
+                  {cityFocused && citySuggestions.length > 0 && (
+                    <div
+                      className="absolute left-0 right-0 top-full mt-1.5 z-20 max-h-[240px] overflow-y-auto rounded-lg bg-white py-1"
+                      style={{
+                        border: '1px solid #E6E8EC',
+                        boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)',
+                      }}
+                    >
+                      {citySuggestions.map(c => (
+                        <button
+                          key={c}
+                          type="button"
+                          onMouseDown={(e) => { e.preventDefault(); addCity(c); }}
+                          className="w-full px-3 h-9 flex items-center text-left text-[13px] text-[#1C1E21] hover:bg-[#F3F4F6]"
+                          style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Audience + Units — same row */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                    Audience <span style={{ color: '#FD5000' }}>*</span>
+                  </label>
+                  <input
+                    value={forecastAudience}
+                    onChange={(e) => setForecastAudience(e.target.value)}
+                    placeholder="roofing crews, HVAC techs, etc."
+                    className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                    style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                    Units <span style={{ color: '#FD5000' }}>*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={forecastUnits}
+                      onChange={(e) => setForecastUnits(e.target.value as 'imperial' | 'metric')}
+                      className="appearance-none w-full pl-3 pr-9 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]"
+                      style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                    >
+                      <option value="imperial">Imperial (°F, mph)</option>
+                      <option value="metric">Metric (°C, km/h)</option>
+                    </select>
+                    <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+              </>)}
+
               <div>
                 <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Triggers</label>
                 {enabledTriggers.length > 0 && (
@@ -1988,10 +2422,12 @@ function MJCreateAgentForm({
               </div>
             </div>
           </section>
+          </>}
 
+          {activeTab === 'capabilities' && <>
           {/* SKILLS & TOOLS */}
-          <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
-            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Skills and tools</h2>
+          <section id="skills" className="mb-10 scroll-mt-24">
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Skills and tools</h2>
             <p className="text-[14px] text-[#6B7280] mb-6">Pick the abilities and tools your agent can use to get work done.</p>
 
             <div className="mb-7">
@@ -2008,11 +2444,13 @@ function MJCreateAgentForm({
                       item={s}
                       detail={detail}
                       onRemove={() => setSkills((p) => ({ ...p, [s.key]: false }))}
+                      readOnly={capabilitiesReadOnly}
                     />
                     );
                   })}
                 </div>
               )}
+              {!capabilitiesReadOnly && (
               <AddPicker
                 buttonLabel="Add skill"
                 catalog={skillCatalog}
@@ -2076,6 +2514,7 @@ function MJCreateAgentForm({
                   return null;
                 }}
               />
+              )}
             </div>
 
             <div>
@@ -2096,11 +2535,13 @@ function MJCreateAgentForm({
                         item={t}
                         detail={detail}
                         onRemove={() => setTools((p) => ({ ...p, [t.key]: false }))}
+                        readOnly={capabilitiesReadOnly}
                       />
                     );
                   })}
                 </div>
               )}
+              {!capabilitiesReadOnly && (
               <AddPicker
                 buttonLabel="Add tool"
                 catalog={toolCatalog}
@@ -2169,12 +2610,13 @@ function MJCreateAgentForm({
                   return null;
                 }}
               />
+              )}
             </div>
           </section>
 
           {/* KNOWLEDGE */}
           <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
-            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Knowledge base</h2>
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Knowledge base</h2>
             <p className="text-[14px] text-[#6B7280] mb-6">Connect data sources to give your agent domain knowledge.</p>
             {enabledKb.length > 0 && (
               <div className="space-y-2.5 mb-3">
@@ -2183,10 +2625,12 @@ function MJCreateAgentForm({
                     key={k.key}
                     item={k}
                     onRemove={() => setKb((p) => ({ ...p, [k.key]: false }))}
+                    readOnly={capabilitiesReadOnly}
                   />
                 ))}
               </div>
             )}
+            {!capabilitiesReadOnly && (
             <AddPicker
               buttonLabel="Add knowledge"
               catalog={kbCatalog}
@@ -2196,6 +2640,7 @@ function MJCreateAgentForm({
               createLabel="Create knowledge source"
               onCreate={() => {}}
             />
+            )}
           </section>
 
           {/* ADVANCED OPTIONS */}
@@ -2207,7 +2652,7 @@ function MJCreateAgentForm({
               style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
             >
               <div>
-                <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Advanced</h2>
+                <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Advanced</h2>
                 <p className="text-[14px] text-[#6B7280]">Fine-tune the model, behavior, and memory for {name.trim() || 'this agent'}.</p>
               </div>
               <span
@@ -2317,6 +2762,7 @@ function MJCreateAgentForm({
               </div>
             )}
           </section>
+          </>}
           </>)}
         </div>
       </div>
@@ -2328,19 +2774,79 @@ function MJAgentActivityFeed({ agentName, accent }: { agentName: string; accent:
   // Build a small synthetic activity log scoped to this agent so the feed
   // feels populated. New agents (name placeholder) get the empty state.
   const isPlaceholder = !agentName || agentName === 'this agent' || /^new agent/i.test(agentName);
-  const runs = isPlaceholder ? [] : [
-    { kind: 'SCHEDULE', when: '3 minutes ago', task: 'Scheduled run', tokens: '21,769', duration: '22.7s', status: 'Completed' as const },
-    { kind: 'MENTION', when: 'about 1 hour ago', task: 'Triggered by @mention in #service-ops', tokens: '6,124', duration: '8.4s', status: 'Completed' as const },
-    { kind: 'SCHEDULE', when: '4 hours ago', task: 'Scheduled run', tokens: '18,402', duration: '17.1s', status: 'Completed' as const },
-    { kind: 'WEBHOOK', when: 'about 22 hours ago', task: 'Webhook from Zuper', tokens: '25,811', duration: '3579.2s', status: 'Failed' as const },
-    { kind: 'SCHEDULE', when: '2 days ago', task: 'Scheduled run', tokens: '—', duration: '6574.4s', status: 'Failed' as const },
+  type RunStatus = 'Completed' | 'Failed';
+  type Run = { kind: string; when: string; daysAgo: number; task: string; status: RunStatus };
+  const KINDS: { kind: string; task: string }[] = [
+    { kind: 'SCHEDULE', task: 'Scheduled run' },
+    { kind: 'MENTION', task: 'Triggered by @mention in #service-ops' },
+    { kind: 'WEBHOOK', task: 'Webhook from Zuper' },
+    { kind: 'SCHEDULE', task: 'Scheduled run' },
+    { kind: 'MENTION', task: 'Triggered by @mention in #ops' },
   ];
+  const fmtWhen = (d: number): string => {
+    if (d === 0) return 'a few minutes ago';
+    if (d === 1) return 'yesterday';
+    if (d < 7) return `${d} days ago`;
+    if (d < 30) return `${Math.floor(d / 7)} weeks ago`;
+    if (d < 60) return 'about 1 month ago';
+    return `${Math.floor(d / 30)} months ago`;
+  };
+  const runs: Run[] = isPlaceholder ? [] : Array.from({ length: 32 }, (_, i) => {
+    const slot = KINDS[i % KINDS.length];
+    const d = i === 0 ? 0 : i === 1 ? 0 : i === 2 ? 1 : i;
+    const isFail = i === 3 || i === 8 || i === 14 || i === 21 || i === 27;
+    return { kind: slot.kind, task: slot.task, daysAgo: d, when: fmtWhen(d), status: isFail ? 'Failed' : 'Completed' };
+  });
 
-  const statusStyle: Record<'Completed' | 'Failed', { bg: string; color: string; dot: string }> = {
+  const statusStyle: Record<RunStatus, { bg: string; color: string; dot: string }> = {
     Completed: { bg: '#DCFCE7', color: '#15803D', dot: '#10B981' },
     Failed:    { bg: '#FEE2E2', color: '#B91C1C', dot: '#EF4444' },
   };
   const kindIcon: Record<string, any> = { SCHEDULE: Clock, MENTION: AtSign, WEBHOOK: Webhook };
+
+  // Date filter
+  type DateRange = '7' | '30' | '90' | 'all' | 'custom';
+  const [dateRange, setDateRange] = useState<DateRange>('all');
+  const [dateOpen, setDateOpen] = useState(false);
+  const [showCustomPanel, setShowCustomPanel] = useState(false);
+  const dateRef = useRef<HTMLDivElement>(null);
+  const today = new Date();
+  const isoDate = (d: Date) => d.toISOString().slice(0, 10);
+  const dayOffset = (n: number) => { const d = new Date(today); d.setDate(d.getDate() - n); return isoDate(d); };
+  const [customFrom, setCustomFrom] = useState(dayOffset(14));
+  const [customTo, setCustomTo] = useState(isoDate(today));
+  const [appliedRange, setAppliedRange] = useState<{ from: string; to: string } | null>(null);
+  useEffect(() => {
+    if (!dateOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (dateRef.current && !dateRef.current.contains(e.target as Node)) { setDateOpen(false); setShowCustomPanel(false); }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [dateOpen]);
+  const dateLabel = dateRange === 'all' ? 'All time'
+    : dateRange === '7' ? 'Last 7 days'
+    : dateRange === '30' ? 'Last 30 days'
+    : dateRange === '90' ? 'Last 90 days'
+    : appliedRange ? `${appliedRange.from} – ${appliedRange.to}` : 'Custom range';
+  const filtered = runs.filter(r => {
+    if (dateRange === 'all') return true;
+    if (dateRange === 'custom' && appliedRange) {
+      const fromDays = Math.floor((today.getTime() - new Date(appliedRange.from).getTime()) / 86400000);
+      const toDays = Math.floor((today.getTime() - new Date(appliedRange.to).getTime()) / 86400000);
+      return r.daysAgo >= toDays && r.daysAgo <= fromDays;
+    }
+    if (dateRange === 'custom') return true;
+    return r.daysAgo <= Number(dateRange);
+  });
+
+  // Pagination
+  const PAGE_SIZE = 15;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageItems = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  useEffect(() => { setPage(1); }, [dateRange, appliedRange]);
 
   if (isPlaceholder) {
     return (
@@ -2358,43 +2864,214 @@ function MJAgentActivityFeed({ agentName, accent }: { agentName: string; accent:
 
   return (
     <section className="mb-10">
-      <div className="mb-3">
-        <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Activity</h2>
-        <p className="text-[14px] text-[#6B7280]">Every run — what triggered it and how long it took.</p>
+      <div className="flex items-start justify-between gap-4 mb-3">
+        <div>
+          <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Activity</h2>
+          <p className="text-[14px] text-[#6B7280]">Every run — what triggered it.</p>
+        </div>
+        <div ref={dateRef} className="relative">
+          <button
+            onClick={(e) => { e.stopPropagation(); setDateOpen(v => !v); setShowCustomPanel(false); }}
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-[#E6E8EC] bg-white text-[13px] font-medium text-[#1C1E21] hover:bg-[#F8F9FB]"
+            style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+          >
+            <Calendar className="w-3.5 h-3.5 text-[#6B7280]" />
+            <span>{dateLabel}</span>
+            <ChevronDown className="w-3.5 h-3.5 text-[#9CA3AF]" style={{ transform: dateOpen ? 'rotate(180deg)' : 'none', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }} />
+          </button>
+          {dateOpen && (
+            <div
+              className="absolute right-0 top-full mt-1.5 z-50 rounded-xl overflow-hidden bg-white"
+              style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: showCustomPanel ? 240 : 160 }}
+            >
+              {!showCustomPanel ? (
+                <div className="py-1">
+                  {([
+                    { key: '7', label: 'Last 7 days' },
+                    { key: '30', label: 'Last 30 days' },
+                    { key: '90', label: 'Last 90 days' },
+                    { key: 'all', label: 'All time' },
+                    { key: 'custom', label: 'Custom range' },
+                  ] as { key: DateRange; label: string }[]).map(opt => {
+                    const sel = dateRange === opt.key;
+                    return (
+                      <button
+                        key={opt.key}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (opt.key === 'custom') { setShowCustomPanel(true); }
+                          else { setDateRange(opt.key); setAppliedRange(null); setDateOpen(false); }
+                        }}
+                        className="w-full text-left px-3.5 py-2"
+                        style={{
+                          fontSize: 12.5,
+                          fontWeight: sel ? 600 : 500,
+                          color: sel ? '#1C1E21' : '#4B5563',
+                          background: sel ? '#F8F9FB' : 'transparent',
+                          transition: 'background-color 120ms cubic-bezier(0.23,1,0.32,1)',
+                        }}
+                        onMouseEnter={(e) => { if (!sel) (e.currentTarget as HTMLElement).style.background = '#F8F9FB'; }}
+                        onMouseLeave={(e) => { if (!sel) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-3" onClick={(e) => e.stopPropagation()}>
+                  <p style={{ fontSize: 11, fontWeight: 600, color: '#1C1E21', marginBottom: 8 }}>Custom range</p>
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <label style={{ fontSize: 10.5, color: '#6B7280', display: 'block', marginBottom: 3 }}>From</label>
+                      <input
+                        type="date"
+                        value={customFrom}
+                        max={customTo}
+                        onChange={(e) => setCustomFrom(e.target.value)}
+                        className="w-full rounded-md px-2 py-1.5 outline-none"
+                        style={{ fontSize: 12, color: '#1C1E21', background: '#F8F9FB', border: '1px solid #E6E8EC' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 10.5, color: '#6B7280', display: 'block', marginBottom: 3 }}>To</label>
+                      <input
+                        type="date"
+                        value={customTo}
+                        min={customFrom}
+                        max={isoDate(today)}
+                        onChange={(e) => setCustomTo(e.target.value)}
+                        className="w-full rounded-md px-2 py-1.5 outline-none"
+                        style={{ fontSize: 12, color: '#1C1E21', background: '#F8F9FB', border: '1px solid #E6E8EC' }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (customFrom && customTo) {
+                          setAppliedRange({ from: customFrom, to: customTo });
+                          setDateRange('custom');
+                        }
+                        setDateOpen(false);
+                        setShowCustomPanel(false);
+                      }}
+                      className="w-full mt-1 py-1.5 rounded-lg text-white active:scale-[0.98]"
+                      style={{ fontSize: 11.5, fontWeight: 600, background: 'linear-gradient(to right, #221E1F, #6D5F63)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="rounded-2xl bg-white border border-[#E6E8EC] overflow-hidden">
-        {runs.map((r, i) => {
-          const Icon = kindIcon[r.kind] || Clock;
-          const status = statusStyle[r.status];
-          return (
-            <div
-              key={i}
-              className={`flex items-center gap-3 px-5 py-3 ${i !== runs.length - 1 ? 'border-b border-[#F0F1F3]' : ''} hover:bg-[#FAFAFB]`}
-              style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-            >
-              <div
-                className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0"
-                style={{ background: `${accent}14`, border: `1px solid ${accent}26` }}
-              >
-                <Icon className="w-[12px] h-[12px]" style={{ color: accent }} strokeWidth={2} />
+      {filtered.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-[#E6E8EC] bg-white px-6 py-10 text-center">
+          <p className="text-[13px] text-[#6B7280]">No runs in this period.</p>
+        </div>
+      ) : (
+        <>
+          <div className="rounded-2xl bg-white border border-[#E6E8EC] overflow-hidden">
+            {pageItems.map((r, i) => {
+              const Icon = kindIcon[r.kind] || Clock;
+              const status = statusStyle[r.status];
+              return (
+                <div
+                  key={`${safePage}-${i}`}
+                  className={`flex items-center gap-3 px-4 py-2 ${i !== pageItems.length - 1 ? 'border-b border-[#F0F1F3]' : ''} hover:bg-[#FAFAFB]`}
+                  style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  <div
+                    className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0"
+                    style={{ background: `${accent}14`, border: `1px solid ${accent}26` }}
+                  >
+                    <Icon className="w-[11px] h-[11px]" style={{ color: accent }} strokeWidth={2} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] font-medium text-[#1C1E21] truncate">{r.task}</div>
+                    <div className="text-[11px] text-[#9CA3AF] mt-0.5">{r.when}</div>
+                  </div>
+                  <span
+                    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase flex-shrink-0"
+                    style={{ background: status.bg, color: status.color }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: status.dot }} />
+                    {r.status}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-3">
+              <p style={{ fontSize: 12, color: '#9CA3AF' }}>
+                Showing <span style={{ color: '#1C1E21', fontWeight: 500 }}>{(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)}</span> of {filtered.length}
+              </p>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={safePage === 1}
+                  aria-label="Previous page"
+                  className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#4B5563] active:scale-[0.96]"
+                  style={{
+                    border: '1px solid #E6E8EC',
+                    background: '#FFFFFF',
+                    cursor: safePage === 1 ? 'not-allowed' : 'pointer',
+                    opacity: safePage === 1 ? 0.4 : 1,
+                    transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                  onMouseEnter={e => { if (safePage !== 1) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => {
+                  const active = n === safePage;
+                  return (
+                    <button
+                      key={n}
+                      onClick={() => setPage(n)}
+                      className="inline-flex items-center justify-center min-w-[32px] h-8 rounded-md text-[12.5px] font-medium active:scale-[0.96]"
+                      style={{
+                        border: active ? '1px solid #1C1E21' : '1px solid #E6E8EC',
+                        background: active ? '#1C1E21' : '#FFFFFF',
+                        color: active ? '#FFFFFF' : '#4B5563',
+                        padding: '0 10px',
+                        cursor: 'pointer',
+                        transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                      onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                      onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; } }}
+                    >
+                      {n}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={safePage === totalPages}
+                  aria-label="Next page"
+                  className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#4B5563] active:scale-[0.96]"
+                  style={{
+                    border: '1px solid #E6E8EC',
+                    background: '#FFFFFF',
+                    cursor: safePage === totalPages ? 'not-allowed' : 'pointer',
+                    opacity: safePage === totalPages ? 0.4 : 1,
+                    transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                  onMouseEnter={e => { if (safePage !== totalPages) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-[13.5px] font-medium text-[#1C1E21] truncate">{r.task}</div>
-                <div className="text-[11.5px] text-[#9CA3AF] mt-0.5">{r.when}</div>
-              </div>
-              <span className="text-[12px] text-[#6B7280] flex-shrink-0 tabular-nums">{r.duration}</span>
-              <span
-                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-bold tracking-wide uppercase flex-shrink-0"
-                style={{ background: status.bg, color: status.color }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: status.dot }} />
-                {r.status}
-              </span>
             </div>
-          );
-        })}
-      </div>
+          )}
+        </>
+      )}
     </section>
   );
 }
@@ -3266,7 +3943,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
               setCreating(false);
               setFirstTime(false);
               if (record) onAddCustomAgent?.(record);
-              showToast('Agent deployed successfully');
+              showToast(record?.name ? `${record.name} is now live` : 'Agent is now live');
             }}
           />
         ) : (
@@ -3281,7 +3958,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   setTimeout(() => onOpenAgent?.(record.name), 0);
                 }
               }
-              showToast('Agent deployed successfully');
+              showToast(record?.name ? `${record.name} is now live` : 'Agent is now live');
             }}
           />
         )}
@@ -3521,7 +4198,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   boxShadow: '0 1px 2px rgba(28,30,33,0.03)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1), border-color 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.12), 0 22px 44px -22px rgba(124,58,237,0.35)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.45)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.10), 0 0 22px 0 rgba(124,58,237,0.14), 0 14px 28px -18px rgba(124,58,237,0.20)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.30)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.22)'; }}
               >
                 {/* Blank-canvas grid — darker in centre, fades out at edges */}
@@ -3596,23 +4273,23 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 onClick={() => { setChooserOpen(false); onEnterMarketplace?.(); }}
                 className="relative rounded-2xl overflow-hidden text-left flex flex-col h-[400px] active:scale-[0.995] group"
                 style={{
-                  background: 'linear-gradient(135deg, #F7F5FF 0%, #F0EBFE 30%, #E5DCFC 60%, #D8CBF8 100%)',
-                  border: '1px solid rgba(124,58,237,0.28)',
-                  boxShadow: '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.22)',
+                  background: 'linear-gradient(135deg, #FCFBFF 0%, #F7F4FE 50%, #F1ECFB 100%)',
+                  border: '1px solid #EFEAF7',
+                  boxShadow: '0 1px 2px rgba(28,30,33,0.03), 0 12px 28px -18px rgba(124,58,237,0.10)',
                   transition: 'transform 220ms cubic-bezier(0.23,1,0.32,1), box-shadow 220ms cubic-bezier(0.23,1,0.32,1), border-color 220ms cubic-bezier(0.23,1,0.32,1)',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.40)'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.08), 0 0 18px 0 rgba(167,139,250,0.22), 0 30px 56px -22px rgba(124,58,237,0.28)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.28)'; e.currentTarget.style.boxShadow = '0 2px 4px rgba(28,30,33,0.04), 0 24px 52px -22px rgba(124,58,237,0.22)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.30)'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.10), 0 0 22px 0 rgba(124,58,237,0.14), 0 14px 28px -18px rgba(124,58,237,0.20)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.borderColor = '#EFEAF7'; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03), 0 12px 28px -18px rgba(124,58,237,0.10)'; }}
               >
-                {/* Radial blooms */}
-                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 360, height: 300, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(168,85,247,0.28), rgba(168,85,247,0) 70%)', filter: 'blur(36px)' }} />
-                <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -40, width: 280, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.18), rgba(236,72,153,0) 70%)', filter: 'blur(40px)' }} />
+                {/* Radial blooms — softened */}
+                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 360, height: 300, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(168,85,247,0.10), rgba(168,85,247,0) 70%)', filter: 'blur(36px)' }} />
+                <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -40, width: 280, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.06), rgba(236,72,153,0) 70%)', filter: 'blur(40px)' }} />
                 {/* Top inset highlight */}
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent)' }} />
 
                 {/* Top — eyebrow */}
                 <div className="relative px-6 pt-6 z-10">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(124,58,237,0.18)', backdropFilter: 'blur(8px)' }}>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(124,58,237,0.14)', backdropFilter: 'blur(8px)' }}>
                     <Sparkles className="w-[11px] h-[11px] text-[#7C3AED]" fill="currentColor" />
                     <span className="text-[10.5px] font-semibold tracking-[0.10em] uppercase text-[#6D28D9]">Sense Marketplace</span>
                   </span>
@@ -3621,9 +4298,9 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 {/* Avatars — equal height, shared baseline */}
                 <div className="relative flex-1 min-h-0 flex items-center justify-center z-10 -mt-1">
                   <div className="flex items-end justify-center -space-x-28" style={{ height: 200 }}>
-                    <img src={agentMarketer} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 1 }} draggable={false} />
-                    <img src={agentSupport} alt="" className="h-[200px] w-auto object-contain object-bottom drop-shadow-[0_14px_26px_rgba(76,29,149,0.26)]" style={{ zIndex: 3 }} draggable={false} />
-                    <img src={agentReviews} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_12px_22px_rgba(76,29,149,0.22)]" style={{ zIndex: 2 }} draggable={false} />
+                    <img src={agentMarketer} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(76,29,149,0.12)]" style={{ zIndex: 1 }} draggable={false} />
+                    <img src={agentSupport} alt="" className="h-[200px] w-auto object-contain object-bottom drop-shadow-[0_12px_20px_rgba(76,29,149,0.14)]" style={{ zIndex: 3 }} draggable={false} />
+                    <img src={agentReviews} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(76,29,149,0.12)]" style={{ zIndex: 2 }} draggable={false} />
                   </div>
                 </div>
 
@@ -3633,7 +4310,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                     <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
                     <span style={{ color: '#6D28D9' }}>agents.</span>
                   </h3>
-                  <p className="text-[12.5px] text-[#4C2A8F] leading-snug max-w-[280px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
+                  <p className="text-[12.5px] text-[#6B7280] leading-snug max-w-[280px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
                 </div>
               </button>
             </div>
@@ -3721,6 +4398,16 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
   const fallback = categoryTint[agent.category] || { tint: 'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)', accent: '#E48A98' };
   const tint = { tint: agent.tint || fallback.tint, accent: agent.accent || fallback.accent };
   const accent = tint.accent;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [menuOpen]);
 
   return (
     <div
@@ -3760,6 +4447,43 @@ function AUAgentCardCompact({ agent, onOpen }: { agent: typeof myAgents[number];
       />
       {/* Inner highlight line for glassy depth */}
       <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }} />
+
+      {/* Kebab menu — visible on hover */}
+      <div ref={menuRef} className="absolute top-2 right-2 z-10">
+        <button
+          onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v); }}
+          className={`w-7 h-7 rounded-md flex items-center justify-center text-[#4B5563] active:scale-[0.94] ${menuOpen ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+          style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #E6E8EC', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', backdropFilter: 'blur(4px)', transition: 'opacity 140ms cubic-bezier(0.23,1,0.32,1), background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#FFFFFF'; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; }}
+          aria-label="Agent options"
+        >
+          <MoreHorizontal className="w-[14px] h-[14px]" strokeWidth={2.2} />
+        </button>
+        {menuOpen && (
+          <div
+            className="absolute right-0 top-full mt-1.5 min-w-[160px] rounded-lg bg-white py-1 z-30"
+            style={{ border: '1px solid #E6E8EC', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {[
+              { label: 'Pause', icon: Clock, color: '#1C1E21' },
+              { label: 'Deactivate', icon: AlertTriangle, color: '#1C1E21' },
+              { label: 'Remove', icon: Trash2, color: '#DC2626' },
+            ].map(({ label, icon: ItemIcon, color }) => (
+              <button
+                key={label}
+                onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-left hover:bg-[#F3F4F6] active:scale-[0.99]"
+                style={{ color, transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+              >
+                <ItemIcon className="w-[13px] h-[13px]" strokeWidth={2} />
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Avatar — sits on the card gradient, no separate pane */}
       <div className="relative flex items-end justify-center overflow-hidden pt-6" style={{ height: 200 }}>
@@ -4233,7 +4957,7 @@ function Metric({ label, value, sub }: { label: string; value: string; sub?: str
   );
 }
 
-function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof catalogItems[number]; onBack: () => void; onHire?: (a: typeof myAgents[number]) => void; onChatWith?: (name: string) => void }) {
+function TryAgentView({ agent, onBack, onHire, onChatWith, isMJ = false, onHireRequest }: { agent: typeof catalogItems[number]; onBack: () => void; onHire?: (a: typeof myAgents[number]) => void; onChatWith?: (name: string) => void; isMJ?: boolean; onHireRequest?: (a: typeof catalogItems[number]) => void }) {
   const persona = catalogPersonas[agent.title] || hiredPersonas[agent.title] || { name: agent.title.split(' ')[0], pronouns: 'it/its' };
   const agentShort = agent.title.replace(/\s+Agent$/i, '').trim();
   const rL = agent.role.toLowerCase();
@@ -4277,6 +5001,43 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
     ],
   };
   const capabilities = capabilitiesByCategory[catKey] || capabilitiesByCategory.Operations;
+
+  // Per-agent template content (subtitle, intro, steps, skills, tools, triggers).
+  // Falls back to generic capabilities-derived content for agents not listed here.
+  const agentContent: Record<string, {
+    subtitle: string;
+    intro: string;
+    steps: string[];
+    skills: { title: string; desc: string }[];
+    skillsEmptyNote?: string;
+    tools: { title: string; desc: string }[];
+    triggers: { title: string; desc: string }[];
+    knowledge?: { title: string; desc: string }[];
+    knowledgeEmptyNote?: string;
+  }> = {
+    'Daily Weather Forecast': {
+      subtitle: 'Multi-city weather digest emailed every morning',
+      intro: 'You are a daily weather forecaster for {{audience}}.',
+      steps: [
+        'Fetch the weather forecast for the configured cities.',
+        'Assess the conditions for {{audience}} — call out safety concerns, work impact, and recommendations.',
+        'Send the daily weather digest by email to {{recipient_email}} (if Send Email is enabled).',
+        'Post the same digest as a structured chat card to the configured channel (if Send Message (Chat) is enabled).',
+      ],
+      skills: [],
+      skillsEmptyNote: 'No skills attached. Tools below are used directly.',
+      tools: [
+        { title: 'Send Message (Chat)', desc: 'Send a message to a Zuper chat channel. The channel is locked at agent build time.' },
+        { title: 'Get Weather', desc: 'Fetch a daily weather forecast for given lat/lon coordinates via Open-Meteo.' },
+      ],
+      triggers: [
+        { title: 'Scheduled run', desc: 'Recurring schedule — configure delivery time during clone.' },
+      ],
+      knowledge: [],
+      knowledgeEmptyNote: 'No knowledge base attached. Add docs in the agent builder after cloning.',
+    },
+  };
+  const content = agentContent[agent.title];
 
   const quoteByCategory: Record<string, string> = {
     Operations: `I'll take ${agent.saves.replace('Saves ', '')} of grunt work off your plate and stop tomorrow's surprises from costing you money.`,
@@ -4372,30 +5133,199 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
     }, 700);
   };
 
+  // ────────────────────────────────────────────────────────────────────
+  // MJ — Template overview modal (single-column document layout)
+  // ────────────────────────────────────────────────────────────────────
+  if (isMJ) {
+    const skills = content?.skills ?? [];
+    const tools = content?.tools ?? [
+      { title: 'Send Message (Chat)', desc: 'Send a message to a Zuper chat channel — locked at agent build time.' },
+      { title: `Fetch ${agentShort}`, desc: `Pulls fresh ${agentShort.toLowerCase()} data for the configured source.` },
+    ];
+    const triggers = content?.triggers ?? [
+      { title: 'Scheduled run', desc: 'Recurring schedule — configure delivery time during clone.' },
+    ];
+    const knowledge = content?.knowledge ?? [];
+
+    const sections: { label: string; icon: typeof Wrench; items: { title: string; desc: string }[]; empty?: string }[] = [
+      { label: 'Skills', icon: Zap, items: skills, empty: content?.skillsEmptyNote },
+      { label: 'Tools', icon: Wrench, items: tools },
+      { label: 'Knowledge', icon: BookOpen, items: knowledge, empty: content?.knowledgeEmptyNote },
+      { label: 'Triggers', icon: Clock, items: triggers },
+    ];
+
+    return (
+      <div className="flex flex-col h-full bg-white">
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-6 h-14 border-b border-[#F0F1F3] flex-shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-[12.5px] font-semibold text-[#4B5563] truncate">{agent.title}</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-[#F3F4F6] text-[#6B7280] text-[10px] font-bold uppercase tracking-[0.06em]">Template</span>
+          </div>
+          <button onClick={onBack} className="w-8 h-8 rounded-md hover:bg-[#F3F4F6] flex items-center justify-center text-[#6B7280] active:scale-[0.96]" style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }} aria-label="Close">
+            <X className="w-[16px] h-[16px]" />
+          </button>
+        </div>
+
+        {/* Body — 2-col layout from top. Left: identity + what it does. Right: reference card. */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <div className="h-full max-w-[960px] mx-auto px-8 pt-8 pb-6 grid grid-cols-[1fr_340px] gap-8 min-h-0">
+            {/* LEFT column — identity + what it does */}
+            <div className="overflow-y-auto pr-1 min-h-0">
+              {/* Identity */}
+              <div className="flex items-center gap-4 mb-7">
+                <div
+                  className="relative w-[72px] h-[72px] rounded-2xl overflow-hidden flex items-end justify-center flex-shrink-0"
+                  style={{ background: tint.tint }}
+                >
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute" style={{ top: -20, left: -16, width: 92, height: 92, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}40, transparent 70%)`, filter: 'blur(14px)' }} />
+                  </div>
+                  <img src={agent.img} alt="" className="relative h-[72px] w-auto object-contain" draggable={false} />
+                </div>
+                <div className="min-w-0">
+                  <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+                    {agent.title}
+                  </h2>
+                  {content?.subtitle && (
+                    <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.5, marginTop: 3 }}>
+                      {content.subtitle}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-2.5 mt-2.5 text-[12px] text-[#6B7280]">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full rounded-full opacity-50 bg-[#10B981] animate-ping" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#10B981]" />
+                      </span>
+                      Online
+                    </span>
+                    <span style={{ width: 1, height: 10, background: '#E6E8EC' }} />
+                    <span><span className="font-semibold text-[#1C1E21]">{price}</span> · Saves <span className="font-semibold text-[#1C1E21]">{saves}</span></span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Hairline */}
+              <div className="h-px bg-[#F0F1F3] mb-6" />
+
+              {/* What it does */}
+              <section>
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#9CA3AF] mb-3">What it does</p>
+                <p style={{ fontSize: 14, color: '#1C1E21', lineHeight: 1.65, marginBottom: 16 }}>
+                  {content?.intro || agent.desc}
+                </p>
+                <p style={{ fontSize: 13.5, color: '#1C1E21', fontWeight: 500, marginBottom: 10 }}>Each scheduled run:</p>
+                <ol className="space-y-2.5 list-decimal pl-5 marker:text-[#9CA3AF] marker:font-medium">
+                  {(content?.steps || capabilities.map(c => `${c.title}. ${c.desc}`)).map((step, i) => (
+                    <li key={i} style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.65, paddingLeft: 4 }}>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            </div>
+
+            {/* RIGHT column — pinned reference card (no scroll, compact) */}
+            <aside
+              className="self-start rounded-xl p-5 bg-[#FAFAFB]"
+              style={{ border: '1px solid #EFF0F3' }}
+            >
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#9CA3AF] mb-4">What it comes with</p>
+              <div className="space-y-4">
+                {(() => {
+                  const sectionAccents: Record<string, string> = {
+                    Skills: '#7C3AED',
+                    Tools: '#FD5000',
+                    Knowledge: '#2563EB',
+                    Triggers: '#10B981',
+                  };
+                  return sections.map(({ label, icon: Icon, items, empty }, idx) => {
+                    const accentColor = sectionAccents[label] || tint.accent;
+                    return (
+                      <div key={label} className={idx > 0 ? 'pt-4 border-t border-[#EAECEF]' : ''}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span
+                            className="inline-flex items-center justify-center w-5 h-5 rounded-md flex-shrink-0"
+                            style={{ background: `${accentColor}15` }}
+                          >
+                            <Icon className="w-[12px] h-[12px]" style={{ color: accentColor }} strokeWidth={2} />
+                          </span>
+                          <span style={{ fontSize: 12.5, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>{label}</span>
+                          <span style={{ fontSize: 11, color: '#9CA3AF', fontWeight: 500 }}>· {items.length}</span>
+                        </div>
+                        {items.length === 0 ? (
+                          <p style={{ fontSize: 11.5, color: '#9CA3AF', lineHeight: 1.5, fontStyle: 'italic' }}>
+                            {empty || 'None attached.'}
+                          </p>
+                        ) : (
+                          <ul className="space-y-2.5">
+                            {items.map((it) => (
+                              <li key={it.title}>
+                                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#1C1E21', lineHeight: 1.35 }}>{it.title}</div>
+                                <div style={{ fontSize: 11.5, color: '#6B7280', lineHeight: 1.5, marginTop: 2 }}>{it.desc}</div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        {/* Sticky footer */}
+        <div className="flex items-center justify-between gap-3 px-8 py-4 bg-white border-t border-[#F0F1F3] flex-shrink-0">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center px-4 h-9 rounded-md text-[13px] font-medium text-[#4B5563] active:scale-[0.98]"
+            style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => { if (onHireRequest) { onHireRequest(agent); } else { setHiredOpen(true); } }}
+            className="inline-flex items-center gap-1.5 px-5 h-9 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold active:scale-[0.98]"
+            style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+          >
+            <Sparkles className="w-[12px] h-[12px]" fill="currentColor" />
+            Setup agent
+            <ArrowRight className="w-[12px] h-[12px]" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full bg-white">
       {/* Main content */}
       <div className="flex-1 flex flex-col bg-[#FAFAFB] overflow-y-auto">
-      {/* Top header */}
+      {/* Top header — same simple bar for AU and MJ */}
       <div className="flex items-center justify-between px-5 h-14 bg-white/95 backdrop-blur border-b border-[#E6E8EC] flex-shrink-0 sticky top-0 z-20">
         <div className="flex items-center gap-3">
           <button onClick={onBack} className="w-8 h-8 rounded-lg hover:bg-[#F3F4F6] flex items-center justify-center text-[#4B5563] transition" aria-label="Back">
             <ChevronLeft className="w-[18px] h-[18px]" />
           </button>
           <h1 className="text-[14px] font-semibold text-[#1C1E21]">{agent.title}</h1>
-          <span className="px-1.5 py-0.5 rounded-md bg-[#F3F4F6] text-[#4B5563] text-[10px] font-semibold uppercase tracking-wide">Preview</span>
+          <span className="px-1.5 py-0.5 rounded-md bg-[#F3F4F6] text-[#4B5563] text-[10px] font-semibold uppercase tracking-wide">{isMJ ? 'Template' : 'Preview'}</span>
         </div>
         <button onClick={onBack} className="w-8 h-8 rounded-lg hover:bg-[#F3F4F6] flex items-center justify-center text-[#4B5563] transition" aria-label="Close">
           <X className="w-[16px] h-[16px]" />
         </button>
       </div>
 
-      <div className="max-w-[1180px] mx-auto w-full px-6 py-6 pb-24">
-        <div className="grid grid-cols-[1fr_280px] gap-4 items-start">
-        <div className="flex flex-col gap-4 min-w-0">
-        {/* Hero card — agent pitches itself */}
-        <div className="relative rounded-3xl border border-[#E6E8EC] overflow-hidden bg-white">
-          <div className="grid grid-cols-[220px_1fr] items-stretch">
+      <div className={isMJ ? 'flex-1' : 'mx-auto w-full max-w-[1180px] px-6 py-6 pb-12'}>
+        <div className={isMJ ? 'grid grid-cols-[1fr_320px] h-full' : 'grid grid-cols-[1fr_280px] gap-4 items-start'}>
+        <div className={isMJ ? 'flex flex-col min-w-0 border-r border-[#E6E8EC]' : 'flex flex-col gap-4 min-w-0'}>
+        {/* Hero pane — flat for MJ, card for AU */}
+        <div className={isMJ ? 'relative overflow-hidden bg-white border-b border-[#E6E8EC]' : 'relative overflow-hidden bg-white rounded-3xl border border-[#E6E8EC]'}>
+          <div className="grid items-stretch grid-cols-[220px_1fr]">
             <div className="relative overflow-hidden flex items-end justify-center" style={{ background: tint.tint, minHeight: 220 }}>
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute" style={{ top: -60, left: -40, width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${tint.accent}55, transparent 70%)`, filter: 'blur(32px)' }} />
@@ -4428,7 +5358,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                 I'm <span style={{ color: tint.accent }}>{agentShort}</span> Agent
               </h2>
               <p className="text-[13px] text-[#4B5563] leading-relaxed mb-3 max-w-[460px]">
-                {agent.desc}
+                {content?.subtitle || agent.desc}
               </p>
 
               <div className="flex items-center gap-3 mb-4 text-[11.5px] text-[#6B7280]">
@@ -4436,20 +5366,24 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
                   <span className="font-semibold text-[#1C1E21]">{saves}</span>
                   saves
                 </span>
-                <span className="w-px h-3 bg-[#E6E8EC]" />
-                <span className="inline-flex items-center gap-1">
-                  <Star className="w-[11px] h-[11px] text-[#F59E0B] fill-[#F59E0B]" />
-                  <span className="font-semibold text-[#1C1E21]">{agent.rating.toFixed(1)}</span>
-                </span>
+                {!isMJ && (
+                  <>
+                    <span className="w-px h-3 bg-[#E6E8EC]" />
+                    <span className="inline-flex items-center gap-1">
+                      <Star className="w-[11px] h-[11px] text-[#F59E0B] fill-[#F59E0B]" />
+                      <span className="font-semibold text-[#1C1E21]">{agent.rating.toFixed(1)}</span>
+                    </span>
+                  </>
+                )}
               </div>
 
               <div className="mt-auto">
                 <button
-                  onClick={() => setHiredOpen(true)}
+                  onClick={() => { if (onHireRequest) { onHireRequest(agent); } else { setHiredOpen(true); } }}
                   className="inline-flex items-center justify-center gap-1.5 px-4 h-10 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
                 >
                   <Sparkles className="w-[13px] h-[13px]" fill="currentColor" />
-                  Hire {agent.title} — {price}
+                  {isMJ ? 'Setup agent' : `Hire ${agent.title} — ${price}`}
                   <ArrowRight className="w-[13px] h-[13px]" />
                 </button>
               </div>
@@ -4457,136 +5391,205 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
           </div>
         </div>
 
-        {/* Chat — the agent speaking */}
-        <div className="rounded-2xl bg-white border border-[#E6E8EC] flex flex-col min-h-[620px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px -16px rgba(0,0,0,0.08)' }}>
-          <div className="flex items-center justify-between gap-3 px-6 h-16 border-b border-[#F0F1F3]">
-            <div className="min-w-0">
-              <div className="text-[15px] font-semibold text-[#1C1E21] tracking-tight leading-tight">Chat with {agent.title}</div>
-              <div className="text-[12px] text-[#6B7280] mt-0.5">Ask anything · the {agent.title} replies in their own voice</div>
-            </div>
-            <span className="text-[11px] text-[#9CA3AF]">No data saved · preview</span>
+        {isMJ ? (
+          /* MJ — "What it does" pane (flat, no card chrome) */
+          <div className="bg-white px-8 py-7">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.10em] text-[#9CA3AF] mb-3">What it does</p>
+            <p className="text-[14.5px] text-[#1C1E21] leading-[1.65] mb-5">
+              {content?.intro || agent.desc}
+            </p>
+            <p className="text-[13.5px] text-[#1C1E21] font-medium mb-3">Each scheduled run:</p>
+            <ol className="space-y-3 list-decimal pl-5 marker:text-[#9CA3AF] marker:font-medium">
+              {(content?.steps || capabilities.map(c => `${c.title}. ${c.desc}`)).map((step, i) => (
+                <li key={i} className="text-[14px] text-[#374151] leading-[1.65] pl-1">
+                  {step}
+                </li>
+              ))}
+            </ol>
           </div>
-
-          <div className="flex-1 overflow-y-auto px-8 py-8">
-            <div className="max-w-[640px] mx-auto space-y-7">
-            {messages.map((m, i) => (
-              m.from === 'agent' ? (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 6, filter: 'blur(4px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                  className="flex flex-col"
-                >
-                  <div className="text-[11px] font-medium uppercase tracking-[0.10em] mb-1.5" style={{ color: tint.accent }}>{agent.title}</div>
-                  <p className="text-[14.5px] text-[#1C1E21] leading-[1.65]">{m.text}</p>
-                  {m.rich && (
-                    <div className="mt-3 rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-4 py-3 text-[12.5px] text-[#1C1E21] font-mono whitespace-pre-line leading-relaxed">
-                      {m.rich}
-                    </div>
-                  )}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                  className="flex justify-end"
-                >
-                  <div className="max-w-[520px] rounded-2xl rounded-br-md bg-[#EEF2FF] text-[#1C1E21] border border-[#E0E7FF] px-4 py-2.5 text-[14px] leading-relaxed">{m.text}</div>
-                </motion.div>
-              )
-            ))}
-            {sending && (
-              <div className="flex items-center gap-2 text-[13.5px] text-[#9CA3AF]">
-                <span className="inline-flex gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '120ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '240ms' }} />
-                </span>
-                {agent.title} is typing
+        ) : (
+          /* AU — chat with the agent */
+          <div className="rounded-2xl bg-white border border-[#E6E8EC] flex flex-col min-h-[620px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px -16px rgba(0,0,0,0.08)' }}>
+            <div className="flex items-center justify-between gap-3 px-6 h-16 border-b border-[#F0F1F3]">
+              <div className="min-w-0">
+                <div className="text-[15px] font-semibold text-[#1C1E21] tracking-tight leading-tight">Chat with {agent.title}</div>
+                <div className="text-[12px] text-[#6B7280] mt-0.5">Ask anything · the {agent.title} replies in their own voice</div>
               </div>
-            )}
+              <span className="text-[11px] text-[#9CA3AF]">No data saved · preview</span>
             </div>
-          </div>
 
-          <div className="border-t border-[#F0F1F3] px-8 py-5">
-            <div className="max-w-[640px] mx-auto">
-              <div className="flex flex-wrap items-center gap-1.5 mb-3">
-                {suggestions.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => ask(s)}
-                    style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    className="inline-flex items-center px-3 h-8 rounded-full bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:border-[#1C1E21]/30 hover:text-[#1C1E21] active:scale-[0.97]"
+            <div className="flex-1 overflow-y-auto px-8 py-8">
+              <div className="max-w-[640px] mx-auto space-y-7">
+              {messages.map((m, i) => (
+                m.from === 'agent' ? (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 6, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                    className="flex flex-col"
                   >
-                    {s}
-                  </button>
-                ))}
+                    <div className="text-[11px] font-medium uppercase tracking-[0.10em] mb-1.5" style={{ color: tint.accent }}>{agent.title}</div>
+                    <p className="text-[14.5px] text-[#1C1E21] leading-[1.65]">{m.text}</p>
+                    {m.rich && (
+                      <div className="mt-3 rounded-xl bg-[#FAFAFB] border border-[#F0F1F3] px-4 py-3 text-[12.5px] text-[#1C1E21] font-mono whitespace-pre-line leading-relaxed">
+                        {m.rich}
+                      </div>
+                    )}
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                    className="flex justify-end"
+                  >
+                    <div className="max-w-[520px] rounded-2xl rounded-br-md bg-[#EEF2FF] text-[#1C1E21] border border-[#E0E7FF] px-4 py-2.5 text-[14px] leading-relaxed">{m.text}</div>
+                  </motion.div>
+                )
+              ))}
+              {sending && (
+                <div className="flex items-center gap-2 text-[13.5px] text-[#9CA3AF]">
+                  <span className="inline-flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '120ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#9CA3AF] animate-bounce" style={{ animationDelay: '240ms' }} />
+                  </span>
+                  {agent.title} is typing
+                </div>
+              )}
               </div>
-              <div
-                className="rounded-2xl border border-[#E6E8EC] bg-white focus-within:border-[#1C1E21]"
-                style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              >
-                <div className="flex items-center gap-2 px-3.5 py-2.5">
-                  <button
-                    style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    className="w-7 h-7 rounded-full hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#6B7280]"
-                    aria-label="Attach"
-                  >
-                    <Plus className="w-[14px] h-[14px]" />
-                  </button>
-                  <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' && input.trim()) { ask(input.trim()); setInput(''); } }}
-                    placeholder={`Ask the ${agent.title} anything…`}
-                    className="flex-1 bg-transparent text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none"
-                  />
-                  <button
-                    onClick={() => { if (input.trim()) { ask(input.trim()); setInput(''); } }}
-                    style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center active:scale-[0.94] ${input.trim() ? 'bg-[#1C1E21] text-white hover:bg-black' : 'bg-[#F3F4F6] text-[#9CA3AF]'}`}
-                    aria-label="Send"
-                  >
-                    <ArrowUp className="w-[14px] h-[14px]" strokeWidth={2.5} />
-                  </button>
+            </div>
+
+            <div className="border-t border-[#F0F1F3] px-8 py-5">
+              <div className="max-w-[640px] mx-auto">
+                <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                  {suggestions.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => ask(s)}
+                      style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                      className="inline-flex items-center px-3 h-8 rounded-full bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:border-[#1C1E21]/30 hover:text-[#1C1E21] active:scale-[0.97]"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+                <div
+                  className="rounded-2xl border border-[#E6E8EC] bg-white focus-within:border-[#1C1E21]"
+                  style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  <div className="flex items-center gap-2 px-3.5 py-2.5">
+                    <button
+                      style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                      className="w-7 h-7 rounded-full hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#6B7280]"
+                      aria-label="Attach"
+                    >
+                      <Plus className="w-[14px] h-[14px]" />
+                    </button>
+                    <input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && input.trim()) { ask(input.trim()); setInput(''); } }}
+                      placeholder={`Ask the ${agent.title} anything…`}
+                      className="flex-1 bg-transparent text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none"
+                    />
+                    <button
+                      onClick={() => { if (input.trim()) { ask(input.trim()); setInput(''); } }}
+                      style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center active:scale-[0.94] ${input.trim() ? 'bg-[#1C1E21] text-white hover:bg-black' : 'bg-[#F3F4F6] text-[#9CA3AF]'}`}
+                      aria-label="Send"
+                    >
+                      <ArrowUp className="w-[14px] h-[14px]" strokeWidth={2.5} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
         </div>
 
-        {/* Right rail — capabilities + quote */}
-        <aside className="flex flex-col gap-3 sticky top-[72px]">
-          <div className="rounded-2xl bg-white border border-[#E6E8EC] p-4">
-            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9CA3AF] mb-2.5">Capabilities</div>
-            <ul className="space-y-2.5">
-              {capabilities.map(({ icon: Icon, title, desc }) => (
-                <li key={title} className="flex items-start gap-2.5">
-                  <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: `${tint.accent}14`, border: `1px solid ${tint.accent}26` }}>
-                    <Icon className="w-[13px] h-[13px]" style={{ color: tint.accent }} strokeWidth={2} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{title}</div>
-                    <div className="text-[11.5px] text-[#6B7280] leading-snug mt-0.5">{desc}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+        {/* Right rail */}
+        <aside className={isMJ ? 'flex flex-col' : 'flex flex-col gap-3 sticky top-[72px]'}>
+          {!isMJ && (
+            <>
+              <div className="rounded-2xl bg-white border border-[#E6E8EC] p-4">
+                <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9CA3AF] mb-2.5">Capabilities</div>
+                <ul className="space-y-2.5">
+                  {capabilities.map(({ icon: Icon, title, desc }) => (
+                    <li key={title} className="flex items-start gap-2.5">
+                      <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: `${tint.accent}14`, border: `1px solid ${tint.accent}26` }}>
+                        <Icon className="w-[13px] h-[13px]" style={{ color: tint.accent }} strokeWidth={2} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{title}</div>
+                        <div className="text-[11.5px] text-[#6B7280] leading-snug mt-0.5">{desc}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          <div className="rounded-2xl border border-[#E6E8EC] p-4" style={{ background: `linear-gradient(180deg, ${tint.accent}0D 0%, #FFFFFF 100%)` }}>
-            <Quote className="w-[14px] h-[14px] mb-2" style={{ color: tint.accent }} strokeWidth={2.5} />
-            <p className="text-[12.5px] text-[#1C1E21] leading-[1.55] italic">
-              "{businessQuote}"
-            </p>
-            <div className="mt-3 pt-3 border-t border-[#F0F1F3] text-[11px] text-[#6B7280]">
-              — {agent.title}
-            </div>
-          </div>
+              <div className="rounded-2xl border border-[#E6E8EC] p-4" style={{ background: `linear-gradient(180deg, ${tint.accent}0D 0%, #FFFFFF 100%)` }}>
+                <Quote className="w-[14px] h-[14px] mb-2" style={{ color: tint.accent }} strokeWidth={2.5} />
+                <p className="text-[12.5px] text-[#1C1E21] leading-[1.55] italic">
+                  "{businessQuote}"
+                </p>
+                <div className="mt-3 pt-3 border-t border-[#F0F1F3] text-[11px] text-[#6B7280]">
+                  — {agent.title}
+                </div>
+              </div>
+            </>
+          )}
+          {isMJ && (() => {
+            const skills = content?.skills ?? [
+              { title: 'Find Customer', desc: 'Search Zuper customers by name keyword and classify the result.' },
+              { title: 'Get Latest Job', desc: 'Fetch the most recent job for a Zuper customer, bounded by an as-of timestamp.' },
+            ];
+            const tools = content?.tools ?? [
+              { title: 'Send Message (Chat)', desc: 'Send a message to a Zuper chat channel — locked at agent build time.' },
+              { title: `Fetch ${agentShort}`, desc: `Pulls fresh ${agentShort.toLowerCase()} data for the configured source.` },
+            ];
+            const triggers = content?.triggers ?? [
+              { title: 'Scheduled run', desc: 'Recurring schedule — configure delivery time during clone.' },
+            ];
+            const skillsEmptyNote = content?.skillsEmptyNote;
+            const Section = ({ label, items, Icon, isFirst }: { label: string; items: { title: string; desc: string }[]; Icon: typeof Wrench; isFirst?: boolean }) => {
+              if (items.length === 0) return null;
+              return (
+                <div className={isFirst ? '' : 'pt-4 mt-4 border-t border-[#F0F1F3]'}>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#9CA3AF] mb-2.5">{label}</p>
+                  <ul className="space-y-2.5">
+                    {items.map(({ title, desc }) => (
+                      <li key={title} className="flex items-start gap-2.5">
+                        <div className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: `${tint.accent}14`, border: `1px solid ${tint.accent}26` }}>
+                          <Icon className="w-[13px] h-[13px]" style={{ color: tint.accent }} strokeWidth={2} />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-[12.5px] font-semibold text-[#1C1E21] leading-tight">{title}</div>
+                          <div className="text-[11.5px] text-[#6B7280] leading-snug mt-0.5">{desc}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            };
+            const visibleSections = [
+              { label: 'Skills', items: skills, Icon: Zap },
+              { label: 'Tools', items: tools, Icon: Wrench },
+              { label: 'Triggers', items: triggers, Icon: Clock },
+            ].filter(s => s.items.length > 0);
+            return (
+              <div className="bg-white px-6 py-6">
+                {visibleSections.map((s, i) => (
+                  <Section key={s.label} label={s.label} items={s.items} Icon={s.Icon} isFirst={i === 0} />
+                ))}
+              </div>
+            );
+          })()}
         </aside>
         </div>
 
@@ -4610,7 +5613,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith }: { agent: typeof cat
   );
 }
 
-function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void; onHire?: (a: typeof myAgents[number]) => void; onChatWith?: (name: string) => void }) {
+function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBack: () => void; onHire?: (a: typeof myAgents[number]) => void; onChatWith?: (name: string) => void; isMJ?: boolean }) {
   const [search, setSearch] = useState('');
   const [activeCat, setActiveCat] = useState('All');
   const [heroIdx, setHeroIdx] = useState(0);
@@ -4618,17 +5621,55 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
   const wheelLockRef = useRef(false);
   const dragRef = useRef<{ startX: number; startIdx: number; dragging: boolean }>({ startX: 0, startIdx: 0, dragging: false });
   const [triedAgent, setTriedAgent] = useState<typeof catalogItems[number] | null>(null);
+  const [hiredForMJ, setHiredForMJ] = useState<typeof catalogItems[number] | null>(null);
 
-  if (triedAgent) {
+  // MJ Hire — after the ready modal opens, give it ~2s for the boot animation
+  // then send the user into the agent chat.
+  useEffect(() => {
+    if (!hiredForMJ) return;
+    const mpPaletteLocal = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
+    const accentLocal = mpPaletteLocal[Math.abs(hiredForMJ.title.split('').reduce((h, c) => (h << 5) - h + c.charCodeAt(0), 0)) % mpPaletteLocal.length];
+    const tintLocal = `linear-gradient(180deg, ${accentLocal}1F 0%, ${accentLocal}0A 40%, #FFFFFF 80%)`;
+    const t = setTimeout(() => {
+      const record: typeof myAgents[number] = {
+        name: hiredForMJ.title,
+        desc: hiredForMJ.desc,
+        runs: 0,
+        lastRun: 'just now',
+        users: 1,
+        rating: hiredForMJ.rating,
+        reviews: 0,
+        price: hiredForMJ.featured ? 'Free' : '$12/mo',
+        skills: 0,
+        tools: 0,
+        status: 'Active',
+        category: 'Operations',
+        img: hiredForMJ.img,
+        tint: tintLocal,
+        accent: accentLocal,
+      };
+      onHire?.(record);
+      onChatWith?.(record.name);
+      setHiredForMJ(null);
+    }, hiredForMJ.title === 'Google Review Digest' ? 4000 : 2000);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hiredForMJ]);
+
+  // AU user: full-page swap into TryAgentView (with chat).
+  // MJ user: modal overlay (rendered at the bottom of this component).
+  if (triedAgent && !isMJ) {
     return (
       <TryAgentView
         agent={triedAgent}
         onBack={() => setTriedAgent(null)}
         onHire={onHire}
         onChatWith={onChatWith}
+        isMJ={false}
       />
     );
   }
+
   const heroPrev = () => setHeroIdx((i) => (i - 1 + catalogItems.length) % catalogItems.length);
   const heroNext = () => setHeroIdx((i) => (i + 1) % catalogItems.length);
   const categories = ['All', 'Sales', 'Operations', 'Customer', 'Finance', 'Field'];
@@ -4649,7 +5690,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
   });
 
   return (
-    <div className="h-full w-full flex flex-col overflow-y-auto scrollbar-auto-hide">
+    <div className="h-full w-full flex flex-col overflow-hidden">
       {/* Sticky top bar */}
       <div className="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-[#E6E8EC] flex-shrink-0">
         <div className="max-w-[1280px] mx-auto px-8 py-3 flex items-center justify-between gap-4">
@@ -4664,7 +5705,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
       <div
         className="relative overflow-hidden flex-shrink-0"
         style={{
-          minHeight: 240,
+          minHeight: 180,
           background: '#F8F7FF',
         }}
       >
@@ -4715,7 +5756,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
           </svg>
         </div>
 
-        <div className="relative max-w-[1280px] mx-auto px-10 py-10 flex flex-col items-center text-center min-h-full justify-center">
+        <div className="relative max-w-[1280px] mx-auto px-10 py-6 flex flex-col items-center text-center min-h-full justify-center">
           <motion.div
             className="relative z-10 max-w-[760px]"
             initial={{ opacity: 0, y: 16 }}
@@ -4723,7 +5764,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           >
             <div
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-4"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full mb-3"
               style={{
                 background: 'rgba(255, 255, 255, 0.65)',
                 border: '1px solid rgba(124, 58, 237, 0.22)',
@@ -4735,14 +5776,14 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                 Sense Agents Marketplace
               </span>
             </div>
-            <h1 className="text-[40px] font-semibold tracking-tight leading-[1.05] text-[#1C1E21] mb-3">
+            <h1 className="text-[28px] font-semibold tracking-tight leading-[1.1] text-[#1C1E21] mb-2">
               Hire the <span style={{ color: '#6D28D9' }}>agents</span> doing the work for you.
             </h1>
-            <p className="text-[14.5px] text-[#4C2A8F] leading-relaxed max-w-[560px] mx-auto mb-5">
-              Pre-built AI teammates that plug into Zuper. Pick one, deploy in minutes — they handle the work, you keep control.
+            <p className="text-[13.5px] text-[#4C2A8F] leading-snug max-w-[520px] mx-auto mb-4">
+              Pre-built AI teammates that plug into Zuper. Pick one, deploy in minutes.
             </p>
-            <button className="inline-flex items-center gap-1.5 px-5 h-10 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[13.5px] font-semibold transition hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]">
-              <Plus className="w-4 h-4" strokeWidth={2.5} />
+            <button className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold transition hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]">
+              <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
               Create agent
             </button>
           </motion.div>
@@ -4750,7 +5791,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
       </div>
 
       {/* Browse Catalog section */}
-      <div className="max-w-[1280px] mx-auto px-10 pt-12 pb-20 w-full">
+      <div className="max-w-[1280px] mx-auto px-10 pt-6 pb-4 w-full flex-1 min-h-0 flex flex-col">
         <div className="flex items-start justify-between gap-4 mb-5 flex-wrap">
           <div>
             <div className="flex items-center gap-2.5">
@@ -4774,7 +5815,23 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
 
         {/* Peek carousel — rich agent cards */}
         {(() => {
-          const filteredCatalog = catalogItems.filter((c) => {
+          // Curated browse-catalog showcase — overrides source titles for display
+          const sourceByTitle = (t: string) => catalogItems.find(c => c.title === t)!;
+          const browseCatalog: typeof catalogItems = [
+            { ...sourceByTitle('Weather Agent'), title: 'Daily Weather Forecast', img: agentMarketer },
+            { ...sourceByTitle('Review Agent'),  title: 'Google Review Digest',   img: agentSupport },
+            { ...sourceByTitle('Intake Agent'),  title: 'Lead Intake',             img: agentWeatherLead },
+            { ...sourceByTitle('Dispatch Agent'), img: agentDispatch },
+            { ...sourceByTitle('Collection Agent'), img: agentCollection },
+            {
+              ...sourceByTitle('Qualification Agent'),
+              title: 'Sales Coach Agent',
+              role: 'Sales Enablement',
+              desc: 'Reviews call transcripts and surfaces coaching moments to lift your team\'s win rate.',
+              img: agentReviews,
+            },
+          ];
+          const filteredCatalog = browseCatalog.filter((c) => {
             if (search && !`${c.title} ${c.role}`.toLowerCase().includes(search.toLowerCase())) return false;
             if (activeCat === 'All') return true;
             const r = c.role.toLowerCase();
@@ -4782,7 +5839,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
             if (cat === 'field') return r.includes('field') || r.includes('coordinator');
             if (cat === 'finance') return r.includes('collection') || r.includes('finance');
             return r.includes(cat);
-          }).slice(0, 6);
+          });
           if (filteredCatalog.length === 0) {
             return (
               <div className="rounded-2xl border border-dashed border-[#E6E8EC] py-14 text-center">
@@ -4846,7 +5903,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
               </button>
 
               <div
-                className="relative overflow-hidden pt-6 pb-8 select-none cursor-grab active:cursor-grabbing"
+                className="relative overflow-hidden pt-4 pb-4 select-none cursor-grab active:cursor-grabbing"
                 onWheel={handleWheel}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
@@ -4870,8 +5927,9 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                     const mpPalette = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
                     const accent = mpPalette[i % mpPalette.length];
                     return (
-                      <article
+                      <motion.article
                         key={c.title}
+                        layoutId={`agent-card-${c.title}`}
                         onClick={() => setCatalogIdx(i)}
                         className="relative rounded-2xl cursor-pointer overflow-hidden flex flex-col flex-shrink-0"
                         style={{
@@ -4913,7 +5971,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                         <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent)' }} />
 
                         {/* Avatar — sits on the card gradient, no separate pane */}
-                        <div className="relative flex items-end justify-center overflow-hidden" style={{ height: 320 }}>
+                        <div className="relative flex items-end justify-center overflow-hidden" style={{ height: 240 }}>
                           {isAdded ? (
                             <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-white text-[10px] font-bold tracking-wide uppercase text-[#15803D] z-10">
                               <CheckCircle2 className="w-[12px] h-[12px] text-[#10B981]" fill="#10B981" stroke="white" strokeWidth={2.4} />
@@ -4937,25 +5995,30 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
                         {/* Content */}
                         <div className="relative px-5 pt-4 pb-3 flex-1 flex flex-col">
                           <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-1">{c.role.split(' ')[0]}</div>
-                          <h3 className="text-[18px] font-semibold text-[#1C1E21] leading-tight mb-2">{c.title}</h3>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
+                            className="text-left text-[18px] font-semibold text-[#1C1E21] leading-tight mb-2 hover:text-black active:scale-[0.99]"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            {c.title}
+                          </button>
                           <p className="text-[12.5px] text-[#4B5563] leading-relaxed line-clamp-2">{c.desc}</p>
                         </div>
 
                         {/* Footer */}
-                        <div className="relative border-t border-[#F0F1F3] px-5 py-3 flex items-center justify-between">
-                          <div className="flex items-center gap-1.5 text-[12.5px]">
-                            <Star className="w-[13px] h-[13px] text-[#F59E0B] fill-[#F59E0B]" />
-                            <span className="font-semibold text-[#1C1E21]">{c.rating.toFixed(1)}</span>
-                          </div>
+                        <div className="relative px-5 py-3 flex items-center justify-end">
                           <button
-                            onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (isMJ) { setHiredForMJ(c); } else { setTriedAgent(c); }
+                            }}
                             className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
                           >
                             <Sparkles className="w-[12px] h-[12px]" fill="currentColor" />
                             Try me
                           </button>
                         </div>
-                      </article>
+                      </motion.article>
                     );
                   })}
                 </div>
@@ -4966,6 +6029,66 @@ function AUMarketplaceView({ onBack, onHire, onChatWith }: { onBack: () => void;
         })()}
 
       </div>
+
+      {/* MJ Hire — Agent ready modal rendered at marketplace level so the
+          try-agent modal can dismiss first */}
+      {hiredForMJ && (() => {
+        const mpPaletteLocal = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
+        const accentLocal = mpPaletteLocal[Math.abs(hiredForMJ.title.split('').reduce((h, c) => (h << 5) - h + c.charCodeAt(0), 0)) % mpPaletteLocal.length];
+        const tintLocal = `linear-gradient(180deg, ${accentLocal}1F 0%, ${accentLocal}0A 40%, #FFFFFF 80%)`;
+        return (
+          <AgentReadyModal
+            open
+            loading
+            name={hiredForMJ.title}
+            role={hiredForMJ.role}
+            avatar={hiredForMJ.img}
+            avatarTint={tintLocal}
+            accent={accentLocal}
+            onChat={() => {}}
+            onMarketplace={() => {}}
+            onClose={() => setHiredForMJ(null)}
+          />
+        );
+      })()}
+
+      {/* Try-Agent modal — MJ only; card-becoming-modal transition */}
+      <AnimatePresence>
+        {triedAgent && isMJ && (
+          <>
+            <motion.div
+              key="try-agent-backdrop"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[150]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
+              onClick={() => setTriedAgent(null)}
+            />
+            <div className="fixed inset-0 z-[160] flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+              <motion.div
+                key="try-agent-panel"
+                layoutId={`agent-card-${triedAgent.title}`}
+                className="w-full max-w-[1040px] h-[80vh] bg-white rounded-3xl overflow-hidden pointer-events-auto flex flex-col"
+                style={{ boxShadow: '0 24px 64px -24px rgba(0,0,0,0.35), 0 8px 24px -12px rgba(0,0,0,0.18)' }}
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ type: 'spring', duration: 0.5, bounce: 0.18 }}
+              >
+                <TryAgentView
+                  agent={triedAgent}
+                  onBack={() => setTriedAgent(null)}
+                  onHire={onHire}
+                  onChatWith={onChatWith}
+                  isMJ
+                  onHireRequest={(a) => { setHiredForMJ(a); setTriedAgent(null); }}
+                />
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
 
     </div>
   );
@@ -6393,7 +7516,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
         <div className="max-w-[820px] mx-auto px-6 py-10">
           {/* IDENTITY */}
           <section className="mb-10">
-            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Identity</h2>
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Identity</h2>
             <p className="text-[14px] text-[#6B7280] mb-6">Give your skill a clear name and a short summary teammates will see.</p>
 
             <div className="space-y-5">
@@ -6439,7 +7562,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
 
           {/* TOOLS */}
           <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
-            <h2 className="text-[26px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Tools</h2>
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Tools</h2>
             <p className="text-[14px] text-[#6B7280] mb-6">Pick the tools this skill can use — send messages, fetch data, or call external services.</p>
 
             <div className="grid grid-cols-2 gap-2.5">
@@ -7006,15 +8129,15 @@ function frequencyLabel(f: 'hour' | 'day' | 'week' | 'month' | 'weekdays' | 'cus
 function Toast({ message }: { message: string | null }) {
   if (!message) return null;
   return (
-    <div className="fixed bottom-24 right-6 z-50 inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#1C1E21] text-white text-[13px] font-medium shadow-[0_8px_24px_rgba(0,0,0,0.18)] animate-[fadeUpRight_0.18s_ease-out]">
-      <CheckCircle2 className="w-[16px] h-[16px] text-[#10B981]" />
+    <div
+      className="fixed bottom-6 right-6 z-[1000] px-4 py-2.5 rounded-xl bg-[#1C1E21] text-white text-[13px] font-medium"
+      style={{
+        boxShadow: '0 12px 32px -8px rgba(0,0,0,0.30), 0 4px 12px -4px rgba(0,0,0,0.18)',
+        animation: 'agentToastIn 220ms cubic-bezier(0.23,1,0.32,1) both',
+      }}
+    >
       {message}
-      <style>{`
-        @keyframes fadeUpRight {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
+      <style>{`@keyframes agentToastIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: translateY(0) } }`}</style>
     </div>
   );
 }

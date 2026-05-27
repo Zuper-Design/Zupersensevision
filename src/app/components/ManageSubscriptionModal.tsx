@@ -1,6 +1,7 @@
-import { CreditCard, ChevronDown, Check, Calendar, Building2, Sparkles, Plus, Download, ChevronLeft, AlertTriangle, CheckCircle2, RotateCcw, Clock, MessageSquare, BarChart3, RefreshCw, Gauge } from 'lucide-react';
+import { CreditCard, ChevronDown, Check, Calendar, Building2, Sparkles, Plus, Download, ChevronLeft, ChevronRight, AlertTriangle, CheckCircle2, RotateCcw, Clock, MessageSquare, BarChart3, RefreshCw, Gauge } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { SenseLogo } from './SenseLogo';
 
 interface ManageSubscriptionModalProps {
   isOpen: boolean;
@@ -49,6 +50,23 @@ const INVOICES: { id: string; status: InvoiceStatus; amount: string; created: st
   { id: '97480976-0105', status: 'paid',    amount: '$399.00', created: 'Aug 20, 2025, 10:37 PM' },
   { id: '97480976-0104', status: 'paid',    amount: '$399.00', created: 'Jul 20, 2025, 6:39 PM' },
   { id: '97480976-0103', status: 'paid',    amount: '$399.00', created: 'Jun 20, 2025, 4:57 PM' },
+  { id: '97480976-0102', status: 'paid',    amount: '$399.00', created: 'May 20, 2025, 11:12 AM' },
+  { id: '97480976-0101', status: 'paid',    amount: '$399.00', created: 'Apr 20, 2025, 2:48 PM' },
+  { id: '97480976-0100', status: 'paid',    amount: '$399.00', created: 'Mar 20, 2025, 9:24 AM' },
+  { id: '97480976-0099', status: 'paid',    amount: '$399.00', created: 'Feb 20, 2025, 6:01 PM' },
+  { id: '97480976-0098', status: 'paid',    amount: '$399.00', created: 'Jan 20, 2025, 8:53 AM' },
+  { id: '97480976-0097', status: 'paid',    amount: '$399.00', created: 'Dec 20, 2024, 1:17 PM' },
+  { id: '97480976-0096', status: 'paid',    amount: '$399.00', created: 'Nov 20, 2024, 4:42 PM' },
+  { id: '97480976-0095', status: 'paid',    amount: '$399.00', created: 'Oct 20, 2024, 10:08 AM' },
+  { id: '97480976-0094', status: 'paid',    amount: '$399.00', created: 'Sep 20, 2024, 3:55 PM' },
+  { id: '97480976-0093', status: 'paid',    amount: '$399.00', created: 'Aug 20, 2024, 7:29 PM' },
+  { id: '97480976-0092', status: 'paid',    amount: '$399.00', created: 'Jul 20, 2024, 11:46 AM' },
+  { id: '97480976-0091', status: 'paid',    amount: '$399.00', created: 'Jun 20, 2024, 5:13 PM' },
+  { id: '97480976-0090', status: 'paid',    amount: '$399.00', created: 'May 20, 2024, 9:32 AM' },
+  { id: '97480976-0089', status: 'paid',    amount: '$399.00', created: 'Apr 20, 2024, 4:08 PM' },
+  { id: '97480976-0088', status: 'paid',    amount: '$399.00', created: 'Mar 20, 2024, 12:25 PM' },
+  { id: '97480976-0087', status: 'paid',    amount: '$399.00', created: 'Feb 20, 2024, 7:51 AM' },
+  { id: '97480976-0086', status: 'paid',    amount: '$399.00', created: 'Jan 20, 2024, 3:18 PM' },
 ];
 
 const STATUS_STYLE: Record<InvoiceStatus, { bg: string; color: string; label: string }> = {
@@ -68,6 +86,10 @@ type Tab = 'overview' | 'payment' | 'history' | 'billing';
 
 export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, paymentFailed, onUpgrade }: ManageSubscriptionModalProps) {
   const [tab, setTab] = useState<Tab>('overview');
+  const [historyPage, setHistoryPage] = useState(1);
+  const HISTORY_PAGE_SIZE = 15;
+  const historyTotalPages = Math.max(1, Math.ceil(INVOICES.length / HISTORY_PAGE_SIZE));
+  const historyPageItems = INVOICES.slice((historyPage - 1) * HISTORY_PAGE_SIZE, historyPage * HISTORY_PAGE_SIZE);
   const [editingCard, setEditingCard] = useState(false);
   const [cards, setCards] = useState<{ id: string; brand: 'visa' | 'mc'; last4: string; exp: string; isDefault: boolean }[]>([
     { id: 'c1', brand: 'visa', last4: '0965', exp: '08/2027', isDefault: true },
@@ -115,7 +137,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
   const TABS: { id: Tab; label: string }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'payment', label: 'Payment methods' },
-    ...(!isMJ ? [{ id: 'history' as Tab, label: 'Billing history' }] : []),
+    { id: 'history' as Tab, label: 'Billing history' },
     { id: 'billing', label: 'Billing information' },
   ];
 
@@ -131,7 +153,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <h1 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em' }}>Subscription & billing</h1>
+          <h1 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em' }}>Subscription & Billing</h1>
         </div>
 
         {/* Tabs — underline with animated indicator */}
@@ -179,169 +201,94 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
           <div className={`pt-8 grid ${paymentFailed && !isAU && !isVp ? 'grid-cols-[1fr_360px] gap-8' : 'grid-cols-1 gap-4'} items-stretch`}>
             {/* ── Left: Plan hero + billing info ── */}
             {!isAU && !isVp && !paymentFailed && !cancelled ? (
-              /* Active paid (RG) — original copy, refined hierarchy */
-              <>
-                <div>
-                  {/* Title row — sentence + Cancel CTA aligned right */}
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-                      You have subscribed to Zuper Sense
-                    </h2>
-                    <button
-                      onClick={() => setConfirmCancel(true)}
-                      className="inline-flex items-center px-3 h-8 rounded-md text-[12.5px] font-medium text-[#4B5563] flex-shrink-0 active:scale-[0.98]"
-                      style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#DC2626'; (e.currentTarget as HTMLElement).style.color = '#DC2626'; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
-                    >
-                      Cancel subscription
-                    </button>
-                  </div>
-
-                  {/* Billing line */}
-                  <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6 }}>
-                    <span style={{ color: '#1C1E21', fontWeight: 600 }}>$399 / month</span>
-                    <span style={{ color: '#D1D5DB', margin: '0 10px' }}>·</span>
-                    Your next billing date is <span style={{ color: '#1C1E21', fontWeight: 500 }}>Wed, Jun 26, 2026</span>
-                  </p>
-
-                  {/* Paid with */}
-                  <p className="mt-1.5" style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.6 }}>
-                    Paid with card ending <span style={{ color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', letterSpacing: '0.04em' }}>{cards.find(c => c.isDefault)?.last4 || '0965'}</span>
-                  </p>
-                </div>
-
-                {/* Billing history inline — MJ only (RG sees this in the Billing history tab) */}
-                {isMJ && (
-                <div className="mt-8">
-                  <div className="flex items-end justify-between mb-4">
-                    <h3 style={{ fontSize: 15, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.005em' }}>Billing history</h3>
-                    <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
-                  </div>
-                  {/* Column headers */}
-                  <div className="px-1 h-9 flex items-center gap-8 border-b" style={{ borderColor: '#E6E8EC' }}>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 170px' }}>Invoice</span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 110px' }}>Status</span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 100px' }}>Amount</span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: 1 }}>Created</span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 200px', textAlign: 'right' }}>Actions</span>
-                  </div>
-                  {/* Rows */}
-                  {INVOICES.slice(0, 8).map((inv) => {
-                    const style = STATUS_STYLE[inv.status];
-                    const needsPay = inv.status === 'unpaid' || inv.status === 'overdue';
-                    return (
-                      <div
-                        key={inv.id}
-                        className="px-1 h-12 flex items-center gap-8 border-b"
-                        style={{ borderColor: '#F0F1F3' }}
-                      >
-                        <span style={{ fontSize: 13, color: '#1C1E21', fontWeight: 500, fontFamily: 'monospace', flex: '0 0 170px' }}>{inv.id}</span>
-                        <div style={{ flex: '0 0 110px' }}>
-                          <span
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                            style={{ background: style.bg, color: style.color, fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}
-                          >
-                            <span style={{ width: 4, height: 4, borderRadius: '50%', background: style.color }} />
-                            {style.label.toUpperCase()}
-                          </span>
-                        </div>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: '#1C1E21', fontVariantNumeric: 'tabular-nums', flex: '0 0 100px' }}>{inv.amount}</span>
-                        <span style={{ fontSize: 13, color: '#6B7280', flex: 1 }}>{inv.created}</span>
-                        <div className="flex items-center gap-3 flex-shrink-0 justify-end" style={{ flex: '0 0 200px' }}>
-                          {needsPay && (
-                            <button
-                              className="inline-flex items-center px-2.5 h-7 rounded-md bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold active:scale-[0.98]"
-                              style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                            >
-                              Pay now
-                            </button>
-                          )}
-                          <button
-                            className="inline-flex items-center px-2.5 h-7 rounded-md text-[#4B5563] hover:text-[#1C1E21] hover:bg-[#F3F4F6] text-[12.5px] font-medium active:scale-[0.98]"
-                            style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                          >
-                            View
-                          </button>
-                          <button
-                            className="p-1.5 rounded-md hover:bg-[#F3F4F6] text-[#9CA3AF] hover:text-[#1C1E21] active:scale-[0.94]"
-                            style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                            aria-label="Download invoice"
-                          >
-                            <Download className="w-[13px] h-[13px]" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                )}
-              </>
-            ) : isAU || isVp ? (
-              <>
-                {/* Status card */}
-                <div className="rounded-xl bg-white overflow-hidden" style={{ border: '1px solid #E6E8EC' }}>
-                  <div className="px-6 py-6">
-                    <div className="flex items-center gap-2.5 min-w-0 mb-2">
-                      <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.02em' }}>
-                        {isVp ? 'Trial ended' : 'Free trial'}
+              /* Active paid (RG/MJ) — card */
+              <div
+                className="rounded-xl"
+                style={{ background: '#FFFFFF', border: '1px solid #EFF0F3', padding: '20px 24px' }}
+              >
+                {/* Top row — title block (left) + Cancel button (right) */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em', lineHeight: 1.25 }}>
+                        You have subscribed to Zuper Sense
                       </h2>
-                      {isVp ? (
-                        <span
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                          style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                        >
-                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#DC2626' }} />
-                          EXPIRED
-                        </span>
-                      ) : (
-                        <span
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full flex-shrink-0"
-                          style={{ background: 'rgba(37,99,235,0.10)', color: '#1D4ED8', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                        >
-                          <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#2563EB' }} />
-                          ACTIVE
-                        </span>
-                      )}
+                      <span
+                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(22,163,74,0.10)', color: '#15803D', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                      >
+                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#16A34A' }} />
+                        ACTIVE
+                      </span>
                     </div>
-                    <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
-                      {isVp
-                        ? <>Your trial ended on <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>. Subscribe to restore access to Sense.</>
-                        : <>Full access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span> <span style={{ color: '#9CA3AF' }}>(in 31 days)</span>. Subscribe anytime to keep going.</>}
+                    <p className="mt-1.5" style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
+                      Your next billing date is <span style={{ color: '#1C1E21', fontWeight: 500 }}>Wed, Jun 26, 2026</span>.
                     </p>
                   </div>
+                  <button
+                    onClick={() => setConfirmCancel(true)}
+                    className="inline-flex items-center px-3 h-8 rounded-md text-[12.5px] font-medium text-[#4B5563] flex-shrink-0 active:scale-[0.98]"
+                    style={{ border: '1px solid #E6E8EC', background: '#FFFFFF', transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#DC2626'; (e.currentTarget as HTMLElement).style.color = '#DC2626'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                  >
+                    Cancel subscription
+                  </button>
                 </div>
 
-                {/* Plan section — open layout, hairline separators (no card chrome) */}
-                <div className="mt-10 pt-8" style={{ borderTop: '1px solid #E6E8EC' }}>
-                  {/* Title */}
-                  <div className="flex items-baseline gap-2">
-                    <h3 style={{ fontSize: 18, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em', lineHeight: 1.25 }}>
-                      Zuper Sense plan
-                    </h3>
-                    <span style={{ fontSize: 14, color: '#9CA3AF' }}>·</span>
-                    <span style={{ fontSize: 14, color: '#FD5000', fontWeight: 600 }}>$399 / mo</span>
+                {/* Meta — compact label/value grid */}
+                <dl className="mt-6 grid gap-y-3.5" style={{ gridTemplateColumns: '140px max-content' }}>
+                  <dt style={{ fontSize: 13, color: '#6B7280' }}>Plan</dt>
+                  <dd style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21' }}>$399 / month</dd>
+
+                  <dt style={{ fontSize: 13, color: '#6B7280' }}>Payment method</dt>
+                  <dd style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
+                    <span style={{ color: '#9CA3AF', marginRight: 4 }}>••••</span>{cards.find(c => c.isDefault)?.last4 || '0965'}
+                  </dd>
+                </dl>
+              </div>
+            ) : isVp ? (
+              <div className="space-y-4">
+                {/* Card 1 — Trial expired status */}
+                <div
+                  className="rounded-xl"
+                  style={{ background: '#FFFFFF', border: '1px solid #EFF0F3', padding: '20px 24px' }}
+                >
+                  <div className="flex items-center gap-2.5 flex-wrap mb-1.5">
+                    <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em', lineHeight: 1.25 }}>
+                      Your free trial has expired
+                    </h2>
+                    <span
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                      style={{ background: 'rgba(220,38,38,0.10)', color: '#DC2626', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                    >
+                      <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#DC2626' }} />
+                      EXPIRED
+                    </span>
                   </div>
-                  <p style={{ fontSize: 13.5, color: '#6B7280', marginTop: 6, marginBottom: 22, lineHeight: 1.6 }}>
-                    Turn your operations data into instant answers, live dashboards, and daily insights — built for teams that run on signals, not spreadsheets.
+                  <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
+                    Subscribe to restore access to Sense.
                   </p>
+                </div>
 
-                  {/* Bare check list — no ring, just orange stroke */}
-                  <ul className="space-y-3 mb-8">
-                    {PLAN_FEATURES.map(f => (
-                      <li key={f} className="flex items-center gap-3">
-                        <Check className="w-[15px] h-[15px] flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.5} />
-                        <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Footer row — trust line + compact CTA */}
-                  <div className="flex items-center justify-between gap-3 pt-5" style={{ borderTop: '1px solid #E6E8EC' }}>
-                    <p style={{ fontSize: 12, color: '#9CA3AF' }}>Cancel anytime · No hidden fees</p>
+                {/* Card 2 — Upgrade to Sense plan */}
+                <div
+                  className="rounded-xl"
+                  style={{ background: '#FFFFFF', border: '1px solid #EFF0F3', padding: '20px 24px' }}
+                >
+                  {/* Top row — plan title + price (left) | Subscribe CTA (right) */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
+                        Upgrade to Sense
+                      </h3>
+                      <p style={{ fontSize: 13, color: '#6B7280', marginTop: 2 }}>
+                        <span style={{ color: '#1C1E21', fontWeight: 600 }}>$399</span> per month
+                      </p>
+                    </div>
                     <button
                       onClick={onUpgrade}
-                      className="inline-flex items-center justify-center px-5 h-10 rounded-lg text-[13.5px] font-semibold text-white active:scale-[0.98]"
+                      className="inline-flex items-center justify-center px-4 h-9 rounded-md text-[13px] font-semibold text-white flex-shrink-0 active:scale-[0.98]"
                       style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                       onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
                       onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
@@ -349,38 +296,126 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                       Subscribe to Sense
                     </button>
                   </div>
+
+                  {/* Features — grid layout, hairline separator above */}
+                  <ul className="mt-5 pt-5 grid grid-cols-2 gap-x-6 gap-y-2.5" style={{ borderTop: '1px solid #F0F1F3' }}>
+                    {PLAN_FEATURES.map(f => (
+                      <li key={f} className="flex items-center gap-2">
+                        <Check className="w-[14px] h-[14px] flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.5} />
+                        <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </>
-            ) : cancelled ? (
-              /* Cancelled — state copy on top, CANCELLED pill, full-width Reactivate CTA */
-              <div className="rounded-xl bg-white px-7 py-7" style={{ border: '1px solid #E6E8EC' }}>
-                <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 14 }}>
-                  Your plan has been cancelled. You'll keep access until <span style={{ color: '#1C1E21', fontWeight: 600 }}>May 21, 2026</span>.
-                </p>
-                <div className="flex items-center gap-2.5 mb-3">
-                  <h2 style={{ fontSize: 22, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em' }}>Zuper Sense</h2>
-                  <span
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(180,83,9,0.10)', color: '#B45309', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
-                  >
-                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#D97706' }} />
-                    CANCELLED
-                  </span>
-                </div>
-                <div className="flex items-baseline gap-1.5 mb-6">
-                  <span style={{ fontSize: 36, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.03em', lineHeight: 1 }}>$399</span>
-                  <span style={{ fontSize: 15, color: '#9CA3AF' }}>/ month</span>
-                </div>
-                <button
-                  onClick={() => setCancelled(false)}
-                  className="w-full inline-flex items-center justify-center gap-1.5 h-11 rounded-lg text-[14px] font-semibold text-white"
-                  style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                  onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
-                  onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
+              </div>
+            ) : isAU ? (
+              <div className="space-y-4">
+                {/* Card 1 — Free trial status */}
+                <div
+                  className="rounded-xl"
+                  style={{ background: '#FFFFFF', border: '1px solid #EFF0F3', padding: '20px 24px' }}
                 >
-                  <RotateCcw className="w-4 h-4" />
-                  Reactivate subscription
-                </button>
+                  <div className="flex items-center gap-2.5 flex-wrap mb-1.5">
+                    <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em', lineHeight: 1.25 }}>
+                      You're currently on a free trial
+                    </h2>
+                    <span
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                      style={{ background: '#F3F4F6', color: '#4B5563', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                    >
+                      <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#9CA3AF' }} />
+                      CURRENT
+                    </span>
+                  </div>
+                  <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
+                    Full access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>May 21, 2026</span>. Subscribe anytime to keep going.
+                  </p>
+                </div>
+
+                {/* Card 2 — Upgrade to Sense plan */}
+                <div
+                  className="rounded-xl"
+                  style={{ background: '#FFFFFF', border: '1px solid #EFF0F3', padding: '20px 24px' }}
+                >
+                  {/* Top row — plan title + price (left) | Subscribe CTA (right) */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
+                        Upgrade to Sense
+                      </h3>
+                      <p style={{ fontSize: 13, color: '#6B7280', marginTop: 2 }}>
+                        <span style={{ color: '#1C1E21', fontWeight: 600 }}>$399</span> per month
+                      </p>
+                    </div>
+                    <button
+                      onClick={onUpgrade}
+                      className="inline-flex items-center justify-center px-4 h-9 rounded-md text-[13px] font-semibold text-white flex-shrink-0 active:scale-[0.98]"
+                      style={{ background: '#1C1E21', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
+                    >
+                      Subscribe to Sense
+                    </button>
+                  </div>
+
+                  {/* Features — grid layout, hairline separator above */}
+                  <ul className="mt-5 pt-5 grid grid-cols-2 gap-x-6 gap-y-2.5" style={{ borderTop: '1px solid #F0F1F3' }}>
+                    {PLAN_FEATURES.map(f => (
+                      <li key={f} className="flex items-center gap-2">
+                        <Check className="w-[14px] h-[14px] flex-shrink-0" style={{ color: '#FD5000' }} strokeWidth={2.5} />
+                        <span style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ) : cancelled ? (
+              /* Cancelled — mirrors RG active card hierarchy */
+              <div
+                className="rounded-xl"
+                style={{ background: '#FFFFFF', border: '1px solid #EFF0F3', padding: '20px 24px' }}
+              >
+                {/* Top row — title block (left) + Reactivate button (right) */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <h2 style={{ fontSize: 20, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.015em', lineHeight: 1.25 }}>
+                        Your Zuper Sense subscription is ending
+                      </h2>
+                      <span
+                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(180,83,9,0.10)', color: '#B45309', fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em' }}
+                      >
+                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#D97706' }} />
+                        CANCELLED
+                      </span>
+                    </div>
+                    <p className="mt-1.5" style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55 }}>
+                      You'll keep access until <span style={{ color: '#1C1E21', fontWeight: 500 }}>Wed, May 21, 2026</span>.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setCancelled(false)}
+                    className="inline-flex items-center gap-1.5 px-4 h-8 rounded-md text-[12.5px] font-semibold flex-shrink-0 active:scale-[0.98]"
+                    style={{ background: '#1C1E21', color: '#FFFFFF', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = '#000')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = '#1C1E21')}
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" strokeWidth={2.4} style={{ color: '#FFFFFF' }} />
+                    Reactivate
+                  </button>
+                </div>
+
+                {/* Meta — compact label/value grid, mirrors RG */}
+                <dl className="mt-6 grid gap-y-3.5" style={{ gridTemplateColumns: '140px max-content' }}>
+                  <dt style={{ fontSize: 13, color: '#6B7280' }}>Plan</dt>
+                  <dd style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21' }}>$399 / month</dd>
+
+                  <dt style={{ fontSize: 13, color: '#6B7280' }}>Payment method</dt>
+                  <dd style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
+                    <span style={{ color: '#9CA3AF', marginRight: 4 }}>••••</span>{cards.find(c => c.isDefault)?.last4 || '0965'}
+                  </dd>
+                </dl>
               </div>
             ) : (
             <div
@@ -734,7 +769,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
         {tab === 'history' && !isAU && (
           <div className="pt-8">
             <div className="flex items-end justify-between mb-4">
-              <p style={{ fontSize: 13, color: '#9CA3AF' }}>Showing invoices within the past 12 months</p>
+              <p style={{ fontSize: 13, color: '#9CA3AF' }}>
+                Showing <span style={{ color: '#1C1E21', fontWeight: 500 }}>{(historyPage - 1) * HISTORY_PAGE_SIZE + 1}–{Math.min(historyPage * HISTORY_PAGE_SIZE, INVOICES.length)}</span> of {INVOICES.length}
+              </p>
               <span style={{ fontSize: 12, color: '#9CA3AF' }}>{INVOICES.length} invoices</span>
             </div>
             {/* Column headers */}
@@ -746,7 +783,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
               <span style={{ fontSize: 12, color: '#9CA3AF', flex: '0 0 200px', textAlign: 'right' }}>Actions</span>
             </div>
             {/* Rows */}
-            {INVOICES.map((inv) => {
+            {historyPageItems.map((inv) => {
               const style = STATUS_STYLE[inv.status];
               const needsPay = inv.status === 'unpaid' || inv.status === 'overdue';
               return (
@@ -793,6 +830,73 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                 </div>
               );
             })}
+
+            {/* Pagination */}
+            {historyTotalPages > 1 && (
+              <div className="flex items-center justify-between mt-5">
+                <p style={{ fontSize: 12.5, color: '#9CA3AF' }}>
+                  Page <span style={{ color: '#1C1E21', fontWeight: 500 }}>{historyPage}</span> of {historyTotalPages}
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setHistoryPage(p => Math.max(1, p - 1))}
+                    disabled={historyPage === 1}
+                    aria-label="Previous page"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#4B5563] active:scale-[0.96]"
+                    style={{
+                      border: '1px solid #E6E8EC',
+                      background: '#FFFFFF',
+                      cursor: historyPage === 1 ? 'not-allowed' : 'pointer',
+                      opacity: historyPage === 1 ? 0.4 : 1,
+                      transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                    onMouseEnter={e => { if (historyPage !== 1) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  {Array.from({ length: historyTotalPages }, (_, i) => i + 1).map(n => {
+                    const active = n === historyPage;
+                    return (
+                      <button
+                        key={n}
+                        onClick={() => setHistoryPage(n)}
+                        className="inline-flex items-center justify-center min-w-[32px] h-8 rounded-md text-[12.5px] font-medium active:scale-[0.96]"
+                        style={{
+                          border: active ? '1px solid #1C1E21' : '1px solid #E6E8EC',
+                          background: active ? '#1C1E21' : '#FFFFFF',
+                          color: active ? '#FFFFFF' : '#4B5563',
+                          padding: '0 10px',
+                          cursor: 'pointer',
+                          transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                        }}
+                        onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                        onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; } }}
+                      >
+                        {n}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => setHistoryPage(p => Math.min(historyTotalPages, p + 1))}
+                    disabled={historyPage === historyTotalPages}
+                    aria-label="Next page"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#4B5563] active:scale-[0.96]"
+                    style={{
+                      border: '1px solid #E6E8EC',
+                      background: '#FFFFFF',
+                      cursor: historyPage === historyTotalPages ? 'not-allowed' : 'pointer',
+                      opacity: historyPage === historyTotalPages ? 0.4 : 1,
+                      transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                    onMouseEnter={e => { if (historyPage !== historyTotalPages) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -926,9 +1030,9 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="p-6">
-                  <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.015em', marginBottom: 8 }}>Cancel your subscription?</h3>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.015em', marginBottom: 8 }}>Cancel Sense subscription</h3>
                   <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.55, marginBottom: 18 }}>
-                    You'll keep access until <span style={{ fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</span>. After that, Sense stops working for this workspace and you'll lose:
+                    You'll keep access until <span style={{ fontWeight: 600, color: '#1C1E21' }}>May 21, 2026</span>. After that, Sense will stop working for this workspace and you'll lose:
                   </p>
                   <ul className="space-y-2.5 mb-6">
                     {[
@@ -953,7 +1057,7 @@ export function ManageSubscriptionModal({ isOpen, onClose, isVp, isAU, isMJ, pay
                       className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold text-white active:scale-[0.98]"
                       style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                     >
-                      Keep subscription
+                      Keep Sense
                     </button>
                     <button
                       onClick={handleConfirmCancel}
