@@ -4636,6 +4636,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
   const [search, setSearch] = useState('');
   const [creating, setCreating] = useState(false);
   const [chooserOpen, setChooserOpen] = useState(false);
+  const [createDismissed, setCreateDismissed] = useState(false);
   useEffect(() => { onCreatingChange?.(creating); }, [creating, onCreatingChange]);
   useEffect(() => { onChooserChange?.(chooserOpen); }, [chooserOpen, onChooserChange]);
   const [toast, setToast] = useState<string | null>(null);
@@ -4904,8 +4905,9 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 Spin up a custom agent or pick one from the marketplace.
               </p>
             </div>
-            <div className="relative z-10 grid grid-cols-2 gap-5 max-w-[820px] mx-auto">
+            <div className={`relative z-10 ${createDismissed ? 'max-w-[720px]' : 'grid grid-cols-2 gap-5 max-w-[820px]'} mx-auto`}>
               {/* Create — blank-canvas card, violet hint */}
+              {!createDismissed && (
               <button
                 onClick={() => { setChooserOpen(false); setCreating(true); }}
                 className="relative rounded-2xl overflow-hidden text-left p-6 flex flex-col h-[400px] active:scale-[0.995] group"
@@ -4918,7 +4920,6 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.10), 0 0 22px 0 rgba(124,58,237,0.14), 0 14px 28px -18px rgba(124,58,237,0.20)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.30)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.22)'; }}
               >
-                {/* Blank-canvas grid — darker in centre, fades out at edges */}
                 <svg
                   className="absolute inset-0 w-full h-full pointer-events-none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -4934,46 +4935,45 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   </defs>
                   <rect width="100%" height="100%" fill="url(#mjCreateGrid)" />
                 </svg>
-                {/* Soft violet bloom in the corner */}
                 <span aria-hidden className="pointer-events-none absolute" style={{ top: -90, right: -80, width: 280, height: 240, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(196,181,253,0.40), rgba(196,181,253,0) 70%)', filter: 'blur(36px)' }} />
-                {/* Top inset highlight */}
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)' }} />
 
-                {/* Blank-canvas illustration */}
                 <div className="relative flex-1 flex items-center justify-center my-2">
                   <div className="relative w-[240px] h-[170px]">
-                    {/* Floating skill chip — top left */}
                     <div className="absolute left-0 top-0 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-5deg)' }}>
                       <Zap className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Skill</span>
                     </div>
-                    {/* Floating tools chip — bottom left, same baseline as Trigger */}
                     <div className="absolute left-2 bottom-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(-4deg)' }}>
                       <Wrench className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Tools</span>
                     </div>
-                    {/* Floating knowledge chip — top right */}
                     <div className="absolute right-0 top-0 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(6deg)' }}>
                       <Database className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Knowledge</span>
                     </div>
-                    {/* Floating trigger chip — bottom right */}
                     <div className="absolute right-2 bottom-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-white" style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 10px -6px rgba(28,30,33,0.10)', transform: 'rotate(4deg)' }}>
                       <Clock className="w-3 h-3 text-[#7C3AED]" />
                       <span className="text-[10px] font-semibold text-[#1C1E21]">Trigger</span>
                     </div>
-                    {/* Center plus tile — matches the top-left tile */}
-                    <div
-                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-2xl flex items-center justify-center overflow-hidden"
+                    {/* Center plus tile — clicking dismisses this card */}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => { e.stopPropagation(); setCreateDismissed(true); }}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); setCreateDismissed(true); } }}
+                      aria-label="Hide Create your own card"
+                      title="Hide this card"
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-2xl flex items-center justify-center overflow-hidden cursor-pointer active:scale-[0.94]"
                       style={{
                         background: 'linear-gradient(160deg, #EDE9FE 0%, #FFFFFF 100%)',
                         border: '1px solid rgba(124,58,237,0.20)',
                         boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.85), 0 8px 20px -10px rgba(124,58,237,0.30)',
+                        transition: 'transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)',
                       }}
                     >
                       <Plus className="w-7 h-7" style={{ color: '#6D28D9' }} strokeWidth={2.6} />
-                    </div>
-                    {/* Sparkle accents */}
+                    </span>
                     <Sparkles className="absolute left-4 bottom-4 w-3 h-3 text-[#C4B5FD]" fill="#C4B5FD" style={{ transform: 'rotate(-15deg)' }} />
                     <Sparkles className="absolute right-12 top-12 w-2.5 h-2.5 text-[#DDD6FE]" fill="#DDD6FE" />
                   </div>
@@ -4984,11 +4984,12 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   <p className="text-[12.5px] text-[#6B7280] leading-snug">Start from a blank canvas. Pick the avatar, triggers, skills, and knowledge.</p>
                 </div>
               </button>
+              )}
 
               {/* Marketplace — marketing-style card */}
               <button
                 onClick={() => { setChooserOpen(false); onEnterMarketplace?.(); }}
-                className="relative rounded-2xl overflow-hidden text-left flex flex-col h-[400px] active:scale-[0.995] group"
+                className={`relative w-full rounded-2xl overflow-hidden text-left flex flex-col active:scale-[0.995] group ${createDismissed ? 'h-[440px]' : 'h-[400px]'}`}
                 style={{
                   background: 'linear-gradient(135deg, #FCFBFF 0%, #F7F4FE 50%, #F1ECFB 100%)',
                   border: '1px solid #EFEAF7',
@@ -4998,37 +4999,51 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'rgba(124,58,237,0.30)'; e.currentTarget.style.boxShadow = '0 0 0 2px rgba(124,58,237,0.10), 0 0 22px 0 rgba(124,58,237,0.14), 0 14px 28px -18px rgba(124,58,237,0.20)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = ''; e.currentTarget.style.borderColor = '#EFEAF7'; e.currentTarget.style.boxShadow = '0 1px 2px rgba(28,30,33,0.03), 0 12px 28px -18px rgba(124,58,237,0.10)'; }}
               >
-                {/* Radial blooms — softened */}
-                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 360, height: 300, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(168,85,247,0.10), rgba(168,85,247,0) 70%)', filter: 'blur(36px)' }} />
-                <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -40, width: 280, height: 260, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.06), rgba(236,72,153,0) 70%)', filter: 'blur(40px)' }} />
-                {/* Top inset highlight */}
+                <span aria-hidden className="pointer-events-none absolute" style={{ top: -80, right: -80, width: 420, height: 320, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(168,85,247,0.10), rgba(168,85,247,0) 70%)', filter: 'blur(36px)' }} />
+                <span aria-hidden className="pointer-events-none absolute" style={{ bottom: -60, left: -60, width: 360, height: 280, borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(236,72,153,0.06), rgba(236,72,153,0) 70%)', filter: 'blur(40px)' }} />
                 <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent)' }} />
 
-                {/* Top — eyebrow */}
-                <div className="relative px-6 pt-6 z-10">
+                <div className={`relative ${createDismissed ? 'px-7 pt-7' : 'px-6 pt-6'} z-10`}>
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(124,58,237,0.14)', backdropFilter: 'blur(8px)' }}>
                     <Sparkles className="w-[11px] h-[11px] text-[#7C3AED]" fill="currentColor" />
                     <span className="text-[10.5px] font-semibold tracking-[0.10em] uppercase text-[#6D28D9]">Sense Marketplace</span>
                   </span>
                 </div>
 
-                {/* Avatars — equal height, shared baseline */}
                 <div className="relative flex-1 min-h-0 flex items-center justify-center z-10 -mt-1">
-                  <div className="flex items-end justify-center -space-x-28" style={{ height: 200 }}>
-                    <img src={agentMarketer} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(76,29,149,0.12)]" style={{ zIndex: 1 }} draggable={false} />
-                    <img src={agentSupport} alt="" className="h-[200px] w-auto object-contain object-bottom drop-shadow-[0_12px_20px_rgba(76,29,149,0.14)]" style={{ zIndex: 3 }} draggable={false} />
-                    <img src={agentReviews} alt="" className="h-[196px] w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(76,29,149,0.12)]" style={{ zIndex: 2 }} draggable={false} />
+                  <div className="flex items-end justify-center -space-x-28" style={{ height: createDismissed ? 220 : 200 }}>
+                    <img src={agentMarketer} alt="" className={`${createDismissed ? 'h-[214px]' : 'h-[196px]'} w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(76,29,149,0.12)]`} style={{ zIndex: 1 }} draggable={false} />
+                    <img src={agentSupport} alt="" className={`${createDismissed ? 'h-[220px]' : 'h-[200px]'} w-auto object-contain object-bottom drop-shadow-[0_12px_20px_rgba(76,29,149,0.14)]`} style={{ zIndex: 3 }} draggable={false} />
+                    <img src={agentReviews} alt="" className={`${createDismissed ? 'h-[214px]' : 'h-[196px]'} w-auto object-contain object-bottom drop-shadow-[0_10px_18px_rgba(76,29,149,0.12)]`} style={{ zIndex: 2 }} draggable={false} />
                   </div>
                 </div>
 
-                {/* Bottom — title + subtext */}
-                <div className="relative px-6 pb-6 z-10">
-                  <h3 className="text-[20px] font-semibold tracking-tight leading-[1.15] mb-1">
-                    <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
-                    <span style={{ color: '#6D28D9' }}>agents.</span>
-                  </h3>
-                  <p className="text-[12.5px] text-[#6B7280] leading-snug max-w-[280px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
-                </div>
+                {createDismissed ? (
+                  <div className="relative px-7 pb-7 z-10 flex items-end justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 className="text-[22px] font-semibold tracking-tight leading-[1.15] mb-1">
+                        <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
+                        <span style={{ color: '#6D28D9' }}>agents.</span>
+                      </h3>
+                      <p className="text-[13px] text-[#6B7280] leading-snug max-w-[360px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
+                    </div>
+                    <span
+                      className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg text-white text-[13px] font-semibold flex-shrink-0"
+                      style={{ background: '#1C1E21', boxShadow: '0 1px 2px rgba(0,0,0,0.08)', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    >
+                      Explore agents
+                      <ArrowRight className="w-[13px] h-[13px]" strokeWidth={2.4} />
+                    </span>
+                  </div>
+                ) : (
+                  <div className="relative px-6 pb-6 z-10">
+                    <h3 className="text-[20px] font-semibold tracking-tight leading-[1.15] mb-1">
+                      <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
+                      <span style={{ color: '#6D28D9' }}>agents.</span>
+                    </h3>
+                    <p className="text-[12.5px] text-[#6B7280] leading-snug max-w-[280px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
+                  </div>
+                )}
               </button>
             </div>
           </div>
