@@ -1182,19 +1182,32 @@ function AddedItem({
   onRemove,
   detail,
   readOnly,
+  onConfigure,
 }: {
   item: { key: string; label: string; desc: string; icon: any; tint?: string; iconColor?: string };
   onRemove: () => void;
   detail?: string | null;
   readOnly?: boolean;
+  onConfigure?: () => void;
 }) {
   const Icon = item.icon;
   const accent = item.iconColor || '#4B5563';
   const accentSoft = item.tint || '#F3F4F6';
+  const clickable = !!onConfigure;
   return (
     <div
-      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-[#EEF0F3] bg-white"
-      style={{ animation: 'addedItemIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}
+      role={clickable ? 'button' : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onClick={clickable ? onConfigure : undefined}
+      onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onConfigure?.(); } } : undefined}
+      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-[#EEF0F3] bg-white text-left"
+      style={{
+        animation: 'addedItemIn 220ms cubic-bezier(0.23,1,0.32,1) both',
+        transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)',
+        cursor: clickable ? 'pointer' : 'default',
+      }}
+      onMouseEnter={clickable ? (e) => { (e.currentTarget as HTMLElement).style.background = '#FAFBFC'; (e.currentTarget as HTMLElement).style.borderColor = '#E2E5EA'; } : undefined}
+      onMouseLeave={clickable ? (e) => { (e.currentTarget as HTMLElement).style.background = '#FFFFFF'; (e.currentTarget as HTMLElement).style.borderColor = '#EEF0F3'; } : undefined}
     >
       <style>{`@keyframes addedItemIn { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
       <span
@@ -1209,11 +1222,11 @@ function AddedItem({
       </span>
       <div className="flex-1 min-w-0">
         <h4 className="text-[13px] font-semibold text-[#1C1E21] leading-tight">{item.label}</h4>
-        <p className="text-[12px] text-[#6B7280] leading-snug mt-0.5">{detail || item.desc}</p>
+        <p className="text-[12px] text-[#6B7280] leading-snug mt-0.5 truncate">{detail || item.desc}</p>
       </div>
       {!readOnly && (
         <button
-          onClick={onRemove}
+          onClick={(e) => { e.stopPropagation(); onRemove(); }}
           className="w-6 h-6 -mr-0.5 rounded-md flex items-center justify-center text-[#9CA3AF] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
           style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
           aria-label={`Remove ${item.label}`}
@@ -1243,10 +1256,84 @@ function MJCreateAgentForm({
 
   const [name, setName] = useState(seedAgent?.name ?? '');
   const [instructions, setInstructions] = useState(seedAgent?.desc ?? '');
-  const [activeTab, setActiveTab] = useState<'setup' | 'capabilities' | 'activity'>(fromMyAgents ? 'activity' : 'setup');
+  type SectionKey = 'setup' | 'triggers' | 'skills' | 'tools' | 'knowledge' | 'advanced';
+  const [activeTab, setActiveTab] = useState<SectionKey>('setup');
+  const chipNavRef = useRef<HTMLDivElement>(null);
+  const suppressScrollSpyRef = useRef(false);
+  const chipNav: { key: SectionKey; label: string }[] = [
+    { key: 'setup', label: 'Configuration' },
+    { key: 'triggers', label: 'Triggers' },
+    { key: 'skills', label: 'Skills' },
+    { key: 'tools', label: 'Tools' },
+    { key: 'knowledge', label: 'Knowledge' },
+    { key: 'advanced', label: 'Advanced' },
+  ];
+  useEffect(() => {
+    const ids = chipNav.map(c => c.key);
+    const first = document.getElementById(`section-${ids[0]}`);
+    if (!first) return;
+    // Walk up to find the actual scrolling container
+    let scrollRoot: HTMLElement | null = first.parentElement;
+    while (scrollRoot) {
+      const oy = getComputedStyle(scrollRoot).overflowY;
+      if (oy === 'auto' || oy === 'scroll') break;
+      scrollRoot = scrollRoot.parentElement;
+    }
+    if (!scrollRoot) return;
+
+    // Trigger line: just below the sticky header (h-14 = 56px) + sticky hero/chips
+    // Hero card ~150px + chips ~52px ≈ 220px below the scroll container's top edge
+    const TRIGGER_OFFSET = 220;
+
+    let rafId = 0;
+    const computeActive = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        if (suppressScrollSpyRef.current) return;
+        const triggerY = (scrollRoot as HTMLElement).getBoundingClientRect().top + TRIGGER_OFFSET;
+        let current: SectionKey = ids[0];
+        for (const id of ids) {
+          const el = document.getElementById(`section-${id}`);
+          if (!el) continue;
+          // Section is "active" if its top has scrolled past the trigger line
+          if (el.getBoundingClientRect().top <= triggerY) {
+            current = id;
+          } else {
+            break;
+          }
+        }
+        setActiveTab(current);
+      });
+    };
+    computeActive();
+    scrollRoot.addEventListener('scroll', computeActive, { passive: true });
+    window.addEventListener('resize', computeActive);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      scrollRoot.removeEventListener('scroll', computeActive);
+      window.removeEventListener('resize', computeActive);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromMyAgents]);
   const [editingName, setEditingName] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => { if (editingName) nameInputRef.current?.focus(); }, [editingName]);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const descriptionInputRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (editingDescription) {
+      descriptionInputRef.current?.focus();
+      const el = descriptionInputRef.current;
+      if (el) el.setSelectionRange(el.value.length, el.value.length);
+    }
+  }, [editingDescription]);
+  const defaultDescription = (seedAgent?.name || '').toLowerCase().includes('weather forecast')
+    ? 'Wakes up before your crews and emails a multi-city forecast so jobs get rescheduled before rain hits.'
+    : (seedAgent?.name || '').toLowerCase().includes('google review')
+    ? 'Pulls fresh Google reviews, matches them to customers, and flags anything below 4 stars for follow-up.'
+    : (seedAgent?.desc || '');
+  const [description, setDescription] = useState(defaultDescription);
 
   // Template setup fields (Daily Weather Forecast)
   const isWeatherForecast = (seedAgent?.name || '').toLowerCase().includes('weather forecast');
@@ -1255,6 +1342,9 @@ function MJCreateAgentForm({
   const isExistingWeatherAgent = isWeatherForecast && !!seedAgent;
   const isExistingGoogleReviewAgent = isGoogleReviewDigest && !!seedAgent;
   const [agentMenuOpen, setAgentMenuOpen] = useState(false);
+  const [activityHistoryOpen, setActivityHistoryOpen] = useState(false);
+  type ConfigKind = 'trigger' | 'skill' | 'tool' | 'knowledge';
+  const [configuringItem, setConfiguringItem] = useState<{ kind: ConfigKind; key: string } | null>(null);
   const agentMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!agentMenuOpen) return;
@@ -1676,7 +1766,7 @@ function MJCreateAgentForm({
                 {deployPhase === 'idle' ? (
                   <>
                     <Play className="w-[11px] h-[11px]" fill="currentColor" />
-                    Run agent
+                    Deploy agent
                   </>
                 ) : (
                   <>
@@ -1691,9 +1781,9 @@ function MJCreateAgentForm({
       </div>
 
       <div className="flex-1 min-h-0" style={{ background: '#FFFFFF' }}>
-        <div className="max-w-[820px] mx-auto px-6 py-10">
+        <div className="max-w-[820px] mx-auto px-6 py-6">
           {/* Hero strip — peach background, avatar + name + instructions */}
-          <div className="sticky top-14 z-20 bg-white pt-4 pb-0 mb-7 -mx-6 px-6">
+          <div className="sticky top-14 z-20 bg-white pt-2 pb-2 mb-7 -mx-6 px-6">
           <div className="relative rounded-2xl">
           {deployPhase !== 'idle' && (
             <>
@@ -1722,19 +1812,46 @@ function MJCreateAgentForm({
               />
             </>
           )}
-          <div className="relative rounded-2xl px-8 py-8" style={{ background: theme.tint }}>
-            {/* Status pill + kebab menu — top right (only when opened from My Agents) */}
-            {fromMyAgents && seedAgent && (() => {
-              const sStyle = statusStyles[seedAgent.status];
-              return (
-                <div className="absolute top-4 right-4 z-20 flex items-center gap-2" ref={agentMenuRef}>
-                  <span
-                    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
-                    style={{ background: sStyle.bg, color: sStyle.color, border: `1px solid ${sStyle.border}`, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}
+          <div className="relative rounded-2xl px-7 py-6" style={{ background: theme.tint }}>
+            {/* Top-right action cluster: Run now (always), Activity history + kebab (My Agents only) */}
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2" ref={agentMenuRef}>
+              {(() => {
+                const canRun = !!triggers.manual;
+                return (
+                  <button
+                    disabled={!canRun}
+                    className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11.5px] font-semibold active:scale-[0.97]"
+                    style={{
+                      background: canRun ? '#1C1E21' : '#EEF0F3',
+                      color: canRun ? '#FFFFFF' : '#9CA3AF',
+                      border: canRun ? 'none' : '1px solid #E6E8EC',
+                      boxShadow: canRun ? '0 1px 2px rgba(0,0,0,0.08)' : 'none',
+                      cursor: canRun ? 'pointer' : 'not-allowed',
+                      transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                    }}
+                    onMouseEnter={canRun ? (e) => { (e.currentTarget as HTMLElement).style.background = '#000000'; } : undefined}
+                    onMouseLeave={canRun ? (e) => { (e.currentTarget as HTMLElement).style.background = '#1C1E21'; } : undefined}
+                    aria-label="Run now"
+                    title={canRun ? 'Run now' : 'Enable the On demand trigger to run this agent'}
                   >
-                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: sStyle.dot }} />
-                    {seedAgent.status}
-                  </span>
+                    <Play className="w-[10px] h-[10px]" strokeWidth={2.4} fill="currentColor" />
+                    Run now
+                  </button>
+                );
+              })()}
+              {fromMyAgents && seedAgent && (
+                <>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setActivityHistoryOpen(true); }}
+                    className="w-7 h-7 rounded-md flex items-center justify-center text-[#4B5563] hover:text-[#1C1E21] active:scale-[0.94]"
+                    style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #E6E8EC', backdropFilter: 'blur(4px)', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#FFFFFF'; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; }}
+                    aria-label="Activity history"
+                    title="Activity history"
+                  >
+                    <History className="w-[14px] h-[14px]" strokeWidth={2.2} />
+                  </button>
                   <div className="relative">
                     <button
                       onClick={(e) => { e.stopPropagation(); setAgentMenuOpen(v => !v); }}
@@ -1769,9 +1886,9 @@ function MJCreateAgentForm({
                       </div>
                     )}
                   </div>
-                </div>
-              );
-            })()}
+                </>
+              )}
+            </div>
             {/* Decorative layer — clipped to the card so it doesn't escape, but avatar popover stays visible */}
             <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden">
               {/* Soft secondary bloom for gradient depth */}
@@ -1853,6 +1970,7 @@ function MJCreateAgentForm({
                 )}
               </div>
               <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2.5 flex-wrap">
                 {editingName ? (
                   <input
                     ref={nameInputRef}
@@ -1892,104 +2010,65 @@ function MJCreateAgentForm({
                     {name.trim() || 'New Agent'}
                   </button>
                 )}
-                {enabledSkills.length > 0 ? (
-                  <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                    {enabledSkills.slice(0, 3).map((s) => {
-                      const Icon = s.icon;
-                      return (
-                        <button
-                          key={s.key}
-                          onClick={() => {
-                            setActiveTab('capabilities');
-                            setTimeout(() => {
-                              const el = document.getElementById('skills');
-                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }, 60);
-                          }}
-                          className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-[12px] font-medium text-[#1C1E21] active:scale-[0.96]"
-                          style={{
-                            border: '1px solid #E6E8EC',
-                            background: '#FFFFFF',
-                            transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)',
-                          }}
-                        >
-                          {Icon && <Icon className="w-[12px] h-[12px] text-[#6B7280]" />}
-                          {s.label || s.key}
-                        </button>
-                      );
-                    })}
-                    {enabledSkills.length > 3 && (
-                      <div className="relative group">
-                        <button
-                          onClick={() => {
-                            setActiveTab('capabilities');
-                            setTimeout(() => {
-                              const el = document.getElementById('skills');
-                              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }, 60);
-                          }}
-                          className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[12px] font-medium text-[#4B5563] active:scale-[0.96]"
-                          style={{
-                            border: '1px solid #E6E8EC',
-                            background: '#FFFFFF',
-                            transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)',
-                          }}
-                          aria-label={`${enabledSkills.length - 3} more skills`}
-                        >
-                          <Plus className="w-[11px] h-[11px]" />
-                          {enabledSkills.length - 3}
-                        </button>
-                        <div
-                          className="absolute left-0 top-full mt-1.5 z-20 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
-                          style={{
-                            transition: 'opacity 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
-                            transformOrigin: 'top left',
-                          }}
-                        >
-                          <div
-                            className="rounded-lg bg-white py-1.5 min-w-[180px]"
-                            style={{
-                              border: '1px solid #E6E8EC',
-                              boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)',
-                            }}
-                          >
-                            {enabledSkills.slice(3).map((s) => {
-                              const Icon = s.icon;
-                              return (
-                                <div
-                                  key={s.key}
-                                  className="flex items-center gap-2 px-3 py-1.5 text-[12.5px] text-[#1C1E21]"
-                                >
-                                  {Icon && <Icon className="w-[12px] h-[12px] text-[#6B7280] flex-shrink-0" />}
-                                  <span className="truncate">{s.label || s.key}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                {fromMyAgents && seedAgent && (() => {
+                  const sStyle = statusStyles[seedAgent.status];
+                  return (
+                    <span className="inline-flex items-center gap-1.5" style={{ fontSize: 11.5, fontWeight: 500, color: '#6B7280', letterSpacing: '0.01em' }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: sStyle.dot, boxShadow: `0 0 0 3px ${sStyle.dot}1F` }} />
+                      {seedAgent.status}
+                    </span>
+                  );
+                })()}
+                </div>
+                {editingDescription ? (
+                  <textarea
+                    ref={descriptionInputRef}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    onBlur={() => setEditingDescription(false)}
+                    onKeyDown={(e) => { if (e.key === 'Escape') { (e.currentTarget as HTMLTextAreaElement).blur(); } }}
+                    placeholder="Describe what this agent does."
+                    rows={2}
+                    className="mt-0.5 outline-none resize-none"
+                    style={{
+                      fontSize: 13.5,
+                      color: '#1C1E21',
+                      lineHeight: 1.55,
+                      padding: '3px 9px',
+                      marginLeft: -9,
+                      width: 560,
+                      maxWidth: '100%',
+                      borderRadius: 8,
+                      border: '1px solid #1C1E21',
+                      background: '#FFFFFF',
+                    }}
+                  />
                 ) : (
                   <button
-                    onClick={() => {
-                      setActiveTab('capabilities');
-                      setTimeout(() => {
-                        const el = document.getElementById('skills');
-                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }, 60);
-                    }}
-                    className="inline-flex items-center gap-1.5 h-7 px-2.5 mt-2.5 rounded-full text-[12px] font-medium text-[#6B7280] active:scale-[0.96]"
+                    onClick={() => setEditingDescription(true)}
+                    className="mt-0.5 text-left max-w-full"
                     style={{
-                      border: '1px dashed #D1D5DB',
+                      fontSize: 13.5,
+                      color: description.trim() ? '#6B7280' : '#9CA3AF',
+                      lineHeight: 1.55,
+                      padding: '3px 9px',
+                      marginLeft: -9,
+                      borderRadius: 8,
+                      border: '1px solid transparent',
                       background: 'transparent',
-                      transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                      cursor: 'text',
+                      maxWidth: 560,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)',
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB'; (e.currentTarget as HTMLElement).style.color = '#6B7280'; }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'transparent'; }}
+                    aria-label="Edit description"
                   >
-                    <Plus className="w-[12px] h-[12px]" />
-                    Add skill
+                    {description.trim() || 'Describe what this agent does.'}
                   </button>
                 )}
               </div>
@@ -1997,31 +2076,62 @@ function MJCreateAgentForm({
           </div>
           </div>
 
-          {/* TAB SWITCHER — Setup / Capabilities / Activity (sticky with hero) */}
-          <div className="flex items-center gap-6 border-b border-[#E6E8EC] mt-4">
-            {(fromMyAgents ? (['setup', 'capabilities', 'activity'] as const) : (['setup', 'capabilities'] as const)).map((t) => (
-              <button
-                key={t}
-                onClick={() => setActiveTab(t)}
-                className={`relative pb-3 text-[13px] font-medium ${
-                  activeTab === t ? 'text-[#1C1E21]' : 'text-[#6B7280] hover:text-[#1C1E21]'
-                }`}
-                style={{ transition: 'color 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              >
-                {t === 'setup' ? 'Setup' : t === 'capabilities' ? 'Capabilities' : 'Activity'}
-                {activeTab === t && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#1C1E21] rounded-full" />
-                )}
-              </button>
-            ))}
+          {/* CHIP NAV — polished white pills with subtle border + shadow */}
+          <div ref={chipNavRef} className="flex items-center gap-1.5 mt-3 overflow-x-auto scrollbar-auto-hide">
+            {chipNav.map(({ key, label }) => {
+              const isActive = activeTab === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => {
+                    setActiveTab(key);
+                    suppressScrollSpyRef.current = true;
+                    const el = document.getElementById(`section-${key}`);
+                    if (!el) return;
+                    // Find the scroll container
+                    let scrollRoot: HTMLElement | null = el.parentElement;
+                    while (scrollRoot) {
+                      const oy = getComputedStyle(scrollRoot).overflowY;
+                      if (oy === 'auto' || oy === 'scroll') break;
+                      scrollRoot = scrollRoot.parentElement;
+                    }
+                    if (!scrollRoot) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      setTimeout(() => { suppressScrollSpyRef.current = false; }, 700);
+                      return;
+                    }
+                    // Sticky region = h-14 top header + chip nav wrapper bottom
+                    const chipsBottom = chipNavRef.current?.getBoundingClientRect().bottom ?? 0;
+                    const rootTop = scrollRoot.getBoundingClientRect().top;
+                    const stickyHeight = Math.max(0, chipsBottom - rootTop);
+                    const targetY = Math.max(0, el.getBoundingClientRect().top - rootTop + scrollRoot.scrollTop - stickyHeight - 16);
+                    scrollRoot.scrollTo({ top: targetY, behavior: 'smooth' });
+                    setTimeout(() => { suppressScrollSpyRef.current = false; }, 700);
+                  }}
+                  className="inline-flex items-center px-3.5 h-8 rounded-full text-[12.5px] active:scale-[0.97] flex-shrink-0"
+                  style={{
+                    background: isActive ? '#F3F4F6' : '#FFFFFF',
+                    color: isActive ? '#1C1E21' : '#6B7280',
+                    fontWeight: 500,
+                    border: `1px solid ${isActive ? '#E6E8EC' : '#EFF0F3'}`,
+                    boxShadow: isActive
+                      ? '0 1px 2px rgba(16,24,40,0.05)'
+                      : '0 1px 1px rgba(16,24,40,0.02)',
+                    transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1), box-shadow 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                  onMouseEnter={(e) => { if (!isActive) { (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                  onMouseLeave={(e) => { if (!isActive) { (e.currentTarget as HTMLElement).style.borderColor = '#EFF0F3'; (e.currentTarget as HTMLElement).style.color = '#6B7280'; } }}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
           </div>
 
-          {activeTab === 'activity' && fromMyAgents ? (
-            <MJAgentActivityFeed agentName={seedAgent?.name || name || 'this agent'} accent={theme.accent} />
-          ) : (<>
+          <>
 
-          {activeTab === 'setup' && <>
+          <div id="section-setup" className="scroll-mt-[280px]">
           {/* CONFIGURATION */}
           <section className="mb-10">
             <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Configuration</h2>
@@ -2029,7 +2139,7 @@ function MJCreateAgentForm({
 
             <div className="space-y-5">
               <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
+                <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Instructions</label>
                 <button
                   type="button"
                   onClick={() => setInstructionsOpen(true)}
@@ -2046,7 +2156,7 @@ function MJCreateAgentForm({
 
               {isWeatherForecast && (
               <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Send forecast to</label>
+                <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Send forecast to</label>
                 <input
                   value={forecastEmail}
                   onChange={(e) => setForecastEmail(e.target.value)}
@@ -2061,7 +2171,7 @@ function MJCreateAgentForm({
               {isGoogleReviewDigest && (
               <>
                 <div>
-                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Send digest to</label>
+                  <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Send digest to</label>
                   <input
                     value={digestEmail}
                     onChange={(e) => setDigestEmail(e.target.value)}
@@ -2072,7 +2182,7 @@ function MJCreateAgentForm({
                   />
                 </div>
                 <div>
-                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                  <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">
                     Your business on Google Maps <span style={{ color: '#FD5000' }}>*</span>
                   </label>
                   <input
@@ -2089,7 +2199,7 @@ function MJCreateAgentForm({
               {isWeatherForecast && (<>
               {/* Cities to forecast */}
               <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">
                   Cities to forecast <span style={{ color: '#FD5000' }}>*</span>
                 </label>
                 <div className="relative">
@@ -2162,7 +2272,7 @@ function MJCreateAgentForm({
               {/* Audience + Units — same row */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                  <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">
                     Audience <span style={{ color: '#FD5000' }}>*</span>
                   </label>
                   <input
@@ -2174,7 +2284,7 @@ function MJCreateAgentForm({
                   />
                 </div>
                 <div>
-                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">
+                  <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">
                     Units <span style={{ color: '#FD5000' }}>*</span>
                   </label>
                   <div className="relative">
@@ -2192,9 +2302,17 @@ function MJCreateAgentForm({
                 </div>
               </div>
               </>)}
+            </div>
+          </section>
+          </div>
 
+          <div id="section-triggers" className="scroll-mt-[280px]">
+          <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Triggers</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">Decide when this agent should jump in — schedule, mention, or webhook.</p>
+            <div className="space-y-5">
               <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Triggers</label>
+                <label className="block text-[13px] font-medium text-[#1C1E21] mb-3 sr-only">Triggers</label>
                 {enabledTriggers.length > 0 && (
                   <div className="space-y-2.5 mb-3">
                     {enabledTriggers.map((t) => {
@@ -2225,6 +2343,7 @@ function MJCreateAgentForm({
                           item={t}
                           detail={detail}
                           onRemove={() => setTriggers((p) => ({ ...p, [t.key]: false }))}
+                          onConfigure={() => setConfiguringItem({ kind: 'trigger', key: t.key })}
                         />
                       );
                     })}
@@ -2235,8 +2354,6 @@ function MJCreateAgentForm({
                   catalog={triggerItems}
                   enabled={triggers}
                   onToggle={(key, on) => setTriggers((p) => ({ ...p, [key]: on }))}
-                  createLabel="Create custom trigger"
-                  onCreate={() => {}}
                   renderConfig={(t) => {
                     const SurfaceRow = ({ title, sub, on, onToggle }: { title: string; sub: string; on: boolean; onToggle: () => void }) => (
                       <button
@@ -2422,16 +2539,16 @@ function MJCreateAgentForm({
               </div>
             </div>
           </section>
-          </>}
+          </div>
 
-          {activeTab === 'capabilities' && <>
-          {/* SKILLS & TOOLS */}
-          <section id="skills" className="mb-10 scroll-mt-24">
-            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Skills and tools</h2>
-            <p className="text-[14px] text-[#6B7280] mb-6">Pick the abilities and tools your agent can use to get work done.</p>
+          <div id="section-skills" className="scroll-mt-[280px]">
+          {/* SKILLS */}
+          <section id="skills" className="mb-10 pt-8 border-t border-[#F0F1F3] scroll-mt-24">
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Skills</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">Abilities your agent can call on to read, plan, or act on Zuper data.</p>
 
-            <div className="mb-7">
-              <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Skills</label>
+            <div>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-3 sr-only">Skills</label>
               {enabledSkills.length > 0 && (
                 <div className="space-y-2.5 mb-3">
                   {enabledSkills.map((s) => {
@@ -2445,6 +2562,7 @@ function MJCreateAgentForm({
                       detail={detail}
                       onRemove={() => setSkills((p) => ({ ...p, [s.key]: false }))}
                       readOnly={capabilitiesReadOnly}
+                      onConfigure={() => setConfiguringItem({ kind: 'skill', key: s.key })}
                     />
                     );
                   })}
@@ -2456,8 +2574,6 @@ function MJCreateAgentForm({
                 catalog={skillCatalog}
                 enabled={skills}
                 onToggle={(key, on) => setSkills((p) => ({ ...p, [key]: on }))}
-                createLabel="Create custom skill"
-                onCreate={() => {}}
                 renderConfig={(s) => {
                   if (s.key === 'Send emails') {
                     return (
@@ -2516,9 +2632,15 @@ function MJCreateAgentForm({
               />
               )}
             </div>
+          </section>
+          </div>
 
+          <div id="section-tools" className="scroll-mt-[280px]">
+          <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
+            <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Tools</h2>
+            <p className="text-[14px] text-[#6B7280] mb-6">External services this agent can talk to — email, chat, webhooks.</p>
             <div>
-              <label className="block text-[13px] font-medium text-[#1C1E21] mb-3">Tools</label>
+              <label className="block text-[13px] font-medium text-[#1C1E21] mb-3 sr-only">Tools</label>
               {enabledTools.length > 0 && (
                 <div className="space-y-2.5 mb-3">
                   {enabledTools.map((t) => {
@@ -2536,6 +2658,7 @@ function MJCreateAgentForm({
                         detail={detail}
                         onRemove={() => setTools((p) => ({ ...p, [t.key]: false }))}
                         readOnly={capabilitiesReadOnly}
+                        onConfigure={() => setConfiguringItem({ kind: 'tool', key: t.key })}
                       />
                     );
                   })}
@@ -2613,7 +2736,9 @@ function MJCreateAgentForm({
               )}
             </div>
           </section>
+          </div>
 
+          <div id="section-knowledge" className="scroll-mt-[280px]">
           {/* KNOWLEDGE */}
           <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
             <h2 className="text-[17px] font-semibold tracking-tight text-[#1C1E21] mb-1.5">Knowledge base</h2>
@@ -2626,6 +2751,7 @@ function MJCreateAgentForm({
                     item={k}
                     onRemove={() => setKb((p) => ({ ...p, [k.key]: false }))}
                     readOnly={capabilitiesReadOnly}
+                    onConfigure={() => setConfiguringItem({ kind: 'knowledge', key: k.key })}
                   />
                 ))}
               </div>
@@ -2637,12 +2763,12 @@ function MJCreateAgentForm({
               enabled={kb}
               onToggle={(key, on) => setKb((p) => ({ ...p, [key]: on }))}
               layout="list"
-              createLabel="Create knowledge source"
-              onCreate={() => {}}
             />
             )}
           </section>
+          </div>
 
+          <div id="section-advanced" className="scroll-mt-[280px]">
           {/* ADVANCED OPTIONS */}
           <section className="mb-10 pt-8 border-t border-[#F0F1F3]">
             <button
@@ -2669,7 +2795,7 @@ function MJCreateAgentForm({
               <div className="mt-6 space-y-5" style={{ animation: 'mjAdvIn 240ms cubic-bezier(0.23,1,0.32,1) both' }}>
                 <style>{`@keyframes mjAdvIn { from { opacity: 0; transform: translateY(-4px) } to { opacity: 1; transform: translateY(0) } }`}</style>
                 <div>
-                  <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Model</label>
+                  <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Model</label>
                   <div className="relative">
                     <select
                       value={advModel}
@@ -2762,11 +2888,602 @@ function MJCreateAgentForm({
               </div>
             )}
           </section>
-          </>}
-          </>)}
+          </div>
+          </>
         </div>
       </div>
+      {activityHistoryOpen && (
+        <AgentActivityHistoryModal
+          agentName={seedAgent?.name || name || 'this agent'}
+          onClose={() => setActivityHistoryOpen(false)}
+        />
+      )}
+      {configuringItem && (() => {
+        const { kind, key } = configuringItem;
+        const lookup: { label: string; desc: string; icon: any; tint?: string; iconColor?: string } | undefined =
+          kind === 'trigger' ? triggerCatalog.find(t => t.key === key)
+          : kind === 'skill' ? skillCatalog.find(s => s.key === key)
+          : kind === 'tool' ? toolCatalog.find(t => t.key === key)
+          : kbCatalog.find(k => k.key === key);
+        if (!lookup) return null;
+        const close = () => setConfiguringItem(null);
+        const itemHasConfig = (
+          (kind === 'trigger' && (key === 'mention' || key === 'webhook' || key === 'schedule')) ||
+          (kind === 'skill' && (key === 'Send emails' || key === 'Send SMS')) ||
+          (kind === 'tool' && (key === 'Send Email' || key === 'Send Slack Message')) ||
+          kind === 'knowledge'
+        );
+        const showPicker = !itemHasConfig;
+        const kindLabel = kind === 'trigger' ? 'trigger' : kind === 'skill' ? 'skill' : kind === 'tool' ? 'tool' : 'knowledge';
+        const pickerCatalog: any[] =
+          kind === 'trigger' ? triggerCatalog
+          : kind === 'skill' ? skillCatalog
+          : kind === 'tool' ? toolCatalog
+          : kbCatalog;
+        const enabledMap: Record<string, boolean> =
+          kind === 'trigger' ? triggers
+          : kind === 'skill' ? skills
+          : kind === 'tool' ? tools
+          : kb;
+        const togglePickerItem = (k2: string) => {
+          if (kind === 'trigger') setTriggers((p) => ({ ...p, [k2]: !p[k2] }));
+          else if (kind === 'skill') setSkills((p) => ({ ...p, [k2]: !p[k2] }));
+          else if (kind === 'tool') setTools((p) => ({ ...p, [k2]: !p[k2] }));
+          else setKb((p) => ({ ...p, [k2]: !p[k2] }));
+        };
+        let body: any = (
+          <div className="grid grid-cols-2 gap-2.5">
+            {pickerCatalog.map((it: any) => {
+              const ItIcon = it.icon;
+              const itAccent = it.iconColor || '#4B5563';
+              const itTint = it.tint || '#F3F4F6';
+              const on = !!enabledMap[it.key];
+              return (
+                <button
+                  key={it.key}
+                  onClick={() => togglePickerItem(it.key)}
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl bg-white text-left"
+                  style={{
+                    border: `1px solid ${on ? '#1C1E21' : '#EEF0F3'}`,
+                    transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), background-color 140ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                  onMouseEnter={(e) => { if (!on) (e.currentTarget as HTMLElement).style.borderColor = '#D1D5DB'; }}
+                  onMouseLeave={(e) => { if (!on) (e.currentTarget as HTMLElement).style.borderColor = '#EEF0F3'; }}
+                >
+                  <span className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 relative overflow-hidden" style={{ background: `linear-gradient(160deg, ${itTint} 0%, #FFFFFF 100%)`, border: `1px solid ${itAccent}33`, boxShadow: `inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px ${itAccent}1A` }}>
+                    <ItIcon className="w-[15px] h-[15px]" style={{ color: itAccent }} strokeWidth={2} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13.5px] font-semibold text-[#1C1E21] leading-tight truncate">{it.label}</p>
+                    <p className="text-[12px] text-[#6B7280] mt-0.5 leading-snug truncate">{it.desc}</p>
+                  </div>
+                  <span aria-hidden className="relative inline-flex items-center flex-shrink-0" style={{ width: 32, height: 18, borderRadius: 999, background: on ? '#1C1E21' : '#E6E8EC', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                    <span style={{ position: 'absolute', top: 2, left: on ? 16 : 2, width: 14, height: 14, borderRadius: 999, background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.18)', transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)' }} />
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        );
+        // Trigger configs
+        if (kind === 'trigger' && key === 'mention') {
+          body = (
+            <div>
+              <div className="mb-3">
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Where to listen</p>
+                <p className="text-[12.5px] text-[#6B7280] leading-snug">By default the agent responds to <span className="font-mono text-[11.5px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#1C1E21]">@agent</span> across these surfaces.</p>
+              </div>
+              <div className="rounded-xl border border-[#EEF0F3] bg-white divide-y divide-[#F0F1F3] px-4">
+                {[
+                  { title: 'Chat threads', sub: 'In any chat where the agent is added', on: mentionSurfaces.chat, toggle: () => setMentionSurfaces((p) => ({ ...p, chat: !p.chat })) },
+                  { title: 'Comments on jobs & tasks', sub: 'Mentions inside record comments', on: mentionSurfaces.comments, toggle: () => setMentionSurfaces((p) => ({ ...p, comments: !p.comments })) },
+                  { title: 'Direct messages', sub: 'When users DM the agent directly', on: mentionSurfaces.dm, toggle: () => setMentionSurfaces((p) => ({ ...p, dm: !p.dm })) },
+                ].map((r) => (
+                  <button key={r.title} onClick={r.toggle} className="w-full flex items-center justify-between py-3 text-left">
+                    <div className="min-w-0 pr-3">
+                      <p className="text-[13.5px] font-semibold text-[#1C1E21] leading-tight">{r.title}</p>
+                      <p className="text-[12px] text-[#6B7280] mt-1 leading-snug">{r.sub}</p>
+                    </div>
+                    <span aria-hidden className="relative inline-flex items-center flex-shrink-0" style={{ width: 36, height: 20, borderRadius: 999, background: r.on ? '#1C1E21' : '#E6E8EC', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                      <span style={{ position: 'absolute', top: 2, left: r.on ? 18 : 2, width: 16, height: 16, borderRadius: 999, background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.18)', transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)' }} />
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        } else if (kind === 'trigger' && key === 'webhook') {
+          body = (
+            <div>
+              <div className="mb-4">
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Endpoint</p>
+                <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">POST a JSON payload to this URL. Include the signing secret in <span className="font-mono text-[11.5px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#1C1E21]">X-Zuper-Signature</span>.</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
+                    https://hooks.zuper.co/v1/agent/9f3a-mia
+                  </div>
+                  <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>Copy</button>
+                </div>
+              </div>
+              <div className="mb-3">
+                <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Signing secret</p>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">whsec_••••••••••••••3f7a</div>
+                  <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>Rotate</button>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}>
+                <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                <p className="text-[12px] text-[#4B5563]">Requests over 2 MB or with invalid signatures are rejected.</p>
+              </div>
+            </div>
+          );
+        } else if (kind === 'trigger' && key === 'schedule') {
+          const freqs: { key: typeof schedFreq; label: string }[] = [
+            { key: 'hour', label: 'Every hour' },
+            { key: 'day', label: 'Every day' },
+            { key: 'week', label: 'Every week' },
+            { key: 'month', label: 'Every month' },
+            { key: 'weekdays', label: 'Weekdays' },
+            { key: 'custom', label: 'Custom' },
+          ];
+          const summaryMap: Record<typeof schedFreq, string> = {
+            hour: 'every hour', day: 'every day', week: 'every Monday', month: 'on the 1st of every month', weekdays: 'Mon–Fri', custom: 'a custom schedule',
+          };
+          body = (
+            <div>
+              <div className="mb-4">
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-2">Frequency</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {freqs.map((f) => {
+                    const active = schedFreq === f.key;
+                    return (
+                      <button key={f.key} onClick={() => setSchedFreq(f.key)} className="px-3 h-8 rounded-full text-[12.5px] font-medium active:scale-[0.97]"
+                        style={{ background: active ? '#1C1E21' : '#FFFFFF', color: active ? '#FFFFFF' : '#1C1E21', border: `1px solid ${active ? '#1C1E21' : '#E6E8EC'}`, transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                        {f.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="mb-4">
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-2">Time</p>
+                <div className="flex items-center gap-1.5">
+                  <select value={schedHour} onChange={(e) => setSchedHour(e.target.value)} className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                    {Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0')).map((h) => (<option key={h} value={h}>{h}</option>))}
+                  </select>
+                  <span className="text-[13px] text-[#9CA3AF]">:</span>
+                  <select value={schedMin} onChange={(e) => setSchedMin(e.target.value)} className="h-9 px-2.5 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                    {['00', '15', '30', '45'].map((m) => (<option key={m} value={m}>{m}</option>))}
+                  </select>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg" style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}>
+                <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                <p className="text-[12px] text-[#4B5563]">Runs <span className="font-semibold text-[#1C1E21]">{summaryMap[schedFreq]}</span> at <span className="font-semibold text-[#1C1E21]">{schedHour}:{schedMin}</span></p>
+              </div>
+            </div>
+          );
+        } else if (kind === 'skill' && key === 'Send emails') {
+          body = (
+            <div>
+              <div className="mb-4">
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">From address</p>
+                <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Drafts will be sent from this verified address.</p>
+                <input value={emailFrom} onChange={(e) => setEmailFrom(e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }} />
+              </div>
+              <button onClick={() => setEmailSignature((v) => !v)} className="w-full flex items-center justify-between py-3 text-left">
+                <div>
+                  <p className="text-[13.5px] font-semibold text-[#1C1E21] leading-tight">Append signature</p>
+                  <p className="text-[12px] text-[#6B7280] mt-1 leading-snug">Adds the workspace footer to every outgoing draft.</p>
+                </div>
+                <span aria-hidden className="relative inline-flex items-center flex-shrink-0 mt-0.5" style={{ width: 36, height: 20, borderRadius: 999, background: emailSignature ? '#1C1E21' : '#E6E8EC', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                  <span style={{ position: 'absolute', top: 2, left: emailSignature ? 18 : 2, width: 16, height: 16, borderRadius: 999, background: '#FFFFFF', boxShadow: '0 1px 2px rgba(0,0,0,0.18)', transition: 'left 160ms cubic-bezier(0.23,1,0.32,1)' }} />
+                </span>
+              </button>
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg mt-2" style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}>
+                <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                <p className="text-[12px] text-[#4B5563]">Drafts wait for human approval before sending.</p>
+              </div>
+            </div>
+          );
+        } else if (kind === 'skill' && key === 'Send SMS') {
+          body = (
+            <div>
+              <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Sending number</p>
+              <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Use one of your verified SMS-enabled numbers.</p>
+              <select value={smsNumber} onChange={(e) => setSmsNumber(e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                <option>+1 (415) 555-0144</option>
+                <option>+1 (628) 555-0177</option>
+                <option>+44 20 7946 0958</option>
+              </select>
+            </div>
+          );
+        } else if (kind === 'tool' && key === 'Send Email') {
+          body = (
+            <div>
+              <div className="mb-4">
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Default recipient</p>
+                <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Leave blank to let the agent fill the recipient from context.</p>
+                <input value={toolEmailTo} onChange={(e) => setToolEmailTo(e.target.value)} placeholder="customer@example.com" className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }} />
+              </div>
+              <div>
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Subject prefix</p>
+                <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Prepended to every subject line for easy filtering.</p>
+                <input value={toolEmailSubject} onChange={(e) => setToolEmailSubject(e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }} />
+              </div>
+            </div>
+          );
+        } else if (kind === 'tool' && key === 'Send Slack Message') {
+          body = (
+            <div>
+              <div className="mb-4">
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Channel</p>
+                <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Pick the Slack channel this agent should post to.</p>
+                <select value={slackChannel} onChange={(e) => setSlackChannel(e.target.value)} className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}>
+                  <option>#service-ops</option>
+                  <option>#dispatch</option>
+                  <option>#leads-inbound</option>
+                  <option>#alerts</option>
+                </select>
+              </div>
+              <div>
+                <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Mention on send</p>
+                <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">Comma-separated Slack handles to ping. Leave blank for none.</p>
+                <input value={slackMentions} onChange={(e) => setSlackMentions(e.target.value)} placeholder="@oncall, @ops-lead" className="w-full h-10 px-3 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]" style={{ transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1)' }} />
+              </div>
+            </div>
+          );
+        } else if (kind === 'knowledge') {
+          const k = kbCatalog.find(x => x.key === key);
+          body = (
+            <div>
+              {k?.url && (
+                <div className="mb-3">
+                  <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Source URL</p>
+                  <div className="h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">{k.url}</div>
+                </div>
+              )}
+              {k?.badges && k.badges.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1.5">Tags</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {k.badges.map((b, i) => (
+                      <span key={i} className="px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wide" style={{ background: '#F3F4F6', color: '#4B5563', border: '1px solid #E6E8EC' }}>{b.label}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg mt-2" style={{ background: '#F8F9FB', border: '1px solid #EEF0F3' }}>
+                <Info className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                <p className="text-[12px] text-[#4B5563]">Indexed and ready. Agent will retrieve relevant snippets at runtime.</p>
+              </div>
+            </div>
+          );
+        }
+        return (
+          <>
+            <div className="fixed inset-0 z-[700] bg-black/40 backdrop-blur-sm" style={{ animation: 'configOverlayIn 180ms cubic-bezier(0.23,1,0.32,1) both' }} onClick={close} />
+            <div className="fixed inset-0 z-[710] flex items-center justify-center p-4 pointer-events-none">
+              <div className="w-full max-w-[560px] bg-white rounded-2xl overflow-hidden pointer-events-auto flex flex-col" style={{ height: 'min(640px, 90vh)', boxShadow: '0 20px 60px rgba(34,30,31,0.25)', animation: 'configModalIn 220ms cubic-bezier(0.23,1,0.32,1) both' }}>
+                <div className="flex items-center justify-between gap-3 px-6 pt-5 pb-4">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {!showPicker && (
+                      <button onClick={close} className="w-7 h-7 -ml-1 rounded-md flex items-center justify-center text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]" style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }} aria-label="Back">
+                        <ChevronLeft className="w-[16px] h-[16px]" strokeWidth={2.2} />
+                      </button>
+                    )}
+                    <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.01em' }}>{showPicker ? `Add ${kindLabel}` : lookup.label}</h2>
+                  </div>
+                  <button onClick={close} className="w-7 h-7 rounded-md flex items-center justify-center text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]" style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }} aria-label="Close">
+                    <X className="w-[14px] h-[14px]" />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto px-6 pb-5">{body}</div>
+                <div className="flex items-center justify-end gap-2 px-6 py-3 border-t border-[#F0F1F3]">
+                  <button onClick={close} className="h-9 px-4 rounded-lg text-[13px] font-semibold text-white active:scale-[0.98]" style={{ background: '#1C1E21', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>Done</button>
+                </div>
+                <style>{`
+                  @keyframes configOverlayIn { from { opacity: 0 } to { opacity: 1 } }
+                  @keyframes configModalIn { from { opacity: 0; transform: scale(0.97) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+                `}</style>
+              </div>
+            </div>
+          </>
+        );
+      })()}
     </div>
+  );
+}
+
+function AgentActivityHistoryModal({ agentName, onClose }: { agentName: string; onClose: () => void }) {
+  // Build a 90-day daily run dataset so pagination is meaningful.
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const today = new Date(2026, 4, 28); // May 28, 2026 — most recent run
+  const fmt = (d: Date) => `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()} · 09:00`;
+  const isoDate = (d: Date) => d.toISOString().slice(0, 10);
+  const dayOffset = (n: number) => { const d = new Date(today); d.setDate(d.getDate() - n); return isoDate(d); };
+  const runs = Array.from({ length: 90 }, (_, i) => {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    return { at: fmt(d), label: 'Scheduled run', daysAgo: i, date: d };
+  });
+
+  // Date filter
+  type DateRange = '7' | '30' | '90' | 'all' | 'custom';
+  const [dateRange, setDateRange] = useState<DateRange>('all');
+  const [dateOpen, setDateOpen] = useState(false);
+  const [showCustomPanel, setShowCustomPanel] = useState(false);
+  const dateRef = useRef<HTMLDivElement>(null);
+  const [customFrom, setCustomFrom] = useState(dayOffset(14));
+  const [customTo, setCustomTo] = useState(isoDate(today));
+  const [appliedRange, setAppliedRange] = useState<{ from: string; to: string } | null>(null);
+  useEffect(() => {
+    if (!dateOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (dateRef.current && !dateRef.current.contains(e.target as Node)) { setDateOpen(false); setShowCustomPanel(false); }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [dateOpen]);
+  const dateLabel = dateRange === 'all' ? 'All time'
+    : dateRange === '7' ? 'Last 7 days'
+    : dateRange === '30' ? 'Last 30 days'
+    : dateRange === '90' ? 'Last 90 days'
+    : appliedRange ? `${appliedRange.from} – ${appliedRange.to}` : 'Custom range';
+  const filtered = runs.filter(r => {
+    if (dateRange === 'all') return true;
+    if (dateRange === 'custom' && appliedRange) {
+      const fromDays = Math.floor((today.getTime() - new Date(appliedRange.from).getTime()) / 86400000);
+      const toDays = Math.floor((today.getTime() - new Date(appliedRange.to).getTime()) / 86400000);
+      return r.daysAgo >= toDays && r.daysAgo <= fromDays;
+    }
+    if (dateRange === 'custom') return true;
+    return r.daysAgo <= Number(dateRange);
+  });
+
+  // Pagination
+  const PAGE_SIZE = 30;
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pageItems = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const pageStartIndex = (safePage - 1) * PAGE_SIZE;
+  useEffect(() => { setPage(1); }, [dateRange, appliedRange]);
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-[700] bg-black/40 backdrop-blur-sm"
+        style={{ animation: 'historyOverlayIn 180ms cubic-bezier(0.23,1,0.32,1) both' }}
+        onClick={onClose}
+      />
+      <div className="fixed inset-0 z-[710] flex items-center justify-center p-4 pointer-events-none">
+        <div
+          className="w-full max-w-[560px] bg-white rounded-2xl overflow-hidden pointer-events-auto flex flex-col"
+          style={{
+            maxHeight: '86vh',
+            boxShadow: '0 20px 60px rgba(34,30,31,0.25)',
+            animation: 'historyModalIn 220ms cubic-bezier(0.23,1,0.32,1) both',
+          }}
+        >
+          <div className="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-[#F0F1F3]">
+            <div className="min-w-0">
+              <h2 style={{ fontSize: 16, fontWeight: 600, color: '#1C1E21', letterSpacing: '-0.01em' }}>Activity history</h2>
+              <p style={{ fontSize: 12.5, color: '#6B7280', marginTop: 2 }}>{agentName}</p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div ref={dateRef} className="relative">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setDateOpen(v => !v); setShowCustomPanel(false); }}
+                  className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-md border border-[#E6E8EC] bg-white text-[12px] font-medium text-[#1C1E21] hover:bg-[#F8F9FB]"
+                  style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                >
+                  <Calendar className="w-3.5 h-3.5 text-[#6B7280]" />
+                  <span>{dateLabel}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-[#9CA3AF]" style={{ transform: dateOpen ? 'rotate(180deg)' : 'none', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }} />
+                </button>
+                {dateOpen && (
+                  <div
+                    className="absolute right-0 top-full mt-1.5 z-50 rounded-xl overflow-hidden bg-white"
+                    style={{ border: '1px solid #E6E8EC', boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: showCustomPanel ? 240 : 160 }}
+                  >
+                    {!showCustomPanel ? (
+                      <div className="py-1">
+                        {([
+                          { key: '7', label: 'Last 7 days' },
+                          { key: '30', label: 'Last 30 days' },
+                          { key: '90', label: 'Last 90 days' },
+                          { key: 'all', label: 'All time' },
+                          { key: 'custom', label: 'Custom range' },
+                        ] as { key: DateRange; label: string }[]).map(opt => {
+                          const sel = dateRange === opt.key;
+                          return (
+                            <button
+                              key={opt.key}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (opt.key === 'custom') { setShowCustomPanel(true); }
+                                else { setDateRange(opt.key); setAppliedRange(null); setDateOpen(false); }
+                              }}
+                              className="w-full text-left px-3.5 py-2"
+                              style={{
+                                fontSize: 12.5,
+                                fontWeight: sel ? 600 : 500,
+                                color: sel ? '#1C1E21' : '#4B5563',
+                                background: sel ? '#F8F9FB' : 'transparent',
+                                transition: 'background-color 120ms cubic-bezier(0.23,1,0.32,1)',
+                              }}
+                              onMouseEnter={(e) => { if (!sel) (e.currentTarget as HTMLElement).style.background = '#F8F9FB'; }}
+                              onMouseLeave={(e) => { if (!sel) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                            >
+                              {opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="p-3" onClick={(e) => e.stopPropagation()}>
+                        <p style={{ fontSize: 11, fontWeight: 600, color: '#1C1E21', marginBottom: 8 }}>Custom range</p>
+                        <div className="flex flex-col gap-2">
+                          <div>
+                            <label style={{ fontSize: 10.5, color: '#6B7280', display: 'block', marginBottom: 3 }}>From</label>
+                            <input
+                              type="date"
+                              value={customFrom}
+                              max={customTo}
+                              onChange={(e) => setCustomFrom(e.target.value)}
+                              className="w-full rounded-md px-2 py-1.5 outline-none"
+                              style={{ fontSize: 12, color: '#1C1E21', background: '#F8F9FB', border: '1px solid #E6E8EC' }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: 10.5, color: '#6B7280', display: 'block', marginBottom: 3 }}>To</label>
+                            <input
+                              type="date"
+                              value={customTo}
+                              min={customFrom}
+                              max={isoDate(today)}
+                              onChange={(e) => setCustomTo(e.target.value)}
+                              className="w-full rounded-md px-2 py-1.5 outline-none"
+                              style={{ fontSize: 12, color: '#1C1E21', background: '#F8F9FB', border: '1px solid #E6E8EC' }}
+                            />
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (customFrom && customTo) {
+                                setAppliedRange({ from: customFrom, to: customTo });
+                                setDateRange('custom');
+                              }
+                              setDateOpen(false);
+                              setShowCustomPanel(false);
+                            }}
+                            className="w-full mt-1 py-1.5 rounded-lg text-white active:scale-[0.98]"
+                            style={{ fontSize: 11.5, fontWeight: 600, background: 'linear-gradient(to right, #221E1F, #6D5F63)', transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                          >
+                            Apply
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={onClose}
+                className="w-7 h-7 rounded-md flex items-center justify-center text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21] active:scale-[0.94]"
+                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                aria-label="Close"
+              >
+                <X className="w-[14px] h-[14px]" />
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 py-5">
+            {filtered.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-[#E6E8EC] bg-white px-6 py-10 text-center">
+                <p className="text-[13px] text-[#6B7280]">No runs in this period.</p>
+              </div>
+            ) : (
+              <ol className="relative">
+                <span aria-hidden style={{ position: 'absolute', left: 5, top: 6, bottom: 6, width: 1, background: '#E6E8EC' }} />
+                {pageItems.map((r, i) => {
+                  const isNewest = pageStartIndex + i === 0;
+                  return (
+                    <li key={`${safePage}-${i}`} className="relative pl-6 pb-4 last:pb-0">
+                      <span
+                        aria-hidden
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: 4,
+                          width: 11,
+                          height: 11,
+                          borderRadius: '50%',
+                          background: '#FFFFFF',
+                          border: `2px solid ${isNewest ? '#10B981' : '#D1D5DB'}`,
+                          boxShadow: isNewest ? '0 0 0 4px rgba(16,185,129,0.12)' : 'none',
+                        }}
+                      />
+                      <p style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', lineHeight: 1.4 }}>{r.label}</p>
+                      <p style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>{r.at}</p>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+          </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between gap-3 px-6 py-3 border-t border-[#F0F1F3]">
+              <p style={{ fontSize: 12, color: '#9CA3AF' }}>
+                Showing <span style={{ color: '#1C1E21', fontWeight: 500 }}>{pageStartIndex + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)}</span> of {filtered.length}
+              </p>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={safePage === 1}
+                  aria-label="Previous page"
+                  className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#4B5563] active:scale-[0.96]"
+                  style={{
+                    border: '1px solid #E6E8EC',
+                    background: '#FFFFFF',
+                    cursor: safePage === 1 ? 'not-allowed' : 'pointer',
+                    opacity: safePage === 1 ? 0.4 : 1,
+                    transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                  onMouseEnter={e => { if (safePage !== 1) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => {
+                  const active = n === safePage;
+                  return (
+                    <button
+                      key={n}
+                      onClick={() => setPage(n)}
+                      className="inline-flex items-center justify-center min-w-[32px] h-8 rounded-md text-[12.5px] font-medium active:scale-[0.96]"
+                      style={{
+                        border: active ? '1px solid #1C1E21' : '1px solid #E6E8EC',
+                        background: active ? '#1C1E21' : '#FFFFFF',
+                        color: active ? '#FFFFFF' : '#4B5563',
+                        padding: '0 10px',
+                        cursor: 'pointer',
+                        transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), background-color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                      }}
+                      onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                      onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; } }}
+                    >
+                      {n}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={safePage === totalPages}
+                  aria-label="Next page"
+                  className="inline-flex items-center justify-center w-8 h-8 rounded-md text-[#4B5563] active:scale-[0.96]"
+                  style={{
+                    border: '1px solid #E6E8EC',
+                    background: '#FFFFFF',
+                    cursor: safePage === totalPages ? 'not-allowed' : 'pointer',
+                    opacity: safePage === totalPages ? 0.4 : 1,
+                    transition: 'border-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                  onMouseEnter={e => { if (safePage !== totalPages) { (e.currentTarget as HTMLElement).style.borderColor = '#1C1E21'; (e.currentTarget as HTMLElement).style.color = '#1C1E21'; } }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E6E8EC'; (e.currentTarget as HTMLElement).style.color = '#4B5563'; }}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+          <style>{`
+            @keyframes historyOverlayIn { from { opacity: 0 } to { opacity: 1 } }
+            @keyframes historyModalIn { from { opacity: 0; transform: scale(0.97) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+          `}</style>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -5922,7 +6639,8 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
                     const offset = i - idx;
                     const dist = Math.abs(offset);
                     const sc = isActive ? 1 : 0.92;
-                    const isAdded = i === 0;
+                    const comingSoon = c.title === 'Lead Intake';
+                    const isAdded = i === 0 && !comingSoon;
                     // Violet/pink family palette — keeps the marketplace voice, each card stays distinct
                     const mpPalette = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
                     const accent = mpPalette[i % mpPalette.length];
@@ -5940,8 +6658,8 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
                           transformOrigin: '50% 50%',
                           opacity: dist > 3 ? 0 : isActive ? 1 : 0.7,
                           boxShadow: isActive
-                            ? '0 2px 4px rgba(28,30,33,0.04), 0 18px 36px -20px rgba(28,30,33,0.22)'
-                            : '0 1px 2px rgba(28,30,33,0.03)',
+                            ? '0 1px 2px rgba(28,30,33,0.03), 0 8px 16px -10px rgba(28,30,33,0.08), 0 24px 48px -18px rgba(28,30,33,0.12)'
+                            : '0 1px 2px rgba(28,30,33,0.025), 0 6px 12px -10px rgba(28,30,33,0.05)',
                           transition:
                             'transform 520ms cubic-bezier(0.23,1,0.32,1), opacity 360ms cubic-bezier(0.23,1,0.32,1), box-shadow 360ms cubic-bezier(0.23,1,0.32,1)',
                         }}
@@ -5972,7 +6690,12 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
 
                         {/* Avatar — sits on the card gradient, no separate pane */}
                         <div className="relative flex items-end justify-center overflow-hidden" style={{ height: 240 }}>
-                          {isAdded ? (
+                          {comingSoon ? (
+                            <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-white text-[10px] font-bold tracking-wide uppercase text-[#6B7280] z-10" style={{ border: '1px solid #E6E8EC' }}>
+                              <Clock className="w-[11px] h-[11px] text-[#9CA3AF]" strokeWidth={2.4} />
+                              Coming soon
+                            </span>
+                          ) : isAdded ? (
                             <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-white text-[10px] font-bold tracking-wide uppercase text-[#15803D] z-10">
                               <CheckCircle2 className="w-[12px] h-[12px] text-[#10B981]" fill="#10B981" stroke="white" strokeWidth={2.4} />
                               Added
@@ -5987,7 +6710,12 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
                             src={c.img}
                             alt={c.title}
                             className="relative h-[100%] w-auto object-contain"
-                            style={{ filter: `drop-shadow(0 8px 18px ${accent}55) drop-shadow(0 2px 4px rgba(0,0,0,0.08))` }}
+                            style={{
+                              filter: comingSoon
+                                ? `grayscale(0.6) drop-shadow(0 8px 18px rgba(0,0,0,0.10))`
+                                : `drop-shadow(0 8px 18px ${accent}55) drop-shadow(0 2px 4px rgba(0,0,0,0.08))`,
+                              opacity: comingSoon ? 0.85 : 1,
+                            }}
                             draggable={false}
                           />
                         </div>
@@ -5995,28 +6723,43 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
                         {/* Content */}
                         <div className="relative px-5 pt-4 pb-3 flex-1 flex flex-col">
                           <div className="text-[10.5px] font-semibold tracking-[0.14em] uppercase text-[#9CA3AF] mb-1">{c.role.split(' ')[0]}</div>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
-                            className="text-left text-[18px] font-semibold text-[#1C1E21] leading-tight mb-2 hover:text-black active:scale-[0.99]"
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
-                          >
-                            {c.title}
-                          </button>
+                          {comingSoon ? (
+                            <h3 className="text-left text-[18px] font-semibold text-[#1C1E21] leading-tight mb-2" style={{ padding: 0 }}>{c.title}</h3>
+                          ) : (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setTriedAgent(c); }}
+                              className="text-left text-[18px] font-semibold text-[#1C1E21] leading-tight mb-2 hover:text-black active:scale-[0.99]"
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                            >
+                              {c.title}
+                            </button>
+                          )}
                           <p className="text-[12.5px] text-[#4B5563] leading-relaxed line-clamp-2">{c.desc}</p>
                         </div>
 
                         {/* Footer */}
                         <div className="relative px-5 py-3 flex items-center justify-end">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (isMJ) { setHiredForMJ(c); } else { setTriedAgent(c); }
-                            }}
-                            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
-                          >
-                            <Sparkles className="w-[12px] h-[12px]" fill="currentColor" />
-                            Try me
-                          </button>
+                          {comingSoon ? (
+                            <span
+                              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg text-[12.5px] font-semibold"
+                              style={{ background: '#EEF0F3', color: '#9CA3AF', border: '1px solid #E6E8EC', cursor: 'not-allowed' }}
+                              aria-disabled="true"
+                            >
+                              <Clock className="w-[12px] h-[12px]" strokeWidth={2.4} />
+                              Coming soon
+                            </span>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (isMJ) { setHiredForMJ(c); } else { setTriedAgent(c); }
+                              }}
+                              className="inline-flex items-center gap-1.5 px-4 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-all hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+                            >
+                              <Sparkles className="w-[12px] h-[12px]" fill="currentColor" />
+                              Try me
+                            </button>
+                          )}
                         </div>
                       </motion.article>
                     );
@@ -7122,7 +7865,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
           {/* Body */}
           <div className="px-6 pb-4 space-y-4">
             <div>
-              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
+              <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Name</label>
               <input
                 type="text"
                 value={name}
@@ -7134,7 +7877,7 @@ function AddKnowledgeModal({ onClose, onSave }: { onClose: () => void; onSave?: 
             </div>
 
             <div>
-              <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
+              <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Instructions</label>
               <textarea
                 value={instructions}
                 onChange={(e) => setInstructions(e.target.value)}
@@ -7521,7 +8264,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
 
             <div className="space-y-5">
               <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Name</label>
+                <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Name</label>
                 <input
                   type="text"
                   value={name}
@@ -7532,7 +8275,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
                 />
               </div>
               <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Description</label>
+                <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Description</label>
                 <input
                   type="text"
                   value={desc}
@@ -7543,7 +8286,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
                 />
               </div>
               <div>
-                <label className="block text-[13px] font-medium text-[#1C1E21] mb-1.5">Instructions</label>
+                <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">Instructions</label>
                 <button
                   type="button"
                   onClick={() => setInstructionsOpen(true)}
