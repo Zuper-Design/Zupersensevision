@@ -115,7 +115,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
           <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
             <Wand2 className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
           </div>
-          <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">AI Studio</h1>
+          <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">Agent Studio</h1>
         </div>
 
         {isMJ ? (
@@ -1456,7 +1456,7 @@ function MJCreateAgentForm({
   ];
   const avatarAccents = ['#DC2626', '#EA580C', '#059669', '#2563EB', '#DB2777'];
   // Theme follows the selected avatar — same 3-stop fade-to-white as the
-  // marketplace-hired hero so every card across AI Studio reads alike.
+  // marketplace-hired hero so every card across Agent Studio reads alike.
   const avatarThemes = [
     { tint: 'linear-gradient(180deg, #DB27771F 0%, #DB27770A 40%, #FFFFFF 80%)', accent: '#DB2777', soft: '#FBCFE8' },
     { tint: 'linear-gradient(180deg, #EA580C1F 0%, #EA580C0A 40%, #FFFFFF 80%)', accent: '#EA580C', soft: '#FFE0CC' },
@@ -1469,7 +1469,7 @@ function MJCreateAgentForm({
   const baseTheme = avatarThemes[avatarIdx % avatarThemes.length];
   // Violet default for blank Create Agent — uses the same 3-stop fade
   // (accent @ 12% -> accent @ 4% -> white) as marketplace-hired agents
-  // so every hero card across AI Studio reads in the same gentle tint.
+  // so every hero card across Agent Studio reads in the same gentle tint.
   const blankTheme = { tint: 'linear-gradient(180deg, #7C3AED1F 0%, #7C3AED0A 40%, #FFFFFF 80%)', accent: '#7C3AED', soft: '#DDD6FE' };
   const theme = (seedAgent?.tint && seedAgent?.accent)
     ? { tint: seedAgent.tint, accent: seedAgent.accent, soft: seedAgent.accent + '33' }
@@ -6428,7 +6428,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
         <div className="max-w-[1280px] mx-auto px-8 py-3 flex items-center justify-between gap-4">
           <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1C1E21] hover:text-black transition">
             <ChevronLeft className="w-4 h-4" />
-            Back to AI Studio
+            Back to Agent Studio
           </button>
         </div>
       </div>

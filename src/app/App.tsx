@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, Wand2 } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, Wand2, MoreHorizontal, Pencil, Archive } from 'lucide-react';
 import { SenseLogo } from './components/SenseLogo';
 import { ReleasesModal } from './components/ReleasesModal';
 import { WhatsNewFloater } from './components/WhatsNewFloater';
@@ -81,7 +81,7 @@ function AppContent() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  const threadHistory = [
+  const [threadHistory, setThreadHistory] = useState<{ id: number; title: string; active: boolean; archived?: boolean }[]>([
     { id: 1, title: 'Q4 Performance Analysis', active: true },
     { id: 2, title: 'Create new customer - ABC Roofing', active: false },
     { id: 3, title: 'Team performance last week', active: false },
@@ -96,7 +96,44 @@ function AppContent() {
     { id: 13, title: 'Vendor payment processing', active: false },
     { id: 14, title: 'Safety compliance checklist', active: false },
     { id: 15, title: 'Monthly revenue report', active: false },
-  ];
+  ]);
+  const [threadMenuId, setThreadMenuId] = useState<number | null>(null);
+  const [renameThreadId, setRenameThreadId] = useState<number | null>(null);
+  const [renameDraft, setRenameDraft] = useState('');
+  const renameInputRef = useRef<HTMLTextAreaElement>(null);
+  const threadMenuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = renameInputRef.current;
+    if (!el || renameThreadId === null) return;
+    el.style.height = '0px';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [renameDraft, renameThreadId]);
+  useEffect(() => {
+    if (threadMenuId === null) return;
+    const onClick = (e: MouseEvent) => {
+      if (threadMenuRef.current && !threadMenuRef.current.contains(e.target as Node)) setThreadMenuId(null);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [threadMenuId]);
+  const renameThread = (id: number) => {
+    const t = threadHistory.find(x => x.id === id);
+    if (!t) return;
+    setRenameThreadId(id);
+    setRenameDraft(t.title);
+    setThreadMenuId(null);
+  };
+  const archiveThread = (id: number) => {
+    setThreadHistory(prev => prev.map(t => t.id === id ? { ...t, archived: true } : t));
+    setThreadMenuId(null);
+  };
+  const saveRename = () => {
+    if (renameThreadId === null) return;
+    const next = renameDraft.trim();
+    if (next.length === 0) { setRenameThreadId(null); return; }
+    setThreadHistory(prev => prev.map(t => t.id === renameThreadId ? { ...t, title: next } : t));
+    setRenameThreadId(null);
+  };
 
   const handleUserChange = (user: string) => {
     setCurrentUser(user);
@@ -290,7 +327,7 @@ function AppContent() {
                     className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors"
                   >
                     <Wand2 className="w-3.5 h-3.5 text-[#1C1E21]" />
-                    <span className="text-[14px] font-normal text-[#1C1E21]">AI Studio</span>
+                    <span className="text-[14px] font-normal text-[#1C1E21]">Agent Studio</span>
                   </button>
                 )}
                 {currentUser !== 'MJ' && (
@@ -309,21 +346,93 @@ function AppContent() {
                   <p className="px-2 pt-4 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent threads</p>
                 )}
                 {threadHistory
+                  .filter((t) => !t.archived)
                   .filter((t) => !sidebarSearch || t.title.toLowerCase().includes(sidebarSearch.toLowerCase()))
                   .slice(0, demoMode ? 3 : undefined)
-                  .map((thread) => (
-                  <button
-                    key={thread.id}
-                    className={`w-full px-2 py-1.5 text-left rounded-md transition-colors ${currentUser === 'MJ' ? 'mb-1' : 'mb-0.5'} ${
-                      thread.active ? 'bg-[#E8E8E8]' : 'hover:bg-[#EEEEEE]'
-                    }`}
-                  >
-                    <p className={`text-[14px] truncate ${thread.active ? 'text-[#1C1E21] font-medium' : 'text-[#4B5563] font-normal'}`}>
-                      {thread.title}
-                    </p>
-                  </button>
-                ))}
-                {sidebarSearch && threadHistory.filter((t) => t.title.toLowerCase().includes(sidebarSearch.toLowerCase())).length === 0 && (
+                  .map((thread) => {
+                    const menuOpen = threadMenuId === thread.id;
+                    const editing = renameThreadId === thread.id;
+                    const rowBg = thread.active ? '#E8E8E8' : '#EEEEEE';
+                    return (
+                      <div
+                        key={thread.id}
+                        className={`relative group w-full rounded-md transition-colors ${currentUser === 'MJ' ? 'mb-1' : 'mb-0.5'} ${
+                          thread.active && !editing ? 'bg-[#E8E8E8]' : !editing ? 'hover:bg-[#EEEEEE]' : ''
+                        }`}
+                        style={{ zIndex: menuOpen || editing ? 60 : 'auto' }}
+                      >
+                        <button className="block w-full text-left px-2 py-1.5" style={{ visibility: editing ? 'hidden' : 'visible' }}>
+                          <p className={`text-[14px] truncate ${thread.active ? 'text-[#1C1E21] font-medium' : 'text-[#4B5563] font-normal'}`}>
+                            {thread.title}
+                          </p>
+                        </button>
+                        {editing && (
+                          <textarea
+                            ref={renameInputRef}
+                            autoFocus
+                            rows={1}
+                            value={renameDraft}
+                            onChange={(e) => setRenameDraft(e.target.value)}
+                            onBlur={saveRename}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveRename(); }
+                              else if (e.key === 'Escape') setRenameThreadId(null);
+                            }}
+                            className="absolute left-0 right-0 top-0 block w-full text-left text-[14px] font-medium text-[#1C1E21] outline-none resize-none overflow-hidden rounded-md"
+                            style={{
+                              padding: '8px 10px',
+                              lineHeight: 1.4,
+                              background: '#FFFFFF',
+                              border: '1px solid #1C1E21',
+                              boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)',
+                              zIndex: 70,
+                            }}
+                          />
+                        )}
+                        <div
+                          className={`absolute top-1/2 -translate-y-1/2 right-1 flex items-center pl-6 pr-0 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto pointer-events-none'}`}
+                          style={{
+                            background: `linear-gradient(to right, transparent 0%, ${rowBg} 40%, ${rowBg} 100%)`,
+                            transition: 'opacity 140ms cubic-bezier(0.23,1,0.32,1)',
+                          }}
+                          ref={menuOpen ? threadMenuRef : undefined}
+                        >
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setThreadMenuId(menuOpen ? null : thread.id); }}
+                            className="w-6 h-6 rounded-md flex items-center justify-center text-[#6B7280] hover:bg-[#DCDCDC] hover:text-[#1C1E21] active:scale-[0.94]"
+                            style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                            aria-label="Thread options"
+                          >
+                            <MoreHorizontal className="w-[14px] h-[14px]" strokeWidth={2.2} />
+                          </button>
+                          {menuOpen && (
+                            <div
+                              className="absolute right-0 top-full mt-1 min-w-[160px] rounded-lg py-1"
+                              style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)', zIndex: 100 }}
+                            >
+                              <button
+                                onClick={() => renameThread(thread.id)}
+                                className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-[#1C1E21] text-left hover:bg-[#F3F4F6]"
+                                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                              >
+                                <Pencil className="w-[13px] h-[13px]" strokeWidth={2} />
+                                Rename thread
+                              </button>
+                              <button
+                                onClick={() => archiveThread(thread.id)}
+                                className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-[#1C1E21] text-left hover:bg-[#F3F4F6]"
+                                style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
+                              >
+                                <Archive className="w-[13px] h-[13px]" strokeWidth={2} />
+                                Archive
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                {sidebarSearch && threadHistory.filter((t) => !t.archived && t.title.toLowerCase().includes(sidebarSearch.toLowerCase())).length === 0 && (
                   <p className="text-[12px] text-[#9CA3AF] text-center py-4">No threads found</p>
                 )}
               </div>
@@ -776,7 +885,6 @@ function AppContent() {
       />
 
       {/* Sense Logo Demo - Bottom Right */}
-      
     </div>
   );
 }

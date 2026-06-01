@@ -32,7 +32,7 @@ interface NavigationItem {
 
 const baseNavigationItems: NavigationItem[] = [
   { icon: null, label: 'Sense', active: true },
-  { icon: Wand2, label: 'AI Studio', active: false },
+  { icon: Wand2, label: 'Agent Studio', active: false },
   {
     icon: Briefcase, label: 'Work', active: false,
     subItems: [
@@ -189,7 +189,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
   const mjRadarModules = ['Work', 'CRM', 'Finance'];
 
   // Merge published pages into navigation items
-  const navigationItems = baseNavigationItems.filter((item) => !(currentUser === 'MJ' && item.label === 'AI Studio')).map(item => {
+  const navigationItems = baseNavigationItems.filter((item) => !(currentUser === 'MJ' && item.label === 'Agent Studio')).map(item => {
     let mergedItem = { ...item, dividerAfter: undefined as number | undefined };
 
     // Add published pages
@@ -276,7 +276,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
         {navigationItems.map((rawItem, index) => {
           // Override active state for Agent Builder vs Sense based on prop
           const item = (() => {
-            if (agentBuilderActive && rawItem.label === 'AI Studio') return { ...rawItem, active: true };
+            if (agentBuilderActive && rawItem.label === 'Agent Studio') return { ...rawItem, active: true };
             if (agentBuilderActive && rawItem.label === 'Sense') return { ...rawItem, active: false };
             return rawItem;
           })();
@@ -299,7 +299,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
                   if (item.label === 'Sense') {
                     setActivePage(null);
                     onSenseClick?.();
-                  } else if (item.label === 'AI Studio') {
+                  } else if (item.label === 'Agent Studio') {
                     setActivePage(null);
                     onAgentBuilderClick?.();
                   }
