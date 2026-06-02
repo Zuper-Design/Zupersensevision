@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, Wand2, MoreHorizontal, Pencil, Archive } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, MoreHorizontal, Pencil, Archive } from 'lucide-react';
+import { AgentStudioIcon } from './components/icons/AgentStudioIcon';
 import { SenseLogo } from './components/SenseLogo';
 import { ReleasesModal } from './components/ReleasesModal';
 import { WhatsNewFloater } from './components/WhatsNewFloater';
@@ -81,22 +82,27 @@ function AppContent() {
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
 
-  const [threadHistory, setThreadHistory] = useState<{ id: number; title: string; active: boolean; archived?: boolean }[]>([
-    { id: 1, title: 'Q4 Performance Analysis', active: true },
-    { id: 2, title: 'Create new customer - ABC Roofing', active: false },
-    { id: 3, title: 'Team performance last week', active: false },
-    { id: 4, title: 'Revenue breakdown by project type', active: false },
-    { id: 5, title: 'Outstanding invoices review', active: false },
-    { id: 7, title: 'Material request for North Ave project', active: false },
-    { id: 8, title: 'Weekly team schedule review', active: false },
-    { id: 9, title: 'Quote follow-up automation', active: false },
-    { id: 10, title: 'Customer satisfaction analysis', active: false },
-    { id: 11, title: 'Inventory status check', active: false },
-    { id: 12, title: 'Project timeline updates', active: false },
-    { id: 13, title: 'Vendor payment processing', active: false },
-    { id: 14, title: 'Safety compliance checklist', active: false },
-    { id: 15, title: 'Monthly revenue report', active: false },
-  ]);
+  const [threadHistory, setThreadHistory] = useState<{ id: number; title: string; active: boolean; archived?: boolean; ts: number }[]>(() => {
+    const now = Date.now();
+    const MIN = 60_000, HR = 3_600_000, DAY = 86_400_000;
+    const seed: { id: number; title: string; active: boolean; ts: number }[] = [
+      { id: 1, title: 'Q4 Performance Analysis', active: true, ts: now - 8 * MIN },
+      { id: 2, title: 'Create new customer - ABC Roofing', active: false, ts: now - 2 * HR },
+      { id: 3, title: 'Team performance last week', active: false, ts: now - 5 * HR },
+      { id: 4, title: 'Revenue breakdown by project type', active: false, ts: now - 1 * DAY },
+      { id: 5, title: 'Outstanding invoices review', active: false, ts: now - 1 * DAY - 3 * HR },
+      { id: 7, title: 'Material request for North Ave project', active: false, ts: now - 2 * DAY },
+      { id: 8, title: 'Weekly team schedule review', active: false, ts: now - 3 * DAY },
+      { id: 9, title: 'Quote follow-up automation', active: false, ts: now - 4 * DAY },
+      { id: 10, title: 'Customer satisfaction analysis', active: false, ts: now - 6 * DAY },
+      { id: 11, title: 'Inventory status check', active: false, ts: now - 8 * DAY },
+      { id: 12, title: 'Project timeline updates', active: false, ts: now - 12 * DAY },
+      { id: 13, title: 'Vendor payment processing', active: false, ts: now - 18 * DAY },
+      { id: 14, title: 'Safety compliance checklist', active: false, ts: now - 25 * DAY },
+      { id: 15, title: 'Monthly revenue report', active: false, ts: now - 34 * DAY },
+    ];
+    return seed;
+  });
   const [threadMenuId, setThreadMenuId] = useState<number | null>(null);
   const [renameThreadId, setRenameThreadId] = useState<number | null>(null);
   const [renameDraft, setRenameDraft] = useState('');
@@ -126,6 +132,11 @@ function AppContent() {
   const archiveThread = (id: number) => {
     setThreadHistory(prev => prev.map(t => t.id === id ? { ...t, archived: true } : t));
     setThreadMenuId(null);
+  };
+  const openThread = (id: number) => {
+    setThreadHistory(prev => prev.map(t => ({ ...t, active: t.id === id })));
+    setActivePage(null);
+    setAgentBuilderOpen(false);
   };
   const saveRename = () => {
     if (renameThreadId === null) return;
@@ -294,7 +305,7 @@ function AppContent() {
 
               {/* Actions */}
               <div className="px-2 pb-0.5 flex flex-col">
-                {currentUser === 'MJ' && (
+                {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
                     <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
                     <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
@@ -321,16 +332,16 @@ function AppContent() {
                     <span className="text-[14px] font-normal text-[#1C1E21]">Search</span>
                   </button>
                 )}
-                {currentUser === 'MJ' && (
+                {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button
                     onClick={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
                     className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors"
                   >
-                    <Wand2 className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <AgentStudioIcon className="w-[15px] h-[15px]" variant={currentUser === 'AU' ? 'orange' : 'purple'} />
                     <span className="text-[14px] font-normal text-[#1C1E21]">Agent Studio</span>
                   </button>
                 )}
-                {currentUser !== 'MJ' && (
+                {currentUser !== 'MJ' && currentUser !== 'AU' && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
                     <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
                     <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
@@ -338,11 +349,11 @@ function AppContent() {
                 )}
               </div>
 
-              {currentUser !== 'MJ' && <div className="mx-2 my-1.5 border-t border-[#E6E8EC]" />}
+              {currentUser !== 'MJ' && currentUser !== 'AU' && <div className="mx-2 my-1.5 border-t border-[#E6E8EC]" />}
 
               {/* Thread list */}
               <div className="flex-1 overflow-y-auto scrollbar-auto-hide px-2 pb-2">
-                {currentUser === 'MJ' && (
+                {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <p className="px-2 pt-4 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent threads</p>
                 )}
                 {threadHistory
@@ -356,12 +367,12 @@ function AppContent() {
                     return (
                       <div
                         key={thread.id}
-                        className={`relative group w-full rounded-md transition-colors ${currentUser === 'MJ' ? 'mb-1' : 'mb-0.5'} ${
+                        className={`relative group w-full rounded-md transition-colors ${(currentUser === 'MJ' || currentUser === 'AU') ? 'mb-1' : 'mb-0.5'} ${
                           thread.active && !editing ? 'bg-[#E8E8E8]' : !editing ? 'hover:bg-[#EEEEEE]' : ''
                         }`}
                         style={{ zIndex: menuOpen || editing ? 60 : 'auto' }}
                       >
-                        <button className="block w-full text-left px-2 py-1.5" style={{ visibility: editing ? 'hidden' : 'visible' }}>
+                        <button onClick={() => openThread(thread.id)} className="block w-full text-left px-2 py-1.5" style={{ visibility: editing ? 'hidden' : 'visible' }}>
                           <p className={`text-[14px] truncate ${thread.active ? 'text-[#1C1E21] font-medium' : 'text-[#4B5563] font-normal'}`}>
                             {thread.title}
                           </p>

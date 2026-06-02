@@ -64,9 +64,24 @@ interface ChecklistItem {
   completed: boolean;
 }
 
+// Format a message timestamp as "3:42 PM", prefixing the date ("May 28, 3:42 PM")
+// only when the message isn't from today.
+function formatMessageTime(ts?: number): string {
+  const d = ts ? new Date(ts) : new Date();
+  const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const today = new Date();
+  const sameDay =
+    d.getFullYear() === today.getFullYear() &&
+    d.getMonth() === today.getMonth() &&
+    d.getDate() === today.getDate();
+  if (sameDay) return time;
+  return `${d.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${time}`;
+}
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  timestamp?: number;
   showResearch?: boolean;
   canvasWidgetId?: string;
   confirmationCard?: {
@@ -1264,7 +1279,7 @@ Sarah`
       setIsPreviewMode(true);
     }
 
-    setMessages(prev => [...prev, { role: 'user', content: userMessage, imageUrl: currentImage || undefined }]);
+    setMessages(prev => [...prev, { role: 'user', content: userMessage, timestamp: Date.now(), imageUrl: currentImage || undefined }]);
     setMessage('');
     setUploadedImage(null);
     setUploadedImageName(null);
@@ -1479,7 +1494,7 @@ Sarah`
   };
 
   const handleFollowupSelect = (text: string) => {
-    setMessages([{ role: 'user', content: text }]);
+    setMessages([{ role: 'user', content: text, timestamp: Date.now() }]);
     setTimeout(() => {
       if (detectNewUsersByMonth(text)) {
         setMessages(prev => [...prev, {
@@ -2003,15 +2018,28 @@ Sarah`
             <div className="flex-1 py-8 px-8">
             <div className="w-full max-w-[720px] mx-auto flex flex-col gap-8">
               {messages.map((msg, index) => (
-                <div key={index} className={msg.role === 'user' ? 'flex justify-end' : 'relative flex flex-col group'}>
+                <div key={index} className={msg.role === 'user' ? 'group flex justify-end' : 'relative flex flex-col group'}>
                   {msg.role === 'user' ? (
-                    <div className="inline-block bg-[#F3F4F6] rounded-[16px] px-5 py-3 max-w-[80%]">
-                      {msg.imageUrl && (
-                        <div className="mb-2 rounded-lg overflow-hidden border border-[#E6E8EC]">
-                          <img src={msg.imageUrl} alt="Uploaded" className="max-w-full max-h-[200px] object-contain" />
-                        </div>
-                      )}
-                      <p className="text-[15px] text-[#1C1E21] font-normal whitespace-pre-wrap">{msg.content}</p>
+                    <div className="flex flex-col items-end max-w-[80%]">
+                      <div className="inline-block bg-[#F3F4F6] rounded-[16px] px-5 py-3">
+                        {msg.imageUrl && (
+                          <div className="mb-2 rounded-lg overflow-hidden border border-[#E6E8EC]">
+                            <img src={msg.imageUrl} alt="Uploaded" className="max-w-full max-h-[200px] object-contain" />
+                          </div>
+                        )}
+                        <p className="text-[15px] text-[#1C1E21] font-normal whitespace-pre-wrap">{msg.content}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1.5 pr-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                        <button
+                          onClick={() => setMessage(msg.content)}
+                          title="Edit"
+                          aria-label="Edit message"
+                          className="flex items-center justify-center w-6 h-6 rounded-md text-[#9CA3AF] hover:text-[#4B5563] hover:bg-[#F3F4F6] transition-colors"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="text-[12px] text-[#9CA3AF] tabular-nums">{formatMessageTime(msg.timestamp)}</span>
+                      </div>
                     </div>
                   ) : (
                     <>

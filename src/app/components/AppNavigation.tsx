@@ -10,10 +10,11 @@ import {
   FileText, Receipt, DollarSign, CreditCard,
   PieChart, LayoutGrid,
   Workflow, Settings,
-  Globe, Radar, Bot, Wand2,
+  Globe, Radar, Bot,
   type LucideIcon
 } from 'lucide-react';
 import { usePublishedPages } from './PublishedPagesContext';
+import { AgentStudioIcon } from './icons/AgentStudioIcon';
 
 interface SubMenuItem {
   icon: LucideIcon;
@@ -32,7 +33,7 @@ interface NavigationItem {
 
 const baseNavigationItems: NavigationItem[] = [
   { icon: null, label: 'Sense', active: true },
-  { icon: Wand2, label: 'Agent Studio', active: false },
+  { icon: AgentStudioIcon as unknown as LucideIcon, label: 'Agent Studio', active: false },
   {
     icon: Briefcase, label: 'Work', active: false,
     subItems: [
@@ -325,11 +326,15 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
                       <rect x="31.5" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
                     </svg>
                   ) : Icon ? (
-                    <Icon className={`w-5 h-5 transition-colors ${
-                      (item.active && !activePage) || hasActivePageInWorkspace
-                        ? 'text-[#FF6B35]'
-                        : 'text-[#8B7355] group-hover:text-[#FF6B35]'
-                    }`} />
+                    item.label === 'Agent Studio' ? (
+                      <AgentStudioIcon className="w-6 h-6" variant={currentUser === 'AU' ? 'orange' : 'purple'} />
+                    ) : (
+                      <Icon className={`w-5 h-5 transition-colors ${
+                        (item.active && !activePage) || hasActivePageInWorkspace
+                          ? 'text-[#FF6B35]'
+                          : 'text-[#8B7355] group-hover:text-[#FF6B35]'
+                      }`} />
+                    )
                   ) : null}
                 </div>
                 <span className={`text-[10px] font-medium ${

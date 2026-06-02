@@ -7,6 +7,7 @@ import {
   Clock, Mail, Webhook, Info, ArrowRight, Wrench, Globe, Layers, CheckCircle2, RefreshCw, Loader2, Trash2, ChevronDown, X, Upload,
   AtSign, History, Maximize2, MoreVertical, Send, Share2, BarChart2, ChevronLeft, ChevronRight, Mic, ArrowUp, Sparkles, Wand2, FileText, Settings, Quote, Calendar,
 } from 'lucide-react';
+import { AgentStudioIcon } from './icons/AgentStudioIcon';
 import avatarBg from '../../imports/agents/avatar-bg.png';
 import agentClassic1 from '../../imports/agents/agent-1.png';
 import agentClassic2 from '../../imports/agents/agent-2.png';
@@ -113,7 +114,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
           <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
-            <Wand2 className="w-[15px] h-[15px] text-[#7C3AED]" strokeWidth={2} />
+            <AgentStudioIcon className="w-[16px] h-[16px]" strokeWidth={3} />
           </div>
           <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">Agent Studio</h1>
         </div>
@@ -4898,7 +4899,14 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 aria-label="Back to my agents"
                 title="Back to my agents"
               >
-                <Wand2 className="w-9 h-9 text-[#7C3AED]/70" strokeWidth={1.6} />
+                <img
+                  src="/agent-studio-3d.png"
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className="w-14 h-14 object-contain"
+                  style={{ filter: 'drop-shadow(0 6px 14px rgba(124,46,230,0.16))' }}
+                />
               </button>
               <h2 className="text-[24px] font-semibold tracking-tight text-[#1C1E21] mb-2">Build your AI workforce</h2>
               <p className="text-[13.5px] text-[#6B7280] max-w-[480px] mx-auto leading-relaxed">
