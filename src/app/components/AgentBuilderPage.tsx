@@ -114,7 +114,7 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
           <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
-            <AgentStudioIcon className="w-[16px] h-[16px]" strokeWidth={3} />
+            <AgentStudioIcon className="w-[16px] h-[16px]" strokeWidth={3} variant={currentUser === 'AU' ? 'orange' : 'purple'} />
           </div>
           <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">Agent Studio</h1>
         </div>
@@ -4900,7 +4900,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 title="Back to my agents"
               >
                 <img
-                  src="/agent-studio-3d.png"
+                  src={isMJ ? '/agent-studio-3d.png' : '/agent-studio-au.png'}
                   alt=""
                   aria-hidden="true"
                   draggable={false}
