@@ -18,8 +18,8 @@ import { RadarWelcomeModal } from './RadarWelcomeModal';
 interface RadarWorkspaceProps {
   isOpen: boolean;
   onClose: () => void;
-  activeView?: 'chat' | 'radar';
-  onViewChange?: (view: 'chat' | 'radar') => void;
+  activeView?: 'chat' | 'radar' | 'build';
+  onViewChange?: (view: 'chat' | 'radar' | 'build') => void;
   onOpenCard?: (card: SavedCard) => void;
   showBetaBanner?: boolean;
   onCloseBetaBanner?: () => void;

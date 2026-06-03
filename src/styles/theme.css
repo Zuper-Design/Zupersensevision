@@ -1,5 +1,11 @@
 @custom-variant dark (&:is(.dark *));
 
+@property --gen-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root {
   --font-size: 16px;
   --background: #ffffff;
@@ -199,6 +205,143 @@
     50% {
       transform: translateX(100%);
     }
+  }
+
+  /* slow pan of the pixel grid inside the Build prompt bar */
+  @keyframes build-grid-pan {
+    0%   { background-position: 0 0, 0 0; }
+    100% { background-position: 14px 14px, 14px 14px; }
+  }
+  @keyframes build-grid-twinkle {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 0.85; }
+  }
+  .build-pixel-grid {
+    animation: build-grid-pan 6s linear infinite, build-grid-twinkle 3.5s ease-in-out infinite;
+  }
+
+  .build-home-plus-field {
+    contain: paint;
+  }
+
+  @keyframes build-thinking-pixels-pan {
+    0%   { background-position: 0 0, 4px 4px; transform: translate3d(-8px, 0, 0); }
+    50%  { transform: translate3d(8px, 0, 0); }
+    100% { background-position: 16px 16px, 20px 20px; transform: translate3d(-8px, 0, 0); }
+  }
+  @keyframes build-thinking-pixels-breathe {
+    0%, 100% { filter: blur(0px); }
+    50%      { filter: blur(0.35px); }
+  }
+  .build-thinking-pixels {
+    animation: build-thinking-pixels-pan 5.5s linear infinite, build-thinking-pixels-breathe 2.8s ease-in-out infinite;
+    will-change: transform, background-position, filter;
+  }
+
+  @keyframes build-circuit-thinking-pan {
+    0% {
+      background-position: 0 0, 0 0, 0 0, 0 0;
+      opacity: 0.7;
+    }
+    50% {
+      background-position: 0 20px, 20px 0, 0 0, 0 0;
+      opacity: 1;
+    }
+    100% {
+      background-position: 0 40px, 40px 0, 0 0, 0 0;
+      opacity: 0.74;
+    }
+  }
+
+  .build-circuit-thinking {
+    background-color: #F2F3F6;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(75, 85, 99, 0.08) 19px, rgba(75, 85, 99, 0.08) 20px, transparent 20px, transparent 39px, rgba(75, 85, 99, 0.08) 39px, rgba(75, 85, 99, 0.08) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(75, 85, 99, 0.08) 19px, rgba(75, 85, 99, 0.08) 20px, transparent 20px, transparent 39px, rgba(75, 85, 99, 0.08) 39px, rgba(75, 85, 99, 0.08) 40px),
+      radial-gradient(circle at 20px 20px, rgba(55, 65, 81, 0.12) 2px, transparent 2px),
+      radial-gradient(circle at 40px 40px, rgba(55, 65, 81, 0.12) 2px, transparent 2px);
+    background-size: 40px 40px, 40px 40px, 40px 40px, 40px 40px;
+    animation: build-circuit-thinking-pan 2.4s ease-in-out infinite;
+    contain: paint;
+    will-change: background-position, opacity;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .build-thinking-pixels,
+    .build-circuit-thinking {
+      animation: none;
+    }
+  }
+
+  /* Generate button — rotating pseudo-element border sweep */
+  @keyframes gen-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  .generate-btn-wrap {
+    position: relative;
+    display: inline-flex;
+    border-radius: 9999px;
+    overflow: hidden;
+    padding: 1.5px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  /* The spinning bright arc — sits behind the inner button */
+  .generate-btn-wrap::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    background: conic-gradient(
+      transparent 0deg,
+      transparent 150deg,
+      rgba(255,255,255,0.0) 158deg,
+      rgba(255,255,255,0.95) 178deg,
+      rgba(255,255,255,1)    180deg,
+      rgba(255,255,255,0.95) 182deg,
+      rgba(255,255,255,0.0) 190deg,
+      transparent 198deg,
+      transparent 360deg
+    );
+    animation: gen-spin 2.2s linear infinite;
+    border-radius: 0;
+    z-index: 0;
+  }
+
+  .generate-btn-wrap:has(button:disabled)::before {
+    display: none;
+  }
+
+  .generate-btn-inner {
+    position: relative;
+    z-index: 1;
+    background: #111315;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 20px;
+    color: white;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: transform 160ms cubic-bezier(0.23,1,0.32,1), opacity 200ms;
+  }
+
+  .generate-btn-inner:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .generate-btn-wrap::before { animation: none; }
   }
 
   @keyframes float {

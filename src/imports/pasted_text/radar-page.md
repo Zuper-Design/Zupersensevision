@@ -1,45 +1,37 @@
-Here's the prompt:
-
----
-
-**Prompt:**
-
-Design the Radar page for Zuper Sense. Use the existing Radar page as the exact reference for all styling, spacing, typography, card anatomy, and page shell. Do not invent a new visual language — extend what already exists. The page is light theme, white background, clean and minimal.
+Design Radar page, Zuper Sense. Use existing Radar page as exact ref for all styling, spacing, typography, card anatomy, page shell. No new visual language — extend what exists. Light theme, white bg, clean minimal.
 
 ---
 
 **Page shell — reproduce exactly.**
 
-Top bar: left side shows a lightning bolt icon in amber, bold text "My Workspace" followed by a "1" badge and a dropdown chevron. Centre of the top bar: three tab pills — "Canvas", "Chat", "Radar" — with "Radar" as the active tab, shown with a visible border or filled state matching the existing design. Right side: "Just now" text in muted grey with a circular refresh icon next to it.
+Top bar: left = amber lightning bolt icon, bold "My Workspace" + "1" badge + dropdown chevron. Centre: three tab pills — "Canvas", "Chat", "Radar" — "Radar" active, visible border/filled state matching existing design. Right: "Just now" muted grey + circular refresh icon.
 
-Below the top bar, a page header section. Left side: the same amber lightning bolt icon at 32px, next to it the page title "My Workspace" in large bold dark text. Below the title, a subtitle in muted grey — "5 cards · Pinned insights and saved items". No other elements in the header.
+Below top bar, page header. Left: amber lightning bolt 32px, page title "My Workspace" large bold dark. Below title, muted grey subtitle — "5 cards · Pinned insights and saved items". No other elements.
 
 ---
 
 **Card grid layout.**
 
-All five cards follow the exact anatomy of the existing DSO card without exception: bold title top-left, muted grey subtitle below it, chart filling the middle section with generous vertical padding, a thin top-border separator, a four-stat summary row below the separator, and a footer in small muted grey showing "Mar 11 · From conversation". White background, rounded corners matching the existing card, same subtle border and shadow as the DSO card. Internal padding identical to the existing card.
+All five cards follow exact anatomy of existing DSO card: bold title top-left, muted grey subtitle below, chart filling middle with generous vertical padding, thin top-border separator, four-stat summary row below separator, footer small muted grey "Mar 11 · From conversation". White bg, rounded corners matching existing card, same subtle border/shadow as DSO card. Internal padding identical.
 
-Row 1: two cards side by side at equal width with a gap between them matching the existing card's margin from the page edge. Card 1 on the left, Card 2 on the right.
-
-Row 2: two cards side by side at equal width, same gap. Card 3 on the left, Card 4 on the right.
-
-Row 3: one full-width card spanning the entire content width. Card 5.
+Row 1: two cards side-by-side equal width, gap matching existing card margin. Card 1 left, Card 2 right.
+Row 2: two cards side-by-side equal width, same gap. Card 3 left, Card 4 right.
+Row 3: one full-width card spanning entire content width. Card 5.
 
 ---
 
 **Card 1 — Revenue MTD vs Target.**
 
-Title: "Revenue MTD vs Target" in bold dark text.
-Subtitle: "Daily cumulative revenue against monthly target pace" in muted grey.
+Title: "Revenue MTD vs Target" bold dark.
+Subtitle: "Daily cumulative revenue against monthly target pace" muted grey.
 
-Chart: Line chart identical in style to the DSO card. Two lines with dot markers at each data point. Line 1 — "Actual Revenue" — solid dark navy line. Line 2 — "Target Pace" — solid green line matching the Industry Avg green from the DSO card. X-axis shows day markers: 1, 7, 14, 21, 28. Y-axis shows dollar values: 0, 100k, 200k, 300k. Actual Revenue line starts lower and curves upward, crossing above Target Pace around day 18 and ending higher. Light green fill between the two lines where Actual is above Target. Legend below the chart identical to DSO card style: coloured square + label for each line — "Actual Revenue" and "Target Pace".
+Chart: Line chart identical in style to DSO card. Two lines, dot markers each data point. Line 1 — "Actual Revenue" — solid dark navy. Line 2 — "Target Pace" — solid green matching Industry Avg green from DSO card. X-axis day markers: 1, 7, 14, 21, 28. Y-axis dollar values: 0, 100k, 200k, 300k. Actual Revenue starts lower, curves upward, crosses above Target Pace ~day 18, ends higher. Light green fill between lines where Actual > Target. Legend below chart identical DSO style: coloured square + label — "Actual Revenue", "Target Pace".
 
-Stat row — four values in the same layout as the DSO card, separated by the thin top border:
-- Label "Revenue MTD" · value "$284,500" in green
-- Label "Monthly Target" · value "$260,000" in dark
-- Label "Gap to Target" · value "+$24,500" in green
-- Label "Days Remaining" · value "20" in muted grey
+Stat row — four values, thin top border separator:
+- "Revenue MTD" · "$284,500" green
+- "Monthly Target" · "$260,000" dark
+- "Gap to Target" · "+$24,500" green
+- "Days Remaining" · "20" muted grey
 
 Footer: "Mar 11 · From conversation"
 
@@ -47,16 +39,16 @@ Footer: "Mar 11 · From conversation"
 
 **Card 2 — Overdue Invoices.**
 
-Title: "Overdue Invoices" in bold dark text.
-Subtitle: "Invoice aging breakdown by overdue period" in muted grey.
+Title: "Overdue Invoices" bold dark.
+Subtitle: "Invoice aging breakdown by overdue period" muted grey.
 
-Chart: Horizontal bar chart. Three bars stacked vertically with generous spacing between them. Each bar has a label on the left and a dollar value on the right. Bar heights are 10px, fully rounded ends, same border radius as the page's pill components. Bar 1: label "0–30 days" · bar in amber (#F59E0B) · value "$14,200". Bar 2: label "31–60 days" · bar in orange (#EA580C) · value "$11,800". Bar 3: label "60+ days" · bar in red (#DC2626) · value "$12,200". Bar widths are proportional to value — 60+ days bar is the longest. Background grid lines are the same light grey horizontal rules as the DSO chart. No Y-axis. X-axis shows dollar values at 0, 5k, 10k, 15k below the bars.
+Chart: Horizontal bar chart. Three bars, generous spacing, label left, dollar value right. Bars 10px height, fully rounded ends, same border radius as page pill components. Bar 1: "0–30 days" · amber (#F59E0B) · "$14,200". Bar 2: "31–60 days" · orange (#EA580C) · "$11,800". Bar 3: "60+ days" · red (#DC2626) · "$12,200". Widths proportional — 60+ days longest. Light grey horizontal grid lines same as DSO chart. No Y-axis. X-axis: 0, 5k, 10k, 15k below bars.
 
-Stat row — four values:
-- Label "Total Overdue" · value "$38,200" in red
-- Label "Invoices" · value "14" in dark
-- Label "Avg Days Overdue" · value "22 days" in amber
-- Label "Collected MTD" · value "$197,400" in green
+Stat row:
+- "Total Overdue" · "$38,200" red
+- "Invoices" · "14" dark
+- "Avg Days Overdue" · "22 days" amber
+- "Collected MTD" · "$197,400" green
 
 Footer: "Mar 11 · From conversation"
 
@@ -64,16 +56,16 @@ Footer: "Mar 11 · From conversation"
 
 **Card 3 — Quote-to-Invoice Conversion.**
 
-Title: "Quote-to-Invoice Conversion" in bold dark text.
-Subtitle: "Monthly conversion rate trend over the last 8 months" in muted grey.
+Title: "Quote-to-Invoice Conversion" bold dark.
+Subtitle: "Monthly conversion rate trend over the last 8 months" muted grey.
 
-Chart: Line chart identical in style and structure to the DSO card — two lines, dot markers, same axis style, same grid lines. X-axis months: Jul, Aug, Sep, Oct, Nov, Dec, Jan, Feb. Y-axis: 0, 25, 50, 75, 100 showing percentage. Line 1 — "Your Rate" — in red matching the DSO "Your DSO" line, showing values around 52, 55, 53, 58, 60, 59, 62, 61 — a gentle upward trend. Line 2 — "Industry Avg" — in green matching the DSO card, flat around 55 across all months. Legend below: "Your Rate" and "Industry Avg" in the same style as the DSO legend.
+Chart: Line chart, identical structure to DSO card — two lines, dot markers, same axis/grid style. X-axis months: Jul, Aug, Sep, Oct, Nov, Dec, Jan, Feb. Y-axis: 0, 25, 50, 75, 100 (percentage). Line 1 — "Your Rate" — red matching DSO "Your DSO" line, values ~52, 55, 53, 58, 60, 59, 62, 61, gentle upward trend. Line 2 — "Industry Avg" — green matching DSO card, flat ~55 all months. Legend: "Your Rate", "Industry Avg" same DSO legend style.
 
-Stat row — four values:
-- Label "Current Rate" · value "61%" in green
-- Label "Industry Avg" · value "55%" in green
-- Label "Quotes Sent MTD" · value "63" in dark
-- Label "Quotes Won MTD" · value "38" in dark
+Stat row:
+- "Current Rate" · "61%" green
+- "Industry Avg" · "55%" green
+- "Quotes Sent MTD" · "63" dark
+- "Quotes Won MTD" · "38" dark
 
 Footer: "Mar 11 · From conversation"
 
@@ -81,16 +73,16 @@ Footer: "Mar 11 · From conversation"
 
 **Card 4 — Crew Utilisation.**
 
-Title: "Crew Utilisation" in bold dark text.
-Subtitle: "Weekly utilisation rate by crew — target 80%" in muted grey.
+Title: "Crew Utilisation" bold dark.
+Subtitle: "Weekly utilisation rate by crew — target 80%" muted grey.
 
-Chart: Horizontal bar chart, four bars — one per crew. Same bar style as Card 2 — 10px height, rounded ends, label left, value right. Bar 1: "Crew A" · 86% · green bar. Bar 2: "Crew B" · 82% · green bar. Bar 3: "Crew C" · 71% · amber bar. Bar 4: "Crew D" · 64% · amber bar. A vertical dashed reference line sits at the 80% position across all four bars, labelled "Target 80%" in 10px muted grey at the top of the chart area. Bars are proportional to percentage. X-axis shows 0, 25, 50, 75, 100 percent markers. Same light grey horizontal grid lines as the other cards.
+Chart: Horizontal bar chart, four bars one per crew. Same bar style as Card 2 — 10px height, rounded ends, label left, value right. Bar 1: "Crew A" · 86% · green. Bar 2: "Crew B" · 82% · green. Bar 3: "Crew C" · 71% · amber. Bar 4: "Crew D" · 64% · amber. Vertical dashed reference line at 80%, labelled "Target 80%" 10px muted grey at top of chart area. Bars proportional. X-axis: 0, 25, 50, 75, 100%. Same light grey horizontal grid lines.
 
-Stat row — four values:
-- Label "Overall Utilisation" · value "74%" in amber
-- Label "Above Target" · value "2 crews" in green
-- Label "Below Target" · value "2 crews" in amber
-- Label "Field Hours MTD" · value "1,248 hrs" in dark
+Stat row:
+- "Overall Utilisation" · "74%" amber
+- "Above Target" · "2 crews" green
+- "Below Target" · "2 crews" amber
+- "Field Hours MTD" · "1,248 hrs" dark
 
 Footer: "Mar 11 · From conversation"
 
@@ -98,18 +90,18 @@ Footer: "Mar 11 · From conversation"
 
 **Card 5 — Jobs Completed vs At Risk.**
 
-This card is full width — it spans the entire content area, same left and right edges as the two-card rows above it.
+Full width — spans entire content area, same left/right edges as two-card rows above.
 
-Title: "Jobs — Completed vs At Risk" in bold dark text.
-Subtitle: "Weekly job completion and active risk flags — current week" in muted grey.
+Title: "Jobs — Completed vs At Risk" bold dark.
+Subtitle: "Weekly job completion and active risk flags — current week" muted grey.
 
-Chart: Line chart, two lines, same style and dot markers as the DSO card but wider since the card is full width. X-axis shows days of the current week: Mon, Tue, Wed, Thu, Fri, Sat, Sun. Y-axis shows job counts: 0, 10, 20, 30, 40. Line 1 — "Completed" — in green, trending upward across the week, values roughly 12, 18, 22, 28, 32, 35, 38. Line 2 — "At Risk" — in red, relatively flat with a slight uptick, values roughly 8, 7, 9, 8, 7, 8, 7. The contrast between the rising green line and the flat red line tells the operational story. Legend below the chart: "Completed" and "At Risk" in the same legend style.
+Chart: Line chart, two lines, same style/dot markers as DSO card, wider due to full-width card. X-axis: Mon, Tue, Wed, Thu, Fri, Sat, Sun. Y-axis: 0, 10, 20, 30, 40. Line 1 — "Completed" — green, trending upward: ~12, 18, 22, 28, 32, 35, 38. Line 2 — "At Risk" — red, flat with slight uptick: ~8, 7, 9, 8, 7, 8, 7. Rising green vs flat red tells operational story. Legend: "Completed", "At Risk" same legend style.
 
-Stat row — four values, same separator and layout:
-- Label "Completed This Week" · value "134" in green
-- Label "At Risk Right Now" · value "7" in amber
-- Label "On-Time Rate" · value "91%" in dark
-- Label "Avg Days to Complete" · value "3.2 days" in dark
+Stat row:
+- "Completed This Week" · "134" green
+- "At Risk Right Now" · "7" amber
+- "On-Time Rate" · "91%" dark
+- "Avg Days to Complete" · "3.2 days" dark
 
 Footer: "Mar 11 · From conversation"
 
@@ -117,6 +109,6 @@ Footer: "Mar 11 · From conversation"
 
 **Style constraints.**
 
-Reproduce the existing page shell, typography, card border, card shadow, chart grid lines, axis label style, dot marker style, legend style, stat row separator, and footer text style exactly from the reference DSO card. Do not introduce any new visual elements, colours, or components that are not already present in the existing Radar page. The only colours used across all charts are the existing red (#EF4444 or matching), green (#22C55E or matching), amber (#F59E0B) for the new amber states, and dark navy for neutral lines — all matching what already exists. The page should look like these five cards were always part of this Radar, designed by the same hand as the DSO card.
+Reproduce existing page shell, typography, card border, card shadow, chart grid lines, axis label style, dot marker style, legend style, stat row separator, footer text style exactly from DSO card ref. No new visual elements, colours, components not already in existing Radar page. Only colours across all charts: red (#EF4444 or matching), green (#22C55E or matching), amber (#F59E0B), dark navy for neutral lines — all matching existing. Five cards must look like they were always part of this Radar, designed by same hand as DSO card.
 
-**Deliver one full-page frame at 1440px width** showing the complete Radar page — top bar with workspace switcher, page header, all five cards in the three-row grid layout described above. No artboard background colour — white page, white cards, light grey borders, exactly as the reference.
+**Deliver one full-page frame at 1440px width** — complete Radar page: top bar with workspace switcher, page header, all five cards in three-row grid. No artboard bg — white page, white cards, light grey borders, exactly as reference.

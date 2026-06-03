@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, MoreHorizontal, Pencil, Archive } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, MoreHorizontal, Pencil, Archive, Blocks } from 'lucide-react';
 import { AgentStudioIcon } from './components/icons/AgentStudioIcon';
 import { SenseLogo } from './components/SenseLogo';
 import { ReleasesModal } from './components/ReleasesModal';
@@ -31,6 +31,7 @@ import { InvoicePageBuilderCard } from './components/InvoicePageBuilderCard';
 import { JobListingPage } from './components/JobListingPage';
 import { AgentBuilderPage } from './components/AgentBuilderPage';
 import { SubscriptionFlowPage } from './components/SubscriptionFlowPage';
+import { BuildWorkspace } from './components/build/BuildWorkspace';
 
 function AppContent() {
   const [showDemo, setShowDemo] = useState(false);
@@ -39,7 +40,13 @@ function AppContent() {
   const [transcribedText, setTranscribedText] = useState('');
   const [isBugModalOpen, setIsBugModalOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
-  const [activeView, setActiveView] = useState<'chat' | 'radar'>('chat');
+  const [activeView, setActiveView] = useState<'chat' | 'radar' | 'build'>(() => {
+    if (typeof window === 'undefined') return 'chat';
+    const h = window.location.hash;
+    if (h === '#build' || h.startsWith('#build/')) return 'build';
+    return 'chat';
+  });
+  const [buildSeedPrompt, setBuildSeedPrompt] = useState<string | null>(null);
   const [pendingConversation, setPendingConversation] = useState<{ topic: string; fromCanvas: boolean; widgetId: string } | null>(null);
   const [pendingRadarCard, setPendingRadarCard] = useState<SavedCard | null>(null);
   const { activePage, setActivePage } = usePublishedPages();
@@ -77,10 +84,23 @@ function AppContent() {
   const [subFlowOpen, setSubFlowOpen] = useState(typeof window !== 'undefined' && window.location.hash === '#sub-flow');
 
   useEffect(() => {
-    const onHash = () => setSubFlowOpen(window.location.hash === '#sub-flow');
+    const onHash = () => {
+      setSubFlowOpen(window.location.hash === '#sub-flow');
+      const h = window.location.hash;
+      if (h === '#build' || h.startsWith('#build/')) setActiveView('build');
+    };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
+
+  // Clear the #build hash when navigating away from the build view
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const h = window.location.hash;
+    if (activeView !== 'build' && (h === '#build' || h.startsWith('#build/'))) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, [activeView]);
 
   const [threadHistory, setThreadHistory] = useState<{ id: number; title: string; active: boolean; archived?: boolean; ts: number }[]>(() => {
     const now = Date.now();
@@ -265,7 +285,7 @@ function AppContent() {
             setActiveSubPage(label);
             setActivePage(null);
           }}
-          onSenseClick={() => { setActiveSubPage(null); setAgentBuilderOpen(false); }}
+          onSenseClick={() => { setActiveSubPage(null); setAgentBuilderOpen(false); setActiveView('chat'); }}
           onAgentBuilderClick={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
           agentBuilderActive={agentBuilderOpen}
           currentUser={currentUser}
@@ -288,7 +308,7 @@ function AppContent() {
             )}
           <div
             className={`transition-all duration-300 bg-[#FAFAFA] flex-shrink-0 overflow-hidden border-r border-[#E6E8EC] ${
-              sidebarOpen && activeView !== 'radar' && !agentBuilderOpen ? 'w-[230px]' : 'w-0 border-r-0'
+              sidebarOpen && activeView === 'chat' && !agentBuilderOpen ? 'w-[230px]' : 'w-0 border-r-0'
             }`}
           >
             <div className="h-full flex flex-col w-[230px]">
@@ -341,6 +361,17 @@ function AppContent() {
                     <span className="text-[14px] font-normal text-[#1C1E21]">Agent Studio</span>
                   </button>
                 )}
+                <button
+                  onClick={() => { setActiveView('build'); setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(false); if (typeof window !== 'undefined') window.location.hash = '#build'; }}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 text-left rounded-md transition-colors"
+                  style={{ background: activeView === 'build' ? '#E8E8E8' : 'transparent' }}
+                  onMouseEnter={(e) => { if (activeView !== 'build') e.currentTarget.style.background = '#EEEEEE'; }}
+                  onMouseLeave={(e) => { if (activeView !== 'build') e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <Blocks className="w-3.5 h-3.5" style={{ color: activeView === 'build' ? '#FD5000' : '#1C1E21' }} />
+                  <span className="text-[14px] font-normal" style={{ color: activeView === 'build' ? '#1C1E21' : '#1C1E21', fontWeight: activeView === 'build' ? 500 : 400 }}>Build</span>
+                  <span className="ml-auto text-[9px] font-semibold px-1 py-px rounded bg-[#FFF4ED] text-[#FD5000]">Beta</span>
+                </button>
                 {currentUser !== 'MJ' && currentUser !== 'AU' && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
                     <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
@@ -744,7 +775,16 @@ function AppContent() {
                       onUpgrade={openUpgrade}
                       onOpenAgentBuilder={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
                       onPersonalizationClick={() => setPersonalizationOpen(true)}
+                      onTurnIntoApp={(p) => { setBuildSeedPrompt(p); setActiveView('build'); }}
                       demoMode={demoMode}
+                    />
+                  </div>
+                ) : activeView === 'build' ? (
+                  <div className="flex-1 flex overflow-hidden p-0">
+                    <BuildWorkspace
+                      currentUser={currentUser}
+                      seededPrompt={buildSeedPrompt}
+                      onConsumeSeed={() => setBuildSeedPrompt(null)}
                     />
                   </div>
                 ) : activeView === 'radar' ? (

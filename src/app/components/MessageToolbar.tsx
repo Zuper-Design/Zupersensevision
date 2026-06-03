@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Copy, RefreshCw, ThumbsUp, ThumbsDown, Crosshair, Loader2, Check } from 'lucide-react';
+import { Copy, RefreshCw, ThumbsUp, ThumbsDown, Crosshair, Loader2, Check, Blocks } from 'lucide-react';
 
 interface MessageToolbarProps {
   hideOnIdle?: boolean;
   onAddToRadar?: () => void;
   onAddToRadarComplete?: () => void;
   onViewInRadar?: () => void;
+  onTurnIntoApp?: () => void;
 }
 
-export function MessageToolbar({ hideOnIdle = false, onAddToRadar, onAddToRadarComplete, onViewInRadar }: MessageToolbarProps) {
+export function MessageToolbar({ hideOnIdle = false, onAddToRadar, onAddToRadarComplete, onViewInRadar, onTurnIntoApp }: MessageToolbarProps) {
   const [radarState, setRadarState] = useState<'idle' | 'loading' | 'done'>('idle');
 
   const handleAddToRadar = () => {
@@ -23,8 +24,18 @@ export function MessageToolbar({ hideOnIdle = false, onAddToRadar, onAddToRadarC
 
   return (
     <div className="flex items-center" style={{ marginTop: 4 }}>
-      {/* Left: Add to Radar — always visible */}
-      <div className="flex-1">
+      {/* Left: Add to Radar + Turn into app — always visible */}
+      <div className="flex-1 flex items-center gap-1">
+        {onTurnIntoApp && (
+          <button
+            onClick={onTurnIntoApp}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[12px] text-[#9CA3AF] hover:text-[#FD5000] hover:bg-[#FFF4ED] transition-all duration-150"
+            style={{ fontWeight: 500 }}
+          >
+            <Blocks className="w-3.5 h-3.5" />
+            <span>Turn this into an app</span>
+          </button>
+        )}
         {onAddToRadar && (
           <>
             {radarState === 'idle' && (

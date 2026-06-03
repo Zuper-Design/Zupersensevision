@@ -10,8 +10,8 @@ interface Tab {
 }
 
 interface TopNavigationProps {
-  activeView: 'chat' | 'radar';
-  onViewChange: (view: 'chat' | 'radar') => void;
+  activeView: 'chat' | 'radar' | 'build';
+  onViewChange: (view: 'chat' | 'radar' | 'build') => void;
   currentUser?: string;
   onUserChange?: (user: string) => void;
   onAskSense?: () => void;
@@ -60,7 +60,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
   const activeUserData = users.find(u => u.initials === currentUser) || users[0];
 
   return (
-    <div className="h-[44px] flex items-center justify-between flex-shrink-0 bg-[#f8f2ec] px-4 py-1">
+    <div className="h-[44px] flex items-center justify-between flex-shrink-0 bg-[#f8f2ec] px-4 py-1 relative">
       {/* Left Side: Logo + Tabs */}
       <div className="flex items-center gap-3 flex-1 overflow-hidden px-[8px] py-[0px]">
         {/* Logo */}

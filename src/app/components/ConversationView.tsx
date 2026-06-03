@@ -144,8 +144,8 @@ interface ConversationViewProps {
   question: string;
   onBack?: () => void;
   demoMode?: boolean;
-  activeView?: 'chat' | 'radar';
-  onViewChange?: (view: 'chat' | 'radar') => void;
+  activeView?: 'chat' | 'radar' | 'build';
+  onViewChange?: (view: 'chat' | 'radar' | 'build') => void;
   fromCanvas?: boolean;
   widgetId?: string | null;
   onOpenFeedback?: () => void;
@@ -156,6 +156,7 @@ interface ConversationViewProps {
   isVp?: boolean;
   onUpgrade?: () => void;
   onPersonalizationClick?: () => void;
+  onTurnIntoApp?: (prompt: string) => void;
 }
 
 // Widget response text mapping
@@ -274,7 +275,7 @@ function GeneratedChartCard() {
   );
 }
 
-export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onPersonalizationClick, demoMode = false }: ConversationViewProps) {
+export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onPersonalizationClick, onTurnIntoApp, demoMode = false }: ConversationViewProps) {
   const { radars, activeRadarId, addCardToRadar } = useRadar();
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
@@ -2231,7 +2232,7 @@ Sarah`
                               <div className="flex justify-start min-w-0 overflow-hidden">
                                 <div className="w-full max-w-[720px] min-w-0">
                                   <UnassignedJobsCard />
-                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Unassigned Jobs (this week)', preview: '5 unassigned jobs, May 4–5, 2 urgent / 3 low' })} />
+                                  <MessageToolbar onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'card', content: msg, title: 'Unassigned Jobs (this week)', preview: '5 unassigned jobs, May 4–5, 2 urgent / 3 low' })} onTurnIntoApp={onTurnIntoApp ? () => onTurnIntoApp('Build a dispatch board for this week showing unassigned jobs as cards I can drag onto technicians, with SLA deadline and priority on each card, and highlight anything overdue.') : undefined} />
                                 </div>
                               </div>
                             </>
@@ -2304,7 +2305,7 @@ Sarah`
                               <div className="flex justify-start min-w-0 overflow-hidden">
                                 <div className="w-full max-w-[640px] min-w-0">
                                   <AgingBucketChartCard />
-                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Overdue Invoices by Aging Bucket', preview: '1–30 Days $2.01M · 31–60 Days $1.61M · 61–90 Days $308K' })} />
+                                  <MessageToolbar hideOnIdle onAddToRadarComplete={handleAddToRadarComplete} onViewInRadar={handleViewInRadar} onAddToRadar={() => handleAddToRadar({ type: 'chart', content: msg, title: 'Overdue Invoices by Aging Bucket', preview: '1–30 Days $2.01M · 31–60 Days $1.61M · 61–90 Days $308K' })} onTurnIntoApp={onTurnIntoApp ? () => onTurnIntoApp('Build a board of overdue invoices grouped into 0-30 / 30-60 / 60+ day aging buckets with amount and customer.') : undefined} />
                                 </div>
                               </div>
                             </>

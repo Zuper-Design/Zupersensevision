@@ -10,8 +10,9 @@ import { SavedCard } from './RadarContext';
 interface ChatInterfaceProps {
   voiceMode: boolean;
   onToggleVoiceMode: () => void;
-  activeView: 'chat' | 'radar';
-  onViewChange: (view: 'chat' | 'radar') => void;
+  activeView: 'chat' | 'radar' | 'build';
+  onViewChange: (view: 'chat' | 'radar' | 'build') => void;
+  onTurnIntoApp?: (prompt: string) => void;
   pendingConversation?: { topic: string; fromCanvas: boolean; widgetId: string } | null;
   onConversationConsumed?: () => void;
   onOpenFeedback?: () => void;
@@ -103,7 +104,7 @@ const placeholderTexts = [
   "Show me customer satisfaction scores...",
 ];
 
-export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick, onPersonalizationClick, onOpenAgentBuilder, demoMode = false }: ChatInterfaceProps) {
+export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onViewChange, pendingConversation, onConversationConsumed, onOpenFeedback, pendingRadarCard, onRadarCardConsumed, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onSettingsClick, onPersonalizationClick, onOpenAgentBuilder, onTurnIntoApp, demoMode = false }: ChatInterfaceProps) {
   const [message, setMessage] = useState('');
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -915,6 +916,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 isVp={isVp}
                 onUpgrade={onUpgrade}
                 onPersonalizationClick={onPersonalizationClick}
+                onTurnIntoApp={onTurnIntoApp}
                 demoMode={demoMode}
               />
             )}

@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface ViewToggleProps {
-  activeView: 'chat' | 'radar';
-  onToggle: (view: 'chat' | 'radar') => void;
+  activeView: 'chat' | 'radar' | 'build';
+  onToggle: (view: 'chat' | 'radar' | 'build') => void;
 }
 
 export const ViewToggle: React.FC<ViewToggleProps> = ({ activeView, onToggle }) => {
