@@ -201,10 +201,73 @@ export const KANBAN_PLAN: { label: string; detail: string }[] = [
 ];
 
 // Clarifying question Sense asks before generating (schema-grounded, §3a)
+// Kept for backward-compat (single-question consumers); the full multi-question
+// flow lives in CLARIFY_QUESTIONS below.
 export const CLARIFY = {
   question: 'By "this week" do you mean the dispatch calendar week (Mon–Sun) or a rolling 7 days?',
   options: ['Calendar week (Mon–Sun)', 'Rolling 7 days'],
 };
+
+// ── AI reasoning trace (shown in the "thinking" state before clarify) ─────
+// Each line streams in; the planning steps below resolve against live modules.
+export const CLARIFY_REASONING: string[] = [
+  'A dispatch board needs a time axis, a set of jobs, and someone to assign them to — so I should ground all three against your live schema before laying anything out.',
+  '"This week" is ambiguous (calendar week vs. rolling 7 days) and I don\'t yet know which crews or regions you care about — guessing here would build the wrong board.',
+  'Let me pull the relevant records first, then ask you the few things I genuinely can\'t infer.',
+];
+
+// Planning steps — render as a checklist that completes top-to-bottom while
+// the reasoning streams. count = records "found" for that module.
+export interface PlanStep {
+  module: 'Jobs' | 'Quotes' | 'Technicians' | 'Schema';
+  label: string;
+  detail: string;
+  count?: string;
+}
+export const CLARIFY_PLAN: PlanStep[] = [
+  { module: 'Schema', label: 'Resolving entities', detail: 'Jobs · HVAC · TX', count: 'matched' },
+  { module: 'Jobs', label: 'Querying Jobs module', detail: 'status = unassigned · this week', count: '17 jobs' },
+  { module: 'Technicians', label: 'Reading Technician roster', detail: 'active · TX region', count: '8 techs' },
+  { module: 'Quotes', label: 'Cross-referencing Quotes', detail: 'approved → ready to dispatch', count: '5 quotes' },
+];
+
+// ── Multi-question clarify (asked all at once, §3a) ───────────────────────
+export type ClarifyKind = 'choice' | 'text';
+export interface ClarifyQuestion {
+  id: string;
+  prompt: string;
+  kind: ClarifyKind;
+  options?: string[];      // for choice
+  placeholder?: string;    // for text
+  optional?: boolean;
+}
+export const CLARIFY_QUESTIONS: ClarifyQuestion[] = [
+  {
+    id: 'week',
+    prompt: 'By "this week", do you mean the calendar week (Mon–Sun) or a rolling 7 days?',
+    kind: 'choice',
+    options: ['Calendar week (Mon–Sun)', 'Rolling 7 days'],
+  },
+  {
+    id: 'crews',
+    prompt: 'Which crews should the board cover?',
+    kind: 'choice',
+    options: ['All HVAC crews', 'Only TX region', 'Let me pick specific techs'],
+  },
+  {
+    id: 'group',
+    prompt: 'How should jobs be grouped down the board?',
+    kind: 'choice',
+    options: ['By technician', 'By time slot', 'By priority'],
+  },
+  {
+    id: 'notes',
+    prompt: 'Anything else I should account for? (SLAs, skills, no-go zones…)',
+    kind: 'text',
+    placeholder: 'e.g. keep emergency jobs unassigned until a senior tech is free',
+    optional: true,
+  },
+];
 
 // ── Dispatch board live data ────────────────────────────────────────────
 export type Priority = 'High' | 'Medium' | 'Low';

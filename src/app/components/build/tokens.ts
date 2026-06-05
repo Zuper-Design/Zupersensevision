@@ -1,8 +1,8 @@
 // Sense Build — design tokens (Spec 2 §1).
 // Single source of truth. Generated apps pull every visual value from here —
 // no raw hex/px inside app components. Values are Zuper's real palette
-// (Guidelines.md + the warm Sense system used across the app), NOT the
-// spec's blue placeholder examples.
+// and the warm Sense system used across the app, NOT the spec's blue
+// placeholder examples.
 
 export const token = {
   color: {

@@ -1,75 +1,76 @@
 <claude-mem-context>
 # Memory Context
 
-# [App Builder] recent context, 2026-06-03 2:12pm GMT+5:30
+# [sense] recent context, 2026-06-05 11:30am GMT+5:30
 
 Legend: 🎯session 🔴bugfix 🟣feature 🔄refactor ✅change 🔵discovery ⚖️decision 🚨security_alert 🔐security_note
 Format: ID TIME TYPE TITLE
 Fetch details: get_observations([IDs]) | Search: mem-search skill
 
-Stats: 50 obs (16,786t read) | 743,332t work | 98% savings
+Stats: 50 obs (17,977t read) | 1,886,752t work | 99% savings
 
-### Jun 3, 2026
-1198 12:01p 🔵 Sandbox Blocks Network Binding — Dev Server Cannot Start on 127.0.0.1:5173
-1200 12:02p ⚖️ User directed app builder toward non-AI aesthetic using Pinterest moodboard
-1201 12:05p 🔵 Full source snapshot of BuildWorkspace home screen and ChatThread confirmed
-1202 12:06p 🔵 No fonts.css exists in project
-1203 12:07p 🟣 BuildWorkspace home screen redesigned — editorial layout replacing AI-gradient aesthetic
-1204 " 🟣 ChatThread visual language overhauled — away from AI-chat aesthetic toward editorial card UI
-1205 12:08p 🟣 DispatchGrid audit toast redesigned — dark pill replaced with white card toast
-1206 " 🟣 ArCockpit audit toast updated — same white card pattern as DispatchGrid
-1207 " 🟣 BuildWorkspace canvas empty state redesigned — white card with plus-grid replaces pixel-grid animation
-1208 " 🔵 Post-redesign audit: no AI-signaling keywords remain in core build components
-1209 " 🟣 CanvasInspector redesigned — paper background, white cards, faint section labels
-1210 " 🟣 Canvas header and archetype card frame fully redesigned — paper background, rounded cards, pill buttons
-1211 " 🟣 DispatchGrid layout redesigned — editorial filterbar header, floating card sections, rounder job chips
-S574 Monitor App Builder redesign session — check ChatThread generating stage, BuildWorkspace toolbar hover cleanup, theme.css changes, and assess next highest-impact change (Jun 3 at 12:34 PM)
-S575 App Builder redesign — iterative home screen composition redesign, pushing toward moodboard-inspired layered layout with floating context pane (Jun 3 at 12:35 PM)
-S576 Homepage UI iteration for Sense Build app using graphify codebase context and screenshot reference (Jun 3 at 12:47 PM)
-1225 12:51p ⚖️ New design direction: references folder now contains actual images
-1212 12:53p 🔵 Homepage UI Iteration Request with Graphify Codebase Context
-1213 " 🔵 App Builder Project Structure Mapped
-1214 " 🔵 Sense Build Home — Full Architecture and Design System Mapped
-1215 12:54p 🔵 Tech Stack and CSS Animation System Fully Catalogued
-1216 " 🟣 Build Home UI Refinements — Typography, Spacing, and Card Polish
-1217 12:55p 🔴 Headline Typography Switched from clamp() to Tailwind Responsive Prefixes
-1218 " 🔵 Build Home Final State Verified — All Patches Applied Correctly
-1219 " 🔵 Build Verification Blocked — Sandbox Prevents /tmp mkdir and Escalated Permissions
-1220 " 🔵 TypeScript Build Clean — esbuild Confirms Zero Errors in Modified Source
-S577 Read references/ folder images and apply home page changes to BuildWorkspace.tsx (Jun 3 at 12:56 PM)
-1221 12:59p 🟣 App Builder Home Page UI Redesign with Reference Images
-1222 " 🔵 App Builder BuildWorkspace.tsx Architecture Mapped
-1223 1:00p 🔵 References Folder Contains Only home-moodboard.md
-1224 " ✅ Design Moodboard Reference Documented from 12 Uploaded Images
-1226 1:02p 🟣 App Builder Home Page Redesigned with Greeting + Live Stats
-1227 1:04p 🔵 Moodboard Reference Images Analyzed for Home Page Redesign
-S578 App Builder home page UI redesign inspired by 12 uploaded reference images, with moodboard saved to references/ folder (Jun 3 at 1:04 PM)
-S579 Read references/ folder images and apply home page changes to BuildWorkspace.tsx (Jun 3 at 1:06 PM)
-S582 Home page major revamp — references-inspired, no constraints, make it delightful (Jun 3 at 1:11 PM)
-1228 1:11p 🟣 Contact Sheet Generated from Reference Images via Python/Pillow
-1229 1:12p 🔵 Contact Sheet Viewed — Reference Images Analyzed via Vision
-1230 " ✅ UI Page Regression — Design Rework Requested
-1231 1:20p 🟣 Home Page Major Revamp with Interactive Elements
-1232 1:27p 🟣 homeStarter State Added to BuildWorkspace
-1233 1:28p 🔵 Build Home Page Architecture and Design System Fully Mapped
-1234 1:29p 🟣 Home Page Major Revamp with Interactive Reference-Inspired Elements
-1235 " 🟣 CSS Animations Added for Build Prompt Bar Interactive States
-1236 " 🟣 HOME_STARTERS Config Added to BuildWorkspace
-1237 1:30p 🟣 BuildHome Component Fully Revamped with Thinking State and Rich Starter Cards
-1238 " 🟣 Stacked Card Deck Widget Replaces Plus-Grid in Home Header
-1239 1:31p 🟣 Prompt Bar Segment Chips Now Dynamic via activeStarter
-1240 " 🟣 Prompt Bar Textarea Placeholder and Template Pills Now Driven by HOME_STARTERS
-1241 " 🟣 Bottom Strip Redesigned: Template Pills + Recent Builds Button
-S580 Home page major revamp for App Builder — draw from references folder, no constraints, make it delightful (Jun 3 at 1:32 PM)
-S581 Home page major revamp — draw from references, no constraints, make it delightful (Jun 3 at 1:32 PM)
-S583 Home page major revamp — references-inspired, no constraints, make it delightful. Final layout iteration: editorial hero + ambient plus field + minimal prompt card. (Jun 3 at 1:36 PM)
-1242 2:07p ⚖️ Plus Field Animation Removed — Static Decorative Element
-1243 " ✅ Plus Field Animation Stripped from theme.css
-1244 " ⚖️ BuildHome Sidebar Starter Card Redesign Requested
-1245 2:09p 🟣 Bottom Strip Upgraded to Frosted Card with Mini Template Tiles
-1246 2:11p 🟣 BuildHome Sidebar Starter Cards Redesigned with Real Row Previews
-1247 " 🟣 HOME_STARTERS Extended with previewRows Field
-1248 2:12p 🟣 Bottom Strip Template Cards Redesigned as Rich Preview Cards
+### Jun 4, 2026
+1427 6:39p 🟣 AppGallery Thumbnail Nav-Module Badge Added
+1428 6:43p 🔄 AppGallery Card Redesign: AT&T Fiber Card Aesthetic
+1429 6:44p 🔄 Dead Preview Code Pruned from AppGallery.tsx
+1430 6:45p 🔄 AppGallery.tsx Imports Cleaned After AT&T Card Redesign
+1431 " 🟣 Build Flow "Waiting for Input" Page Redesign — Session Resumed
+S779 AppGallery AT&T card redesign finalized + blockCount dead code removed — session resumed, build green (Jun 4 at 6:45 PM)
+S781 AppGallery card padding iteration (px-[21px] → px-6) + reading Build.tsx for "Waiting for input" redesign (Jun 4 at 7:46 PM)
+S782 AppGallery card padding finalized at px-6 — still polishing AppCard before Build.tsx redesign (Jun 4 at 7:46 PM)
+S780 AppGallery card padding micro-tweak (px-5 → px-[21px]) + beginning investigation of Build.tsx for "Waiting for input" redesign (Jun 4 at 7:46 PM)
+S783 AppGallery card white body inset framing — iterating margin to get AT&T card "color framing white panel" effect (Jun 4 at 7:47 PM)
+1432 7:49p 🔵 Build.tsx State Machine Structure Discovered
+S784 AppGallery card white body inset margin iterated — finalizing AT&T card framing effect before Build.tsx redesign (Jun 4 at 7:49 PM)
+S785 AppGallery card final pivot to monochrome dark design — #1C1E21 header, 2px inset white body, dead theme code removed (Jun 4 at 7:54 PM)
+1433 7:54p ✅ AppCard Design Direction Pivoted to Monochrome Dark Header
+1434 " 🔄 MODULE_THEME and themeFor() Now Dead Code After Monochrome Card Pivot
+S786 Redesign Build "Waiting for Input" page to match Sense conversation page layout, and redesign AppGallery from card grid to list rows (Jun 4 at 7:54 PM)
+1435 8:03p 🟣 Dispatch Board "Waiting for Input" Page Redesign
+1436 8:05p 🔄 AppGallery: Card Grid → Focus-Stack Row List
+1437 " 🔄 AppGallery: Wire AppRow List with Inline "Build New App" Row
+S787 Redesign Build "Waiting for Input" page (Sense conversation style) + AppGallery UI iteration — now debating direction after plain list felt bland (Jun 4 at 8:05 PM)
+1438 8:08p 🟣 Apps Listing Page Redesign with Card Layout
+1439 " 🔵 Sense Project Structure and Reference Materials
+1440 8:09p 🔵 Existing AppGallery.tsx Design Patterns and Moodboard Direction
+1441 " 🔵 Reference Contact Sheet Analyzed — UI Design Patterns Identified
+1442 8:14p 🟣 Apps Listing Page Redesign with Card Layout
+1443 " 🟣 AppGallery Component Full Rewrite — Card-Based Apps Listing
+1444 " 🔵 Sense Project Stack: Vite + React 18 + Tailwind 4 + Full Radix/shadcn Suite
+1445 " 🔵 AppGallery Build Verified via esbuild — TypeScript Clean, 23.2kb Bundle
+1446 8:15p 🔵 Sense Dev Server Blocked by Sandbox — EPERM on Network Bind
+1447 " 🔄 AppGallery Color Palette Shifted from Warm Parchment to Cool Neutral
+1448 " 🔵 Vite Full Build Started Successfully via --configLoader native --outDir /dev/null
+1449 " 🔵 Vite Transformed All 2734 Modules Successfully — Only Output Dir Write Failed
+1450 8:16p 🔵 Final AppGallery State Confirmed — 446 Lines, Clean, All Patches Applied
+1451 8:18p 🔵 Sense Build Workspace Architecture — Full Component Map
+1452 " 🔵 Sense Design Context: FSM Platform, Linear/Retool Aesthetic, Brand Orange #FD5000
+1453 " 🟣 AppGallery v3 — Semantic Mini-Surface Thumbnails, Cleaner Header, owner-filtered Search
+1454 " ⚖️ AppGallery Design Direction Reset — Reference-Faithful Visual Language
+1455 8:29p 🟣 AppGallery v4 — Reference-Faithful Glass Morphism 3-Panel Layout
+1456 8:34p ⚖️ AppGallery v4 Glass Layout Rejected — Revert + Reference Card Replication
+1457 " 🟣 AppGallery v5 — "APP PROFILE" Card Layout with Dark Sphere Avatar
+1458 8:46p ⚖️ AppGallery All Iterations Rejected — Full Revert to Session Start
+### Jun 5, 2026
+1459 11:15a 🔵 Project origin: Figma Make — no inherited design.md or rules found
+1460 " 🔵 Sense project: Figma Make origin confirmed, design rules in guidelines/Guidelines.md
+1461 11:16a 🔵 Sense project: full design rule inventory — sibling projects also have design.md files
+1462 11:17a 🔵 Design tokens codified in src/app/components/build/tokens.ts — single source of truth
+1463 " 🔵 Git status reveals active uncommitted changes across core app files
+1464 11:18a ✅ Figma Make artifacts stripped — project de-branded from @figma/my-make-file
+1465 " 🔵 Figma Make cleanup verified complete — only stale graphify-out cache retains old references
+1466 11:19a ✅ Empty Figma Make scaffold directories removed
+1467 11:20a 🔵 graphify update fails with PermissionError on rebuild lock file
+1468 " 🔵 graphify update blocked — approval policy OnFailure prevents escalated permissions
+1469 " ✅ graphify-out/ cache fully wiped to resolve stale Figma Make references
+1470 " ✅ graphify-out/ fully wiped and CLAUDE.md updated — project now clean of all generated artifacts
+1471 11:21a ✅ Sense project fully de-branded — zero Figma Make markers remain in live source
+1472 " 🔵 Vite build succeeds (2733 modules transformed) — only /tmp write blocked by sandbox
+1473 " ✅ graphify-out/ directory tree fully removed
+1474 " 🔵 Git status shows complete diff — all Figma Make removals and doc changes staged/unstaged
+1475 " 🔵 Build workspace architecture confirmed — AppGallery, BuildWorkspace, buildData are the active feature area
+1476 " 🟣 AppGallery completely redesigned — new "Build index" layout with warm editorial aesthetic
+S788 AppGallery redesign — second iteration shifting from warm editorial aesthetic to dark-left-panel + cool-neutral-right layout (Jun 5 at 11:21 AM)
 
-Access 743k tokens of past work via get_observations([IDs]) or mem-search skill.
+Access 1887k tokens of past work via get_observations([IDs]) or mem-search skill.
 </claude-mem-context>

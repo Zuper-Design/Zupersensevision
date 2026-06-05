@@ -56,10 +56,12 @@ function AppContent() {
   const [announcementOpen, setAnnouncementOpen] = useState(() => {
     if (typeof window === 'undefined') return false;
     if (new URLSearchParams(window.location.search).get('demo') === '1') return false;
-    return true;
+    // show once — suppress on every later refresh
+    return localStorage.getItem('sense.announcementSeen') !== '1';
   });
   const closeAnnouncement = () => {
     setAnnouncementOpen(false);
+    try { localStorage.setItem('sense.announcementSeen', '1'); } catch { /* ignore */ }
   };
   const [releasesOpen, setReleasesOpen] = useState(false);
   const [showBetaBanner, setShowBetaBanner] = useState(true);

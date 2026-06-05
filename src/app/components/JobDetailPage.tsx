@@ -5,7 +5,6 @@ import {
   MessageSquare, Share2, Sparkles, CheckCircle2, AlertTriangle, Circle,
   Building2, FileText, Phone, Mail, Mic, MicOff, ArrowUp, X
 } from 'lucide-react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SenseLogo } from './SenseLogo';
 
 interface JobDetailPageProps {
@@ -331,8 +330,8 @@ export function JobDetailPage({ jobId, workOrderNumber, jobTitle, onBack }: JobD
               <>
                 {/* Job photo */}
                 <div className="w-full h-[148px] rounded-xl overflow-hidden mb-5 bg-[#F3F4F6]" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}>
-                  <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1758899183445-1c20011cbab9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb29maW5nJTIwY29uc3RydWN0aW9uJTIwaG91c2V8ZW58MXx8fHwxNzczMjg1OTY5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                  <img
+                    src="https://images.unsplash.com/photo-1758899183445-1c20011cbab9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb29maW5nJTIwY29uc3RydWN0aW9uJTIwaG91c2V8ZW58MXx8fHwxNzczMjg1OTY5fDA&ixlib=rb-4.1.0&q=80&w=1080"
                     alt="Job site"
                     className="w-full h-full object-cover"
                   />

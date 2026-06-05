@@ -4,6 +4,11 @@ import {
   Plus,
   ArrowLeft,
   ArrowRight,
+  Loader2,
+  Check,
+  Briefcase,
+  Users,
+  FileText,
   Lock,
   Eye,
   Code2,
@@ -36,6 +41,9 @@ import {
   DISPATCH_PLAN,
   KANBAN_PLAN,
   CLARIFY,
+  CLARIFY_REASONING,
+  CLARIFY_PLAN,
+  CLARIFY_QUESTIONS,
   DISPATCH_TREE,
   COCKPIT_TREE,
   KANBAN_TREE,
@@ -44,7 +52,9 @@ import {
 } from "./buildData";
 
 type Stage =
+  | "gallery"
   | "home"
+  | "homeReasoning"
   | "homeClarify"
   | "homeThinking"
   | "clarify"
@@ -236,7 +246,7 @@ export function BuildWorkspace({
 }: Props) {
   const canPublish = CAN_PUBLISH[currentUser] ?? true;
   const reduceMotion = useReducedMotion();
-  const [stage, setStage] = useState<Stage>("home");
+  const [stage, setStage] = useState<Stage>("gallery");
   const [prompt, setPrompt] = useState("");
   const [canvasMode, setCanvasMode] = useState<CanvasMode>("preview");
   const [selectedEl, setSelectedEl] = useState("el-card");
@@ -251,6 +261,13 @@ export function BuildWorkspace({
   const [refineLog, setRefineLog] = useState<string[]>([]);
   const [isRefining, setIsRefining] = useState(false);
   const [clarifyAnswer, setClarifyAnswer] = useState<string | null>(null);
+  // multi-question clarify: per-question answers keyed by question id
+  const [clarifyAnswers, setClarifyAnswers] = useState<Record<string, string>>({});
+  // reasoning-state animation: which reasoning line + plan step is "done"
+  const [reasonLine, setReasonLine] = useState(0);
+  const [planStep, setPlanStep] = useState(0);
+  const [planStarted, setPlanStarted] = useState(false); // gate step "loading" until plan phase begins
+  const clarifyQuestionsRef = useRef<HTMLDivElement>(null); // scroll target when questions appear
   const [auditOpen, setAuditOpen] = useState(false);
   const [autoOpen, setAutoOpen] = useState(false);
   const [, setEditLog] = useState<string[]>([]); // element-scoped edits applied
@@ -283,16 +300,30 @@ export function BuildWorkspace({
   };
   const activeThread = threads.find((t) => t.id === activeThreadId) ?? threads[0];
 
+  // back / exit → the app listing
   const resetBuild = () => {
-    setStage("home");
+    setStage("gallery");
     setOpenedApp(null);
     setPrompt("");
     setRefineLog([]);
     setClarifyAnswer(null);
+    setClarifyAnswers({});
     setSkillBadge(false);
     setPublished(false);
     setAuditOpen(false);
     setAutoOpen(false);
+  };
+  // "Build a new app" → the prompt composer (the old home screen)
+  const openComposer = () => {
+    setOpenedApp(null);
+    setPrompt("");
+    setRefineLog([]);
+    setClarifyAnswer(null);
+    setClarifyAnswers({});
+    setSkillBadge(false);
+    setPublished(false);
+    setStage("home");
+    setTimeout(() => taRef.current?.focus(), 60);
   };
   const sendRefine = () => {
     if (!refineDraft.trim() || stage !== "preview") return;
@@ -347,13 +378,65 @@ export function BuildWorkspace({
     return () => clearTimeout(id);
   }, [stage]);
 
+  // reasoning state — stream reasoning lines + resolve plan steps, then hand
+  // off to the clarify questions once the AI has "gathered context".
+  //
+  // Each plan step gets a visible "resolving…" loading phase before it
+  // completes, so the AI reads as genuinely working through each source.
+  // Timeline (ms):  reasoning lines first → then steps start, each holding
+  // ~1.7s in its loading state before the next begins.
+  useEffect(() => {
+    if (stage !== "homeReasoning") return;
+    setReasonLine(0);
+    setPlanStep(0);
+    setPlanStarted(false);
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    const REASON_GAP = 1100;   // gap between streamed reasoning lines
+    const STEP_DUR = 1700;     // how long each plan step shows "resolving…"
+    const reasonDone = 600 + CLARIFY_REASONING.length * REASON_GAP;
+
+    // 1. stream the reasoning lines
+    CLARIFY_REASONING.forEach((_, i) =>
+      timers.push(setTimeout(() => setReasonLine(i + 1), 600 + i * REASON_GAP)),
+    );
+
+    // 2. then resolve plan steps one-by-one — each holds STEP_DUR in its
+    //    loading state (planStep === i) before completing (planStep > i).
+    const stepsStart = reasonDone + 400;
+    timers.push(setTimeout(() => setPlanStarted(true), stepsStart));
+    CLARIFY_PLAN.forEach((_, i) =>
+      timers.push(setTimeout(() => setPlanStep(i + 1), stepsStart + (i + 1) * STEP_DUR)),
+    );
+
+    // 3. hand off once the last step has finished + a beat to read it
+    const total = stepsStart + (CLARIFY_PLAN.length + 1) * STEP_DUR + 900;
+    timers.push(setTimeout(() => setStage("homeClarify"), total));
+    return () => timers.forEach(clearTimeout);
+  }, [stage]);
+
+  // once questions appear, scroll the first one into view so it's obvious
+  // the user needs to fill them in.
+  useEffect(() => {
+    if (stage !== "homeClarify") return;
+    const id = setTimeout(() => {
+      clarifyQuestionsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 420);
+    return () => clearTimeout(id);
+  }, [stage]);
+
   // keep URL hash in sync with build stage
   useEffect(() => {
     if (typeof window === "undefined") return;
     const hash =
-      stage === "home" || stage === "homeClarify" || stage === "homeThinking"
+      stage === "gallery"
         ? "#build"
-        : "#build/editor";
+        : stage === "home" ||
+            stage === "homeReasoning" ||
+            stage === "homeClarify" ||
+            stage === "homeThinking"
+          ? "#build/new"
+          : "#build/editor";
     if (window.location.hash !== hash) window.location.hash = hash;
   }, [stage]);
 
@@ -363,19 +446,40 @@ export function BuildWorkspace({
     setArchetype(a);
     setRefineLog([]);
     setClarifyAnswer(null);
-    // dispatch → clarify (needs one detail)
+    setClarifyAnswers({});
+    // dispatch → reason (gather context) → clarify (ask the 4 questions)
     // cockpit  → thinking (brief pause, then generate)
     // kanban   → generating immediately
-    if (a === "dispatch") setStage("homeClarify");
+    if (a === "dispatch") setStage("homeReasoning");
     else if (a === "cockpit") setStage("homeThinking");
     else {
       setStage("generating");
     }
   };
 
+  // single-question clarify (still used by the in-build ChatThread composer)
   const answerClarify = (opt: string) => {
     setClarifyAnswer(opt);
-    setStage("homeThinking"); // brief thinking state keeps home block mounted for layout animation
+    setStage("homeThinking");
+  };
+
+  // set one question's answer
+  const setClarify = (id: string, value: string) =>
+    setClarifyAnswers((prev) => ({ ...prev, [id]: value }));
+
+  // all required questions answered?
+  const clarifyComplete = CLARIFY_QUESTIONS.every(
+    (q) => q.optional || (clarifyAnswers[q.id] && clarifyAnswers[q.id].trim()),
+  );
+
+  // submit all answers → thinking → generating
+  const submitClarify = () => {
+    if (!clarifyComplete) return;
+    const summary = CLARIFY_QUESTIONS.map((q) => clarifyAnswers[q.id])
+      .filter(Boolean)
+      .join(" · ");
+    setClarifyAnswer(summary);
+    setStage("homeThinking");
   };
 
   const useTemplate = (t: BuildTemplate) => {
@@ -399,7 +503,11 @@ export function BuildWorkspace({
     setCanvasMode("preview");
   };
 
-  const homeFlowActive = stage === "homeThinking" || stage === "homeClarify";
+  const homeReasoningActive = stage === "homeReasoning";
+  const homeFlowActive =
+    stage === "homeReasoning" ||
+    stage === "homeThinking" ||
+    stage === "homeClarify";
   const homeClarifyActive = stage === "homeClarify";
 
   // White flash that bridges the blue↔orange color swap so neither hard-cuts.
@@ -416,18 +524,439 @@ export function BuildWorkspace({
   }, [homeClarifyActive, homeFlowActive]);
   const activeStarter = HOME_STARTERS[homeStarter];
 
-  // ── HOME ───────────────────────────────────────────────────────────────
-  if (stage === 'home' || stage === 'homeClarify' || stage === 'homeThinking') {
+  // ── GALLERY · landing app listing ───────────────────────────────────────
+  // The default Build landing is the listing of every app in the workspace.
+  // "Build App" (header CTA + the dashed New-App card) opens the composer.
+  if (stage === "gallery") {
+    return (
+      <div className="flex-1 rounded-xl border border-[#E1E3E6] relative overflow-hidden overflow-y-auto">
+        <AppGallery onOpenApp={openApp} onNewApp={openComposer} />
+      </div>
+    );
+  }
+
+  // ── HOME · REASONING + CLARIFY CONVERSATION ─────────────────────────────
+  // Submitting a dispatch prompt drops into a Sense-style conversation:
+  //   1. homeReasoning — AI streams its reasoning + a live plan panel that
+  //      "fetches records" from Jobs / Technicians / Quotes before it can ask.
+  //   2. homeClarify  — Sense asks all 4 questions at once; user answers via
+  //      chips + free text, then hits Generate.
+  //   3. homeThinking — brief hand-off into the build.
+  if (homeFlowActive) {
+    const promptText = (prompt.trim() || activeStarter.template.prompt);
+    const answeredCount = CLARIFY_QUESTIONS.filter(
+      (q) => clarifyAnswers[q.id] && clarifyAnswers[q.id].trim(),
+    ).length;
     return (
       <div
-        className="flex-1 rounded-xl border border-[#E1E3E6] relative overflow-hidden overflow-y-auto snap-y snap-mandatory"
+        className="flex-1 rounded-xl border border-[#E1E3E6] relative overflow-hidden flex flex-col bg-white"
+      >
+        {/* conversation scroll area */}
+        <div className="flex-1 overflow-y-auto scrollbar-auto-hide">
+          <div className="w-full max-w-[720px] mx-auto px-8 py-10 flex flex-col gap-8">
+
+            {/* user message — right aligned bubble */}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="flex justify-end"
+            >
+              <div className="inline-block max-w-[80%] bg-[#F3F4F6] rounded-[16px] px-5 py-3">
+                <p className="text-[15px] text-[#1C1E21] font-normal whitespace-pre-wrap leading-[1.5]">
+                  {promptText}
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Sense response */}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.34, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col"
+            >
+              {/* logo + label */}
+              <div className="flex items-center gap-2 mb-3">
+                <svg width="20" height="20" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
+                  <rect y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
+                  <rect x="15.75" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
+                  <rect x="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
+                  <rect x="15.75" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
+                  <rect y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
+                  <rect x="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
+                  <rect x="31.5" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
+                  <rect x="31.5" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
+                </svg>
+                <span className="text-[14px] font-medium text-[#1C1E21]">Sense</span>
+              </div>
+
+              {/* ── Reasoning card — floating, elevated, warm (ref: Notion Create + Linear hues) ── */}
+              {(() => {
+                // per-module color theme — distinct hue per source (Linear-style)
+                const MODULE_THEME: Record<string, { icon: typeof Database; tint: string; ink: string; ring: string }> = {
+                  Schema:      { icon: Database,  tint: '#EDE9FE', ink: '#6D28D9', ring: 'rgba(109,40,217,0.18)' },
+                  Jobs:        { icon: Briefcase, tint: '#FFE8DC', ink: '#C2410C', ring: 'rgba(194,65,12,0.18)' },
+                  Technicians: { icon: Users,     tint: '#DBEAFE', ink: '#1D4ED8', ring: 'rgba(29,78,216,0.18)' },
+                  Quotes:      { icon: FileText,  tint: '#D1FAE5', ink: '#047857', ring: 'rgba(4,120,87,0.18)' },
+                };
+                const pct = Math.round((Math.min(planStep, CLARIFY_PLAN.length) / CLARIFY_PLAN.length) * 100);
+                return (
+              <div
+                className="relative rounded-[20px] bg-white overflow-hidden"
+                style={{
+                  boxShadow: '0 0 0 1px rgba(28,30,33,0.05), 0 1px 2px rgba(28,30,33,0.04), 0 24px 48px -28px rgba(28,30,33,0.28)',
+                }}
+              >
+                {/* warm ambient wash behind the header */}
+                <div
+                  className="absolute inset-x-0 top-0 h-24 pointer-events-none"
+                  style={{ background: homeReasoningActive
+                    ? 'linear-gradient(180deg, #FFF4EC 0%, rgba(255,244,236,0) 100%)'
+                    : 'linear-gradient(180deg, #EFF8EC 0%, rgba(239,248,236,0) 100%)' }}
+                />
+
+                {/* header — raised soft icon badge (ref: Staking Bot flame badge) */}
+                <div className="relative flex items-center gap-3 px-4 pt-4 pb-3">
+                  <span
+                    className="w-9 h-9 rounded-[12px] flex items-center justify-center flex-shrink-0 bg-white"
+                    style={{ boxShadow: '0 1px 1px rgba(28,30,33,0.04), 0 6px 14px -6px rgba(28,30,33,0.28), inset 0 0 0 1px rgba(28,30,33,0.04)' }}
+                  >
+                    {homeReasoningActive ? (
+                      <Loader2 className={`w-[18px] h-[18px] text-[#FD5000] ${reduceMotion ? '' : 'animate-spin'}`} />
+                    ) : (
+                      <span className="w-7 h-7 rounded-full bg-[#EAF3E4] flex items-center justify-center">
+                        <Check className="w-4 h-4 text-[#5B8C3E]" strokeWidth={3} />
+                      </span>
+                    )}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[14px] font-semibold tracking-[-0.02em] text-[#111315] leading-tight">
+                      {homeReasoningActive ? 'Gathering context' : 'Context gathered'}
+                    </p>
+                    <p className="text-[12px] text-[#9CA3AF] leading-tight mt-0.5">
+                      {homeReasoningActive
+                        ? 'Reading your live Zuper data before I design anything'
+                        : 'Grounded against 4 live sources — ready to build'}
+                    </p>
+                  </div>
+                  <span
+                    className="flex-shrink-0 inline-flex items-center justify-center min-w-[44px] h-7 px-2.5 rounded-full text-[11.5px] font-semibold tabular-nums"
+                    style={{ background: '#F4F4F2', color: '#6B7280' }}
+                  >
+                    {Math.min(planStep, CLARIFY_PLAN.length)}/{CLARIFY_PLAN.length}
+                  </span>
+                </div>
+
+                {/* thin progress bar */}
+                <div className="relative h-[3px] mx-4 mb-3 rounded-full overflow-hidden bg-[#F0F0EE]">
+                  <motion.div
+                    className="h-full rounded-full"
+                    initial={false}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ background: homeReasoningActive ? '#FD5000' : '#5B8C3E' }}
+                  />
+                </div>
+
+                {/* reasoning lines (stream in) */}
+                <div className="relative px-4 pb-1 flex flex-col gap-2">
+                  {CLARIFY_REASONING.map((line, i) => (
+                    <motion.p
+                      key={i}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: i < reasonLine ? 1 : 0, y: i < reasonLine ? 0 : 4 }}
+                      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                      className="text-[13px] leading-[1.55] text-[#6B7280]"
+                      style={{ display: i < reasonLine ? 'block' : 'none' }}
+                    >
+                      {line}
+                    </motion.p>
+                  ))}
+                </div>
+
+                {/* plan steps — each record fades in only once it starts resolving */}
+                <div className="relative px-2.5 pt-3 pb-3 flex flex-col gap-1.5">
+                  <AnimatePresence initial={false}>
+                    {CLARIFY_PLAN.map((step, i) => {
+                      const done = i < planStep;
+                      const running = planStarted && i === planStep && homeReasoningActive;
+                      // not yet reached → don't render at all (no disabled rows)
+                      if (!done && !running) return null;
+                      const t = MODULE_THEME[step.module];
+                      const Icon = t.icon;
+                      return (
+                        <motion.div
+                          key={step.label}
+                          initial={{ opacity: 0, y: 6, height: 0, marginTop: 0 }}
+                          animate={{ opacity: 1, y: 0, height: 'auto', marginTop: 0 }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                          className="flex items-center gap-3 px-2.5 py-2 rounded-[14px] overflow-hidden"
+                          style={{
+                            background: running ? '#FFFFFF' : '#FBFBFA',
+                            boxShadow: running
+                              ? `0 0 0 1px ${t.ring}, 0 8px 18px -10px rgba(28,30,33,0.30)`
+                              : '0 0 0 1px rgba(28,30,33,0.04)',
+                            transition: 'box-shadow 280ms ease, background 280ms ease',
+                          }}
+                        >
+                          {/* colored module tile */}
+                          <span
+                            className="w-9 h-9 rounded-[11px] flex items-center justify-center flex-shrink-0"
+                            style={{ background: t.tint }}
+                          >
+                            <Icon className="w-[17px] h-[17px]" style={{ color: t.ink }} />
+                          </span>
+
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[13px] font-semibold tracking-[-0.01em] text-[#1C1E21] leading-tight truncate">
+                              {step.label}
+                            </p>
+                            <p className="text-[11.5px] leading-tight mt-0.5 truncate" style={{ color: running ? t.ink : '#9CA3AF' }}>
+                              {running ? 'resolving…' : step.detail}
+                            </p>
+                          </div>
+
+                          {done ? (
+                            <motion.span
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                              className="inline-flex items-center gap-1 h-6 pl-1.5 pr-2.5 rounded-full text-[11px] font-semibold flex-shrink-0"
+                              style={{ background: t.tint, color: t.ink }}
+                            >
+                              <Check className="w-3 h-3" strokeWidth={3} /> {step.count}
+                            </motion.span>
+                          ) : (
+                            <Loader2 className={`w-4 h-4 flex-shrink-0 ${reduceMotion ? '' : 'animate-spin'}`} style={{ color: t.ink }} />
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                </div>
+              </div>
+                );
+              })()}
+
+              {/* ── Clarify questions — all asked at once ── */}
+              {(homeClarifyActive || (!homeReasoningActive && clarifyAnswer)) && (
+                <motion.div
+                  ref={clarifyQuestionsRef}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                  className="mt-5 scroll-mt-6"
+                >
+                  <p className="text-[15px] text-[#1C1E21] leading-relaxed mb-1">
+                    I've pulled the records. A few things I can't infer — answer these and I'll build it:
+                  </p>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-[11.5px] font-semibold tracking-[0.02em] uppercase text-[#A0522D]/70">
+                      {answeredCount} of {CLARIFY_QUESTIONS.length} answered
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    {CLARIFY_QUESTIONS.map((q, qi) => {
+                      const val = clarifyAnswers[q.id] || '';
+                      return (
+                        <div key={q.id} className="rounded-2xl border border-[#ECEEF1] bg-white p-4" style={{ boxShadow: '0 1px 2px rgba(28,30,33,0.04)' }}>
+                          <div className="flex items-start gap-2.5 mb-3">
+                            <span className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-[11px] font-bold" style={{ background: val ? '#EAF3E4' : '#F3F4F6', color: val ? '#5B8C3E' : '#9CA3AF' }}>
+                              {val ? <Check className="w-3 h-3" strokeWidth={3} /> : qi + 1}
+                            </span>
+                            <p className="text-[14px] font-medium text-[#1C1E21] leading-snug">
+                              {q.prompt}
+                              {q.optional && <span className="text-[#9CA3AF] font-normal"> · optional</span>}
+                            </p>
+                          </div>
+                          {q.kind === 'choice' ? (
+                            <div className="flex flex-wrap gap-2 pl-7">
+                              {q.options!.map((opt) => {
+                                const active = val === opt;
+                                return (
+                                  <motion.button
+                                    key={opt}
+                                    onClick={() => setClarify(q.id, active ? '' : opt)}
+                                    disabled={!homeClarifyActive}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[13px] font-medium transition-colors disabled:opacity-60"
+                                    style={{
+                                      background: active ? '#FFF1E8' : '#FFFFFF',
+                                      border: `1px solid ${active ? '#FD5000' : '#E1E3E6'}`,
+                                      color: active ? '#C0410C' : '#374151',
+                                      boxShadow: active ? 'none' : '0 1px 2px rgba(28,30,33,0.04)',
+                                    }}
+                                  >
+                                    {active && <Check className="w-3 h-3" strokeWidth={3} />}
+                                    {opt}
+                                  </motion.button>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <div className="pl-7">
+                              <input
+                                value={val}
+                                readOnly={!homeClarifyActive}
+                                onChange={(e) => setClarify(q.id, e.target.value)}
+                                placeholder={q.placeholder}
+                                className="w-full h-10 px-3.5 rounded-xl bg-[#FAFAFA] border border-[#ECEEF1] outline-none text-[13.5px] text-[#1C1E21] placeholder:text-[#B0B8C4] focus:border-[#FD5000]/40 focus:bg-white transition-colors"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* prompt box — pinned, PixelBlast tray + Generate action */}
+        <div className="px-8 pt-2 pb-5 flex-shrink-0 bg-white">
+          <div className="w-full max-w-[720px] mx-auto">
+            <motion.div
+              layoutId="build-prompt-card"
+              layout
+              transition={{ layout: { duration: 0.2, ease: [0.23, 1, 0.32, 1] } }}
+              className="rounded-[24px] bg-white overflow-hidden"
+              style={{ boxShadow: '0 0 0 1px rgba(180,151,207,0.18), 0 1px 2px rgba(28,30,33,0.04), 0 18px 54px -42px rgba(28,30,33,0.62)' }}
+            >
+              {/* PixelBlast status tray */}
+              <div
+                className="relative overflow-hidden w-full"
+                style={{
+                  height: 56,
+                  background: homeClarifyActive ? '#EEF4FA' : '#FCF4EC',
+                  transition: 'background-color 320ms cubic-bezier(0.23,1,0.32,1)',
+                }}
+              >
+                <div className="absolute inset-0">
+                  <PixelBlast
+                    variant="square"
+                    pixelSize={2}
+                    color={homeClarifyActive ? '#A9CCE8' : '#F2B485'}
+                    patternScale={2.5}
+                    patternDensity={0.8}
+                    enableRipples={false}
+                    liquid={false}
+                    speed={0.35}
+                    edgeFade={0.28}
+                    transparent
+                  />
+                </div>
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: '#FFFFFF',
+                    opacity: colorFlash ? 1 : 0,
+                    transition: colorFlash ? 'opacity 90ms ease-out' : 'opacity 300ms cubic-bezier(0.23,1,0.32,1)',
+                  }}
+                />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div
+                    className="inline-flex items-center gap-2 h-8 px-3.5 rounded-full"
+                    style={{
+                      background: '#FFFFFF',
+                      border: `1px solid ${homeClarifyActive ? 'rgba(67,133,190,0.24)' : 'rgba(236,139,73,0.24)'}`,
+                      boxShadow: `0 4px 16px -2px ${homeClarifyActive ? 'rgba(67,133,190,0.32)' : 'rgba(236,139,73,0.34)'}, 0 1px 3px rgba(28,30,33,0.08)`,
+                      transition: 'border-color 320ms ease, box-shadow 320ms ease',
+                    }}
+                  >
+                    <span
+                      className={(reduceMotion ? '' : 'animate-spin ') + 'w-3 h-3 rounded-full border-2'}
+                      style={{
+                        borderColor: homeClarifyActive ? '#CFE2F2' : '#F6E0CB',
+                        borderTopColor: homeClarifyActive ? '#4385BE' : '#EC8B49',
+                        transition: 'border-color 320ms ease',
+                        ...(reduceMotion ? {} : { animationDuration: '0.7s' }),
+                      }}
+                    />
+                    <span className="relative inline-flex text-[13px] font-semibold tracking-[-0.02em]" style={{ height: 17 }}>
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                          key={homeClarifyActive ? 'waiting' : 'thinking'}
+                          initial={{ opacity: 0, filter: 'blur(3px)' }}
+                          animate={{ opacity: 1, filter: 'blur(0px)' }}
+                          exit={{ opacity: 0, filter: 'blur(3px)' }}
+                          transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                          className="whitespace-nowrap"
+                          style={{ color: homeClarifyActive ? '#205EA6' : '#A85A2A' }}
+                        >
+                          {homeClarifyActive ? 'Waiting for input' : homeReasoningActive ? 'Thinking...' : 'Building...'}
+                        </motion.span>
+                      </AnimatePresence>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* action row — Generate once all questions answered */}
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-[13px] text-[#9CA3AF] flex-1">
+                  {homeClarifyActive
+                    ? clarifyComplete
+                      ? 'All set — generate your dispatch board.'
+                      : `Answer the ${CLARIFY_QUESTIONS.length - answeredCount} remaining ${CLARIFY_QUESTIONS.length - answeredCount === 1 ? 'question' : 'questions'} above.`
+                    : 'Pick an answer above or type something else to continue'}
+                </span>
+                <BorderGlow
+                  animated
+                  borderRadius={9999}
+                  backgroundColor="#111315"
+                  glowColor="0 0 100"
+                  colors={['#ffffff', '#cccccc', '#ffffff']}
+                  glowIntensity={1.2}
+                  glowRadius={24}
+                  coneSpread={18}
+                  edgeSensitivity={20}
+                >
+                  <motion.button
+                    onClick={submitClarify}
+                    disabled={!homeClarifyActive || !clarifyComplete}
+                    whileTap={{ scale: 0.97 }}
+                    className="inline-flex items-center gap-2 h-10 px-5 rounded-full text-white disabled:opacity-25 disabled:cursor-not-allowed text-[13.5px] font-semibold tracking-[-0.01em]"
+                    style={{ transition: 'opacity 200ms' }}
+                  >
+                    <Sparkles className={`w-3.5 h-3.5 flex-shrink-0 ${!homeClarifyActive && !reduceMotion ? 'animate-pulse' : ''}`} />
+                    <span>{homeClarifyActive ? 'Generate' : 'Generating...'}</span>
+                  </motion.button>
+                </BorderGlow>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── HOME · BUILD COMPOSER ───────────────────────────────────────────────
+  // Reached from the gallery's "Build App" CTA. Hero + prompt + starter tiles.
+  if (stage === 'home') {
+    return (
+      <div
+        className="flex-1 rounded-xl border border-[#E1E3E6] relative overflow-hidden overflow-y-auto"
         style={{
           backgroundColor: '#F4F4F2',
           backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(28,30,33,0.055) 1px, transparent 0)',
           backgroundSize: '22px 22px',
         }}
       >
-        <div className="flex flex-col items-center px-8 pt-[8vh] pb-4 min-h-full snap-start snap-always">
+        {/* back to listing */}
+        <button
+          onClick={resetBuild}
+          className="absolute top-4 left-4 z-10 inline-flex items-center gap-1.5 h-9 pl-2.5 pr-3.5 rounded-full bg-white border border-[#E4E7EC] text-[13px] font-medium text-[#374151] hover:border-[#D5D9DE] transition-colors"
+          style={{ boxShadow: '0 1px 3px rgba(28,30,33,0.06)' }}
+        >
+          <ArrowLeft className="w-4 h-4" /> All apps
+        </button>
+        <div className="flex flex-col items-center px-8 pt-[8vh] pb-12 min-h-full">
           <div className="relative w-full max-w-[780px]">
 
             {/* Hero row */}
@@ -644,8 +1173,8 @@ export function BuildWorkspace({
                           setArchetype(a);
                           setPrompt(item.template.prompt);
                           setHomeStarter(i);
-                          setRefineLog([]); setClarifyAnswer(null);
-                          if (a === 'dispatch') setStage('homeClarify');
+                          setRefineLog([]); setClarifyAnswer(null); setClarifyAnswers({});
+                          if (a === 'dispatch') setStage('homeReasoning');
                           else if (a === 'cockpit') setStage('homeThinking');
                           else setStage('generating');
                         }}
@@ -675,33 +1204,8 @@ export function BuildWorkspace({
               )}
             </AnimatePresence>
 
-            {/* Marketplace scroll hint */}
-            {!(homeFlowActive || homeClarifyActive) && (
-              <div className="flex justify-center mt-10 mb-1">
-                <div
-                  className="inline-flex items-center gap-1.5 h-7 px-3.5 rounded-full text-[11.5px] font-medium tracking-[-0.01em] select-none animate-bounce"
-                  style={{
-                    background: 'rgba(28,30,33,0.07)',
-                    color: '#6B7280',
-                    border: '1px solid rgba(28,30,33,0.09)',
-                    animationDuration: '2s',
-                  }}
-                >
-                  <span>↓</span>
-                  App Gallery
-                </div>
-              </div>
-            )}
-
           </div>
         </div>
-
-        {/* ── App Gallery snap section ── */}
-        {!(homeFlowActive || homeClarifyActive) && (
-          <div className="snap-start snap-always min-h-full">
-            <AppGallery onOpenApp={openApp} onNewApp={resetBuild} />
-          </div>
-        )}
       </div>
     );
   }
