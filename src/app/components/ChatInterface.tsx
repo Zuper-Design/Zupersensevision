@@ -874,7 +874,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                           <button
                             key={p.label}
                             onClick={() => handlePromptClick(p.label)}
-                            className="group flex items-start justify-between gap-3 p-4 bg-white border border-[#ECEEF1] rounded-xl text-left shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-[#E0E2E6] hover:shadow-[0_8px_20px_-8px_rgba(16,24,40,0.14)] active:scale-[0.985] active:translate-y-0"
+                            className="group flex items-start justify-between gap-3 p-4 bg-white border border-[#E6E8EC] rounded-xl text-left shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-[#E6E8EC] hover:shadow-[0_8px_20px_-8px_rgba(16,24,40,0.14)] active:scale-[0.985] active:translate-y-0"
                           >
                             <div className="flex-1 min-w-0">
                               <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{p.label}</h3>

@@ -297,7 +297,7 @@ function AppContent() {
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-[#4B5563]">Sense</span>
                 <button
                   onClick={() => setSidebarOpen(false)}
-                  className="p-1.5 rounded-md hover:bg-[#EEEEEE] transition-colors"
+                  className="p-1.5 rounded-md hover:bg-[#F3F4F6] transition-colors"
                 >
                   <PanelLeftClose className="w-[18px] h-[18px] text-[#9CA3AF]" />
                 </button>
@@ -306,7 +306,7 @@ function AppContent() {
               {/* Actions */}
               <div className="px-2 pb-0.5 flex flex-col">
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
-                  <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
+                  <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors">
                     <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
                   </button>
@@ -327,7 +327,7 @@ function AppContent() {
                     </button>
                   </div>
                 ) : (
-                  <button onClick={() => { setSidebarSearchOpen(true); setTimeout(() => sidebarSearchRef.current?.focus(), 50); }} className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
+                  <button onClick={() => { setSidebarSearchOpen(true); setTimeout(() => sidebarSearchRef.current?.focus(), 50); }} className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors">
                     <span className="w-[18px] flex items-center justify-center shrink-0"><Search className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">Search</span>
                   </button>
@@ -335,14 +335,14 @@ function AppContent() {
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button
                     onClick={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
-                    className="group w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors"
+                    className="group w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors"
                   >
                     <span className="w-[18px] flex items-center justify-center shrink-0"><AgentStudioIcon className="w-4 h-4 [filter:brightness(0)_invert(0.32)] transition-[filter] duration-200 group-hover:[filter:none]" variant={currentUser === 'AU' ? 'orange' : 'purple'} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">Agent Studio</span>
                   </button>
                 )}
                 {currentUser !== 'MJ' && currentUser !== 'AU' && (
-                  <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
+                  <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors">
                     <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
                   </button>
@@ -363,12 +363,12 @@ function AppContent() {
                   .map((thread) => {
                     const menuOpen = threadMenuId === thread.id;
                     const editing = renameThreadId === thread.id;
-                    const rowBg = thread.active ? '#E8E8E8' : '#EEEEEE';
+                    const rowBg = thread.active ? '#E8E8E8' : '#F3F4F6';
                     return (
                       <div
                         key={thread.id}
                         className={`relative group w-full rounded-md transition-colors ${(currentUser === 'MJ' || currentUser === 'AU') ? 'mb-1' : 'mb-0.5'} ${
-                          thread.active && !editing ? 'bg-[#E8E8E8]' : !editing ? 'hover:bg-[#EEEEEE]' : ''
+                          thread.active && !editing ? 'bg-[#E8E8E8]' : !editing ? 'hover:bg-[#F3F4F6]' : ''
                         }`}
                         style={{ zIndex: menuOpen || editing ? 60 : 'auto' }}
                       >

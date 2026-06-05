@@ -1248,7 +1248,7 @@ function AddedItem({
       tabIndex={clickable ? 0 : undefined}
       onClick={clickable ? onConfigure : undefined}
       onKeyDown={clickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onConfigure?.(); } } : undefined}
-      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-[#EEF0F3] bg-white text-left"
+      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border border-[#E6E8EC] bg-white text-left"
       style={{
         animation: 'addedItemIn 220ms cubic-bezier(0.23,1,0.32,1) both',
         transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), border-color 140ms cubic-bezier(0.23,1,0.32,1)',
@@ -2493,7 +2493,7 @@ function MJCreateAgentForm({
                             <p className="text-[14px] font-semibold text-[#1C1E21] mb-1">Endpoint</p>
                             <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">POST a JSON payload to this URL. Include the signing secret in <span className="font-mono text-[11.5px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#1C1E21]">X-Zuper-Signature</span>.</p>
                             <div className="flex items-center gap-2">
-                              <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
+                              <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#E6E8EC] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
                                 https://hooks.zuper.co/v1/agent/9f3a-mia
                               </div>
                               <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>
@@ -2504,7 +2504,7 @@ function MJCreateAgentForm({
                           <div className="mb-3">
                             <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Signing secret</p>
                             <div className="flex items-center gap-2">
-                              <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
+                              <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#E6E8EC] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
                                 whsec_••••••••••••••3f7a
                               </div>
                               <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>
@@ -3053,7 +3053,7 @@ function MJCreateAgentForm({
                 <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Where to listen</p>
                 <p className="text-[12.5px] text-[#6B7280] leading-snug">By default the agent responds to <span className="font-mono text-[11.5px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#1C1E21]">@agent</span> across these surfaces.</p>
               </div>
-              <div className="rounded-xl border border-[#EEF0F3] bg-white divide-y divide-[#F0F1F3] px-4">
+              <div className="rounded-xl border border-[#E6E8EC] bg-white divide-y divide-[#F0F1F3] px-4">
                 {[
                   { title: 'Chat threads', sub: 'In any chat where the agent is added', on: mentionSurfaces.chat, toggle: () => setMentionSurfaces((p) => ({ ...p, chat: !p.chat })) },
                   { title: 'Comments on jobs & tasks', sub: 'Mentions inside record comments', on: mentionSurfaces.comments, toggle: () => setMentionSurfaces((p) => ({ ...p, comments: !p.comments })) },
@@ -3079,7 +3079,7 @@ function MJCreateAgentForm({
                 <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Endpoint</p>
                 <p className="text-[12.5px] text-[#6B7280] leading-snug mb-2.5">POST a JSON payload to this URL. Include the signing secret in <span className="font-mono text-[11.5px] bg-[#F3F4F6] px-1.5 py-0.5 rounded text-[#1C1E21]">X-Zuper-Signature</span>.</p>
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
+                  <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#E6E8EC] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">
                     https://hooks.zuper.co/v1/agent/9f3a-mia
                   </div>
                   <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>Copy</button>
@@ -3088,7 +3088,7 @@ function MJCreateAgentForm({
               <div className="mb-3">
                 <p className="text-[13px] font-semibold text-[#1C1E21] mb-2">Signing secret</p>
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">whsec_••••••••••••••3f7a</div>
+                  <div className="flex-1 h-9 rounded-lg bg-[#F8F9FB] border border-[#E6E8EC] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">whsec_••••••••••••••3f7a</div>
                   <button className="h-9 px-3 rounded-lg border border-[#E6E8EC] bg-white text-[12.5px] font-semibold text-[#1C1E21] active:scale-[0.97]" style={{ transition: 'transform 140ms cubic-bezier(0.23,1,0.32,1)' }}>Rotate</button>
                 </div>
               </div>
@@ -3221,7 +3221,7 @@ function MJCreateAgentForm({
               {k?.url && (
                 <div className="mb-3">
                   <p className="text-[13.5px] font-semibold text-[#1C1E21] mb-1">Source URL</p>
-                  <div className="h-9 rounded-lg bg-[#F8F9FB] border border-[#EEF0F3] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">{k.url}</div>
+                  <div className="h-9 rounded-lg bg-[#F8F9FB] border border-[#E6E8EC] flex items-center px-3 font-mono text-[12px] text-[#1C1E21] truncate">{k.url}</div>
                 </div>
               )}
               {k?.badges && k.badges.length > 0 && (
@@ -7055,7 +7055,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
 // Recommended-for-you agent card (used in the marketplace recommendations grid)
 function RecAgentCard({ avatar, match, title, desc, rating, reviews }: { avatar: string; match: string; title: string; desc: string; rating: string; reviews: string }) {
   return (
-    <div className="group relative flex flex-col h-full rounded-2xl bg-white border border-[#ECEEF1] p-6 transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-[#E0E2E6] hover:shadow-[0_10px_24px_-12px_rgba(16,24,40,0.16)]">
+    <div className="group relative flex flex-col h-full rounded-2xl bg-white border border-[#E6E8EC] p-6 transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-[#E6E8EC] hover:shadow-[0_10px_24px_-12px_rgba(16,24,40,0.16)]">
       <div className="flex items-start justify-between">
         <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0" style={{ background: 'radial-gradient(circle at 50% 42%, #FCEAD9, #F7DAC6)' }}>
           <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-[14%] h-[175%] w-auto max-w-none object-contain" draggable={false} />
@@ -7086,7 +7086,7 @@ function RecAgentCard({ avatar, match, title, desc, rating, reviews }: { avatar:
 // Agent-bundle mini card (used below the featured bundle)
 function BundleMiniCard({ avatars, eyebrow, eyebrowColor, bg, save, title, desc, price, was }: { avatars: string[]; eyebrow: string; eyebrowColor: string; bg: string; save: string; title: string; desc: string; price: string; was: string }) {
   return (
-    <div className="group flex flex-col rounded-2xl overflow-hidden border border-[#ECEEF1] bg-white transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-14px_rgba(16,24,40,0.18)]">
+    <div className="group flex flex-col rounded-2xl overflow-hidden border border-[#E6E8EC] bg-white transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-14px_rgba(16,24,40,0.18)]">
       <div className="relative h-[140px] flex items-end justify-center overflow-hidden" style={{ background: bg }}>
         <span className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/85 backdrop-blur text-[10px] font-bold tracking-wide uppercase" style={{ color: eyebrowColor }}>
           <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />{eyebrow}
