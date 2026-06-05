@@ -307,7 +307,7 @@ function AppContent() {
               <div className="px-2 pb-0.5 flex flex-col">
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                    <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
                   </button>
                 )}
@@ -328,22 +328,22 @@ function AppContent() {
                   </div>
                 ) : (
                   <button onClick={() => { setSidebarSearchOpen(true); setTimeout(() => sidebarSearchRef.current?.focus(), 50); }} className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                    <Search className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><Search className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">Search</span>
                   </button>
                 )}
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button
                     onClick={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors"
+                    className="group w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors"
                   >
-                    <AgentStudioIcon className="w-[15px] h-[15px]" variant={currentUser === 'AU' ? 'orange' : 'purple'} />
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><AgentStudioIcon className="w-4 h-4 [filter:brightness(0)_invert(0.32)] transition-[filter] duration-200 group-hover:[filter:none]" variant={currentUser === 'AU' ? 'orange' : 'purple'} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">Agent Studio</span>
                   </button>
                 )}
                 {currentUser !== 'MJ' && currentUser !== 'AU' && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                    <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
                   </button>
                 )}

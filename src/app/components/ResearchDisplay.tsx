@@ -185,14 +185,14 @@ export const ResearchDisplay: React.FC<ResearchDisplayProps> = ({ topics, isActi
           {/* Header with collapse icon - only shown when expanded */}
           <button
             onClick={toggleCollapse}
-            className="flex items-center gap-1.5 mb-4 group hover:opacity-80 transition-opacity"
+            className="flex items-center gap-1.5 mb-3 group hover:opacity-80 transition-opacity"
           >
             <ChevronDown className="w-4 h-4 text-[#9CA3AF]" />
-            
+
             {/* Thinking Logo with Animation */}
             {isActive && !allStepsComplete && (
-              <div className="w-8 h-8 flex items-center justify-center">
-                <SenseLogo size={32} animated={true} />
+              <div className="w-5 h-5 flex items-center justify-center">
+                <SenseLogo size={20} animated={true} />
               </div>
             )}
             
@@ -201,7 +201,7 @@ export const ResearchDisplay: React.FC<ResearchDisplayProps> = ({ topics, isActi
               null
             )}
             
-            <h3 className="text-[16px] font-normal text-[#9CA3AF]">
+            <h3 className="text-[14px] font-normal text-[#9CA3AF]">
               {allStepsComplete ? `Thought for ${thinkingDuration} seconds` : 'Thinking'}
             </h3>
           </button>
@@ -210,11 +210,11 @@ export const ResearchDisplay: React.FC<ResearchDisplayProps> = ({ topics, isActi
           <div className="relative">
             {/* Vertical line */}
             <div className="absolute left-[7px] top-2 bottom-2 w-[1px] border-l border-dashed border-[#D1D5DB]"></div>
-            
-            <div className="space-y-4">
+
+            <div className="space-y-2.5">
               {allSteps.map((step, index) => {
                 if (!visibleSteps.includes(step.id)) return null;
-                
+
                 const isCompleted = completedSteps.has(step.id);
 
                 return (
@@ -248,21 +248,12 @@ export const ResearchDisplay: React.FC<ResearchDisplayProps> = ({ topics, isActi
                     {/* Step Content */}
                     <div className="space-y-2">
                       <p className="text-[14px] text-[#6B7280] leading-relaxed">
-                        <TypewriterText 
-                          text={step.text} 
+                        <TypewriterText
+                          text={step.text}
                           onComplete={() => handleStepComplete(step.id)}
                         />
                       </p>
-                      
-                      {/* Tags - show after text completes */}
-                      {step.tags && step.tags.length > 0 && isCompleted && (
-                        <div className="flex flex-wrap gap-2 animate-[fadeIn_0.2s_ease-out]">
-                          {step.tags.map((tag, idx) => (
-                            <TagBadge key={idx} tag={tag} />
-                          ))}
-                        </div>
-                      )}
-                      
+
                       {/* Timestamp */}
                       {step.timestamp && isCompleted && (
                         <p className="text-[11px] text-[#9CA3AF] mt-1 animate-[fadeIn_0.2s_ease-out]">

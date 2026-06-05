@@ -536,6 +536,13 @@ function MyAgentsView() {
   );
 }
 
+const AGENT_BOOT_STEPS: { icon: any; label: string }[] = [
+  { icon: Database, label: 'Loading knowledge base' },
+  { icon: Zap, label: 'Provisioning skills' },
+  { icon: Wrench, label: 'Connecting tools' },
+  { icon: Clock, label: 'Calibrating triggers' },
+];
+
 function AgentReadyModal({
   open,
   name,
@@ -569,6 +576,13 @@ function AgentReadyModal({
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
+
+  const [bootStep, setBootStep] = useState(0);
+  useEffect(() => {
+    if (!open || !loading) { setBootStep(0); return; }
+    const id = setInterval(() => setBootStep((s) => (s + 1) % AGENT_BOOT_STEPS.length), 1300);
+    return () => clearInterval(id);
+  }, [open, loading]);
 
   if (!open) return null;
 
@@ -624,19 +638,37 @@ function AgentReadyModal({
             />
           ))}
 
-          {/* Breathing ring behind avatar */}
+          {/* Soft breathing glow behind avatar */}
           <span
+            aria-hidden
             className="absolute pointer-events-none rounded-full"
             style={{
               top: '50%',
               left: '50%',
-              width: 240,
-              height: 240,
+              width: 300,
+              height: 300,
               transform: 'translate(-50%, -50%)',
-              border: `1px solid ${accent}66`,
-              animation: 'agentReadyRing 2800ms cubic-bezier(0.23,1,0.32,1) infinite',
+              background: `radial-gradient(circle, ${accent}24 0%, ${accent}00 62%)`,
+              animation: 'agentReadyGlow 3200ms cubic-bezier(0.45,0,0.55,1) infinite',
             }}
           />
+          {/* Radar ripple rings — staggered, feels like the agent is coming online */}
+          {[0, 1, 2].map((i) => (
+            <span
+              key={`ring-${i}`}
+              aria-hidden
+              className="absolute pointer-events-none rounded-full"
+              style={{
+                top: '50%',
+                left: '50%',
+                width: 168,
+                height: 168,
+                transform: 'translate(-50%, -50%) scale(0.55)',
+                border: `1px solid ${accent}55`,
+                animation: `agentRadarPulse 3000ms cubic-bezier(0.23,1,0.32,1) ${i * 1000}ms infinite`,
+              }}
+            />
+          ))}
 
           {/* Avatar */}
           <img
@@ -677,21 +709,32 @@ function AgentReadyModal({
           {loading ? (
             <>
               <h2
-                className="text-[20px] font-semibold text-[#1C1E21] tracking-tight leading-[1.25] mb-4"
+                className="text-[20px] font-semibold text-[#1C1E21] tracking-tight leading-[1.25] mb-5"
                 style={{ animation: 'agentReadyText 360ms cubic-bezier(0.23,1,0.32,1) 380ms both' }}
               >
                 Setting up <span style={{ color: accent }}>{name || 'your agent'}</span>
               </h2>
-              <div
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#F8F9FB] border border-[#F0F1F3]"
-                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 480ms both' }}
-              >
-                <span className="inline-flex gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: accent }} />
-                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: accent, animationDelay: '120ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full animate-bounce" style={{ background: accent, animationDelay: '240ms' }} />
-                </span>
-                <span className="text-[12px] font-medium text-[#6B7280]">Hold tight</span>
+              <div style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 480ms both' }}>
+                {/* Indeterminate boot progress */}
+                <div className="relative h-1.5 w-full max-w-[280px] mx-auto rounded-full overflow-hidden" style={{ background: `${accent}1F` }}>
+                  <span
+                    className="absolute inset-y-0 left-0 w-2/5 rounded-full"
+                    style={{ background: accent, animation: 'agentBootBar 1600ms cubic-bezier(0.45,0,0.55,1) infinite' }}
+                  />
+                </div>
+                {/* Current provisioning step */}
+                <div className="mt-3.5 flex items-center justify-center gap-2 h-5">
+                  {(() => {
+                    const step = AGENT_BOOT_STEPS[bootStep];
+                    const Icon = step.icon;
+                    return (
+                      <span key={bootStep} className="inline-flex items-center gap-1.5" style={{ animation: 'agentBootStep 420ms cubic-bezier(0.23,1,0.32,1) both' }}>
+                        <Icon className="w-[13px] h-[13px]" style={{ color: accent }} strokeWidth={2.4} />
+                        <span className="text-[12.5px] font-medium text-[#6B7280] tabular-nums">{step.label}…</span>
+                      </span>
+                    );
+                  })()}
+                </div>
               </div>
             </>
           ) : (
@@ -715,24 +758,14 @@ function AgentReadyModal({
                 Deployed and standing by. {name?.split(' ')[0] || 'They'}'ll start handling work the moment you say go.
               </p>
 
-              <div
-                className="flex items-stretch gap-2.5"
-                style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 600ms both' }}
-              >
-                <button
-                  onClick={onMarketplace}
-                  style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl bg-white border border-[#E6E8EC] text-[#1C1E21] text-[13px] font-semibold hover:border-[#1C1E21]/30 active:scale-[0.98]"
-                >
-                  {secondaryLabel}
-                </button>
+              <div style={{ animation: 'agentReadyText 400ms cubic-bezier(0.23,1,0.32,1) 600ms both' }}>
                 <button
                   onClick={onChat}
                   style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                  className="flex-1 inline-flex items-center justify-center gap-1.5 h-11 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold active:scale-[0.98] hover:shadow-[0_8px_22px_-8px_rgba(0,0,0,0.30)]"
+                  className="w-full inline-flex items-center justify-center gap-1.5 h-11 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[13px] font-semibold active:scale-[0.98] hover:shadow-[0_8px_22px_-8px_rgba(0,0,0,0.30)]"
                 >
-                  <MessageSquare className="w-[14px] h-[14px]" />
-                  {primaryLabel} {name?.split(' ')[0] || 'them'}
+                  Go to my agents
+                  <ArrowRight className="w-[14px] h-[14px]" strokeWidth={2.4} />
                 </button>
               </div>
             </>
@@ -760,9 +793,14 @@ function AgentReadyModal({
             from { opacity: 0; transform: translateY(6px) }
             to { opacity: 1; transform: translateY(0) }
           }
-          @keyframes agentReadyRing {
-            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.92) }
-            50% { opacity: 0.15; transform: translate(-50%, -50%) scale(1.08) }
+          @keyframes agentReadyGlow {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9) }
+            50% { opacity: 0.95; transform: translate(-50%, -50%) scale(1.06) }
+          }
+          @keyframes agentRadarPulse {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.55) }
+            18% { opacity: 0.55 }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.72) }
           }
           @keyframes sparkleOrbit0 {
             0% { opacity: 0; transform: translate(-50%, -50%) rotate(0deg) translateX(90px) }
@@ -783,6 +821,15 @@ function AgentReadyModal({
             0% { opacity: 0; transform: translate(-50%, -50%) rotate(270deg) translateX(90px) }
             30% { opacity: 1 }
             100% { opacity: 0; transform: translate(-50%, -50%) rotate(450deg) translateX(110px) }
+          }
+          @keyframes agentBootBar {
+            0% { transform: translateX(-105%) scaleX(0.9) }
+            50% { transform: translateX(85%) scaleX(1.05) }
+            100% { transform: translateX(270%) scaleX(0.9) }
+          }
+          @keyframes agentBootStep {
+            0% { opacity: 0; transform: translateY(4px); filter: blur(2px) }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0) }
           }
         `}</style>
       </div>
@@ -1542,6 +1589,19 @@ function MJCreateAgentForm({
   const [deployPhase, setDeployPhase] = useState<'idle' | 'glow' | 'success'>('idle');
   const isEdit = !!seedAgent;
 
+  // Required-field validation — highlight empties + toast on save attempt
+  const [triedSave, setTriedSave] = useState(false);
+  const [saveToast, setSaveToast] = useState<string | null>(null);
+  const saveToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showSaveToast = (msg: string) => {
+    setSaveToast(msg);
+    if (saveToastTimer.current) clearTimeout(saveToastTimer.current);
+    saveToastTimer.current = setTimeout(() => setSaveToast(null), 2800);
+  };
+  const missCities = isWeatherForecast && forecastCities.length === 0;
+  const missAudience = isWeatherForecast && forecastAudience.trim().length === 0;
+  const missGooglePlace = isGoogleReviewDigest && googlePlace.trim().length === 0;
+
   // Capture the initial values once so we can tell when the user has
   // actually changed something — disables Save changes until then.
   const initialRef = useRef({
@@ -1566,10 +1626,8 @@ function MJCreateAgentForm({
     !sameMap(tools, initialRef.current.tools) ||
     !sameMap(kb, initialRef.current.kb) ||
     !sameMap(triggers, initialRef.current.triggers);
-  const missingHint = !canDeploy
-    ? (name.trim().length <= 1
-        ? 'Give your agent a name to continue'
-        : 'Add at least one skill or tool')
+  const missingHint = !canDeploy && name.trim().length <= 1
+    ? 'Give your agent a name to continue'
     : null;
 
   const buildRecord = (): typeof myAgents[number] => ({
@@ -1582,7 +1640,17 @@ function MJCreateAgentForm({
   });
 
   const deploy = () => {
-    if (!canDeploy || deployPhase !== 'idle') return;
+    if (deployPhase !== 'idle') return;
+    if (!templateMandatoryOk) {
+      setTriedSave(true);
+      showSaveToast('Please fill in all required fields before saving.');
+      return;
+    }
+    if (!canDeploy) {
+      setTriedSave(true);
+      showSaveToast(name.trim().length < 2 ? 'Give your agent a name to continue.' : 'Add at least one skill or tool to continue.');
+      return;
+    }
     if (isEdit) {
       onDeploy(buildRecord(), false);
       return;
@@ -1702,6 +1770,8 @@ function MJCreateAgentForm({
         onClose={() => setDeployPhase('idle')}
       />
 
+      <Toast message={saveToast} />
+
       {/* Header bar — Create agent + Deploy */}
       <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
         <div className="flex items-center gap-2">
@@ -1733,8 +1803,8 @@ function MJCreateAgentForm({
               </button>
               <button
                 onClick={deploy}
-                disabled={!isDirty || deployPhase !== 'idle'}
-                className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${isDirty && deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+                disabled={deployPhase !== 'idle'}
+                className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${isDirty && deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF]'}`}
               >
                 {deployPhase === 'idle' ? (
                   <>
@@ -1761,8 +1831,8 @@ function MJCreateAgentForm({
               </button>
               <button
                 onClick={deploy}
-                disabled={!canDeploy || deployPhase !== 'idle' || (isEdit && !isDirty)}
-                className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${canDeploy && deployPhase === 'idle' && (!isEdit || isDirty) ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF] cursor-not-allowed'}`}
+                disabled={deployPhase !== 'idle'}
+                className={`inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg text-white text-[12px] font-semibold transition-all ${deployPhase === 'idle' ? 'bg-[#1C1E21] hover:bg-black hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]' : 'bg-[#9CA3AF]'}`}
               >
                 {deployPhase === 'idle' ? (
                   <>
@@ -2190,9 +2260,12 @@ function MJCreateAgentForm({
                     value={googlePlace}
                     onChange={(e) => setGooglePlace(e.target.value)}
                     placeholder="Search for a place…"
-                    className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                    className={`w-full px-3 h-10 rounded-lg text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none border ${missGooglePlace && triedSave ? 'border-[#FD5000] bg-[#FFF7F4]' : 'bg-white border-[#E6E8EC] focus:border-[#1C1E21]'}`}
                     style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
                   />
+                  {missGooglePlace && triedSave && (
+                    <p className="mt-1.5 text-[12px] text-[#FD5000]">Select your business on Google Maps.</p>
+                  )}
                 </div>
               </>
               )}
@@ -2205,7 +2278,7 @@ function MJCreateAgentForm({
                 </label>
                 <div className="relative">
                   <div
-                    className="w-full px-2 py-1.5 rounded-lg bg-white border border-[#E6E8EC] focus-within:border-[#1C1E21] flex flex-wrap items-center gap-1.5 min-h-[40px]"
+                    className={`w-full px-2 py-1.5 rounded-lg bg-white border flex flex-wrap items-center gap-1.5 min-h-[40px] ${missCities && triedSave ? 'border-[#FD5000] bg-[#FFF7F4]' : 'border-[#E6E8EC] focus-within:border-[#1C1E21]'}`}
                     style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
                     onClick={() => cityInputRef.current?.focus()}
                   >
@@ -2268,6 +2341,9 @@ function MJCreateAgentForm({
                     </div>
                   )}
                 </div>
+                {missCities && triedSave && (
+                  <p className="mt-1.5 text-[12px] text-[#FD5000]">Add at least one city to forecast.</p>
+                )}
               </div>
 
               {/* Audience + Units — same row */}
@@ -2280,9 +2356,12 @@ function MJCreateAgentForm({
                     value={forecastAudience}
                     onChange={(e) => setForecastAudience(e.target.value)}
                     placeholder="roofing crews, HVAC techs, etc."
-                    className="w-full px-3 h-10 rounded-lg bg-white border border-[#E6E8EC] text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none focus:border-[#1C1E21]"
+                    className={`w-full px-3 h-10 rounded-lg text-[14px] text-[#1C1E21] placeholder:text-[#C0C4CC] focus:outline-none border ${missAudience && triedSave ? 'border-[#FD5000] bg-[#FFF7F4]' : 'bg-white border-[#E6E8EC] focus:border-[#1C1E21]'}`}
                     style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1)' }}
                   />
+                  {missAudience && triedSave && (
+                    <p className="mt-1.5 text-[12px] text-[#FD5000]">Tell us who this forecast is for.</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-[12.5px] font-medium text-[#4B5563] mb-1.5">
@@ -4856,7 +4935,7 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
 
       {(showChooser || (isEmpty && !isMJ)) ? (
         isMJ ? (
-          <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-24 pb-16 overflow-hidden min-h-[calc(100vh-80px)]">
+          <div className="relative -mx-8 -mt-8 -mb-12 px-8 pt-40 pb-16 overflow-hidden min-h-[calc(100vh-80px)]">
             {/* Back to My agents — only when arriving from the populated grid */}
             {!isEmpty && (
               <button
@@ -4988,8 +5067,8 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                 </div>
 
                 <div className="relative">
-                  <h3 className="text-[18px] font-semibold text-[#1C1E21] tracking-tight mb-1.5">Create your own</h3>
-                  <p className="text-[12.5px] text-[#6B7280] leading-snug">Start from a blank canvas. Pick the avatar, triggers, skills, and knowledge.</p>
+                  <h3 className="text-[20px] font-semibold text-[#1C1E21] tracking-tight leading-[1.15] mb-1.5">Create your own</h3>
+                  <p className="text-[13px] font-normal text-[#6B7280] leading-snug max-w-[300px]">Start from a blank canvas. Pick the avatar, triggers, skills, and knowledge.</p>
                 </div>
               </button>
               )}
@@ -5045,11 +5124,11 @@ function AUMyAgentsView({ onEnterMarketplace, onOpenAgent, customAgents = [], on
                   </div>
                 ) : (
                   <div className="relative px-6 pb-6 z-10">
-                    <h3 className="text-[20px] font-semibold tracking-tight leading-[1.15] mb-1">
+                    <h3 className="text-[20px] font-semibold tracking-tight leading-[1.15] mb-1.5">
                       <span className="text-[#1C1E21]">Hire pre-built</span>{' '}
                       <span style={{ color: '#6D28D9' }}>agents.</span>
                     </h3>
-                    <p className="text-[12.5px] text-[#6B7280] leading-snug max-w-[280px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
+                    <p className="text-[13px] font-normal text-[#6B7280] leading-snug max-w-[300px]">Autonomous teammates that run inside Zuper, ready in minutes.</p>
                   </div>
                 )}
               </button>
@@ -6431,8 +6510,10 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden">
-      {/* Sticky top bar */}
-      <div className="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-[#E6E8EC] flex-shrink-0">
+      {/* Scrollable content */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+      {/* Top bar */}
+      <div className="relative z-30 bg-white/85 backdrop-blur-md border-b border-[#E6E8EC]">
         <div className="max-w-[1280px] mx-auto px-8 py-3 flex items-center justify-between gap-4">
           <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#1C1E21] hover:text-black transition">
             <ChevronLeft className="w-4 h-4" />
@@ -6531,7 +6612,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
       </div>
 
       {/* Browse Catalog section */}
-      <div className="max-w-[1280px] mx-auto px-10 pt-6 pb-4 w-full flex-1 min-h-0 flex flex-col">
+      <div className="max-w-[1280px] mx-auto px-10 pt-6 pb-4 w-full flex flex-col">
         <div className="flex items-start justify-between gap-4 mb-5 flex-wrap">
           <div>
             <div className="flex items-center gap-2.5">
@@ -6643,7 +6724,7 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
               </button>
 
               <div
-                className="relative overflow-hidden pt-4 pb-4 select-none cursor-grab active:cursor-grabbing"
+                className="relative overflow-x-clip pt-6 pb-10 select-none cursor-grab active:cursor-grabbing"
                 onWheel={handleWheel}
                 onMouseDown={onMouseDown}
                 onMouseMove={onMouseMove}
@@ -6796,6 +6877,117 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
 
       </div>
 
+      {/* Recommended for you */}
+      <div className="max-w-[1280px] mx-auto px-10 pt-6 pb-6 mt-6 w-full">
+        <div className="flex items-center justify-between gap-4 mb-1">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="w-[18px] h-[18px] text-[#FF6B35]" fill="#FF6B35" />
+            <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight">Recommended for you</h2>
+          </div>
+          <button className="group inline-flex items-center gap-1 text-[13px] font-medium text-[#1C1E21] hover:text-black transition-colors">
+            See all
+            <ArrowRight className="w-[14px] h-[14px] transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:translate-x-0.5" />
+          </button>
+        </div>
+        <p className="text-[13px] text-[#6B7280] mb-5">
+          Because you're <span className="font-semibold text-[#4B5563]">running a 5-crew roofing operation</span> with rising inbound — these handle what's slipping.
+        </p>
+
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          {/* Featured — Top pick */}
+          <div className="col-span-2 relative rounded-2xl overflow-hidden border border-[#F0E3D8] flex min-h-[340px]" style={{ background: 'linear-gradient(120deg, #FBE4D0 0%, #FCEEE0 58%, #FDF4EC 100%)' }}>
+            <div className="relative z-10 flex-1 p-7 flex flex-col">
+              <span className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-white text-[10.5px] font-bold tracking-wide uppercase text-[#C2410C] mb-4">
+                <Sparkles className="w-[11px] h-[11px] text-[#FF6B35]" fill="#FF6B35" /> Top pick for you
+              </span>
+              <h3 className="text-[24px] font-semibold text-[#1C1E21] tracking-tight leading-[1.15] mb-2.5">Daily Weather Forecast</h3>
+              <p className="text-[14px] text-[#6B5C52] leading-relaxed max-w-[360px] mb-7">Stops weather-driven cancellations. Wakes up before your crews and emails a multi-city forecast so jobs get rescheduled before rain hits.</p>
+              <button className="inline-flex items-center gap-1.5 self-start px-5 h-11 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[14px] font-semibold transition-[transform,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.25)] active:scale-[0.97] mt-auto">
+                <Sparkles className="w-[14px] h-[14px]" fill="currentColor" /> Try now
+              </button>
+            </div>
+            <div className="relative w-[42%] flex items-end justify-center">
+              <img src={agentMarketer} alt="" className="h-[95%] w-auto object-contain" draggable={false} />
+            </div>
+          </div>
+
+          {/* Tall right card */}
+          <RecAgentCard avatar={agentDetective} match="#2 Match" title="Dispatch Optimizer" desc="Recovers cold quotes before they die." rating="4.7" reviews="188" />
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <RecAgentCard avatar={agentDispatch} match="#3 Match" title="SLA Watchdog" desc="Greets inbound before they bounce." rating="4.6" reviews="121" />
+          <RecAgentCard avatar={agentReviewGirl} match="#4 Match" title="Material Stock Watcher" desc="Catches stock-outs before crews arrive empty." rating="4.7" reviews="165" />
+          <RecAgentCard avatar={agentSupport} match="#5 Match" title="Job Auto-Tagger" desc="Triages complaints before they escalate." rating="4.5" reviews="92" />
+        </div>
+      </div>
+
+      {/* Agent Bundles */}
+      <div className="max-w-[1280px] mx-auto px-10 pt-6 pb-14 mt-6 w-full">
+        <div className="flex items-center gap-2.5 mb-1.5">
+          <Layers className="w-[18px] h-[18px] text-[#1C1E21]" />
+          <h2 className="text-[22px] font-semibold text-[#1C1E21] tracking-tight">Agent Bundles</h2>
+          <span className="text-[11px] font-bold tracking-wide uppercase text-[#C2410C]">Save up to 30%</span>
+        </div>
+        <p className="text-[13px] text-[#6B7280] mb-7">Pre-built squads for common scenarios. Hire as a team, deploy together.</p>
+
+        {/* Featured bundle */}
+        <div className="relative rounded-2xl overflow-hidden border border-[#F3DCCF] mb-5 flex" style={{ background: 'linear-gradient(120deg, #FBD9C4 0%, #FCE3D5 100%)' }}>
+          <span className="absolute top-5 right-5 px-2.5 py-1 rounded-full bg-white text-[10.5px] font-bold tracking-wide text-[#1C1E21] z-10">SAVE $19/MO</span>
+          <div className="relative z-10 flex-1 px-8 py-7 flex flex-col">
+            <span className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-white text-[10px] font-bold tracking-wide uppercase text-[#C2410C] mb-3.5">
+              <Sparkles className="w-[10px] h-[10px] text-[#FF6B35]" fill="#FF6B35" /> New branch launch
+            </span>
+            <h3 className="text-[20px] font-semibold text-[#1C1E21] tracking-tight mb-2">Launch Day Squad</h3>
+            <p className="text-[12.5px] text-[#6B5C52] leading-relaxed max-w-[340px] mb-5">Spin up a new market in days, not weeks. Greets leads, books crews, watches reviews.</p>
+            <div className="flex items-center gap-4 mt-auto">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-[20px] font-semibold text-[#1C1E21]">$39/mo</span>
+                <span className="text-[12.5px] text-[#9CA3AF] line-through">$58/mo</span>
+              </div>
+              <button className="inline-flex items-center gap-1.5 px-4 h-9 rounded-xl bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.25)] active:scale-[0.97]">
+                <Sparkles className="w-[12px] h-[12px]" fill="currentColor" /> Hire bundle
+              </button>
+            </div>
+          </div>
+          <div className="relative w-[40%] flex items-end justify-center overflow-hidden">
+            <div className="flex items-end">
+              <img src={agentWeatherLead} alt="" className="h-[150px] w-auto object-contain -mr-12 translate-y-1.5" draggable={false} />
+              <img src={agentMarketer} alt="" className="h-[182px] w-auto object-contain relative z-10" draggable={false} />
+              <img src={agentSupport} alt="" className="h-[152px] w-auto object-contain -ml-12 translate-y-1.5" draggable={false} />
+            </div>
+          </div>
+        </div>
+
+        {/* Two bundle cards */}
+        <div className="grid grid-cols-2 gap-5">
+          <BundleMiniCard
+            avatars={[agentSupport, agentMarketer, agentDispatch]}
+            eyebrow="Cash Flow Crunch"
+            eyebrowColor="#6D28D9"
+            bg="linear-gradient(135deg, #C9B8F0 0%, #D9CCF5 100%)"
+            save="SAVE $21/MO"
+            title="Collect & Recover"
+            desc="Cold quotes, aging invoices, missed follow-ups — chased on schedule, every time."
+            price="$45/mo"
+            was="$66/mo"
+          />
+          <BundleMiniCard
+            avatars={[agentSupport, agentMarketer, agentDispatch]}
+            eyebrow="Customer Love & Retention"
+            eyebrowColor="#15803D"
+            bg="linear-gradient(135deg, #BFE0C8 0%, #D2ECD8 100%)"
+            save="SAVE $16/MO"
+            title="Customer Champions"
+            desc="Keep happy customers happy. Triages support, follows up post-job, watches reviews."
+            price="$32/mo"
+            was="$48/mo"
+          />
+        </div>
+      </div>
+
+      </div>
+
       {/* MJ Hire — Agent ready modal rendered at marketplace level so the
           try-agent modal can dismiss first */}
       {hiredForMJ && (() => {
@@ -6856,6 +7048,69 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
         )}
       </AnimatePresence>
 
+    </div>
+  );
+}
+
+// Recommended-for-you agent card (used in the marketplace recommendations grid)
+function RecAgentCard({ avatar, match, title, desc, rating, reviews }: { avatar: string; match: string; title: string; desc: string; rating: string; reviews: string }) {
+  return (
+    <div className="group relative flex flex-col h-full rounded-2xl bg-white border border-[#ECEEF1] p-6 transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-[#E0E2E6] hover:shadow-[0_10px_24px_-12px_rgba(16,24,40,0.16)]">
+      <div className="flex items-start justify-between">
+        <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0" style={{ background: 'radial-gradient(circle at 50% 42%, #FCEAD9, #F7DAC6)' }}>
+          <img src={avatar} alt="" className="absolute left-1/2 -translate-x-1/2 top-[14%] h-[175%] w-auto max-w-none object-contain" draggable={false} />
+        </div>
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold tracking-wide uppercase text-[#C2410C]">
+          <Sparkles className="w-[10px] h-[10px] text-[#FF6B35]" fill="#FF6B35" />{match}
+        </span>
+      </div>
+      <div className="flex-1 min-h-[16px]" />
+      <div>
+        <h3 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight mb-1">{title}</h3>
+        <p className="text-[13px] text-[#6B7280] leading-snug">{desc}</p>
+      </div>
+      <div className="flex items-center justify-between mt-5">
+        <div className="flex items-center gap-1 text-[12.5px] text-[#4B5563]">
+          <Star className="w-[13px] h-[13px] text-[#F59E0B] fill-[#F59E0B]" />
+          <span className="font-semibold">{rating}</span>
+          <span className="text-[#9CA3AF]">· {reviews}</span>
+        </div>
+        <button className="inline-flex items-center gap-1 px-3.5 h-9 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_6px_14px_-6px_rgba(0,0,0,0.3)] active:scale-[0.97]">
+          Try me <ArrowRight className="w-[13px] h-[13px]" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Agent-bundle mini card (used below the featured bundle)
+function BundleMiniCard({ avatars, eyebrow, eyebrowColor, bg, save, title, desc, price, was }: { avatars: string[]; eyebrow: string; eyebrowColor: string; bg: string; save: string; title: string; desc: string; price: string; was: string }) {
+  return (
+    <div className="group flex flex-col rounded-2xl overflow-hidden border border-[#ECEEF1] bg-white transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-14px_rgba(16,24,40,0.18)]">
+      <div className="relative h-[140px] flex items-end justify-center overflow-hidden" style={{ background: bg }}>
+        <span className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/85 backdrop-blur text-[10px] font-bold tracking-wide uppercase" style={{ color: eyebrowColor }}>
+          <Sparkles className="w-[10px] h-[10px]" fill="currentColor" />{eyebrow}
+        </span>
+        <span className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full bg-white text-[10.5px] font-bold tracking-wide text-[#1C1E21]">{save}</span>
+        <div className="flex items-end justify-center">
+          <img src={avatars[0]} alt="" className="h-[112px] w-auto object-contain -mr-7 translate-y-2" draggable={false} />
+          <img src={avatars[1]} alt="" className="h-[128px] w-auto object-contain relative z-[1]" draggable={false} />
+          <img src={avatars[2]} alt="" className="h-[114px] w-auto object-contain -ml-7 translate-y-2" draggable={false} />
+        </div>
+      </div>
+      <div className="p-6 flex flex-col flex-1">
+        <h3 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight mb-1.5">{title}</h3>
+        <p className="text-[12.5px] text-[#6B7280] leading-relaxed mb-5">{desc}</p>
+        <div className="flex items-center justify-between mt-auto">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[18px] font-semibold text-[#1C1E21]">{price}</span>
+            <span className="text-[12.5px] text-[#9CA3AF] line-through">{was}</span>
+          </div>
+          <button className="inline-flex items-center gap-1.5 px-3.5 h-8 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12px] font-semibold transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_6px_14px_-6px_rgba(0,0,0,0.3)] active:scale-[0.97]">
+            Hire bundle <ArrowRight className="w-[12px] h-[12px]" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

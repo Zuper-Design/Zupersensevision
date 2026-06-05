@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, Palette, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon, PieChart, MessageSquare } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, SlidersHorizontal, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon, PieChart, MessageSquare } from 'lucide-react';
 import { ConversationView } from './ConversationView';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
@@ -512,7 +512,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         title="Personalization"
                         className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
                       >
-                        <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
+                        <SlidersHorizontal className="w-[18px] h-[18px] text-[#6B7280]" />
                       </button>
                     )}
                   </div>
@@ -523,16 +523,16 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 <div className="w-full max-w-[1100px] flex flex-col items-center gap-5 relative z-10">
                   {/* Welcome Header with Logo */}
                   <div className="text-center w-full mb-0">
-                    <div className="flex items-center justify-center gap-3 mb-1">
-                      {/* Logo - New Sense Logo (Smaller) */}
-                      <div className="animated-logo-img relative w-9 h-9">
-                        <SenseLogo size={28} animated={true} />
+                    <div className="flex items-center justify-center gap-2.5 mb-3">
+                      {/* Logo - New Sense Logo (eyebrow size) */}
+                      <div className="animated-logo-img relative w-[26px] h-[26px]">
+                        <SenseLogo size={26} animated={true} />
                       </div>
-                      <h2 className="font-normal text-[24px] bg-gradient-to-r from-[#1F2937] to-[#A96B65] text-transparent bg-clip-text">
+                      <h2 className="text-[18px] font-medium text-[#6B7280] tracking-tight">
                         Good evening{demoMode ? '' : ' JT'}
                       </h2>
                     </div>
-                    <h1 className="text-[32px] font-semibold leading-tight bg-gradient-to-r from-[#1F2937] to-[#A96B65] text-transparent bg-clip-text">
+                    <h1 className="text-[32px] font-semibold leading-[1.12] tracking-[-0.02em] text-[#1C1E21]">
                       What would you like to do today?
                     </h1>
                   </div>
@@ -851,7 +851,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                   {/* Suggested Prompts Section */}
                   <div className="w-full max-w-[1000px] mt-8">
                     <div className="flex flex-col items-center">
-                      <h2 className="text-base font-medium text-[#1C1E21] mb-3">Suggested prompts</h2>
+                      <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9CA3AF] mb-4">Suggested prompts</h2>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
                         {(demoMode
                           ? [
@@ -874,17 +874,15 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                           <button
                             key={p.label}
                             onClick={() => handlePromptClick(p.label)}
-                            className="group p-3.5 bg-white/70 border border-[#E6E8EC]/70 hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] rounded-[10px] transition-all duration-150 text-left shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_2px_8px_rgba(255,107,53,0.08)]"
+                            className="group flex items-start justify-between gap-3 p-4 bg-white border border-[#ECEEF1] rounded-xl text-left shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-[#E0E2E6] hover:shadow-[0_8px_20px_-8px_rgba(16,24,40,0.14)] active:scale-[0.985] active:translate-y-0"
                           >
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="flex-1">
-                                <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{p.label}</h3>
-                                <p className="text-[12px] text-[#9CA3AF] font-medium">{p.sub}</p>
-                              </div>
-                              <div className="flex-shrink-0">
-                                <p.icon className="w-[18px] h-[18px] text-[#FF6B35]" />
-                              </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-[13px] font-medium text-[#1C1E21] leading-tight mb-1 whitespace-nowrap overflow-hidden text-ellipsis">{p.label}</h3>
+                              <p className="text-[12px] text-[#9CA3AF] font-normal">{p.sub}</p>
                             </div>
+                            <span className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-[#F6F7F9] text-[#9CA3AF] transition-colors duration-200 ease-out group-hover:bg-[#FFF1E9] group-hover:text-[#FF6B35]">
+                              <p.icon className="w-[16px] h-[16px]" />
+                            </span>
                           </button>
                         ))}
                       </div>

@@ -1,4 +1,4 @@
-import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp, Settings, Palette, MessageSquare, Radar as RadarIcon } from 'lucide-react';
+import { ExternalLink, RefreshCw, FileText, Clock, AlertTriangle, Sparkles, ArrowRight, MoreHorizontal, Pencil, PinOff, GripVertical, LayoutGrid, Check, X, FlaskConical, Maximize2, Minimize2, TrendingUp, Settings, SlidersHorizontal, MessageSquare, Radar as RadarIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRadar, SavedCard } from './RadarContext';
@@ -510,7 +510,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   title="Personalization"
                   className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
                 >
-                  <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
+                  <SlidersHorizontal className="w-[18px] h-[18px] text-[#6B7280]" />
                 </button>
               </div>
             </div>

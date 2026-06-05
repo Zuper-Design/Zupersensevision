@@ -1,4 +1,4 @@
-import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical, ImagePlus, Palette } from 'lucide-react';
+import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical, ImagePlus, SlidersHorizontal } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ResearchDisplay } from './ResearchDisplay';
 import { ConfirmationCard } from './ConfirmationCard';
@@ -1924,7 +1924,7 @@ Sarah`
             title="Personalization"
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#F3F4F6] transition-colors"
           >
-            <Palette className="w-[18px] h-[18px] text-[#6B7280]" />
+            <SlidersHorizontal className="w-[18px] h-[18px] text-[#6B7280]" />
           </button>
         </div>
 
