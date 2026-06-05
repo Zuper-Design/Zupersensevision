@@ -180,6 +180,111 @@ export const TEMPLATES: BuildTemplate[] = [
     prompt: 'Build a table of customers with open jobs older than 14 days, sorted by total open value.' },
 ];
 
+// ── Public app gallery (community apps published by other companies) ─────
+// Browsable on the New-app composer. Each opens a preview; "Use as template"
+// drops its prompt into the composer box so the user can edit before Generate.
+export interface PublicApp {
+  id: string;
+  name: string;
+  company: string;        // publishing org
+  author: string;        // person who published
+  category: string;      // module / domain
+  icon: string;          // emoji
+  installs: number;      // social proof
+  rating: number;        // 0–5
+  blurb: string;         // one-line on the card
+  description: string;   // longer copy in the preview
+  highlights: string[];  // bullet points in the preview
+  prompt: string;        // prefilled into the composer on "Use as template"
+}
+
+export const PUBLIC_APPS: PublicApp[] = [
+  {
+    id: 'pub-route',
+    name: 'Smart Route Planner',
+    company: 'Meridian Field Services',
+    author: 'Priya Nair',
+    category: 'Schedule',
+    icon: '🗺️',
+    installs: 3120,
+    rating: 4.8,
+    blurb: 'Auto-sequence the day\'s jobs by drive time and SLA.',
+    description: 'Orders each technician\'s assigned jobs into the shortest viable route, respecting SLA windows and skill requirements. Surfaces the jobs that won\'t make their deadline so dispatch can reshuffle before the day starts.',
+    highlights: ['Drive-time-optimized job order per tech', 'Flags SLA misses before dispatch', 'Honors skill + region constraints'],
+    prompt: 'Build a daily route planner that takes each technician\'s assigned jobs and orders them by shortest drive time, while keeping SLA deadlines satisfied. Flag any job that can\'t make its SLA in red.',
+  },
+  {
+    id: 'pub-warranty',
+    name: 'Warranty Claims Desk',
+    company: 'Apex HVAC Group',
+    author: 'Daniel Okoro',
+    category: 'Jobs',
+    icon: '🛡️',
+    installs: 1840,
+    rating: 4.6,
+    blurb: 'Track warranty jobs from claim to reimbursement.',
+    description: 'A pipeline for warranty work: claim filed → parts ordered → job done → manufacturer reimbursed. Highlights claims stuck past the manufacturer\'s filing window so you never eat a reimbursable cost.',
+    highlights: ['Claim-to-reimbursement pipeline', 'Alerts on expiring filing windows', 'Links parts cost to each claim'],
+    prompt: 'Build a board for warranty jobs moving through stages: claim filed, parts ordered, work done, reimbursed. Warn me when a claim is approaching the manufacturer filing deadline.',
+  },
+  {
+    id: 'pub-csat',
+    name: 'Post-Job CSAT Pulse',
+    company: 'BrightServe Co.',
+    author: 'Lena Vogt',
+    category: 'Customers',
+    icon: '⭐',
+    installs: 5470,
+    rating: 4.9,
+    blurb: 'Watch satisfaction scores roll in per tech and job type.',
+    description: 'Aggregates post-job survey responses into a live scoreboard by technician, job type, and region. Flags any tech whose rolling score drops below threshold so you can coach early.',
+    highlights: ['Live CSAT by tech / job type / region', 'Coaching flags on score drops', 'Trend sparkline per technician'],
+    prompt: 'Show me post-job customer satisfaction scores broken down by technician and job type, with a rolling 30-day trend, and flag any technician trending below 4 stars.',
+  },
+  {
+    id: 'pub-stock',
+    name: 'Van Stock Replenisher',
+    company: 'Coastline Mechanical',
+    author: 'Marcus Bell',
+    category: 'Inventory',
+    icon: '🚐',
+    installs: 2260,
+    rating: 4.5,
+    blurb: 'Keep every truck stocked from upcoming job needs.',
+    description: 'Reads the next 7 days of scheduled jobs, predicts the parts each van will burn, and lists what to restock tonight. Cross-checks warehouse availability before suggesting a reorder.',
+    highlights: ['Predicts part usage from the schedule', 'Per-van restock checklist', 'Cross-checks warehouse stock first'],
+    prompt: 'Look at the next 7 days of scheduled jobs, estimate the parts each technician\'s van will need, and build a per-van restock list. Flag parts that aren\'t in the warehouse.',
+  },
+  {
+    id: 'pub-aging',
+    name: 'Cash Flow Forecast',
+    company: 'Ledgerline Finance',
+    author: 'Sofia Marchetti',
+    category: 'Invoices',
+    icon: '💹',
+    installs: 4010,
+    rating: 4.7,
+    blurb: 'Project incoming cash from open invoices and quotes.',
+    description: 'Projects the next 60 days of cash by weighting open invoices by historical collection time and quotes by win probability. Shows best/expected/worst bands so finance can plan.',
+    highlights: ['60-day weighted cash projection', 'Best / expected / worst bands', 'Pulls from invoices + open quotes'],
+    prompt: 'Build a 60-day cash flow forecast that projects incoming cash from open invoices weighted by how long they usually take to collect, plus open quotes weighted by win rate. Show best, expected, and worst case.',
+  },
+  {
+    id: 'pub-onboard',
+    name: 'New Tech Onboarding',
+    company: 'Summit Trades Academy',
+    author: 'Hassan Reza',
+    category: 'Schedule',
+    icon: '🎓',
+    installs: 980,
+    rating: 4.4,
+    blurb: 'Ramp new technicians with shadowing and skill sign-offs.',
+    description: 'Tracks a new hire\'s ramp: shadow shifts, required skill sign-offs, and first solo jobs. Shows who\'s cleared for which job types so dispatch only assigns work they\'re ready for.',
+    highlights: ['Shadow-shift + sign-off checklist', 'Cleared-for-job-type matrix', 'Surfaces ramp blockers'],
+    prompt: 'Build an onboarding tracker for new technicians showing their shadow shifts, required skill sign-offs, and first solo jobs, with a matrix of which job types each is cleared to take.',
+  },
+];
+
 // ── Plan steps Sense shows for the dispatch-board prompt (Spec 2 §4b) ────
 // Archetype = Scheduler/DispatchGrid (time axis present → never Kanban, §5).
 export const DISPATCH_PLAN: { label: string; detail: string }[] = [

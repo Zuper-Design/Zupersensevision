@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   Workflow,
   CheckCircle2,
+  X,
 } from "lucide-react";
 import { DispatchGrid } from "./DispatchGrid";
 import { DispatchBoard } from "./DispatchBoard"; // kanban — now the Quote Follow-up triage board (§4c)
@@ -32,6 +33,7 @@ import { AuditPanel } from "./AuditPanel";
 import { AutomationPanel } from "./AutomationPanel";
 import { ChatThread } from "./ChatThread";
 import { AppGallery } from "./AppGallery";
+import { PublicAppGallery, TemplateThumb } from "./PublicAppGallery";
 import { EditProvider, type SelectedElement } from "./EditContext";
 import { SenseLogo } from "../SenseLogo";
 import PixelBlast from "./PixelBlast";
@@ -49,6 +51,7 @@ import {
   KANBAN_TREE,
   type BuildApp,
   type BuildTemplate,
+  type PublicApp,
 } from "./buildData";
 
 type Stage =
@@ -176,35 +179,54 @@ const GEN_PHASES = [
   { icon: CheckCircle2, label: "Finishing the final polish", accent: "#7DAE6B", tint: "#EAF3E4" },
 ] as const;
 
+// Editorial starters — `phrase` uses *asterisks* to mark the words that carry
+// the intent; everything else fades back so the meaning reads at a glance.
 const HOME_STARTERS = [
   {
     id: "dispatch",
+    kicker: "Jobs",
     label: "Dispatch scheduler",
-    outcome: "Needs one detail",
-    outcomeColor: "#92400E",
-    outcomeBg: "#FEF3C7",
+    phrase: "*Assign* this week's *HVAC jobs* to technicians and *flag* anything *overdue*.",
     accent: "#FD5000",
     template: TEMPLATES[0],
   },
   {
     id: "collections",
+    kicker: "Invoices",
     label: "Collections cockpit",
-    outcome: "Thinking…",
-    outcomeColor: "#5B3D7A",
-    outcomeBg: "#F0EAFA",
+    phrase: "Group *overdue invoices* into *aging buckets* I can *act on*.",
     accent: "#16A34A",
     template: TEMPLATES[2],
   },
   {
     id: "quotes",
+    kicker: "Quotes",
     label: "Quote triage board",
-    outcome: "Builds right away",
-    outcomeColor: "#1E3A5F",
-    outcomeBg: "#EFF6FF",
+    phrase: "Surface *quotes stuck in sent* for *3+ days*, *oldest first*.",
     accent: "#2563EB",
     template: TEMPLATES[1],
   },
 ] as const;
+
+// Render a *marked* phrase: starred spans pop in primary; the rest fades.
+function EmphasizedPhrase({ phrase }: { phrase: string }) {
+  const parts = phrase.split(/(\*[^*]+\*)/g).filter(Boolean);
+  return (
+    <span className="block text-[17px] leading-[1.42] tracking-[-0.02em]">
+      {parts.map((part, i) =>
+        part.startsWith("*") && part.endsWith("*") ? (
+          <span key={i} className="font-semibold text-[#1C1E21]">
+            {part.slice(1, -1)}
+          </span>
+        ) : (
+          <span key={i} className="font-normal text-[#C0C5CC]">
+            {part}
+          </span>
+        ),
+      )}
+    </span>
+  );
+}
 
 // §4 publish gate — only roles with `publish_apps` permission can roll an app org-wide
 const CAN_PUBLISH: Record<string, boolean> = {
@@ -274,6 +296,11 @@ export function BuildWorkspace({
   const [archetype, setArchetype] = useState<Archetype>("dispatch");
   const [homeStarter, setHomeStarter] = useState(0);
   const taRef = useRef<HTMLTextAreaElement>(null);
+  // Scroll-snap sections on the composer page: composer ↕ app gallery.
+  const composerRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  // Template attached from the App gallery — shown as a thumbnail chip in the box.
+  const [attachedTemplate, setAttachedTemplate] = useState<PublicApp | null>(null);
 
   // ── Conversation threads (per app) ──────────────────────────────────────
   // Each app can hold multiple threads. The active thread drives the left pane.
@@ -317,6 +344,7 @@ export function BuildWorkspace({
   const openComposer = () => {
     setOpenedApp(null);
     setPrompt("");
+    setAttachedTemplate(null);
     setRefineLog([]);
     setClarifyAnswer(null);
     setClarifyAnswers({});
@@ -941,7 +969,11 @@ export function BuildWorkspace({
   if (stage === 'home') {
     return (
       <div
-        className="flex-1 rounded-xl border border-[#E1E3E6] relative overflow-hidden overflow-y-auto"
+        className={
+          "flex-1 rounded-xl border border-[#E1E3E6] relative overflow-hidden overflow-y-auto scroll-smooth" +
+          // snap only in the idle composer state; the conversation flow needs free scroll
+          (!(homeFlowActive || homeClarifyActive) ? " snap-y snap-mandatory" : "")
+        }
         style={{
           backgroundColor: '#F4F4F2',
           backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(28,30,33,0.055) 1px, transparent 0)',
@@ -956,7 +988,9 @@ export function BuildWorkspace({
         >
           <ArrowLeft className="w-4 h-4" /> All apps
         </button>
-        <div className="flex flex-col items-center px-8 pt-[8vh] pb-12 min-h-full">
+
+        {/* ── Snap section 1 · composer (one full viewport) ──────────────── */}
+        <div ref={composerRef} className="flex flex-col items-center px-8 pt-[8vh] pb-12 min-h-full snap-start">
           <div className="relative w-full max-w-[780px]">
 
             {/* Hero row */}
@@ -1113,6 +1147,41 @@ export function BuildWorkspace({
                   placeholder={activeStarter.template.prompt}
                   className="w-full resize-none outline-none bg-transparent text-[20px] tracking-normal text-[#111315] placeholder:text-[#B0B8C4] leading-[1.55] px-1 pt-1 min-h-[112px]"
                 />
+
+                {/* Attached template — small square thumbnail chip */}
+                <AnimatePresence>
+                  {attachedTemplate && !(homeFlowActive || homeClarifyActive) && (
+                    <motion.div
+                      key={attachedTemplate.id}
+                      initial={{ opacity: 0, scale: 0.9, y: 4 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9, y: 4 }}
+                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                      className="mt-3 inline-flex items-center gap-2.5 rounded-2xl border border-[#ECEEF1] bg-[#FAFAFA] py-1.5 pl-1.5 pr-3"
+                    >
+                      <div className="group relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-xl border border-[#ECEEF1]">
+                        <TemplateThumb app={attachedTemplate} className="h-full w-full" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-[12px] font-semibold tracking-[-0.01em] text-[#1C1E21]">
+                          {attachedTemplate.name}
+                        </p>
+                        <p className="truncate text-[11px] text-[#9CA3AF]">
+                          Template · {attachedTemplate.company}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setAttachedTemplate(null)}
+                        className="ml-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[#9CA3AF] transition-colors hover:bg-[#ECEEF1] hover:text-[#1C1E21]"
+                        aria-label="Remove template"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {!(homeFlowActive || homeClarifyActive) && <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#F0F0F2]">
                   <button
                     className="w-8 h-8 rounded-full border border-[#ECEEF1] flex items-center justify-center text-[#9CA3AF] hover:text-[#1C1E21] hover:border-[#D5D9DE] transition-colors"
@@ -1162,7 +1231,7 @@ export function BuildWorkspace({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full"
+                  className="mt-10 w-full"
                 >
                   <div className="flex min-w-0 gap-2.5 overflow-x-auto scrollbar-hide">
                     {HOME_STARTERS.map((item, i) => (
@@ -1178,25 +1247,25 @@ export function BuildWorkspace({
                           else if (a === 'cockpit') setStage('homeThinking');
                           else setStage('generating');
                         }}
-                        className="group relative flex-1 min-w-[220px] overflow-hidden rounded-[20px] border bg-white text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                        className="group relative flex flex-1 min-w-[240px] flex-col overflow-hidden rounded-[20px] border bg-white px-5 pb-5 pt-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
                         style={{
-                          borderColor: i === homeStarter ? '#D4D8DF' : '#E8EAEE',
-                          boxShadow: '0 1px 3px rgba(28,30,33,0.06)',
+                          borderColor: i === homeStarter ? '#C9CDD4' : '#E6E8EC',
+                          boxShadow: '0 1px 2px rgba(28,30,33,0.04)',
                         }}
                       >
-                        <span className="block h-1 w-full" style={{ background: item.accent, opacity: 0.7 }} />
-                        <span className="block px-4 py-3.5">
-                          <span
-                            className="inline-flex items-center gap-1.5 text-[10.5px] font-semibold tracking-[0.01em] uppercase rounded-full px-2.5 py-1 mb-2.5"
-                            style={{ color: item.outcomeColor, background: item.outcomeBg }}
-                          >
-                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: item.outcomeColor }} />
-                            {item.outcome}
-                          </span>
-                          <span className="block text-[13px] font-medium leading-[1.4] tracking-[-0.01em] text-[#374151] line-clamp-3">
-                            {item.template.prompt}
+                        {/* kicker — module identity dot + label */}
+                        <span className="mb-3 inline-flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full" style={{ background: item.accent }} />
+                          <span className="text-[10.5px] font-semibold uppercase tracking-[0.07em] text-[#9CA3AF]">
+                            {item.kicker}
                           </span>
                         </span>
+
+                        {/* editorial phrase — key words pop, connective words fade */}
+                        <EmphasizedPhrase phrase={item.phrase} />
+
+                        {/* arrow reveals on hover */}
+                        <ArrowRight className="mt-4 h-4 w-4 -rotate-45 text-[#1C1E21] opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
                       </button>
                     ))}
                   </div>
@@ -1204,8 +1273,56 @@ export function BuildWorkspace({
               )}
             </AnimatePresence>
 
+            {/* scroll affordance — gallery is one scroll down */}
+            <AnimatePresence>
+              {!(homeFlowActive || homeClarifyActive) && (
+                <motion.button
+                  key="home-scroll-hint"
+                  type="button"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.26 }}
+                  onClick={() => galleryRef.current?.scrollIntoView({ behavior: "smooth" })}
+                  className="mt-10 inline-flex w-full items-center justify-center gap-2 text-[12px] font-medium text-[#9CA3AF] transition-colors hover:text-[#1C1E21]"
+                >
+                  Browse the app gallery
+                  <ArrowRight className="h-3.5 w-3.5 rotate-90" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+
           </div>
         </div>
+
+        {/* ── Snap section 2 · app gallery (one full viewport) ───────────── */}
+        <AnimatePresence>
+          {!(homeFlowActive || homeClarifyActive) && (
+            <motion.div
+              key="home-gallery"
+              ref={galleryRef}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+              className="flex min-h-full snap-start flex-col items-center px-8 pb-12 pt-[8vh]"
+            >
+              <div className="w-full max-w-[1080px]">
+                <PublicAppGallery
+                  onUseTemplate={(app) => {
+                    const a = classify(app.prompt);
+                    setArchetype(a);
+                    setPrompt(app.prompt);
+                    setAttachedTemplate(app);
+                    // jump back up to the composer (section 1) and focus it
+                    composerRef.current?.scrollIntoView({ behavior: "smooth" });
+                    setTimeout(() => taRef.current?.focus(), 420);
+                  }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }

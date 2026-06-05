@@ -1,0 +1,402 @@
+import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import {
+  ArrowUpRight,
+  CalendarClock,
+  Check,
+  Clock,
+  Download,
+  FileText,
+  Package,
+  Receipt,
+  Sparkles,
+  Star,
+  Truck,
+  Users,
+  Wrench,
+  X,
+} from "lucide-react";
+import { PUBLIC_APPS, type PublicApp } from "./buildData";
+import { token } from "./tokens";
+
+interface Props {
+  // Called when the user clicks "Use as template" — prefills the composer
+  // prompt and attaches a thumbnail of the chosen template.
+  onUseTemplate: (app: PublicApp) => void;
+}
+
+// Small square preview of a template — used as an attachment chip in the
+// composer prompt box once a template is picked.
+export function TemplateThumb({
+  app,
+  className = "",
+}: {
+  app: PublicApp;
+  className?: string;
+}) {
+  const t = themeFor(app.category);
+  return (
+    <div
+      className={`relative overflow-hidden ${className}`}
+      style={{ background: t.grad }}
+    >
+      <div
+        className="absolute -bottom-4 -right-3 h-16 w-16 rounded-full opacity-40 blur-xl"
+        style={{ background: t.accent }}
+      />
+      {/* scaled-down mock so the full thumbnail fits the small square */}
+      <div className="absolute inset-0 origin-top-left scale-[0.34]" style={{ width: "294%", height: "294%" }}>
+        <Thumbnail app={app} />
+      </div>
+    </div>
+  );
+}
+
+function installLabel(n: number) {
+  return n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : String(n);
+}
+
+// ── Module → archetype mapping for thumbnails (from the original gallery) ──
+type Archetype = "dispatch" | "cockpit" | "kanban" | "table";
+
+function archetypeFor(category: string): Archetype {
+  switch (category) {
+    case "Jobs":
+    case "Schedule":
+      return "dispatch";
+    case "Invoices":
+    case "Customers":
+      return "cockpit";
+    case "Quotes":
+      return "kanban";
+    case "Assets":
+    case "Inventory":
+    default:
+      return "table";
+  }
+}
+
+// Per-module accent + soft gradient field behind the floating card.
+interface ModuleTheme {
+  accent: string;
+  grad: string;
+}
+const MODULE_THEME: Record<string, ModuleTheme> = {
+  Jobs:      { accent: "#FD5000", grad: "linear-gradient(135deg, #FBEEE8 0%, #FFF6F1 55%, #FFFFFF 100%)" },
+  Schedule:  { accent: "#4A90D9", grad: "linear-gradient(135deg, #E8F0FA 0%, #F2F7FC 55%, #FFFFFF 100%)" },
+  Invoices:  { accent: "#16A34A", grad: "linear-gradient(135deg, #E9F5EE 0%, #F3FAF6 55%, #FFFFFF 100%)" },
+  Customers: { accent: "#7C5CE0", grad: "linear-gradient(135deg, #EFE9FB 0%, #F6F2FD 55%, #FFFFFF 100%)" },
+  Quotes:    { accent: "#C026D3", grad: "linear-gradient(135deg, #F2E6F7 0%, #F9F1FC 55%, #FFFFFF 100%)" },
+  Assets:    { accent: "#0891B2", grad: "linear-gradient(135deg, #E4F2F6 0%, #F0F8FB 55%, #FFFFFF 100%)" },
+  Inventory: { accent: "#CA8A04", grad: "linear-gradient(135deg, #F7F0DE 0%, #FBF7EC 55%, #FFFFFF 100%)" },
+};
+function themeFor(category: string): ModuleTheme {
+  return MODULE_THEME[category] ?? MODULE_THEME.Jobs;
+}
+
+const MODULE_ICON: Record<string, typeof Truck> = {
+  Jobs: Truck,
+  Schedule: CalendarClock,
+  Invoices: Receipt,
+  Customers: Users,
+  Quotes: FileText,
+  Assets: Wrench,
+  Inventory: Package,
+};
+
+// ── Rich composed thumbnails — floating glassy card on a gradient field ────
+
+function ListCardThumb({ app }: { app: PublicApp }) {
+  const Icon = MODULE_ICON[app.category] ?? Truck;
+  const rowAccents = ["#4A90D9", "#16A34A", "#FD5000"];
+  return (
+    <div
+      className="absolute left-7 right-3 top-7 rounded-[16px] bg-white/85 px-3.5 py-3 backdrop-blur-sm"
+      style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.05), 0 18px 36px -22px rgba(28,30,33,0.4)" }}
+    >
+      <p className="mb-2.5 text-[12px] font-semibold tracking-[-0.02em] text-[#1C2A3A]">
+        {app.category === "Schedule" ? "Today" : "Activity"}
+      </p>
+      <div className="space-y-2">
+        {[0, 1, 2].map((i) => {
+          const RowIcon = i === 0 ? Icon : i === 1 ? Users : Clock;
+          return (
+            <div key={i} className="flex items-center gap-2.5">
+              <RowIcon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: rowAccents[i] }} />
+              <span className="h-1.5 rounded-full bg-[#E5E7EB]" style={{ width: `${[62, 78, 46][i]}%` }} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MetricCardThumb({ app }: { app: PublicApp }) {
+  const t = themeFor(app.category);
+  const metric =
+    app.category === "Invoices" ? "$3.9M overdue"
+    : app.category === "Customers" ? "12 at-risk"
+    : app.category === "Inventory" ? "7 low-stock"
+    : "9 due soon";
+  return (
+    <div
+      className="absolute left-5 right-5 top-6 rounded-[16px] bg-white/85 px-4 py-3.5 backdrop-blur-sm"
+      style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.05), 0 18px 36px -22px rgba(28,30,33,0.4)" }}
+    >
+      <div className="mb-2 flex items-center justify-between">
+        <div
+          className="flex h-7 w-7 items-center justify-center rounded-full"
+          style={{ background: `radial-gradient(circle at 30% 30%, ${t.accent}, ${t.accent}99)` }}
+        >
+          <Sparkles className="h-3.5 w-3.5 text-white" />
+        </div>
+        <span className="font-mono text-[8.5px] uppercase tracking-wider text-[#9CA3AF]">Since yesterday</span>
+      </div>
+      <p className="text-[16px] font-semibold leading-tight tracking-[-0.03em] text-[#1C2A3A]">
+        {metric}
+      </p>
+      <div
+        className="mt-2.5 inline-flex h-6 items-center gap-1 rounded-full bg-white px-2.5"
+        style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.08)" }}
+      >
+        <span className="text-[10px] font-medium text-[#374151]">Get details</span>
+        <ArrowUpRight className="h-3 w-3 text-[#9CA3AF]" />
+      </div>
+    </div>
+  );
+}
+
+function ChatCardThumb({ app }: { app: PublicApp }) {
+  const t = themeFor(app.category);
+  return (
+    <>
+      <div className="absolute right-3 top-6 h-6 rounded-full bg-white/55 backdrop-blur-sm" style={{ width: "62%" }} />
+      <div className="absolute right-3 top-[52px] h-6 rounded-full bg-white/75 backdrop-blur-sm" style={{ width: "74%" }} />
+      <div
+        className="absolute left-6 right-5 top-[78px] flex h-9 items-center gap-2.5 rounded-full bg-white px-3"
+        style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.06), 0 14px 30px -18px rgba(124,92,224,0.5)" }}
+      >
+        <Sparkles className="h-3.5 w-3.5 flex-shrink-0" style={{ color: t.accent }} />
+        <span className="h-4 w-px bg-[#E5E7EB]" />
+        <span className="text-[11px] font-medium" style={{ color: t.accent }}>Generating reply…</span>
+      </div>
+    </>
+  );
+}
+
+function Thumbnail({ app }: { app: PublicApp }) {
+  const a = archetypeFor(app.category);
+  if (a === "kanban") return <ChatCardThumb app={app} />;
+  if (a === "cockpit" || a === "table") return <MetricCardThumb app={app} />;
+  return <ListCardThumb app={app} />;
+}
+
+function PublicAppCard({ app, onOpen }: { app: PublicApp; onOpen: () => void }) {
+  const t = themeFor(app.category);
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="group overflow-hidden rounded-2xl border border-[#E6E8EC] bg-white text-left transition-all duration-200 hover:-translate-y-1"
+      style={{ boxShadow: token.elev[1] }}
+      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = token.elev[2])}
+      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = token.elev[1])}
+    >
+      {/* Thumbnail — gradient field with a floating glassy card */}
+      <div
+        className="relative h-[150px] w-full overflow-hidden border-b border-[#F0F0F2]"
+        style={{ background: t.grad }}
+      >
+        <div
+          className="absolute -bottom-8 -right-6 h-32 w-32 rounded-full opacity-40 blur-2xl"
+          style={{ background: t.accent }}
+        />
+        <Thumbnail app={app} />
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        <div className="mb-1 flex items-center gap-2">
+          <span className="flex-shrink-0 text-base leading-none">{app.icon}</span>
+          <span className="truncate text-[14px] font-semibold leading-tight tracking-[-0.01em] text-[#1C1E21]">
+            {app.name}
+          </span>
+        </div>
+        <p className="text-[11px] text-[#9CA3AF]">by {app.company}</p>
+        <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-[#6B7280]">
+          {app.blurb}
+        </p>
+        <div className="mt-3 flex items-center gap-2 border-t border-[#F0F0F2] pt-3 text-[10.5px] text-[#9CA3AF]">
+          <span className="inline-flex items-center gap-1">
+            <Star className="h-3 w-3 fill-[#F5A623] text-[#F5A623]" />
+            {app.rating.toFixed(1)}
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Download className="h-3 w-3" />
+            {installLabel(app.installs)}
+          </span>
+          <span className="ml-auto">{app.category}</span>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function PreviewModal({
+  app,
+  onClose,
+  onUseTemplate,
+}: {
+  app: PublicApp;
+  onClose: () => void;
+  onUseTemplate: () => void;
+}) {
+  const t = themeFor(app.category);
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[450] bg-black/35 backdrop-blur-[2px]"
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.97, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.97, y: 8 }}
+        transition={{ duration: 0.17, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed left-1/2 top-1/2 z-[460] w-[480px] max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white"
+        style={{ boxShadow: "0 24px 70px rgba(30,34,60,0.25)" }}
+      >
+        {/* Hero thumbnail */}
+        <div
+          className="relative h-[140px] w-full overflow-hidden border-b border-[#F0F0F2]"
+          style={{ background: t.grad }}
+        >
+          <div
+            className="absolute -bottom-8 -right-6 h-32 w-32 rounded-full opacity-40 blur-2xl"
+            style={{ background: t.accent }}
+          />
+          <Thumbnail app={app} />
+          <button
+            onClick={onClose}
+            className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-md bg-white/80 text-[#6B7280] backdrop-blur-sm hover:bg-white"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="max-h-[52vh] space-y-4 overflow-y-auto p-5">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-base leading-none">{app.icon}</span>
+              <h3 className="text-[16px] font-semibold leading-tight tracking-[-0.01em] text-[#1C1E21]">
+                {app.name}
+              </h3>
+            </div>
+            <p className="mt-1 text-[12px] text-[#9CA3AF]">
+              by {app.company} · {app.author}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 text-[11.5px] text-[#9CA3AF]">
+            <span className="inline-flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-[#F5A623] text-[#F5A623]" />
+              {app.rating.toFixed(1)}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Download className="h-3.5 w-3.5" />
+              {installLabel(app.installs)} installs
+            </span>
+            {/* category = token.status.neutral */}
+            <span className="rounded-full bg-[#F3F4F6] px-2 py-0.5 text-[#6B7280]">
+              {app.category}
+            </span>
+          </div>
+
+          <p className="text-[13px] leading-[1.55] text-[#6B7280]">
+            {app.description}
+          </p>
+
+          <div>
+            <p className="mb-2 text-[12px] font-semibold text-[#1C1E21]">What it does</p>
+            <ul className="space-y-1.5">
+              {app.highlights.map((h) => (
+                <li key={h} className="flex items-start gap-2 text-[12.5px] text-[#6B7280]">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#15803D]" />
+                  {h}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-xl bg-[#FAFAFA] p-3">
+            <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.04em] text-[#9CA3AF]">
+              Starting prompt
+            </p>
+            <p className="text-[12.5px] leading-[1.5] text-[#6B7280]">{app.prompt}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 border-t border-[#E6E8EC] px-5 py-3.5">
+          <button
+            onClick={onClose}
+            className="h-9 rounded-full px-4 text-[13px] font-medium text-[#6B7280] transition-colors hover:text-[#1C1E21]"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onUseTemplate}
+            className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#1C1E21] px-4 text-[13px] font-semibold text-white transition-colors hover:bg-[#FD5000]"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Use as template
+          </button>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+export function PublicAppGallery({ onUseTemplate }: Props) {
+  const [preview, setPreview] = useState<PublicApp | null>(null);
+
+  return (
+    <div className="w-full">
+      {/* Section header — Sense `display` type token (26px / -0.025em), not the
+          Build. hero treatment. No accent dot. */}
+      <div className="mb-7 border-b border-[#F0F0F2] pb-5">
+        <h2
+          className="font-semibold text-[#1C1E21]"
+          style={{ fontSize: token.type.display.size, letterSpacing: token.type.display.tracking }}
+        >
+          App gallery
+        </h2>
+        <p className="mt-1.5 max-w-[58ch] text-[13px] leading-[1.45] text-[#6B7280]">
+          Public apps published by other teams. Preview one to start from it.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {PUBLIC_APPS.map((app) => (
+          <PublicAppCard key={app.id} app={app} onOpen={() => setPreview(app)} />
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {preview && (
+          <PreviewModal
+            app={preview}
+            onClose={() => setPreview(null)}
+            onUseTemplate={() => {
+              onUseTemplate(preview);
+              setPreview(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}

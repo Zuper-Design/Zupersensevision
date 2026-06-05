@@ -13,6 +13,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { MY_APPS, type BuildApp } from "./buildData";
+import { token } from "./tokens";
 
 interface AppGalleryProps {
   onOpenApp: (app: BuildApp) => void;
@@ -72,7 +73,7 @@ function AppRow({ app, onOpen }: { app: BuildApp; onOpen: () => void }) {
   return (
     <tr
       onClick={onOpen}
-      className="group cursor-pointer border-b border-[#F2F4F3] transition-colors last:border-0 hover:bg-[#F7F9F8]"
+      className="group cursor-pointer border-b border-[#F0F0F2] transition-colors last:border-0 hover:bg-[#FAFAFA]"
     >
       <td className="px-5 py-3.5">
         <div className="flex min-w-0 items-center gap-3">
@@ -86,17 +87,17 @@ function AppRow({ app, onOpen }: { app: BuildApp; onOpen: () => void }) {
             <Icon className="h-[18px] w-[18px]" strokeWidth={2.15} />
           </span>
           <div className="min-w-0">
-            <div className="truncate text-[14px] font-medium tracking-[-0.01em] text-[#17191C]">
+            <div className="truncate text-[14px] font-medium tracking-[-0.01em] text-[#1C1E21]">
               {app.name}
             </div>
-            <div className="truncate text-[12px] text-[#9AA39F] sm:hidden">
+            <div className="truncate text-[12px] text-[#9CA3AF] sm:hidden">
               {app.module} · {app.owner}
             </div>
           </div>
         </div>
       </td>
 
-      <td className="hidden px-5 py-3.5 text-[13px] text-[#5F6964] sm:table-cell">
+      <td className="hidden px-5 py-3.5 text-[13px] text-[#6B7280] sm:table-cell">
         {app.module}
       </td>
 
@@ -105,32 +106,29 @@ function AppRow({ app, onOpen }: { app: BuildApp; onOpen: () => void }) {
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1C1E21] text-[10px] font-semibold text-white">
             {ownerInitials(app.owner)}
           </span>
-          <span className="text-[13px] text-[#5F6964]">{app.owner}</span>
+          <span className="text-[13px] text-[#6B7280]">{app.owner}</span>
         </div>
       </td>
 
       <td className="px-5 py-3.5">
+        {/* Live = token.status.success · Draft = token.status.neutral */}
         <span
           className="inline-flex h-6 items-center rounded-full px-2.5 text-[11px] font-medium"
           style={{
-            background: isLive ? "#EEF8F2" : "#EEF2F0",
-            color: isLive ? "#177245" : "#66706B",
+            background: isLive ? token.status.success.bg : token.status.neutral.bg,
+            color: isLive ? token.status.success.fg : token.status.neutral.fg,
           }}
         >
           {isLive ? "Live" : "Draft"}
         </span>
       </td>
 
-      <td className="hidden px-5 py-3.5 text-[13px] text-[#5F6964] sm:table-cell">
-        v{app.version}
-      </td>
-
-      <td className="hidden px-5 py-3.5 text-[13px] text-[#9AA39F] lg:table-cell">
+      <td className="hidden px-5 py-3.5 text-[13px] text-[#9CA3AF] lg:table-cell">
         {app.updated}
       </td>
 
       <td className="px-5 py-3.5 text-right">
-        <ArrowUpRight className="ml-auto h-[18px] w-[18px] text-[#C4CCC8] transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#1C1E21]" />
+        <ArrowUpRight className="ml-auto h-[18px] w-[18px] text-[#1C1E21] opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
       </td>
     </tr>
   );
@@ -168,14 +166,17 @@ export function AppGallery({ onOpenApp, onNewApp }: AppGalleryProps) {
   ];
 
   return (
-    <main className="min-h-full bg-[#F4F6F5] px-4 py-6 text-[#1C1E21] sm:px-6 sm:py-8 lg:px-10">
+    <main className="min-h-full bg-[#F4F4F2] px-4 py-6 text-[#1C1E21] sm:px-6 sm:py-8 lg:px-10">
       <div className="mx-auto max-w-[1240px]">
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-[28px] font-semibold leading-none tracking-[-0.045em] text-[#17191C]">
+            <h1
+              className="font-semibold leading-none text-[#1C1E21]"
+              style={{ fontSize: token.type.display.size, letterSpacing: token.type.display.tracking }}
+            >
               Apps
             </h1>
-            <p className="mt-2 text-[13px] text-[#66706B]">
+            <p className="mt-2 text-[13px] text-[#6B7280]">
               Operational tools for dispatch, revenue, customers, and field teams.
             </p>
           </div>
@@ -193,16 +194,17 @@ export function AppGallery({ onOpenApp, onNewApp }: AppGalleryProps) {
           {summary.map(({ label, value, hint, Icon }) => (
             <div
               key={label}
-              className="rounded-2xl bg-white p-4 ring-1 ring-[#E4E9E6]"
+              className="rounded-2xl border border-[#E6E8EC] bg-white p-4"
+              style={{ boxShadow: token.elev[1] }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[12px] font-medium text-[#7B8580]">{label}</span>
-                <Icon className="h-4 w-4 text-[#A6B0AB]" strokeWidth={2.1} />
+                <span className="text-[12px] font-medium text-[#6B7280]">{label}</span>
+                <Icon className="h-4 w-4 text-[#9CA3AF]" strokeWidth={2.1} />
               </div>
-              <div className="mt-3 text-[28px] font-semibold leading-none tracking-[-0.05em] text-[#17191C]">
+              <div className="mt-3 text-[28px] font-semibold leading-none tracking-[-0.045em] text-[#1C1E21]">
                 {value}
               </div>
-              <div className="mt-2 text-[11px] text-[#9AA39F]">{hint}</div>
+              <div className="mt-2 text-[11px] text-[#9CA3AF]">{hint}</div>
             </div>
           ))}
         </section>
@@ -210,13 +212,13 @@ export function AppGallery({ onOpenApp, onNewApp }: AppGalleryProps) {
         <section className="mt-6">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative min-w-0 lg:w-[320px]">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8A9590]" />
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
               <input
                 type="text"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search apps"
-                className="h-10 w-full rounded-full border border-[#DDE4E1] bg-white pl-10 pr-4 text-[13px] text-[#1C1E21] outline-none transition-colors placeholder:text-[#9AA39F] focus:border-[#FD5000]/60"
+                className="h-10 w-full rounded-full border border-[#E6E8EC] bg-white pl-10 pr-4 text-[13px] text-[#1C1E21] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#FD5000]/60"
               />
             </div>
 
@@ -232,16 +234,16 @@ export function AppGallery({ onOpenApp, onNewApp }: AppGalleryProps) {
                     className="inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-3 text-[12px] font-medium transition-colors"
                     style={{
                       background: active ? "#1C1E21" : "#FFFFFF",
-                      borderColor: active ? "#1C1E21" : "#DDE4E1",
-                      color: active ? "#FFFFFF" : "#5F6964",
+                      borderColor: active ? "#1C1E21" : "#E6E8EC",
+                      color: active ? "#FFFFFF" : "#6B7280",
                     }}
                   >
                     {module}
                     <span
                       className="rounded-full px-1.5 py-0.5 text-[10px]"
                       style={{
-                        background: active ? "rgba(255,255,255,0.16)" : "#E8EEEB",
-                        color: active ? "#FFFFFF" : "#7B8580",
+                        background: active ? "rgba(255,255,255,0.16)" : "#F3F4F6",
+                        color: active ? "#FFFFFF" : "#6B7280",
                       }}
                     >
                       {moduleCount(module)}
@@ -253,15 +255,17 @@ export function AppGallery({ onOpenApp, onNewApp }: AppGalleryProps) {
           </div>
 
           {filtered.length > 0 ? (
-            <div className="mt-5 overflow-hidden rounded-2xl bg-white ring-1 ring-[#E4E9E6]">
+            <div
+              className="mt-5 overflow-hidden rounded-2xl border border-[#E6E8EC] bg-white"
+              style={{ boxShadow: token.elev[1] }}
+            >
               <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="border-b border-[#EEF1F0] text-[11px] font-medium uppercase tracking-[0.04em] text-[#9AA39F]">
+                  <tr className="border-b border-[#F0F0F2] text-[11px] font-medium uppercase tracking-[0.04em] text-[#9CA3AF]">
                     <th className="px-5 py-3 font-medium">App</th>
                     <th className="hidden px-5 py-3 font-medium sm:table-cell">Module</th>
                     <th className="hidden px-5 py-3 font-medium md:table-cell">Owner</th>
                     <th className="px-5 py-3 font-medium">Status</th>
-                    <th className="hidden px-5 py-3 font-medium sm:table-cell">Version</th>
                     <th className="hidden px-5 py-3 font-medium lg:table-cell">Updated</th>
                     <th className="px-5 py-3" />
                   </tr>
@@ -274,7 +278,7 @@ export function AppGallery({ onOpenApp, onNewApp }: AppGalleryProps) {
               </table>
             </div>
           ) : (
-            <div className="mt-5 flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed border-[#CBD5D0] bg-white/65 px-5 text-center">
+            <div className="mt-5 flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed border-[#C9CDD4] bg-white/65 px-5 text-center">
               <div>
                 <div className="text-[15px] font-semibold tracking-[-0.02em] text-[#1C1E21]">
                   No matching apps
@@ -285,7 +289,7 @@ export function AppGallery({ onOpenApp, onNewApp }: AppGalleryProps) {
                     setQuery("");
                     setActiveModule("All");
                   }}
-                  className="mt-4 h-9 rounded-full border border-[#DDE4E1] px-4 text-[12px] font-medium text-[#5F6964] transition-colors hover:border-[#FD5000]/50 hover:text-[#FD5000]"
+                  className="mt-4 h-9 rounded-full border border-[#E6E8EC] px-4 text-[12px] font-medium text-[#6B7280] transition-colors hover:border-[#FD5000]/50 hover:text-[#FD5000]"
                 >
                   Clear filters
                 </button>
