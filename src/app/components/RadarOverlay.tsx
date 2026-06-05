@@ -48,7 +48,7 @@ export function RadarOverlay({ isOpen, onClose }: RadarOverlayProps) {
             <div className="p-8">
               <div className="grid grid-cols-2 gap-4">
                 {/* Weather Widget */}
-                <div className="bg-white rounded-[12px] border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
+                <div className="bg-white rounded-card border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
                   {/* Card Controls */}
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     <button className="p-1.5 rounded-md bg-white/90 hover:bg-white border border-[#E6E8EC] shadow-sm transition-colors duration-150 cursor-grab active:cursor-grabbing" aria-label="Rearrange">
@@ -119,7 +119,7 @@ export function RadarOverlay({ isOpen, onClose }: RadarOverlayProps) {
                 </div>
 
                 {/* Today's Jobs Checklist */}
-                <div className="bg-white rounded-[12px] border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
+                <div className="bg-white rounded-card border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
                   {/* Card Controls */}
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     <button className="p-1.5 rounded-md bg-white hover:bg-[#F8F9FB] border border-[#E6E8EC] shadow-sm transition-colors duration-150 cursor-grab active:cursor-grabbing" aria-label="Rearrange">
@@ -165,7 +165,7 @@ export function RadarOverlay({ isOpen, onClose }: RadarOverlayProps) {
                 </div>
 
                 {/* Active Job Sites Map */}
-                <div className="col-span-2 bg-white rounded-[12px] border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden group relative">
+                <div className="col-span-2 bg-white rounded-card border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden group relative">
                   {/* Card Controls */}
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     <button className="p-1.5 rounded-md bg-white hover:bg-[#F8F9FB] border border-[#E6E8EC] shadow-sm transition-colors duration-150 cursor-grab active:cursor-grabbing" aria-label="Rearrange">
@@ -250,7 +250,7 @@ export function RadarOverlay({ isOpen, onClose }: RadarOverlayProps) {
                 </div>
 
                 {/* Weather Alert Card */}
-                <div className="bg-gradient-to-br from-[#FEF3C7] to-[#FDE68A] rounded-[12px] border border-[#F59E0B]/20 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 group relative">
+                <div className="bg-gradient-to-br from-[#FEF3C7] to-[#FDE68A] rounded-card border border-[#F59E0B]/20 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 group relative">
                   {/* Card Controls */}
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     <button className="p-1.5 rounded-md bg-white hover:bg-[#F8F9FB] border border-[#E6E8EC] shadow-sm transition-colors duration-150 cursor-grab active:cursor-grabbing" aria-label="Rearrange">
@@ -288,7 +288,7 @@ export function RadarOverlay({ isOpen, onClose }: RadarOverlayProps) {
                 </div>
 
                 {/* Team Status Card */}
-                <div className="bg-white rounded-[12px] border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
+                <div className="bg-white rounded-card border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-5 group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
                   {/* Card Controls */}
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     <button className="p-1.5 rounded-md bg-white hover:bg-[#F8F9FB] border border-[#E6E8EC] shadow-sm transition-colors duration-150 cursor-grab active:cursor-grabbing" aria-label="Rearrange">
@@ -341,7 +341,7 @@ export function RadarOverlay({ isOpen, onClose }: RadarOverlayProps) {
                 </div>
 
                 {/* Feature Implementation Plan Card */}
-                <div className="bg-white rounded-[12px] border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6 group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
+                <div className="bg-white rounded-card border border-[#E6E8EC]/70 shadow-[0_2px_8px_rgba(0,0,0,0.04)] p-6 group relative hover:border-[#FF6B35]/40 hover:bg-[#FFF4ED] transition-all duration-150 hover:shadow-[0_4px_12px_rgba(255,107,53,0.08)]">
                   {/* Card Controls */}
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     <button className="p-1.5 rounded-md bg-white hover:bg-[#F8F9FB] border border-[#E6E8EC] shadow-sm transition-colors duration-150 cursor-grab active:cursor-grabbing" aria-label="Rearrange">
@@ -394,7 +394,7 @@ export function RadarOverlay({ isOpen, onClose }: RadarOverlayProps) {
               </div>
 
               {/* Empty State for Pinned Items */}
-              <div className="mt-8 bg-white rounded-[12px] border border-dashed border-[#E6E8EC] p-8 text-center">
+              <div className="mt-8 bg-white rounded-card border border-dashed border-[#E6E8EC] p-8 text-center">
                 <div className="w-12 h-12 bg-[#F8F9FB] rounded-full flex items-center justify-center mx-auto mb-3">
                   <MapPin className="w-5 h-5 text-[#9CA3AF]" />
                 </div>

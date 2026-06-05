@@ -547,7 +547,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                             ? { opacity: 0.55, cursor: 'not-allowed' }
                             : undefined
                       }
-                      className={`relative w-full bg-white rounded-[16px] transition-all duration-300 ${
+                      className={`relative w-full bg-white rounded-2xl transition-all duration-300 ${
                         inputFocused && !voiceMode
                           ? 'border border-[#FF6B35]/30 shadow-[0_0_0_3px_rgba(255,107,53,0.12),0_8px_24px_rgba(255,107,53,0.15)]'
                           : 'border border-[#E6E8EC] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]'

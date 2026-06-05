@@ -9,7 +9,7 @@ interface ActionConfirmationCardProps {
 
 export function ActionConfirmationCard({ action, details, onConfirm, onCancel }: ActionConfirmationCardProps) {
   return (
-    <div className="inline-flex items-center gap-3 bg-gradient-to-br from-[#6366F1]/5 to-white border border-[#6366F1]/20 rounded-[16px] px-4 py-3 shadow-[0_2px_12px_rgba(99,102,241,0.08)] max-w-[520px]">
+    <div className="inline-flex items-center gap-3 bg-gradient-to-br from-[#6366F1]/5 to-white border border-[#6366F1]/20 rounded-2xl px-4 py-3 shadow-[0_2px_12px_rgba(99,102,241,0.08)] max-w-[520px]">
       {/* Icon */}
       <div className="flex-shrink-0 w-8 h-8 bg-[#6366F1]/10 rounded-full flex items-center justify-center">
         <CheckCircle className="w-[18px] h-[18px] text-[#6366F1]" />

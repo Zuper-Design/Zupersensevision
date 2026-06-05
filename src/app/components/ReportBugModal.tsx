@@ -57,7 +57,7 @@ export function ReportBugModal({ isOpen, onClose }: ReportBugModalProps) {
       {/* Modal */}
       <div className="fixed z-[60] flex items-center justify-center p-4 pointer-events-none" style={{ inset: 0 }}>
         <div 
-          className="bg-white rounded-[12px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] w-full max-w-[440px] pointer-events-auto"
+          className="bg-white rounded-card shadow-[0_8px_32px_rgba(0,0,0,0.12)] w-full max-w-[440px] pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -85,7 +85,7 @@ export function ReportBugModal({ isOpen, onClose }: ReportBugModalProps) {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Type here..."
                 rows={5}
-                className="w-full px-3.5 py-3 text-[15px] leading-[1.5] text-[#1C1E21] placeholder:text-[#9CA3AF] bg-white border border-[#E6E8EC] rounded-[8px] focus:outline-none focus:border-[#6366F1] focus:ring-2 focus:ring-[#6366F1]/10 resize-none transition-all duration-150"
+                className="w-full px-3.5 py-3 text-[15px] leading-[1.5] text-[#1C1E21] placeholder:text-[#9CA3AF] bg-white border border-[#E6E8EC] rounded-md focus:outline-none focus:border-[#6366F1] focus:ring-2 focus:ring-[#6366F1]/10 resize-none transition-all duration-150"
               />
             </div>
 
@@ -103,7 +103,7 @@ export function ReportBugModal({ isOpen, onClose }: ReportBugModalProps) {
               {uploadedImage ? (
                 <div>
                   <div className="mb-3">
-                    <div className="relative border border-[#E6E8EC] rounded-[8px] overflow-hidden">
+                    <div className="relative border border-[#E6E8EC] rounded-md overflow-hidden">
                       <img 
                         src={uploadedImage} 
                         alt="Uploaded screenshot" 
@@ -125,7 +125,7 @@ export function ReportBugModal({ isOpen, onClose }: ReportBugModalProps) {
                 /* Capture Screenshot Button */
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[14px] font-medium text-[#1C1E21] bg-white border border-[#E6E8EC] rounded-[8px] hover:bg-[#F8F9FB] transition-colors duration-150"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[14px] font-medium text-[#1C1E21] bg-white border border-[#E6E8EC] rounded-md hover:bg-[#F8F9FB] transition-colors duration-150"
                 >
                   <Camera className="w-4 h-4" />
                   Add Image
@@ -146,14 +146,14 @@ export function ReportBugModal({ isOpen, onClose }: ReportBugModalProps) {
           <div className="flex items-center justify-end gap-3 px-6 pb-6 pt-2 border-t border-[#E6E8EC]">
             <button
               onClick={onClose}
-              className="px-5 py-2.5 text-[14px] font-medium text-[#6B7280] hover:bg-[#F8F9FB] rounded-[8px] transition-colors duration-150"
+              className="px-5 py-2.5 text-[14px] font-medium text-[#6B7280] hover:bg-[#F8F9FB] rounded-md transition-colors duration-150"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={!description.trim()}
-              className="px-5 py-2.5 text-[14px] font-medium text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] rounded-[8px] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:from-[#221E1F] disabled:hover:to-[#6D5F63]"
+              className="px-5 py-2.5 text-[14px] font-medium text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] rounded-md transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:from-[#221E1F] disabled:hover:to-[#6D5F63]"
             >
               Send
             </button>

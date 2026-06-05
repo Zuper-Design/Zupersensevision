@@ -709,7 +709,7 @@ function AppContent() {
                     </p>
                     <button
                       onClick={() => setPurchaseSuccess(false)}
-                      className="px-8 py-3 rounded-[12px] text-[14px] font-semibold text-white transition-all duration-150"
+                      className="px-8 py-3 rounded-card text-[14px] font-semibold text-white transition-all duration-150"
                       style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
                       onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
                       onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}

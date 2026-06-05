@@ -219,7 +219,7 @@ export function CheckoutModal({ isOpen, onClose, onSuccess, onCancelVerification
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                className="w-full mt-6 py-3.5 rounded-[12px] text-[14px] font-semibold text-white transition-all duration-150"
+                className="w-full mt-6 py-3.5 rounded-card text-[14px] font-semibold text-white transition-all duration-150"
                 style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
                 onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
@@ -235,7 +235,7 @@ export function CheckoutModal({ isOpen, onClose, onSuccess, onCancelVerification
             {/* ── Right: Order summary ── */}
             <div>
               <div
-                className="rounded-[16px] p-5"
+                className="rounded-2xl p-5"
                 style={{ background: '#F7F8FA', border: '1px solid #EAECEF' }}
               >
                 <p style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}>Order summary</p>

@@ -313,7 +313,7 @@ export function MetricsChartCards({ variant = 'full' }: MetricsChartCardsProps) 
   const effectiveTab = variant !== 'full' ? variant === 'team' ? 'team' : variant === 'revenue' ? 'revenue' : variant === 'jobs' ? 'jobs' : activeTab : activeTab;
 
   return (
-    <div className="w-full bg-white rounded-[16px] border border-[#E6E8EC] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+    <div className="w-full bg-white rounded-2xl border border-[#E6E8EC] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
       {/* Header */}
       <div className="px-5 pt-5 pb-0">
         <div className="flex items-center justify-between mb-1">

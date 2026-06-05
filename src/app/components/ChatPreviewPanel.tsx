@@ -135,7 +135,7 @@ export function ChatPreviewPanel({ card, onClose, onExpandFullScreen }: ChatPrev
 
               {/* User question bubble — grey like Sense chat */}
               <div className="flex justify-end">
-                <div className="max-w-[85%] bg-[#F3F4F6] rounded-[16px] px-5 py-3">
+                <div className="max-w-[85%] bg-[#F3F4F6] rounded-2xl px-5 py-3">
                   <p className="text-[14px] text-[#1C1E21] leading-relaxed">{conversation.question}</p>
                 </div>
               </div>

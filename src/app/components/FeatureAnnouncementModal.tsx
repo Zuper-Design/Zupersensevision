@@ -50,7 +50,7 @@ function ChartBars() {
       {bars.map((h, i) => (
         <div
           key={i}
-          className="flex-1 rounded-[2px]"
+          className="flex-1 rounded-xs"
           style={{
             height: `${h}%`,
             background: i === 2 ? 'linear-gradient(180deg,#FF8043,#FD5000)' : '#FFD9C2',

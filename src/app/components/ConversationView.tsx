@@ -2021,7 +2021,7 @@ Sarah`
                 <div key={index} className={msg.role === 'user' ? 'group flex justify-end' : 'relative flex flex-col group'}>
                   {msg.role === 'user' ? (
                     <div className="flex flex-col items-end max-w-[80%]">
-                      <div className="inline-block bg-[#F3F4F6] rounded-[16px] px-5 py-3">
+                      <div className="inline-block bg-[#F3F4F6] rounded-2xl px-5 py-3">
                         {msg.imageUrl && (
                           <div className="mb-2 rounded-lg overflow-hidden border border-[#E6E8EC]">
                             <img src={msg.imageUrl} alt="Uploaded" className="max-w-full max-h-[200px] object-contain" />
@@ -2702,7 +2702,7 @@ Sarah`
       {/* Rename Modal */}
       {isRenameModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-[16px] w-[420px] p-6 shadow-2xl">
+          <div className="bg-white rounded-2xl w-[420px] p-6 shadow-2xl">
             <h2 className="text-[17px] font-semibold text-[#1C1E21] mb-4">Rename chat</h2>
             <input
               type="text"

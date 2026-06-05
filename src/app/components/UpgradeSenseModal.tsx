@@ -43,7 +43,7 @@ export function UpgradeSenseModal({ isOpen, onClose, isVp, isTrial, showSuccess,
       />
       <div className="fixed z-[210] flex items-center justify-center p-4 pointer-events-none" style={overlayStyle}>
         <div
-          className="bg-white rounded-[16px] shadow-[0_20px_60px_rgba(34,30,31,0.25)] w-full max-w-[440px] pointer-events-auto"
+          className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(34,30,31,0.25)] w-full max-w-[440px] pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {showSuccess ? (
@@ -57,7 +57,7 @@ export function UpgradeSenseModal({ isOpen, onClose, isVp, isTrial, showSuccess,
                 Start improving your business with Sense — your AI-powered operations partner is ready to go.
               </p>
               <button
-                className="w-full py-3 rounded-[12px] text-[14px] font-semibold text-white active:scale-[0.97] transition-transform"
+                className="w-full py-3 rounded-card text-[14px] font-semibold text-white active:scale-[0.97] transition-transform"
                 style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)', border: 'none', cursor: 'pointer' }}
                 onClick={onClose}>
                 Start using Sense
@@ -131,7 +131,7 @@ export function UpgradeSenseModal({ isOpen, onClose, isVp, isTrial, showSuccess,
 
               <button
                 onClick={onSubscribe}
-                className="w-full py-3 rounded-[12px] text-[14px] font-semibold text-white transition-all duration-150"
+                className="w-full py-3 rounded-card text-[14px] font-semibold text-white transition-all duration-150"
                 style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
                 onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
                 onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
