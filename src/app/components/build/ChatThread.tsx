@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUp, ArrowRight, Check, Plus, Database, ShieldCheck, LayoutTemplate, Activity, ChevronDown, MessageSquarePlus, MessagesSquare } from 'lucide-react';
+import { ArrowUp, ArrowRight, Check, Plus, Database, ShieldCheck, LayoutTemplate, Activity, ChevronDown, MessageSquarePlus, MessagesSquare, FileText } from 'lucide-react';
 import { token } from './tokens';
 import PixelBlast from './PixelBlast';
+import { ReasoningCard } from './ReasoningCard';
+import { CLARIFY_PLAN, CLARIFY_REASONING } from './buildData';
+
+const PLAN_COUNT = CLARIFY_PLAN.length;
+const REASONING_COUNT = CLARIFY_REASONING.length;
 
 type Phase = 'clarify' | 'generating' | 'ready';
 
@@ -34,6 +39,8 @@ export interface ThreadProps {
   refineLog: string[];
   onNewApp: () => void;
   isRefining?: boolean;
+  // uploaded files that can be @-mentioned in the refine composer
+  mentionables?: { id: string; name: string }[];
   // conversation threads
   threads?: BuildThread[];
   activeThreadId?: string;
@@ -43,7 +50,26 @@ export interface ThreadProps {
 
 export function ChatThread(p: ThreadProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
   const [threadMenuOpen, setThreadMenuOpen] = useState(false);
+
+  // ── @-mention of uploaded files ─────────────────────────────────────────
+  const files = p.mentionables ?? [];
+  // active @-token at the caret → null when not mentioning
+  const mention = (() => {
+    if (p.phase !== 'ready') return null;
+    const v = p.refineDraft;
+    const m = v.match(/(?:^|\s)@([\w.\-]*)$/);
+    if (!m) return null;
+    const q = m[1].toLowerCase();
+    const hits = files.filter(f => f.name.toLowerCase().includes(q));
+    return hits.length ? { query: m[1], hits } : null;
+  })();
+  const pickMention = (name: string) => {
+    const v = p.refineDraft.replace(/@([\w.\-]*)$/, `@${name} `);
+    p.onRefineChange(v);
+    setTimeout(() => taRef.current?.focus(), 0);
+  };
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [p.phase, p.genStep, p.refineLog.length, p.clarifyAnswer]);
@@ -140,10 +166,13 @@ export function ChatThread(p: ThreadProps) {
 
       {/* thread */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-5 space-y-4">
+        {/* 1:1 with the conversation flow — user prompt → Sense reasoning card → clarify answer */}
         {p.phase === 'ready' && <Msg from="user">{p.prompt}</Msg>}
 
         {(p.phase === 'generating' || p.phase === 'ready') && (
-          <BuildTrace archetype={p.archetype} phase={p.phase} />
+          <Msg from="sense">
+            <ReasoningCard reasonLine={REASONING_COUNT} planStep={PLAN_COUNT} planStarted active={false} />
+          </Msg>
         )}
 
         {(p.phase === 'clarify' || p.clarifyAnswer) && p.clarifyQuestion && (
@@ -165,48 +194,10 @@ export function ChatThread(p: ThreadProps) {
                 ))}
               </div>
             ) : (
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11.5px]" style={{ background: token.color.brand.subtle, color: token.color.brand.primary }}>
+              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-medium" style={{ background: token.color.brand.subtle, color: token.color.brand.primary }}>
                 <Check className="w-3 h-3" /> {p.clarifyAnswer}
               </div>
             )}
-          </Msg>
-        )}
-
-        {(p.phase === 'generating' || p.phase === 'ready') && (
-          <Msg from="sense">
-            <p className="text-[13px] font-medium mb-2.5" style={{ color: token.color.text.primary }}>{p.genTitle}</p>
-            <div className="space-y-1.5 mb-3">
-              {p.genSteps.map((s, i) => {
-                const done = p.phase === 'ready' || i < p.genStep;
-                const active = p.phase === 'generating' && i === p.genStep;
-                return (
-                  <div key={s} className="flex items-center gap-2 text-[12px]" style={{ opacity: done || active ? 1 : 0.3 }}>
-                    {done ? <Check className="w-3.5 h-3.5 flex-shrink-0" style={{ color: token.status.success.fg }} />
-                      : active ? <span className="w-3.5 h-3.5 rounded-full border-2 border-t-transparent animate-spin flex-shrink-0" style={{ borderColor: token.color.brand.primary, borderTopColor: 'transparent' }} />
-                      : <span className="w-3.5 h-3.5 rounded-full border flex-shrink-0" style={{ borderColor: token.color.border.default }} />}
-                    <span style={{ color: done || active ? token.color.text.secondary : token.color.text.muted }}>{s}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="rounded-[20px] overflow-hidden" style={{ border: `1px solid ${token.color.border.default}`, background: token.color.bg.surface }}>
-              <div className="flex items-center gap-2 px-3 h-9" style={{ borderBottom: `1px solid ${token.color.border.hairline}` }}>
-                <span className="text-[10.5px] font-mono uppercase tracking-wider" style={{ color: token.color.text.muted }}>Plan</span>
-                {p.phase === 'ready' && (
-                  <span className="ml-auto inline-flex items-center gap-1 text-[10.5px] font-medium" style={{ color: token.status.success.fg }}>
-                    <Check className="w-3 h-3" /> ready
-                  </span>
-                )}
-              </div>
-              <div className="p-3 space-y-2">
-                {p.plan.map(pl => (
-                  <div key={pl.label} className="flex gap-3 text-[11.5px]">
-                    <span className="w-[64px] flex-shrink-0 text-[10px] font-mono uppercase tracking-wide pt-px" style={{ color: token.color.text.muted }}>{pl.label}</span>
-                    <span className="leading-relaxed" style={{ color: token.color.text.secondary }}>{pl.detail}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </Msg>
         )}
 
@@ -298,18 +289,36 @@ export function ChatThread(p: ThreadProps) {
           )}
           </AnimatePresence>
 
+          {/* @-mention suggestions */}
+          {mention && (
+            <div className="mx-2 mb-1 overflow-hidden rounded-xl border bg-white" style={{ borderColor: token.color.border.default, boxShadow: '0 12px 28px -16px rgba(28,30,33,0.3)' }}>
+              <div className="px-3 pt-2 pb-1 text-[10.5px] font-semibold uppercase tracking-wider" style={{ color: token.color.text.muted }}>Uploaded files</div>
+              {mention.hits.slice(0, 5).map(f => (
+                <button key={f.id} onClick={() => pickMention(f.name)}
+                  className="flex w-full items-center gap-2 px-3 h-8 text-left hover:bg-[#F4F4F2] transition-colors">
+                  <FileText className="w-3.5 h-3.5 flex-shrink-0" style={{ color: token.color.text.muted }} />
+                  <span className="text-[12.5px] truncate" style={{ color: token.color.text.primary }}>{f.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Input row */}
           <div className="flex items-end gap-2 p-2">
             <button className="w-7 h-7 rounded-full border flex items-center justify-center mt-0.5 flex-shrink-0" style={{ borderColor: token.color.border.default, color: token.color.text.muted }}>
               <Plus className="w-3.5 h-3.5" />
             </button>
             <textarea
+              ref={taRef}
               value={p.phase === 'ready' ? p.refineDraft : p.prompt}
               onChange={e => p.onRefineChange(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); p.onRefineSend(); } }}
+              onKeyDown={e => {
+                if (mention && e.key === 'Enter') { e.preventDefault(); pickMention(mention.hits[0].name); return; }
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); p.onRefineSend(); }
+              }}
               rows={1}
               disabled={p.phase !== 'ready'}
-              placeholder={p.phase === 'ready' ? 'Adjust the app...' : 'Building...'}
+              placeholder={p.phase === 'ready' ? 'Adjust the app — type @ to reference a file' : 'Building...'}
               className="flex-1 resize-none outline-none bg-transparent text-[12.5px] leading-relaxed py-1"
               style={{ color: token.color.text.primary }}
             />

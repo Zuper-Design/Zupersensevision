@@ -46,7 +46,7 @@ export function TemplateThumb({
       />
       {/* scaled-down mock so the full thumbnail fits the small square */}
       <div className="absolute inset-0 origin-top-left scale-[0.34]" style={{ width: "294%", height: "294%" }}>
-        <Thumbnail app={app} />
+        <Thumbnail module={app.category} />
       </div>
     </div>
   );
@@ -63,9 +63,11 @@ function archetypeFor(category: string): Archetype {
   switch (category) {
     case "Jobs":
     case "Schedule":
+    case "Measurement":
       return "dispatch";
     case "Invoices":
     case "Customers":
+    case "Commission":
       return "cockpit";
     case "Quotes":
       return "kanban";
@@ -89,6 +91,8 @@ const MODULE_THEME: Record<string, ModuleTheme> = {
   Quotes:    { accent: "#C026D3", grad: "linear-gradient(135deg, #F2E6F7 0%, #F9F1FC 55%, #FFFFFF 100%)" },
   Assets:    { accent: "#0891B2", grad: "linear-gradient(135deg, #E4F2F6 0%, #F0F8FB 55%, #FFFFFF 100%)" },
   Inventory: { accent: "#CA8A04", grad: "linear-gradient(135deg, #F7F0DE 0%, #FBF7EC 55%, #FFFFFF 100%)" },
+  Measurement: { accent: "#FD5000", grad: "linear-gradient(135deg, #FBEEE8 0%, #FFF6F1 55%, #FFFFFF 100%)" },
+  Commission:  { accent: "#7C5CE0", grad: "linear-gradient(135deg, #EFE9FB 0%, #F6F2FD 55%, #FFFFFF 100%)" },
 };
 function themeFor(category: string): ModuleTheme {
   return MODULE_THEME[category] ?? MODULE_THEME.Jobs;
@@ -106,8 +110,8 @@ const MODULE_ICON: Record<string, typeof Truck> = {
 
 // ── Rich composed thumbnails — floating glassy card on a gradient field ────
 
-function ListCardThumb({ app }: { app: PublicApp }) {
-  const Icon = MODULE_ICON[app.category] ?? Truck;
+function ListCardThumb({ module }: { module: string }) {
+  const Icon = MODULE_ICON[module] ?? Truck;
   const rowAccents = ["#4A90D9", "#16A34A", "#FD5000"];
   return (
     <div
@@ -115,7 +119,7 @@ function ListCardThumb({ app }: { app: PublicApp }) {
       style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.05), 0 18px 36px -22px rgba(28,30,33,0.4)" }}
     >
       <p className="mb-2.5 text-[12px] font-semibold tracking-[-0.02em] text-[#1C2A3A]">
-        {app.category === "Schedule" ? "Today" : "Activity"}
+        {module === "Schedule" ? "Today" : "Activity"}
       </p>
       <div className="space-y-2">
         {[0, 1, 2].map((i) => {
@@ -132,12 +136,12 @@ function ListCardThumb({ app }: { app: PublicApp }) {
   );
 }
 
-function MetricCardThumb({ app }: { app: PublicApp }) {
-  const t = themeFor(app.category);
+function MetricCardThumb({ module }: { module: string }) {
+  const t = themeFor(module);
   const metric =
-    app.category === "Invoices" ? "$3.9M overdue"
-    : app.category === "Customers" ? "12 at-risk"
-    : app.category === "Inventory" ? "7 low-stock"
+    module === "Invoices" ? "$3.9M overdue"
+    : module === "Customers" ? "12 at-risk"
+    : module === "Inventory" ? "7 low-stock"
     : "9 due soon";
   return (
     <div
@@ -167,8 +171,8 @@ function MetricCardThumb({ app }: { app: PublicApp }) {
   );
 }
 
-function ChatCardThumb({ app }: { app: PublicApp }) {
-  const t = themeFor(app.category);
+function ChatCardThumb({ module }: { module: string }) {
+  const t = themeFor(module);
   return (
     <>
       <div className="absolute right-3 top-6 h-6 rounded-full bg-white/55 backdrop-blur-sm" style={{ width: "62%" }} />
@@ -185,11 +189,32 @@ function ChatCardThumb({ app }: { app: PublicApp }) {
   );
 }
 
-function Thumbnail({ app }: { app: PublicApp }) {
-  const a = archetypeFor(app.category);
-  if (a === "kanban") return <ChatCardThumb app={app} />;
-  if (a === "cockpit" || a === "table") return <MetricCardThumb app={app} />;
-  return <ListCardThumb app={app} />;
+function Thumbnail({ module }: { module: string }) {
+  const a = archetypeFor(module);
+  if (a === "kanban") return <ChatCardThumb module={module} />;
+  if (a === "cockpit" || a === "table") return <MetricCardThumb module={module} />;
+  return <ListCardThumb module={module} />;
+}
+
+// Full-size preview thumbnail (gradient field + composed mock) keyed on the
+// app's module/category — reused for the "My apps" project cards.
+export function AppPreviewThumb({
+  module,
+  className = "",
+}: {
+  module: string;
+  className?: string;
+}) {
+  const t = themeFor(module);
+  return (
+    <div className={`relative overflow-hidden ${className}`} style={{ background: t.grad }}>
+      <div
+        className="absolute -bottom-8 -right-6 h-32 w-32 rounded-full opacity-40 blur-2xl"
+        style={{ background: t.accent }}
+      />
+      <Thumbnail module={module} />
+    </div>
+  );
 }
 
 function PublicAppCard({ app, onOpen }: { app: PublicApp; onOpen: () => void }) {
@@ -212,7 +237,7 @@ function PublicAppCard({ app, onOpen }: { app: PublicApp; onOpen: () => void }) 
           className="absolute -bottom-8 -right-6 h-32 w-32 rounded-full opacity-40 blur-2xl"
           style={{ background: t.accent }}
         />
-        <Thumbnail app={app} />
+        <Thumbnail module={app.category} />
       </div>
 
       {/* Content */}
@@ -279,7 +304,7 @@ function PreviewModal({
             className="absolute -bottom-8 -right-6 h-32 w-32 rounded-full opacity-40 blur-2xl"
             style={{ background: t.accent }}
           />
-          <Thumbnail app={app} />
+          <Thumbnail module={app.category} />
           <button
             onClick={onClose}
             className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-md bg-white/80 text-[#6B7280] backdrop-blur-sm hover:bg-white"

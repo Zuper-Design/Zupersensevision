@@ -4,7 +4,7 @@ import {
   Box, Filter, LayoutGrid, CreditCard, Columns3, Check, AlertTriangle,
   CalendarClock, Clock, Inbox, Rows3,
 } from 'lucide-react';
-import { DISPATCH_TREE, type AppElement, type ElementType } from './buildData';
+import { ROOFDRAW_TREE, type AppElement, type ElementType } from './buildData';
 
 const TYPE_ICON: Record<ElementType, typeof Box> = {
   Container: Box, FilterBar: Filter, Board: LayoutGrid, JobCard: CreditCard,
@@ -39,7 +39,7 @@ function TreeNode({ el, depth, selectedId, onSelect }: {
   );
 }
 
-export function ElementTreePane({ selectedId, onSelect, tree = DISPATCH_TREE }: { selectedId: string; onSelect: (id: string) => void; tree?: AppElement }) {
+export function ElementTreePane({ selectedId, onSelect, tree = ROOFDRAW_TREE }: { selectedId: string; onSelect: (id: string) => void; tree?: AppElement }) {
   return (
     <div className="w-[220px] flex-shrink-0 border-r border-[#E6E8EC] bg-white flex flex-col">
       <div className="h-11 px-3 flex items-center justify-between border-b border-[#E6E8EC]">
@@ -71,7 +71,7 @@ const TABS = [
   { key: 'style', label: 'Style', icon: Palette },
 ] as const;
 
-export function InspectorPane({ selectedId, skillBadge, onToggleSkillBadge, tree = DISPATCH_TREE }: {
+export function InspectorPane({ selectedId, skillBadge, onToggleSkillBadge, tree = ROOFDRAW_TREE }: {
   selectedId: string; skillBadge: boolean; onToggleSkillBadge: () => void; tree?: AppElement;
 }) {
   const [tab, setTab] = useState<typeof TABS[number]['key']>('data');

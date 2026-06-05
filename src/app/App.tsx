@@ -75,6 +75,8 @@ function AppContent() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const openUpgrade = () => { setPurchaseSuccess(false); setUpgradeModalOpen(true); };
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  // In Build/Apps, keep the chat-thread sidebar until the planning flow begins.
+  const [buildPlanning, setBuildPlanning] = useState(false);
   const [themeName, setThemeName] = useState<'clean' | 'rams' | 'neon'>('clean');
   const [sidebarSearch, setSidebarSearch] = useState('');
   const [sidebarSearchOpen, setSidebarSearchOpen] = useState(false);
@@ -310,7 +312,7 @@ function AppContent() {
             )}
           <div
             className={`transition-all duration-300 bg-[#FAFAFA] flex-shrink-0 overflow-hidden border-r border-[#E6E8EC] ${
-              sidebarOpen && activeView === 'chat' && !agentBuilderOpen ? 'w-[230px]' : 'w-0 border-r-0'
+              sidebarOpen && !agentBuilderOpen && (activeView === 'chat' || (activeView === 'build' && !buildPlanning)) ? 'w-[230px]' : 'w-0 border-r-0'
             }`}
           >
             <div className="h-full flex flex-col w-[230px]">
@@ -371,7 +373,7 @@ function AppContent() {
                   onMouseLeave={(e) => { if (activeView !== 'build') e.currentTarget.style.background = 'transparent'; }}
                 >
                   <Blocks className="w-3.5 h-3.5" style={{ color: activeView === 'build' ? '#FD5000' : '#1C1E21' }} />
-                  <span className="text-[14px] font-normal" style={{ color: activeView === 'build' ? '#1C1E21' : '#1C1E21', fontWeight: activeView === 'build' ? 500 : 400 }}>Build</span>
+                  <span className="text-[14px] font-normal" style={{ color: activeView === 'build' ? '#1C1E21' : '#1C1E21', fontWeight: activeView === 'build' ? 500 : 400 }}>Apps</span>
                   <span className="ml-auto text-[9px] font-semibold px-1 py-px rounded bg-[#FFF4ED] text-[#FD5000]">Beta</span>
                 </button>
                 {currentUser !== 'MJ' && currentUser !== 'AU' && (
@@ -396,17 +398,19 @@ function AppContent() {
                   .map((thread) => {
                     const menuOpen = threadMenuId === thread.id;
                     const editing = renameThreadId === thread.id;
-                    const rowBg = thread.active ? '#E8E8E8' : '#EEEEEE';
+                    // no thread is "active" outside the chat view (e.g. on Apps/Build)
+                    const threadActive = thread.active && activeView === 'chat';
+                    const rowBg = threadActive ? '#E8E8E8' : '#EEEEEE';
                     return (
                       <div
                         key={thread.id}
                         className={`relative group w-full rounded-md transition-colors ${(currentUser === 'MJ' || currentUser === 'AU') ? 'mb-1' : 'mb-0.5'} ${
-                          thread.active && !editing ? 'bg-[#E8E8E8]' : !editing ? 'hover:bg-[#EEEEEE]' : ''
+                          threadActive && !editing ? 'bg-[#E8E8E8]' : !editing ? 'hover:bg-[#EEEEEE]' : ''
                         }`}
                         style={{ zIndex: menuOpen || editing ? 60 : 'auto' }}
                       >
                         <button onClick={() => openThread(thread.id)} className="block w-full text-left px-2 py-1.5" style={{ visibility: editing ? 'hidden' : 'visible' }}>
-                          <p className={`text-[14px] truncate ${thread.active ? 'text-[#1C1E21] font-medium' : 'text-[#4B5563] font-normal'}`}>
+                          <p className={`text-[14px] truncate ${threadActive ? 'text-[#1C1E21] font-medium' : 'text-[#4B5563] font-normal'}`}>
                             {thread.title}
                           </p>
                         </button>
@@ -787,6 +791,7 @@ function AppContent() {
                       currentUser={currentUser}
                       seededPrompt={buildSeedPrompt}
                       onConsumeSeed={() => setBuildSeedPrompt(null)}
+                      onPlanningChange={setBuildPlanning}
                     />
                   </div>
                 ) : activeView === 'radar' ? (

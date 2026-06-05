@@ -38,15 +38,37 @@ export interface BuildApp {
 // ── User's existing apps (Build home list) ──────────────────────────────
 export const MY_APPS: BuildApp[] = [
   {
-    id: 'app-dispatch',
-    name: 'HVAC Dispatch Board — TX',
-    icon: '🗂️',
-    module: 'Jobs',
+    id: 'app-receivables',
+    name: 'Accounts Receivable',
+    icon: '💰',
+    module: 'Invoices',
     owner: 'Meera Joshi',
     lifecycle: 'published',
-    version: 4,
+    version: 3,
     updated: '2h ago',
-    description: 'Drag unassigned HVAC jobs onto technician lanes. Highlights overdue SLAs.',
+    description: 'Overdue invoices by aging bucket — send reminders, flag disputes, log contact.',
+  },
+  {
+    id: 'app-roofdraw',
+    name: 'Measurement · Roof Draw',
+    icon: '📐',
+    module: 'Measurement',
+    owner: 'Rahul G.',
+    lifecycle: 'published',
+    version: 2,
+    updated: '5h ago',
+    description: 'Sketch roof facets, capture pitch, and auto-total squares with a waste factor.',
+  },
+  {
+    id: 'app-commission',
+    name: 'Commission Calculator',
+    icon: '🧮',
+    module: 'Commission',
+    owner: 'Meera Joshi',
+    lifecycle: 'personal',
+    version: 1,
+    updated: 'yesterday',
+    description: 'Rep payouts from closed deals across tiered commission rates, with totals.',
   },
   {
     id: 'app-quote',
@@ -115,17 +137,6 @@ export const MY_APPS: BuildApp[] = [
     description: 'Quote pipeline by stage showing conversion rates and projected close value.',
   },
   {
-    id: 'app-sla',
-    name: 'SLA Breach Monitor',
-    icon: '⚠️',
-    module: 'Jobs',
-    owner: 'Meera Joshi',
-    lifecycle: 'published',
-    version: 1,
-    updated: '30m ago',
-    description: 'Jobs approaching or past SLA deadline, grouped by severity and technician.',
-  },
-  {
     id: 'app-parts',
     name: 'Parts & Inventory',
     icon: '📦',
@@ -160,13 +171,13 @@ export interface BuildTemplate {
 }
 
 export const TEMPLATES: BuildTemplate[] = [
-  { id: 't-dispatch', name: 'Dispatch Board', module: 'Jobs', icon: '🗂️',
-    blurb: 'Drag-to-assign jobs across technician lanes.',
-    prompt: 'Build a dispatch board for this week showing unassigned HVAC jobs in Texas as cards I can drag onto technicians, with SLA deadline and priority on each card, and highlight anything overdue.' },
+  { id: 't-roofdraw', name: 'Roof Draw', module: 'Measurement', icon: '📐',
+    blurb: 'Sketch roof facets and auto-total squares.',
+    prompt: 'Build a roof measurement tool where I sketch each roof facet, set its pitch, and it totals the squares with a waste factor I can adjust.' },
   { id: 't-quote', name: 'Quote Follow-ups', module: 'Quotes', icon: '📨',
     blurb: 'Track quotes stuck in "sent" and nudge them.',
     prompt: 'Show me quotes still in "sent" status for more than 3 days, oldest first, with the customer, amount, and days waiting.' },
-  { id: 't-invoice', name: 'Overdue Invoices', module: 'Invoices', icon: '💸',
+  { id: 't-invoice', name: 'Accounts Receivable', module: 'Invoices', icon: '💰',
     blurb: 'Aging buckets for receivables you can act on.',
     prompt: 'Build a board of overdue invoices grouped into 0-30 / 30-60 / 60+ day aging buckets with amount and customer.' },
   { id: 't-assets', name: 'Asset Service Due', module: 'Assets', icon: '🔧',
@@ -178,6 +189,9 @@ export const TEMPLATES: BuildTemplate[] = [
   { id: 't-cust', name: 'Customer Health', module: 'Customers', icon: '🏠',
     blurb: 'At-risk accounts with open issues.',
     prompt: 'Build a table of customers with open jobs older than 14 days, sorted by total open value.' },
+  { id: 't-commission', name: 'Commission Calculator', module: 'Commission', icon: '🧮',
+    blurb: 'Rep payouts from closed deals by tier.',
+    prompt: 'Calculate commission payouts from this quarter\'s closed deals using tiered rates by margin, grouped by rep with a payout total.' },
 ];
 
 // ── Public app gallery (community apps published by other companies) ─────
@@ -285,15 +299,23 @@ export const PUBLIC_APPS: PublicApp[] = [
   },
 ];
 
-// ── Plan steps Sense shows for the dispatch-board prompt (Spec 2 §4b) ────
-// Archetype = Scheduler/DispatchGrid (time axis present → never Kanban, §5).
-export const DISPATCH_PLAN: { label: string; detail: string }[] = [
-  { label: 'Archetype', detail: 'Dispatch scheduler — technician rows × hourly time axis (time present → grid, not board)' },
-  { label: 'Entity', detail: 'Jobs · category = HVAC · region = TX · scheduled ∈ today · split assigned / unassigned' },
-  { label: 'Layout', detail: 'Unassigned backlog tray + resource lanes positioned by scheduled start + duration' },
-  { label: 'Surfaces', detail: 'double-booking overlap, travel gaps, per-tech utilization' },
-  { label: 'Interaction', detail: 'drag job onto a lane at a time → write Job.assigned_to + Job.schedule slot' },
-  { label: 'Rule', detail: 'SLA deadline < now → danger (overdue), labelled — never colour-only' },
+// ── Plan steps Sense shows for the roof-draw prompt ───────────────────────
+// Archetype = Measurement canvas (sketch facets → area math).
+export const ROOFDRAW_PLAN: { label: string; detail: string }[] = [
+  { label: 'Archetype', detail: 'Measurement canvas — facet sketch + per-facet area math (geometry present → canvas, not table)' },
+  { label: 'Entity', detail: 'RoofFacet · plane area · pitch · slope-adjusted true area' },
+  { label: 'Layout', detail: 'Drawing surface (facets) + a live totals rail (squares, waste factor, order qty)' },
+  { label: 'Surfaces', detail: 'slope multiplier per pitch, waste factor, total squares to order' },
+  { label: 'Interaction', detail: 'draw / resize a facet → recompute true area + roll up the project total' },
+  { label: 'Rule', detail: 'pitch unset → warning (assumes 4/12), labelled — never silent default' },
+];
+
+// ── Plan steps for the commission-calculator prompt ───────────────────────
+export const COMMISSION_PLAN: { label: string; detail: string }[] = [
+  { label: 'Archetype', detail: 'Calculator table — deals × tiered rates → payout, grouped by rep' },
+  { label: 'Entity', detail: 'Deal · rep · close amount · margin · commission tier' },
+  { label: 'Layout', detail: 'MetricStat row (payout total) → grouped DataTable by rep with subtotals' },
+  { label: 'Rule', detail: 'tier picked by margin band — under-floor margin → warning, never silent' },
 ];
 
 export const KANBAN_PLAN: { label: string; detail: string }[] = [
@@ -309,31 +331,31 @@ export const KANBAN_PLAN: { label: string; detail: string }[] = [
 // Kept for backward-compat (single-question consumers); the full multi-question
 // flow lives in CLARIFY_QUESTIONS below.
 export const CLARIFY = {
-  question: 'By "this week" do you mean the dispatch calendar week (Mon–Sun) or a rolling 7 days?',
-  options: ['Calendar week (Mon–Sun)', 'Rolling 7 days'],
+  question: 'Should pitch be entered as a ratio (e.g. 6/12) or in degrees?',
+  options: ['Ratio (x/12)', 'Degrees'],
 };
 
 // ── AI reasoning trace (shown in the "thinking" state before clarify) ─────
 // Each line streams in; the planning steps below resolve against live modules.
 export const CLARIFY_REASONING: string[] = [
-  'A dispatch board needs a time axis, a set of jobs, and someone to assign them to — so I should ground all three against your live schema before laying anything out.',
-  '"This week" is ambiguous (calendar week vs. rolling 7 days) and I don\'t yet know which crews or regions you care about — guessing here would build the wrong board.',
-  'Let me pull the relevant records first, then ask you the few things I genuinely can\'t infer.',
+  'A roof measurement needs a way to draw each facet, a pitch per facet, and a waste factor — so I should ground the geometry model and your defaults before laying anything out.',
+  'Pitch can be entered a few ways (ratio vs. degrees) and waste factor varies by crew — guessing here would skew every square total downstream.',
+  'Let me resolve the measurement schema first, then ask you the few things I genuinely can\'t infer.',
 ];
 
 // Planning steps — render as a checklist that completes top-to-bottom while
 // the reasoning streams. count = records "found" for that module.
 export interface PlanStep {
-  module: 'Jobs' | 'Quotes' | 'Technicians' | 'Schema';
+  module: 'Measurement' | 'Materials' | 'Templates' | 'Schema';
   label: string;
   detail: string;
   count?: string;
 }
 export const CLARIFY_PLAN: PlanStep[] = [
-  { module: 'Schema', label: 'Resolving entities', detail: 'Jobs · HVAC · TX', count: 'matched' },
-  { module: 'Jobs', label: 'Querying Jobs module', detail: 'status = unassigned · this week', count: '17 jobs' },
-  { module: 'Technicians', label: 'Reading Technician roster', detail: 'active · TX region', count: '8 techs' },
-  { module: 'Quotes', label: 'Cross-referencing Quotes', detail: 'approved → ready to dispatch', count: '5 quotes' },
+  { module: 'Schema', label: 'Resolving entities', detail: 'RoofFacet · pitch · area', count: 'matched' },
+  { module: 'Measurement', label: 'Reading saved measurements', detail: 'recent roof draws', count: '12 draws' },
+  { module: 'Materials', label: 'Loading material units', detail: 'squares · bundles · waste %', count: 'mapped' },
+  { module: 'Templates', label: 'Checking facet templates', detail: 'gable · hip · shed', count: '3 shapes' },
 ];
 
 // ── Multi-question clarify (asked all at once, §3a) ───────────────────────
@@ -348,28 +370,28 @@ export interface ClarifyQuestion {
 }
 export const CLARIFY_QUESTIONS: ClarifyQuestion[] = [
   {
-    id: 'week',
-    prompt: 'By "this week", do you mean the calendar week (Mon–Sun) or a rolling 7 days?',
+    id: 'pitch',
+    prompt: 'How should pitch be entered for each facet?',
     kind: 'choice',
-    options: ['Calendar week (Mon–Sun)', 'Rolling 7 days'],
+    options: ['Ratio (x/12)', 'Degrees', 'Pick from presets'],
   },
   {
-    id: 'crews',
-    prompt: 'Which crews should the board cover?',
+    id: 'units',
+    prompt: 'What unit should the totals roll up to?',
     kind: 'choice',
-    options: ['All HVAC crews', 'Only TX region', 'Let me pick specific techs'],
+    options: ['Squares (100 sq ft)', 'Square feet', 'Bundles'],
   },
   {
-    id: 'group',
-    prompt: 'How should jobs be grouped down the board?',
+    id: 'waste',
+    prompt: 'What waste factor should I apply by default?',
     kind: 'choice',
-    options: ['By technician', 'By time slot', 'By priority'],
+    options: ['10%', '15%', 'Let me set it per project'],
   },
   {
     id: 'notes',
-    prompt: 'Anything else I should account for? (SLAs, skills, no-go zones…)',
+    prompt: 'Anything else I should account for? (ridge/hip, valleys, overhang…)',
     kind: 'text',
-    placeholder: 'e.g. keep emergency jobs unassigned until a senior tech is free',
+    placeholder: 'e.g. add 1.5 ft eave overhang and count ridge length separately',
     optional: true,
   },
 ];
@@ -428,22 +450,40 @@ export const ASSIGNED_JOBS: Record<string, Job> = {
   'JN-2444': { id: 'JN-2444', customer: 'Cedar Heights School', jobType: 'Boiler Service', address: '5 Cedar Heights, Cedar Park', priority: 'Medium', sla: 'Due 5:00 PM', slaHour: 17, overdue: false, skill: 'HVAC-Senior', start: 14, duration: 1.5 },
 };
 
-// ── Element tree for the dispatch scheduler (Spec 2 §4b) ────────────────
-export const DISPATCH_TREE: AppElement = {
-  id: 'el-root', type: 'Scheduler', label: 'DispatchGrid',
+// ── Element tree for the roof-draw measurement canvas ───────────────────
+export const ROOFDRAW_TREE: AppElement = {
+  id: 'el-root', type: 'Container', label: 'RoofDrawCanvas',
   children: [
-    { id: 'el-filter', type: 'FilterBar', label: 'FilterBar', binding: 'region, category, date' },
-    { id: 'el-tray', type: 'BacklogTray', label: 'UnassignedTray', binding: 'Jobs where status = unassigned',
+    { id: 'el-filter', type: 'FilterBar', label: 'Toolbar', binding: 'shape preset, pitch unit, waste %' },
+    { id: 'el-canvas', type: 'Board', label: 'DrawingSurface', binding: 'RoofFacet[] drawn on canvas',
       children: [
-        { id: 'el-card', type: 'JobBlock', label: 'JobBlock', binding: 'Jobs · HVAC · TX · today',
-          fields: ['customer', 'job type', 'SLA deadline', 'priority', 'address'],
-          conditionalFormat: 'overdue → danger' },
-        { id: 'el-warranty', type: 'Field', label: 'Warranty tier', binding: 'Jobs.warranty_tier (field removed in Settings)',
-          bindingBroken: true },
+        { id: 'el-card', type: 'JobBlock', label: 'Facet', binding: 'RoofFacet · plane area · pitch',
+          fields: ['name', 'plane area', 'pitch', 'true area'],
+          conditionalFormat: 'pitch unset → warning' },
+        { id: 'el-pitch', type: 'Field', label: 'Slope multiplier', binding: 'RoofFacet.pitch → slope factor' },
       ] },
-    { id: 'el-axis', type: 'TimeAxis', label: 'TimeAxis', binding: '08:00–18:00 · hourly' },
-    { id: 'el-lanes', type: 'ResourceLane', label: 'ResourceLane[]', binding: 'active technicians in region',
-      action: 'onDrop(job, lane@time) → write Job.assigned_to + Job.schedule slot' },
+    { id: 'el-totals', type: 'Metric', label: 'TotalsRail', binding: 'sum(true area) → squares × waste',
+      children: [
+        { id: 'el-squares', type: 'Metric', label: 'Total squares', binding: 'sum(true area) / 100' },
+        { id: 'el-waste', type: 'Field', label: 'Waste factor', binding: 'project.waste_pct', action: 'adjust → recompute order qty' },
+      ] },
+  ],
+};
+
+// ── Element tree for the commission calculator ──────────────────────────
+export const COMMISSION_TREE: AppElement = {
+  id: 'el-root', type: 'Container', label: 'CommissionCalculator',
+  children: [
+    { id: 'el-metrics', type: 'Metric', label: 'MetricStat row', binding: 'Deals where status = closed',
+      children: [
+        { id: 'el-payout', type: 'Metric', label: 'Total payout', binding: 'sum(Deal.commission)', fields: ['amount'] },
+        { id: 'el-deals', type: 'Metric', label: 'Closed deals', binding: 'Deals count' },
+      ] },
+    { id: 'el-table', type: 'Table', label: 'Grouped DataTable', binding: 'Deals grouped by rep',
+      children: [
+        { id: 'el-card', type: 'Field', label: 'Commission column', binding: 'Deal.amount × tier.rate', fields: ['amount'] },
+        { id: 'el-tier', type: 'Field', label: 'Tier badge', binding: 'Deal.margin → tier band' },
+      ] },
   ],
 };
 
@@ -546,3 +586,95 @@ export const VERSION_HISTORY: { v: number; note: string; when: string; by: strin
   { v: 2, note: 'Technician lanes by region', when: '3 days ago', by: 'Meera Joshi' },
   { v: 1, note: 'Initial board from prompt', when: '4 days ago', by: 'Meera Joshi' },
 ];
+
+// ── Roof Draw (Measurement) data ────────────────────────────────────────
+// Each facet has a plane (footprint) area and a pitch; the true surface area
+// is plane area × the pitch's slope multiplier. Totals roll up to squares.
+export interface RoofFacet {
+  id: string;
+  name: string;
+  // traced polygon over the aerial image — normalized 0–100 viewbox points
+  points: [number, number][];
+  planeArea: number;   // sq ft of the flat footprint
+  pitch: string;       // e.g. '6/12'
+  color: string;
+}
+
+// slope multiplier for an x/12 pitch = sqrt(x^2 + 12^2) / 12
+export function slopeMultiplier(pitch: string): number {
+  const m = pitch.match(/^(\d+(?:\.\d+)?)\s*\/\s*12$/);
+  const rise = m ? parseFloat(m[1]) : 4;
+  return Math.sqrt(rise * rise + 144) / 12;
+}
+
+export const polygonCentroid = (pts: [number, number][]): [number, number] => {
+  const n = pts.length;
+  const x = pts.reduce((s, p) => s + p[0], 0) / n;
+  const y = pts.reduce((s, p) => s + p[1], 0) / n;
+  return [x, y];
+};
+
+// Aerial roof photo (local, free-licensed) traced into facets. This is a
+// classic hip roof: 4 slopes rising from the eaves to a short central ridge.
+// Eave corners ~ (20,20)(80,20)(80,72)(20,72); ridge ~ (40,40)→(60,46).
+export const ROOF_IMAGE_URL = '/roof-aerial.jpeg';
+export const ROOF_IMAGE_CREDIT = 'Aerial roof · top view';
+
+export const ROOF_FACETS: RoofFacet[] = [
+  // front (top) slope — eave edge → ridge
+  { id: 'f-1', name: 'Front slope', pitch: '6/12', planeArea: 540, color: '#FD5000',
+    points: [[20, 20], [80, 20], [60, 46], [40, 40]] },
+  // rear (bottom) slope
+  { id: 'f-2', name: 'Rear slope', pitch: '6/12', planeArea: 540, color: '#4A90D9',
+    points: [[40, 40], [60, 46], [80, 72], [20, 72]] },
+  // left hip end (triangle)
+  { id: 'f-3', name: 'Left hip', pitch: '6/12', planeArea: 240, color: '#16A34A',
+    points: [[20, 20], [40, 40], [20, 72]] },
+  // right hip end (triangle)
+  { id: 'f-4', name: 'Right hip', pitch: '6/12', planeArea: 240, color: '#7C5CE0',
+    points: [[80, 20], [80, 72], [60, 46]] },
+];
+
+// traced edges — ridge / hips / eaves with measurements
+export interface RoofEdge { id: string; from: [number, number]; to: [number, number]; kind: 'ridge' | 'hip' | 'eave' | 'valley'; length: string; }
+export const ROOF_EDGES: RoofEdge[] = [
+  { id: 'e-ridge', kind: 'ridge', from: [40, 40], to: [60, 46], length: "14'" },
+  { id: 'e-hip-1', kind: 'hip', from: [20, 20], to: [40, 40], length: "20'" },
+  { id: 'e-hip-2', kind: 'hip', from: [80, 20], to: [60, 46], length: "20'" },
+  { id: 'e-hip-3', kind: 'hip', from: [20, 72], to: [40, 40], length: "24'" },
+  { id: 'e-hip-4', kind: 'hip', from: [80, 72], to: [60, 46], length: "24'" },
+  { id: 'e-eave', kind: 'eave', from: [20, 20], to: [80, 20], length: "44'" },
+];
+
+export const ROOF_DEFAULTS = { wastePct: 10, unit: 'Squares' as const };
+// roll-up line lengths shown in the totals rail
+export const ROOF_LINES = { ridge: 32, hip: 72, valley: 9, eave: 154, rake: 38 };
+
+// ── Commission Calculator data ──────────────────────────────────────────
+export interface CommissionTier { label: string; minMargin: number; rate: number; }
+export const COMMISSION_TIERS: CommissionTier[] = [
+  { label: 'Tier 1', minMargin: 0.40, rate: 0.10 },
+  { label: 'Tier 2', minMargin: 0.25, rate: 0.07 },
+  { label: 'Tier 3', minMargin: 0.00, rate: 0.04 },
+];
+
+export interface Deal {
+  id: string;
+  rep: string;
+  customer: string;
+  amount: number;     // closed deal value
+  margin: number;     // 0–1
+}
+
+export const COMMISSION_DEALS: Deal[] = [
+  { id: 'D-3012', rep: 'Carlos Mendez', customer: 'Riverside Apartments', amount: 18400, margin: 0.46 },
+  { id: 'D-3019', rep: 'Carlos Mendez', customer: 'Lone Star Diner',       amount: 7600,  margin: 0.31 },
+  { id: 'D-3024', rep: 'Dana Wright',   customer: 'Maple Grove HOA',        amount: 12200, margin: 0.52 },
+  { id: 'D-3031', rep: 'Dana Wright',   customer: 'Tech Park Tower B',      amount: 26800, margin: 0.22 },
+  { id: 'D-3037', rep: 'Sam Okafor',    customer: 'Sunset Retail Plaza',    amount: 5400,  margin: 0.38 },
+  { id: 'D-3042', rep: 'Sam Okafor',    customer: 'Cedar Heights School',   amount: 31500, margin: 0.41 },
+];
+
+export function tierFor(margin: number): CommissionTier {
+  return COMMISSION_TIERS.find((t) => margin >= t.minMargin) ?? COMMISSION_TIERS[COMMISSION_TIERS.length - 1];
+}
