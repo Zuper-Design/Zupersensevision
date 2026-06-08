@@ -1849,7 +1849,7 @@ Sarah`
           {!demoMode && !sidebarOpen && onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
+              className="p-1.5 rounded-lg hover:bg-[#F3F4F6] transition-colors duration-150 -ml-2"
             >
               <PanelLeftClose className="w-[18px] h-[18px] text-[#6B7280] rotate-180" />
             </button>
@@ -2007,7 +2007,7 @@ Sarah`
           {onBack && !demoMode && (
             <button
               onClick={onBack}
-              className="absolute top-4 right-6 z-10 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#E6E8EC] hover:bg-[#F8F9FB] hover:border-[#1C1E21]/20 transition shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              className="absolute top-4 right-6 z-10 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/20 transition shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
               aria-label="Close"
             >
               <X className="w-[15px] h-[15px] text-[#6B7280]" />
@@ -2474,21 +2474,6 @@ Sarah`
                         </>
                       )}
 
-                      {/* Suggested follow-ups at end of last assistant message */}
-                      {msg.role === 'assistant' && msg.content && index === messages.length - 1 && (
-                        <div className="mt-10">
-                          <SuggestedFollowups
-                            suggestions={getFollowupSuggestions(msg.content, {
-                              dsoChart: msg.dsoChart,
-                              confirmationCard: msg.confirmationCard,
-                              checklistCard: msg.checklistCard,
-                              actionConfirmationCard: msg.actionConfirmationCard,
-                              canvasWidgetId: msg.canvasWidgetId,
-                            })}
-                            onSelect={handleFollowupSelect}
-                          />
-                        </div>
-                      )}
                     </div>
                     </>
                   )}
@@ -2502,6 +2487,25 @@ Sarah`
         {/* Minimal Input at Bottom - Fixed */}
         <div className="bg-white px-8 pt-2 pb-4 flex-shrink-0 bg-white">
           <div className="w-full max-w-[720px] mx-auto">
+            {/* Suggested follow-ups — pinned directly above the chat field */}
+            {!isVp && (() => {
+              const lastMsg = messages[messages.length - 1];
+              if (!lastMsg || lastMsg.role !== 'assistant' || !lastMsg.content) return null;
+              return (
+                <div className="mb-2">
+                  <SuggestedFollowups
+                    suggestions={getFollowupSuggestions(lastMsg.content, {
+                      dsoChart: lastMsg.dsoChart,
+                      confirmationCard: lastMsg.confirmationCard,
+                      checklistCard: lastMsg.checklistCard,
+                      actionConfirmationCard: lastMsg.actionConfirmationCard,
+                      canvasWidgetId: lastMsg.canvasWidgetId,
+                    })}
+                    onSelect={handleFollowupSelect}
+                  />
+                </div>
+              );
+            })()}
             {isVp && (
               <div className="flex items-center justify-between gap-3 px-4 py-3 mb-[8px] rounded-xl bg-[#F3F4F6]">
                 <div className="min-w-0">
@@ -2563,7 +2567,7 @@ Sarah`
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => imageInputRef.current?.click()}
-                      className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-[#F8F9FB] transition-all duration-200 flex-shrink-0"
+                      className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-[#F3F4F6] transition-all duration-200 flex-shrink-0"
                       aria-label="Upload image"
                     >
                       <Plus className="w-[18px] h-[18px] text-[#6B7280]" strokeWidth={2.25} />
@@ -2572,7 +2576,7 @@ Sarah`
                       className={`relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 flex-shrink-0 ${
                         isListening
                           ? 'bg-white mic-pulse'
-                          : 'hover:bg-[#F8F9FB]'
+                          : 'hover:bg-[#F3F4F6]'
                       }`}
                       onClick={toggleDictation}
                     aria-label={isListening ? "Stop dictation" : "Start dictation"}
@@ -2720,7 +2724,7 @@ Sarah`
             />
             <div className="flex items-center justify-end gap-3 mt-6">
               <button
-                className="px-4 py-2 text-[14px] text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#F8F9FB] transition-colors duration-150 rounded-lg font-medium"
+                className="px-4 py-2 text-[14px] text-[#6B7280] hover:text-[#1C1E21] hover:bg-[#F3F4F6] transition-colors duration-150 rounded-lg font-medium"
                 onClick={handleCancelRename}
               >
                 Cancel

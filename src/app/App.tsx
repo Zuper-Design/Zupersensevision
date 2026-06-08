@@ -307,8 +307,8 @@ function AppContent() {
               <div className="px-2 pb-0.5 flex flex-col">
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors">
-                    <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
-                    <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-3.5 h-3.5 text-[#1C1E21]" strokeWidth={2.25} /></span>
+                    <span className="text-[14px] font-medium text-[#1C1E21]">New thread</span>
                   </button>
                 )}
                 {sidebarSearchOpen ? (
@@ -328,22 +328,47 @@ function AppContent() {
                   </div>
                 ) : (
                   <button onClick={() => { setSidebarSearchOpen(true); setTimeout(() => sidebarSearchRef.current?.focus(), 50); }} className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors">
-                    <span className="w-[18px] flex items-center justify-center shrink-0"><Search className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><Search className="w-3.5 h-3.5 text-[#525252]" strokeWidth={2.25} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">Search</span>
                   </button>
+                )}
+                {(currentUser === 'MJ' || currentUser === 'AU') && (
+                  <div className="mx-2 my-1.5 border-t border-[#F0F1F3]" />
                 )}
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button
                     onClick={() => { setActiveSubPage(null); setActivePage(null); setAgentBuilderOpen(true); }}
                     className="group w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors"
                   >
-                    <span className="w-[18px] flex items-center justify-center shrink-0"><AgentStudioIcon className="w-4 h-4 [filter:brightness(0)_invert(0.32)] transition-[filter] duration-200 group-hover:[filter:none]" variant={currentUser === 'AU' ? 'orange' : 'purple'} /></span>
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><AgentStudioIcon className="w-3.5 h-3.5 [filter:brightness(0)_invert(0.32)] transition-[filter] duration-200 group-hover:[filter:none]" variant={currentUser === 'AU' ? 'orange' : 'purple'} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">Agent Studio</span>
+                  </button>
+                )}
+                {(currentUser === 'MJ' || currentUser === 'AU') && (
+                  <button
+                    className="group w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors"
+                  >
+                    <span className="w-[18px] flex items-center justify-center shrink-0">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="url(#appBuilderGrad)" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 [filter:grayscale(1)_brightness(0.5)] transition-[filter] duration-200 group-hover:[filter:none]">
+                        <defs>
+                          <linearGradient id="appBuilderGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#FF8A5B" />
+                            <stop offset="1" stopColor="#FF6B35" />
+                          </linearGradient>
+                        </defs>
+                        <rect width="7" height="7" x="3" y="3" rx="1.5" />
+                        <rect width="7" height="7" x="14" y="3" rx="1.5" />
+                        <rect width="7" height="7" x="14" y="14" rx="1.5" />
+                        <rect width="7" height="7" x="3" y="14" rx="1.5" />
+                      </svg>
+                    </span>
+                    <span className="text-[14px] font-normal text-[#1C1E21]">App Builder</span>
+                    <span className="ml-auto text-[11px] font-semibold text-[#FF6B35] bg-[#FFF1EA] px-1.5 py-0.5 rounded-md">Beta</span>
                   </button>
                 )}
                 {currentUser !== 'MJ' && currentUser !== 'AU' && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#F3F4F6] rounded-md transition-colors">
-                    <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-4 h-4 text-[#525252]" strokeWidth={2.75} /></span>
+                    <span className="w-[18px] flex items-center justify-center shrink-0"><Plus className="w-3.5 h-3.5 text-[#525252]" strokeWidth={2.25} /></span>
                     <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
                   </button>
                 )}

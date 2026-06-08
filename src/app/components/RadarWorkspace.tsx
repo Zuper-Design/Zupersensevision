@@ -522,7 +522,7 @@ export function RadarWorkspace({ isOpen, onClose, activeView = 'radar', onViewCh
                   demoMode ? (
                     <button
                       onClick={() => showDemoToast()}
-                      className="inline-flex items-center gap-1.5 px-3 h-8 rounded-lg bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:border-[#1C1E21]/30 transition"
+                      className="inline-flex items-center gap-1.5 px-3 h-8 rounded-lg bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/30 transition"
                     >
                       Last 30 days
                     </button>

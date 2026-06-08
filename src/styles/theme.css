@@ -112,6 +112,17 @@
   /* Canonical card radius (12px) — was the raw rounded-[12px] one-off.
      Distinct from rounded-lg (10px) and rounded-xl (14px). */
   --radius-card: 0.75rem;
+
+  /* ── Canonical product color tokens ───────────────────────────────
+     Names avoid the shadcn layer (--secondary/--border are taken and
+     wired into ui/* primitives). Utilities: text-*/bg-*/border-*.
+     NOT yet applied to usages — pending review (rows 3–5). */
+  --color-brand: #FD5000;            /* primary CTA / brand orange (was split FF6B35/FD5000) */
+  --color-error: #EF4444;            /* error fill (was split EF4444/DC2626/D4183D) */
+  --color-error-strong: #DC2626;     /* error hover/pressed */
+  --color-fg-secondary: #6B7280;     /* secondary text — AA on white, ⚠ fails AA on #F3F4F6 */
+  --color-fg-secondary-strong: #4B5563; /* secondary text, AAA — use on muted bg */
+  --color-stroke: #E6E8EC;           /* default border (distinct from shadcn --border) */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

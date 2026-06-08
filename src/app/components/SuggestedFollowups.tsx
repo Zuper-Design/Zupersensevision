@@ -1,4 +1,5 @@
-import { MessageSquare, FileText, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { MessageSquare, FileText, ArrowRight, ChevronDown } from 'lucide-react';
 
 type Suggestion = { short: string; full: string; icon: 'chat' | 'doc' };
 
@@ -8,21 +9,41 @@ interface SuggestedFollowupsProps {
 }
 
 export function SuggestedFollowups({ suggestions, onSelect }: SuggestedFollowupsProps) {
+  const [collapsed, setCollapsed] = useState(false);
   return (
-    <div>
-      <p className="text-[13px] font-medium text-[#1C1E21] mb-2">Suggested follow-ups</p>
-      <div className="flex flex-col">
-        {suggestions.slice(0, 3).map((s, i) => (
-          <button
-            key={i}
-            onClick={() => onSelect(s.full)}
-            className="group flex items-center gap-3 px-2 py-2.5 text-left border-t border-[#F0F0F0] first:border-t-0 hover:bg-[#FAFAFA] transition-colors rounded-sm"
-          >
-            <MessageSquare className="w-4 h-4 text-[#9CA3AF] flex-shrink-0" />
-            <span className="flex-1 text-[14px] text-[#1C1E21] font-medium">{s.full}</span>
-            <ArrowRight className="w-4 h-4 text-[#9CA3AF] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-          </button>
-        ))}
+    <div className={`rounded-[20px] border border-[#E6E8EC] bg-[#FAFAFB] shadow-[0_1px_2px_rgba(0,0,0,0.03)] px-3 transition-[padding] duration-200 ${collapsed ? 'py-0.5' : 'pt-1 pb-1.5'}`}>
+      <button
+        type="button"
+        onClick={() => setCollapsed((c) => !c)}
+        aria-expanded={!collapsed}
+        className="w-full flex items-center justify-between px-2 py-2 text-left group"
+      >
+        <span className="text-[13px] font-medium text-[#6B7280]">Suggested follow-ups</span>
+        <ChevronDown
+          className={`w-4 h-4 text-[#9CA3AF] group-hover:text-[#6B7280] transition-transform duration-200 ease-out ${collapsed ? '' : 'rotate-180'}`}
+        />
+      </button>
+      {/* grid 1fr→0fr gives a smooth height collapse without measuring */}
+      <div
+        className="grid transition-[grid-template-rows] duration-200 ease-out"
+        style={{ gridTemplateRows: collapsed ? '0fr' : '1fr' }}
+      >
+        <div className="overflow-hidden">
+          <div className="flex flex-col">
+            {suggestions.slice(0, 3).map((s, i) => (
+              <button
+                key={i}
+                onClick={() => onSelect(s.full)}
+                tabIndex={collapsed ? -1 : 0}
+                className="group flex items-center gap-3 px-2 py-2.5 text-left border-t border-[#EEEEF1] first:border-t-0 hover:bg-[#F2F3F5] transition-colors rounded-sm"
+              >
+                <MessageSquare className="w-4 h-4 text-[#9CA3AF] flex-shrink-0" />
+                <span className="flex-1 text-[14px] text-[#1C1E21] font-medium">{s.full}</span>
+                <ArrowRight className="w-4 h-4 text-[#9CA3AF] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

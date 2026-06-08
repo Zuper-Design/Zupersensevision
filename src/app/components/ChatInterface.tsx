@@ -448,7 +448,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                     {!sidebarOpen && onToggleSidebar && (
                       <button
                         onClick={onToggleSidebar}
-                        className="p-1.5 rounded-lg hover:bg-[#F8F9FB] transition-colors duration-150 -ml-2"
+                        className="p-1.5 rounded-lg hover:bg-[#F3F4F6] transition-colors duration-150 -ml-2"
                       >
                         <PanelLeftClose className="w-[18px] h-[18px] text-[#6B7280] rotate-180" />
                       </button>
@@ -600,7 +600,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                           <button
                             onMouseDown={(e) => e.preventDefault()}
                             onClick={() => fileInputRef.current?.click()}
-                            className="ml-2 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F8F9FB]"
+                            className="ml-2 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F3F4F6]"
                             aria-label="Attach file or image"
                             title="Attach file or image"
                           >
@@ -611,7 +611,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         {!inputFocused && !isListening && !(message && attachedFiles.length === 0) && (
                           <button
                             onClick={startDictation}
-                            className="ml-1 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F8F9FB]"
+                            className="ml-1 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F3F4F6]"
                             aria-label="Voice Dictation"
                           >
                             <Mic className="w-[15px] h-[15px] transition-colors duration-300 text-[#6B7280]" />
@@ -739,7 +739,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                                 clearTimeout(typewriterTimerRef.current);
                               }
                             }}
-                            className="px-3 h-8 inline-flex items-center text-[13px] text-[#6B7280] hover:text-[#1C1E21] rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150 font-medium"
+                            className="px-3 h-8 inline-flex items-center text-[13px] text-[#6B7280] hover:text-[#1C1E21] rounded-lg border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 transition-all duration-150 font-medium"
                           >
                             Cancel
                           </button>
@@ -748,7 +748,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={isPaused ? resumeDictation : pauseDictation}
-                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 transition-all duration-150"
                                 aria-label={isPaused ? "Resume Dictating" : "Pause Dictating"}
                               >
                                 {isPaused ? (
@@ -807,7 +807,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                               <button
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150"
+                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 transition-all duration-150"
                                 aria-label="Attach file or image"
                                 title="Attach file or image"
                               >
@@ -815,7 +815,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                               </button>
                               <button
                                 onClick={onToggleVoiceMode}
-                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:border-[#FF6B35]/30 hover:bg-[#FF6B35]/[0.02] transition-all duration-150"
+                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 transition-all duration-150"
                                 aria-label="Voice Mode"
                                 title="Voice Mode"
                               >

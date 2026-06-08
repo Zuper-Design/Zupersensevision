@@ -180,16 +180,16 @@ function CrewPerformance() {
         {crewData.map((crew) => (
           <div key={crew.name} className="flex items-center gap-3">
             <span className="text-[12px] text-[#6B7280] w-[52px] flex-shrink-0">{crew.name}</span>
-            <div className="flex-1 h-[22px] bg-[#F5F5F5] rounded-full overflow-hidden relative">
+            <div className="flex-1 h-[10px] bg-[#F0F1F3] rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-700 ease-out"
                 style={{ width: `${crew.score}%`, backgroundColor: crew.color }}
               />
-              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-[#6B7280]">{crew.score}%</span>
             </div>
+            <span className="text-[12px] font-semibold text-[#1C1E21] w-[34px] text-right flex-shrink-0 tabular-nums">{crew.score}%</span>
             <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="text-[11px] text-[#9CA3AF]">{crew.jobs} jobs</span>
-              <span className="text-[11px] text-[#1C1E21] font-medium">{crew.revenue}</span>
+              <span className="text-[11px] text-[#9CA3AF] w-[44px] text-right tabular-nums">{crew.jobs} jobs</span>
+              <span className="text-[11px] text-[#1C1E21] font-medium w-[40px] text-right tabular-nums">{crew.revenue}</span>
             </div>
           </div>
         ))}

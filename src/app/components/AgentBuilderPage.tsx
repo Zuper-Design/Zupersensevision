@@ -112,8 +112,16 @@ export function AgentBuilderPage({ onClose, currentUser }: { onClose?: () => voi
       {/* Left sidebar */}
       {!(isMJ && (mjCreating || mjChooserOpen || auActiveAgent)) && (
       <aside className="w-[240px] flex-shrink-0 bg-white border-r border-[#E6E8EC] flex flex-col">
-        <div className="px-5 py-5 flex items-center gap-2.5 border-b border-[#F0F1F3]">
-          <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center">
+        <div className="px-3 py-4 flex items-center gap-2 border-b border-[#F0F1F3]">
+          <button
+            onClick={onClose}
+            title="Back to Sense"
+            aria-label="Back to Sense"
+            className="w-7 h-7 rounded-md flex items-center justify-center text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21] transition-colors flex-shrink-0"
+          >
+            <ChevronLeft className="w-[18px] h-[18px]" strokeWidth={2.25} />
+          </button>
+          <div className="w-7 h-7 rounded-md bg-[#F5F3FF] border border-[#E0DCF0] flex items-center justify-center flex-shrink-0">
             <AgentStudioIcon className="w-[16px] h-[16px]" strokeWidth={3} variant={currentUser === 'AU' ? 'orange' : 'purple'} />
           </div>
           <h1 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">Agent Studio</h1>
@@ -901,7 +909,7 @@ function TriggerPicker({
         <div ref={triggerRef} className="relative inline-block">
           <button
             onClick={() => setPickerOpen((v) => !v)}
-            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] hover:border-[#1C1E21]/30 text-[13px] font-medium text-[#1C1E21] active:scale-[0.98]"
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/30 text-[13px] font-medium text-[#1C1E21] active:scale-[0.98]"
             style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
           >
             <Plus className="w-3.5 h-3.5" strokeWidth={2.4} />
@@ -1495,22 +1503,27 @@ function MJCreateAgentForm({
     return () => document.removeEventListener('mousedown', close);
   }, [avatarOpen]);
   const avatars = [agentDetective, agentCreator, agentMarketer, agentSupport, agentReviews];
+  // Avatar backgrounds use the marketplace violet/pink palette so the picker
+  // avatars read identically to the marketplace cards (same 3-stop fade-to-white).
+  // mpPalette: #A78BFA #EC4899 #8B5CF6 #C084FC #F472B6 #6366F1
   const avatarTints = [
-    'linear-gradient(180deg, #FCE4E6 0%, #FDF1F3 100%)',
-    'linear-gradient(180deg, #FFE7C8 0%, #FFF3E2 100%)',
-    'linear-gradient(180deg, #DCEFE2 0%, #ECF5EF 100%)',
-    'linear-gradient(180deg, #DCE9F5 0%, #EAF1F8 100%)',
-    'linear-gradient(180deg, #FFE0EA 0%, #FFEBF1 100%)',
+    'linear-gradient(180deg, #A78BFA1F 0%, #A78BFA0A 40%, #FFFFFF 80%)',
+    'linear-gradient(180deg, #EC48991F 0%, #EC48990A 40%, #FFFFFF 80%)',
+    'linear-gradient(180deg, #8B5CF61F 0%, #8B5CF60A 40%, #FFFFFF 80%)',
+    'linear-gradient(180deg, #C084FC1F 0%, #C084FC0A 40%, #FFFFFF 80%)',
+    'linear-gradient(180deg, #F472B61F 0%, #F472B60A 40%, #FFFFFF 80%)',
+    'linear-gradient(180deg, #6366F11F 0%, #6366F10A 40%, #FFFFFF 80%)',
   ];
-  const avatarAccents = ['#DC2626', '#EA580C', '#059669', '#2563EB', '#DB2777'];
+  const avatarAccents = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
   // Theme follows the selected avatar — same 3-stop fade-to-white as the
   // marketplace-hired hero so every card across Agent Studio reads alike.
   const avatarThemes = [
-    { tint: 'linear-gradient(180deg, #DB27771F 0%, #DB27770A 40%, #FFFFFF 80%)', accent: '#DB2777', soft: '#FBCFE8' },
-    { tint: 'linear-gradient(180deg, #EA580C1F 0%, #EA580C0A 40%, #FFFFFF 80%)', accent: '#EA580C', soft: '#FFE0CC' },
-    { tint: 'linear-gradient(180deg, #0596691F 0%, #0596690A 40%, #FFFFFF 80%)', accent: '#059669', soft: '#A7F3D0' },
-    { tint: 'linear-gradient(180deg, #2563EB1F 0%, #2563EB0A 40%, #FFFFFF 80%)', accent: '#2563EB', soft: '#BFDBFE' },
-    { tint: 'linear-gradient(180deg, #DB27771F 0%, #DB27770A 40%, #FFFFFF 80%)', accent: '#DB2777', soft: '#FBCFE8' },
+    { tint: 'linear-gradient(180deg, #A78BFA1F 0%, #A78BFA0A 40%, #FFFFFF 80%)', accent: '#A78BFA', soft: '#DDD6FE' },
+    { tint: 'linear-gradient(180deg, #EC48991F 0%, #EC48990A 40%, #FFFFFF 80%)', accent: '#EC4899', soft: '#FBCFE8' },
+    { tint: 'linear-gradient(180deg, #8B5CF61F 0%, #8B5CF60A 40%, #FFFFFF 80%)', accent: '#8B5CF6', soft: '#DDD6FE' },
+    { tint: 'linear-gradient(180deg, #C084FC1F 0%, #C084FC0A 40%, #FFFFFF 80%)', accent: '#C084FC', soft: '#EDE0FE' },
+    { tint: 'linear-gradient(180deg, #F472B61F 0%, #F472B60A 40%, #FFFFFF 80%)', accent: '#F472B6', soft: '#FBCFE8' },
+    { tint: 'linear-gradient(180deg, #6366F11F 0%, #6366F10A 40%, #FFFFFF 80%)', accent: '#6366F1', soft: '#C7D2FE' },
   ];
   // Prefer the seed's tint/accent (e.g. when hired from marketplace) so
   // the canvas keeps the marketplace's violet/pink palette.
@@ -3333,17 +3346,15 @@ function AgentActivityHistoryModal({ agentName, onClose }: { agentName: string; 
   return (
     <>
       <div
-        className="fixed inset-0 z-[700] bg-black/40 backdrop-blur-sm"
-        style={{ animation: 'historyOverlayIn 180ms cubic-bezier(0.23,1,0.32,1) both' }}
+        className="fixed inset-0 z-[700] bg-transparent"
         onClick={onClose}
       />
-      <div className="fixed inset-0 z-[710] flex items-center justify-center p-4 pointer-events-none">
+      <div className="fixed inset-0 z-[710] flex justify-end pointer-events-none">
         <div
-          className="w-full max-w-[560px] bg-white rounded-2xl overflow-hidden pointer-events-auto flex flex-col"
+          className="w-full max-w-[460px] h-full bg-white overflow-hidden pointer-events-auto flex flex-col"
           style={{
-            maxHeight: '86vh',
-            boxShadow: '0 20px 60px rgba(34,30,31,0.25)',
-            animation: 'historyModalIn 220ms cubic-bezier(0.23,1,0.32,1) both',
+            boxShadow: '-6px 0 24px rgba(28,30,33,0.10)',
+            animation: 'historyDrawerIn 320ms cubic-bezier(0.32,0.72,0,1) both',
           }}
         >
           <div className="flex items-start justify-between gap-4 px-6 pt-5 pb-4 border-b border-[#F0F1F3]">
@@ -3559,7 +3570,7 @@ function AgentActivityHistoryModal({ agentName, onClose }: { agentName: string; 
           )}
           <style>{`
             @keyframes historyOverlayIn { from { opacity: 0 } to { opacity: 1 } }
-            @keyframes historyModalIn { from { opacity: 0; transform: scale(0.97) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+            @keyframes historyDrawerIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
           `}</style>
         </div>
       </div>
@@ -6289,7 +6300,7 @@ function TryAgentView({ agent, onBack, onHire, onChatWith, isMJ = false, onHireR
                       key={s}
                       onClick={() => ask(s)}
                       style={{ transition: 'border-color 160ms cubic-bezier(0.23,1,0.32,1), color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-                      className="inline-flex items-center px-3 h-8 rounded-full bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:border-[#1C1E21]/30 hover:text-[#1C1E21] active:scale-[0.97]"
+                      className="inline-flex items-center px-3 h-8 rounded-full bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/30 hover:text-[#1C1E21] active:scale-[0.97]"
                     >
                       {s}
                     </button>
@@ -7776,7 +7787,7 @@ function ChatPanel({ selectedName, onClose }: { selectedName: string | null; onC
                 <button
                   key={s}
                   onClick={() => setInput(s)}
-                  className="px-3 h-8 rounded-full bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:border-[#1C1E21]/20 hover:text-[#1C1E21] transition"
+                  className="px-3 h-8 rounded-full bg-white border border-[#E6E8EC] text-[12.5px] font-medium text-[#4B5563] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/20 hover:text-[#1C1E21] transition"
                 >
                   {s}
                 </button>
@@ -8002,7 +8013,7 @@ function KnowledgeBaseView() {
               className="w-full pl-9 pr-3 h-9 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#1C1E21] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#7C3AED]/40 focus:ring-2 focus:ring-[#7C3AED]/10 transition"
             />
           </div>
-          <button className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#4B5563] font-medium hover:border-[#1C1E21]/30 transition">
+          <button className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg bg-white border border-[#E6E8EC] text-[13px] text-[#4B5563] font-medium hover:bg-[#F3F4F6] hover:border-[#1C1E21]/30 transition">
             All Types
             <ChevronDown className="w-[13px] h-[13px] text-[#9CA3AF]" />
           </button>
