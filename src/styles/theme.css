@@ -113,10 +113,10 @@
      Distinct from rounded-lg (10px) and rounded-xl (14px). */
   --radius-card: 0.75rem;
 
-  /* ── Canonical product color tokens ───────────────────────────────
-     Names avoid the shadcn layer (--secondary/--border are taken and
-     wired into ui/* primitives). Utilities: text-*/bg-*/border-*.
-     NOT yet applied to usages — pending review (rows 3–5). */
+  /* Canonical product color tokens. Names avoid the shadcn layer
+     (--secondary and --border are taken and wired into ui primitives).
+     Exposed as text-, bg- and border- utilities.
+     NOT yet applied to usages — pending review (rows 3-5). */
   --color-brand: #FD5000;            /* primary CTA / brand orange (was split FF6B35/FD5000) */
   --color-error: #EF4444;            /* error fill (was split EF4444/DC2626/D4183D) */
   --color-error-strong: #DC2626;     /* error hover/pressed */
