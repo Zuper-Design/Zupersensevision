@@ -6,8 +6,6 @@ import {
   ArrowRight,
   Loader2,
   Check,
-  Briefcase,
-  Users,
   FileText,
   Lock,
   Eye,
@@ -26,8 +24,6 @@ import {
   Home,
   RefreshCw,
   ExternalLink,
-  PanelLeft,
-  ChevronDown,
   MessageSquarePlus,
   Star,
 } from "lucide-react";
@@ -95,15 +91,6 @@ function deriveThreadTitle(msg: string): string {
   if (!words.length) return msg.slice(0, 32);
   const t = words.join(" ");
   return t.charAt(0).toUpperCase() + t.slice(1);
-}
-
-// app name → url-style slug for the editor breadcrumb (e.g. "Roof Draw" → roof-draw)
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[·—–]/g, " ")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 }
 
 function classify(prompt: string): Archetype {
@@ -656,9 +643,6 @@ export function BuildWorkspace({
     setUploadedFiles((prev) => [...prev, ...next]);
   };
   const removeFile = (id: string) => setUploadedFiles((prev) => prev.filter((f) => f.id !== id));
-  // editable page URL slug (spaces auto → "-") + the Work menu dropdown
-  const [pageSlug, setPageSlug] = useState<string | null>(null);
-  const [workMenuOpen, setWorkMenuOpen] = useState(false);
 
   // ── Conversation threads (per app) ──────────────────────────────────────
   // Each app can hold multiple threads. The active thread drives the left pane.
@@ -802,25 +786,26 @@ export function BuildWorkspace({
     setPlanStarted(false);
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    const REASON_GAP = 1100;   // gap between streamed reasoning lines
-    const STEP_DUR = 1700;     // how long each plan step shows "resolving…"
-    const reasonDone = 600 + CLARIFY_REASONING.length * REASON_GAP;
+    const START = 250;         // initial beat before anything streams
+    const REASON_GAP = 450;    // gap between streamed reasoning lines
+    const STEP_DUR = 650;      // how long each plan step shows "resolving…"
+    const reasonDone = START + CLARIFY_REASONING.length * REASON_GAP;
 
     // 1. stream the reasoning lines
     CLARIFY_REASONING.forEach((_, i) =>
-      timers.push(setTimeout(() => setReasonLine(i + 1), 600 + i * REASON_GAP)),
+      timers.push(setTimeout(() => setReasonLine(i + 1), START + i * REASON_GAP)),
     );
 
     // 2. then resolve plan steps one-by-one — each holds STEP_DUR in its
     //    loading state (planStep === i) before completing (planStep > i).
-    const stepsStart = reasonDone + 400;
+    const stepsStart = reasonDone + 150;
     timers.push(setTimeout(() => setPlanStarted(true), stepsStart));
     CLARIFY_PLAN.forEach((_, i) =>
       timers.push(setTimeout(() => setPlanStep(i + 1), stepsStart + (i + 1) * STEP_DUR)),
     );
 
     // 3. hand off once the last step has finished + a beat to read it
-    const total = stepsStart + (CLARIFY_PLAN.length + 1) * STEP_DUR + 900;
+    const total = stepsStart + (CLARIFY_PLAN.length + 1) * STEP_DUR + 350;
     timers.push(setTimeout(() => setStage("homeClarify"), total));
     return () => timers.forEach(clearTimeout);
   }, [stage]);
@@ -1058,51 +1043,6 @@ export function BuildWorkspace({
           )}
         </div>
 
-        {/* center: Work dropdown + editable page URL, in one container */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1 h-9 pl-1.5 pr-2 rounded-lg bg-white border border-[#ECEEF1]" style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.05)" }}>
-          <div className="relative">
-            <button
-              onClick={() => setWorkMenuOpen((o) => !o)}
-              className="inline-flex items-center gap-1.5 h-7 pl-1.5 pr-1 rounded-md text-[13px] font-medium text-[#1C1E21] transition-colors"
-              style={{ background: workMenuOpen ? "#EFEFEC" : "transparent" }}
-              onMouseEnter={(e) => { if (!workMenuOpen) e.currentTarget.style.background = "#F4F4F2"; }}
-              onMouseLeave={(e) => { if (!workMenuOpen) e.currentTarget.style.background = "transparent"; }}
-            >
-              <Briefcase className="w-4 h-4 text-[#6B7280]" />
-              Work
-              <ChevronDown className="w-3.5 h-3.5 text-[#9CA3AF]" style={{ transform: workMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 160ms ease' }} />
-            </button>
-            {workMenuOpen && (
-              <>
-                <div className="fixed inset-0 z-[990]" onClick={() => setWorkMenuOpen(false)} />
-                <div className="absolute left-0 z-[1000] mt-1.5 w-max min-w-[8rem] overflow-hidden rounded-lg border border-[#E6E8EC] bg-white py-1"
-                  style={{ boxShadow: '0 12px 32px -12px rgba(28,30,33,0.28)' }}>
-                  {['Work', 'CRM', 'Finance', 'Field Service'].map((m) => (
-                    <button key={m} onClick={() => setWorkMenuOpen(false)}
-                      className="flex w-full items-center gap-2 px-3 h-8 text-[13px] text-[#374151] hover:bg-[#F4F4F2] hover:text-[#1C1E21] transition-colors whitespace-nowrap">
-                      <Briefcase className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
-                      {m}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-          <span className="text-[#C4CAD4] text-[14px]">/</span>
-          <input
-            value={pageSlug ?? slugify(appName)}
-            onChange={(e) => setPageSlug(e.target.value.replace(/\s+/g, '-').toLowerCase())}
-            spellCheck={false}
-            className="h-7 min-w-0 max-w-[200px] bg-transparent text-[13px] font-medium text-[#1C1E21] tracking-[-0.01em] outline-none rounded-md px-1.5 focus:bg-[#F4F4F2] transition-colors"
-            style={{ width: `${Math.max(8, (pageSlug ?? slugify(appName)).length + 1)}ch` }}
-          />
-          {(published || openedApp?.lifecycle === "published") && (
-            <span className="inline-flex items-center text-[10px] font-mono text-[#15803D] bg-[#ECFDF5] px-2 h-5 rounded-full flex-shrink-0">
-              published
-            </span>
-          )}
-        </div>
-
         {/* right: actions */}
         <div className="flex items-center gap-1">
           <ToolbarIcon icon={RefreshCw} title="Reload preview" />
@@ -1135,8 +1075,14 @@ export function BuildWorkspace({
           >
             {phase === "generating" ? (
               <GenerationOverlay genStep={genStep} title={GEN_TITLE[archetype]} reduceMotion={!!reduceMotion} />
+            ) : homeClarifyActive ? (
+              /* waiting for the user — overlay parked on a "Waiting for input" card */
+              <GenerationOverlay mode="waiting" title="Waiting for your input…" reduceMotion={!!reduceMotion} />
+            ) : homeFlowActive ? (
+              /* reasoning — first build step only, "Building your structure" */
+              <GenerationOverlay mode="structure" title="Building your structure…" reduceMotion={!!reduceMotion} />
             ) : !buildComplete && !isViewer ? (
-              /* stopped mid-flow — app isn't built yet, wait for the user to resume */
+              /* stopped mid-flow — app isn't finished; prompt the user to resume */
               <div
                 className="h-full flex flex-col items-center justify-center px-8 text-center"
                 style={{
@@ -1229,6 +1175,7 @@ export function BuildWorkspace({
         {publishOpen && (
           <PublishAppDialog
             appName={appName}
+            appIcon={openedApp?.icon}
             onClose={() => setPublishOpen(false)}
             onPublish={() => {
               setPublished(true);
@@ -1250,8 +1197,9 @@ export function BuildWorkspace({
     ).length;
     // canvas (built app) shows once we leave reasoning/clarify
     const showCanvas = !homeReasoningActive && !homeClarifyActive;
-    // reasoning/clarify stay full-width conversation; the canvas is the only right pane
-    const showRightPane = showCanvas;
+    // the right pane is present throughout the build view — during reasoning /
+    // clarify it shows a waiting placeholder; once built, the live canvas.
+    const showRightPane = !openedApp || showCanvas;
     // conversation column shows for new builds; opening an existing app / viewer skips straight to canvas
     const showConversation = !openedApp && !isViewer;
     // building = reasoning/clarify/thinking OR generating → keep the status prompt box.
@@ -1271,7 +1219,7 @@ export function BuildWorkspace({
     };
 
     return (
-      <div className="flex-1 flex overflow-hidden rounded-xl border border-[#E1E3E6] bg-white">
+      <div className="flex-1 flex overflow-hidden rounded-r-xl border border-l-0 border-[#E1E3E6] bg-white">
         {/* ── Left: conversation column ─────────────────────────────────── */}
         {showConversation && (
         <div
@@ -1670,18 +1618,17 @@ export function BuildWorkspace({
   if (stage === 'home') {
     return (
       <div
-        className="flex-1 rounded-xl border border-[#E1E3E6] relative overflow-hidden overflow-y-auto scroll-smooth"
+        className="flex-1 rounded-r-xl border border-l-0 border-[#E1E3E6] relative overflow-hidden overflow-y-auto scroll-smooth"
         style={{
-          backgroundColor: '#F8F5F2',
-          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(28,30,33,0.045) 1px, transparent 0)',
+          backgroundColor: '#FAFAF9',
+          backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(28,30,33,0.04) 1px, transparent 0)',
           backgroundSize: '22px 22px',
         }}
       >
-        {/* ambient orange gradient wash (Agent-Studio style, brand hue) */}
+        {/* faint ambient wash — kept subtle */}
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute" style={{ top: -160, left: '50%', transform: 'translateX(-50%)', width: 720, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(253,80,0,0.16), transparent 70%)', filter: 'blur(60px)' }} />
-          <div className="absolute" style={{ top: 40, left: -120, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, rgba(253,80,0,0.12), transparent 70%)', filter: 'blur(56px)' }} />
-          <div className="absolute" style={{ top: 120, right: -140, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,142,71,0.14), transparent 70%)', filter: 'blur(60px)' }} />
+          <div className="absolute" style={{ top: -160, left: '50%', transform: 'translateX(-50%)', width: 720, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(253,80,0,0.05), transparent 70%)', filter: 'blur(64px)' }} />
+          <div className="absolute" style={{ top: 120, right: -140, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(253,80,0,0.04), transparent 70%)', filter: 'blur(64px)' }} />
         </div>
 
         {/* composer (centered) + My apps (full width) */}
@@ -2051,15 +1998,23 @@ function GenerationOverlay({
   genStep,
   title,
   reduceMotion,
+  mode = "generating",
 }: {
-  genStep: number;
+  genStep?: number;
   title: string;
   reduceMotion: boolean;
+  // "structure" = first build step only (reasoning), "waiting" = paused on the
+  // "Waiting for input" card (clarify), "generating" = driven by genStep.
+  mode?: "structure" | "waiting" | "generating";
 }) {
   const PEEK = 56;        // visible slice of a tucked card
   const ACTIVE_GAP = 30;  // extra breathing room around the active card
   const CARD_W = 420;
   const ease = "cubic-bezier(0.32, 0.72, 0, 1)";
+
+  // structure/waiting park on the first card; generating is driven by genStep
+  const step = mode === "generating" ? (genStep ?? 0) : 0;
+  const waiting = mode === "waiting";
 
   return (
     <div
@@ -2079,7 +2034,7 @@ function GenerationOverlay({
       {/* stacked cards — each absolutely positioned, centered on the active one */}
       <div className="relative" style={{ width: CARD_W, height: 460 }}>
         {GEN_PHASES.map((phase, i) => {
-          const dist = i - genStep;          // 0 = active, <0 above, >0 below
+          const dist = i - step;             // 0 = active, <0 above, >0 below
           const isActive = dist === 0;
           const isPast = dist < 0;
           const Icon = phase.icon;
@@ -2092,7 +2047,9 @@ function GenerationOverlay({
           // fade + recede the farther a card is from active.
           // tucked cards shrink in width via scale (keeps them centered).
           const abs = Math.abs(dist);
-          const opacity = isActive ? 1 : Math.max(0.0, 1 - abs * 0.34);
+          // structure/waiting → only the active card; the stack fades in once building
+          const stackHidden = mode !== "generating";
+          const opacity = isActive ? 1 : stackHidden ? 0 : Math.max(0.0, 1 - abs * 0.34);
           const scale = isActive ? 1 : 1 - 0.05 - abs * 0.025;
 
           return (
@@ -2123,7 +2080,7 @@ function GenerationOverlay({
                 style={{
                   width: isActive ? 44 : 40,
                   height: isActive ? 44 : 40,
-                  background: isActive ? phase.accent : phase.tint,
+                  background: isActive ? (waiting ? '#4385BE' : phase.accent) : phase.tint,
                   transition: reduceMotion ? "none" : `all 500ms ${ease}`,
                 }}
               >
@@ -2145,9 +2102,15 @@ function GenerationOverlay({
                   transition: reduceMotion ? "none" : `all 400ms ${ease}`,
                 }}
               >
-                {phase.label}
+                {isActive && waiting ? "Waiting for input" : phase.label}
               </span>
-              {isActive && !reduceMotion && (
+              {isActive && waiting ? (
+                /* paused, blue, pulsing dot — awaiting the user */
+                <span
+                  className={"ml-auto w-2.5 h-2.5 rounded-full flex-shrink-0 " + (reduceMotion ? "" : "animate-pulse")}
+                  style={{ background: '#4385BE' }}
+                />
+              ) : isActive && !reduceMotion ? (
                 <span
                   className="ml-auto w-5 h-5 rounded-full border-2 flex-shrink-0 animate-spin"
                   style={{
@@ -2155,13 +2118,12 @@ function GenerationOverlay({
                     borderTopColor: phase.accent,
                   }}
                 />
-              )}
-              {isPast && (
+              ) : isPast ? (
                 <CheckCircle2
                   className="ml-auto w-4 h-4 flex-shrink-0"
                   style={{ color: "#16A34A", opacity: 0.7 }}
                 />
-              )}
+              ) : null}
             </div>
           );
         })}
