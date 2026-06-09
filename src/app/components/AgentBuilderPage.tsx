@@ -1639,6 +1639,9 @@ function MJCreateAgentForm({
     !sameMap(tools, initialRef.current.tools) ||
     !sameMap(kb, initialRef.current.kb) ||
     !sameMap(triggers, initialRef.current.triggers);
+  // Guard the exit: if there are unsaved edits, confirm before leaving.
+  const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false);
+  const requestCancel = () => { if (isDirty) setLeaveConfirmOpen(true); else onCancel(); };
   const missingHint = !canDeploy && name.trim().length <= 1
     ? 'Give your agent a name to continue'
     : null;
@@ -1789,7 +1792,7 @@ function MJCreateAgentForm({
       <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <button
-            onClick={onCancel}
+            onClick={requestCancel}
             className="w-8 h-8 -ml-2 rounded-lg hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#6B7280]"
             style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
             aria-label="Back"
@@ -1835,7 +1838,7 @@ function MJCreateAgentForm({
           ) : (
             <>
               <button
-                onClick={onCancel}
+                onClick={requestCancel}
                 disabled={deployPhase !== 'idle'}
                 className="inline-flex items-center px-3 h-8 rounded-lg text-[12.5px] font-medium text-[#4B5563] hover:text-[#1C1E21] hover:bg-[#F3F4F6] active:scale-[0.98]"
                 style={{ background: 'transparent', border: 'none', cursor: deployPhase !== 'idle' ? 'not-allowed' : 'pointer', transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
@@ -3285,6 +3288,46 @@ function MJCreateAgentForm({
           </>
         );
       })()}
+
+      {/* Unsaved-changes guard — confirm before leaving agent creation */}
+      {leaveConfirmOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-[760] bg-black/40"
+            style={{ animation: 'leaveOverlayIn 160ms ease-out both' }}
+            onClick={() => setLeaveConfirmOpen(false)}
+          />
+          <div className="fixed inset-0 z-[770] flex items-center justify-center p-4 pointer-events-none">
+            <div
+              className="w-full max-w-[400px] bg-white rounded-2xl p-6 pointer-events-auto"
+              style={{ boxShadow: '0 20px 60px rgba(34,30,31,0.25)', animation: 'leaveModalIn 200ms cubic-bezier(0.23,1,0.32,1) both' }}
+            >
+              <h2 className="text-[16px] font-semibold text-[#1C1E21] tracking-tight">Discard unsaved changes?</h2>
+              <p className="text-[13px] text-[#6B7280] mt-1.5 leading-relaxed">
+                You've made changes to this agent that haven't been saved. If you leave now, they'll be lost.
+              </p>
+              <div className="flex items-center justify-end gap-2 mt-5">
+                <button
+                  onClick={() => setLeaveConfirmOpen(false)}
+                  className="inline-flex items-center h-9 px-3.5 rounded-lg text-[13px] font-medium text-[#1C1E21] bg-white border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 active:scale-[0.98] transition-colors"
+                >
+                  Keep editing
+                </button>
+                <button
+                  onClick={() => { setLeaveConfirmOpen(false); onCancel(); }}
+                  className="inline-flex items-center h-9 px-3.5 rounded-lg text-[13px] font-semibold text-white bg-[#EF4444] hover:bg-[#DC2626] active:scale-[0.98] transition-colors"
+                >
+                  Discard changes
+                </button>
+              </div>
+              <style>{`
+                @keyframes leaveOverlayIn { from { opacity: 0 } to { opacity: 1 } }
+                @keyframes leaveModalIn { from { opacity: 0; transform: scale(0.97) translateY(6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+              `}</style>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -8522,7 +8565,7 @@ function NewSkillForm({ onCancel, onSave }: { onCancel: () => void; onSave: () =
       <div className="flex items-center justify-between px-8 h-14 border-b border-[#F0F1F3] flex-shrink-0 bg-white sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <button
-            onClick={onCancel}
+            onClick={requestCancel}
             className="w-8 h-8 -ml-2 rounded-lg hover:bg-[#F3F4F6] active:scale-[0.94] flex items-center justify-center text-[#6B7280]"
             style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
             aria-label="Back"
