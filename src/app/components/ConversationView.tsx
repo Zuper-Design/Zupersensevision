@@ -1,6 +1,7 @@
-import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical, ImagePlus, SlidersHorizontal } from 'lucide-react';
+import { Mic, ArrowUp, ArrowLeft, Plus, SquareArrowOutUpRight, MessageSquare, Pencil, Star, PanelLeftClose, PanelLeftOpen, X, ChevronLeft, ChevronRight, Archive, Edit3, FlaskConical, ImagePlus, SlidersHorizontal, Bot, LayoutGrid } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ResearchDisplay } from './ResearchDisplay';
+import { AgentStudioIcon } from './icons/AgentStudioIcon';
 import { ConfirmationCard } from './ConfirmationCard';
 
 import { ChecklistCard } from './ChecklistCard';
@@ -156,6 +157,7 @@ interface ConversationViewProps {
   isVp?: boolean;
   onUpgrade?: () => void;
   onPersonalizationClick?: () => void;
+  onOpenAgentBuilder?: () => void;
 }
 
 // Widget response text mapping
@@ -274,7 +276,7 @@ function GeneratedChartCard() {
   );
 }
 
-export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onPersonalizationClick, demoMode = false }: ConversationViewProps) {
+export function ConversationView({ question, onBack, activeView = 'chat', onViewChange, fromCanvas = false, widgetId, onOpenFeedback, radarCard, sidebarOpen, onToggleSidebar, isTrial, isVp, onUpgrade, onPersonalizationClick, onOpenAgentBuilder, demoMode = false }: ConversationViewProps) {
   const { radars, activeRadarId, addCardToRadar } = useRadar();
   const [isListening, setIsListening] = useState(false);
   const [message, setMessage] = useState('');
@@ -355,6 +357,7 @@ export function ConversationView({ question, onBack, activeView = 'chat', onView
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [composerMode, setComposerMode] = useState<null | 'agent' | 'app'>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedImageName, setUploadedImageName] = useState<string | null>(null);
   
@@ -2525,8 +2528,8 @@ Sarah`
                     ? { opacity: 0.55, pointerEvents: 'none', cursor: 'not-allowed' }
                     : undefined
               }
-              className={`w-full bg-white rounded-[20px] border transition-all duration-200 shadow-sm ${
-              isListening ? 'border-[#FF6B35]/40 shadow-[0_0_0_3px_rgba(255,107,53,0.1)]' : 'border-[#E6E8EC] hover:border-[#FF6B35]/40 hover:shadow-[0_0_0_3px_rgba(255,107,53,0.1)] focus-within:border-[#FF6B35]/40 focus-within:shadow-[0_0_0_3px_rgba(255,107,53,0.1)]'
+              className={`w-full bg-white rounded-3xl border transition-all duration-200 ${
+              isListening ? 'border-[#FF6B35]/40 shadow-[0_0_0_3px_rgba(255,107,53,0.10),0_14px_36px_-12px_rgba(28,30,33,0.16)]' : 'border-[#FF6B35]/20 shadow-[0_10px_30px_-12px_rgba(28,30,33,0.12),0_2px_6px_-2px_rgba(28,30,33,0.05)] hover:border-[#FF6B35]/30 focus-within:border-[#FF6B35]/40 focus-within:shadow-[0_0_0_3px_rgba(255,107,53,0.10),0_14px_36px_-12px_rgba(28,30,33,0.16),0_2px_6px_-2px_rgba(28,30,33,0.05)]'
             }`}>
               <div className="flex flex-col px-4 py-3 gap-3">
                 {/* Image preview */}
@@ -2567,10 +2570,29 @@ Sarah`
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => imageInputRef.current?.click()}
-                      className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-[#F3F4F6] transition-all duration-200 flex-shrink-0"
-                      aria-label="Upload image"
+                      className="flex items-center justify-center w-9 h-9 rounded-full text-[#6B7280] hover:bg-[#F3F4F6] transition-colors flex-shrink-0"
+                      aria-label="Add image or files"
+                      title="Add image or files"
                     >
-                      <Plus className="w-[18px] h-[18px] text-[#6B7280]" strokeWidth={2.25} />
+                      <Plus className="w-[18px] h-[18px]" strokeWidth={2.25} />
+                    </button>
+                    <button
+                      onClick={() => setComposerMode(composerMode === 'agent' ? null : 'agent')}
+                      className={`inline-flex items-center h-9 rounded-full transition-all duration-200 ease-out active:scale-[0.97] flex-shrink-0 ${composerMode === 'agent' ? 'pl-2.5 pr-3 bg-[#F5F3FF] text-[#7C3AED]' : 'w-9 justify-center text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                      aria-label="Create an agent"
+                      title="Create an agent"
+                    >
+                      <AgentStudioIcon className={`w-[18px] h-[18px] flex-shrink-0 transition-[filter] duration-200 ${composerMode === 'agent' ? '' : '[filter:grayscale(1)_brightness(0.62)]'}`} variant="purple" />
+                      <span className={`overflow-hidden whitespace-nowrap text-[13px] font-medium transition-all duration-200 ease-out ${composerMode === 'agent' ? 'max-w-[110px] opacity-100 ml-1.5' : 'max-w-0 opacity-0'}`}>Create agent</span>
+                    </button>
+                    <button
+                      onClick={() => setComposerMode(composerMode === 'app' ? null : 'app')}
+                      className={`inline-flex items-center h-9 rounded-full transition-all duration-200 ease-out active:scale-[0.97] flex-shrink-0 ${composerMode === 'app' ? 'pl-2.5 pr-3 bg-[#FFF4ED] text-[#FF6B35]' : 'w-9 justify-center text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                      aria-label="Build an app"
+                      title="Build an app"
+                    >
+                      <LayoutGrid className="w-[18px] h-[18px] flex-shrink-0" strokeWidth={2} />
+                      <span className={`overflow-hidden whitespace-nowrap text-[13px] font-medium transition-all duration-200 ease-out ${composerMode === 'app' ? 'max-w-[110px] opacity-100 ml-1.5' : 'max-w-0 opacity-0'}`}>Build app</span>
                     </button>
                     <button
                       className={`relative flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 flex-shrink-0 ${

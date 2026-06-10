@@ -3341,7 +3341,17 @@ function AgentActivityHistoryModal({ agentName, onClose }: { agentName: string; 
   const dayOffset = (n: number) => { const d = new Date(today); d.setDate(d.getDate() - n); return isoDate(d); };
   const runs = Array.from({ length: 90 }, (_, i) => {
     const d = new Date(today); d.setDate(d.getDate() - i);
-    return { at: fmt(d), label: 'Scheduled run', daysAgo: i, date: d };
+    const status: 'pending' | 'in_progress' | 'completed' | 'failed' =
+      i === 0 ? 'in_progress'
+      : i === 1 ? 'pending'
+      : i % 13 === 0 ? 'failed'
+      : 'completed';
+    const label =
+      status === 'in_progress' ? 'Scheduled run in progress'
+      : status === 'pending' ? 'Scheduled run pending'
+      : status === 'failed' ? 'Scheduled run failed'
+      : 'Scheduled run completed';
+    return { at: fmt(d), label, daysAgo: i, date: d, status };
   });
 
   // Date filter
@@ -3521,23 +3531,25 @@ function AgentActivityHistoryModal({ agentName, onClose }: { agentName: string; 
               <ol className="relative">
                 <span aria-hidden style={{ position: 'absolute', left: 5, top: 6, bottom: 6, width: 1, background: '#E6E8EC' }} />
                 {pageItems.map((r, i) => {
-                  const isNewest = pageStartIndex + i === 0;
                   return (
                     <li key={`${safePage}-${i}`} className="relative pl-6 pb-4 last:pb-0">
                       <span
                         aria-hidden
-                        style={{
-                          position: 'absolute',
-                          left: 0,
-                          top: 4,
-                          width: 11,
-                          height: 11,
-                          borderRadius: '50%',
-                          background: '#FFFFFF',
-                          border: `2px solid ${isNewest ? '#10B981' : '#D1D5DB'}`,
-                          boxShadow: isNewest ? '0 0 0 4px rgba(16,185,129,0.12)' : 'none',
-                        }}
-                      />
+                        className="absolute flex items-center justify-center"
+                        style={{ left: -2, top: 2, width: 15, height: 15, borderRadius: '50%', background: '#FFFFFF' }}
+                      >
+                        {r.status === 'in_progress' ? (
+                          <Loader2 className="w-[14px] h-[14px] animate-spin" style={{ color: '#EB5D2A' }} strokeWidth={2.5} />
+                        ) : r.status === 'completed' ? (
+                          <CheckCircle2 className="w-[14px] h-[14px]" style={{ color: '#10B981' }} strokeWidth={2.25} />
+                        ) : r.status === 'failed' ? (
+                          <span className="flex items-center justify-center" style={{ width: 13, height: 13, borderRadius: '50%', background: '#EF4444' }}>
+                            <X className="w-[9px] h-[9px] text-white" strokeWidth={3.5} />
+                          </span>
+                        ) : (
+                          <Clock className="w-[14px] h-[14px]" style={{ color: '#9CA3AF' }} strokeWidth={2.25} />
+                        )}
+                      </span>
                       <p style={{ fontSize: 13, fontWeight: 500, color: '#1C1E21', lineHeight: 1.4 }}>{r.label}</p>
                       <p style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>{r.at}</p>
                     </li>

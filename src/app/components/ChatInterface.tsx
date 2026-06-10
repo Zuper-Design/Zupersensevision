@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, SlidersHorizontal, Paperclip, FileText, Image as ImageIcon, FileSpreadsheet, Film, File as FileIcon, PieChart, MessageSquare } from 'lucide-react';
+import { Mic, Sparkles, AlertCircle, Clock, TrendingUp, ArrowRight, ChevronLeft, ChevronRight, BarChart3, Users, Target, ArrowLeft, PanelLeftClose, PanelLeft, Plus, Search, Edit3, DollarSign, TrendingDown, Info, Pause, Check, ArrowUp, Radar, History, FlaskConical, Archive, X, Settings, SlidersHorizontal, Paperclip, FileText, Image as ImageIcon, ImagePlus, Bot, LayoutGrid, FileSpreadsheet, Film, File as FileIcon, PieChart, MessageSquare } from 'lucide-react';
 import { ConversationView } from './ConversationView';
+import { AgentStudioIcon } from './icons/AgentStudioIcon';
 import { CreatedCardDisplay } from './CreatedCardDisplay';
 import { LoadingScreen } from './LoadingScreen';
 import logoCircles from '../../imports/logo-circles.svg';
@@ -143,6 +144,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
   const typewriterTimerRef = useRef<any>(null);
   const currentSegmentRef = useRef<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [composerMode, setComposerMode] = useState<null | 'agent' | 'app'>(null);
   const [attachedFiles, setAttachedFiles] = useState<{ name: string; size: number; type: string; url?: string }[]>([]);
 
   // Mock dictation text - split into segments
@@ -547,10 +549,10 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                             ? { opacity: 0.55, cursor: 'not-allowed' }
                             : undefined
                       }
-                      className={`relative w-full bg-white rounded-2xl transition-all duration-300 ${
+                      className={`relative w-full bg-white rounded-3xl transition-all duration-300 ${
                         inputFocused && !voiceMode
-                          ? 'border border-[#FF6B35]/30 shadow-[0_0_0_3px_rgba(255,107,53,0.12),0_8px_24px_rgba(255,107,53,0.15)]'
-                          : 'border border-[#E6E8EC] shadow-[0_2px_8px_rgba(0,0,0,0.04),0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)]'
+                          ? 'border border-[#FF6B35]/40 shadow-[0_0_0_3px_rgba(255,107,53,0.10),0_14px_36px_-12px_rgba(28,30,33,0.16),0_2px_6px_-2px_rgba(28,30,33,0.05)]'
+                          : 'border border-[#FF6B35]/20 shadow-[0_10px_30px_-12px_rgba(28,30,33,0.12),0_2px_6px_-2px_rgba(28,30,33,0.05)] hover:shadow-[0_14px_36px_-12px_rgba(28,30,33,0.16),0_2px_6px_-2px_rgba(28,30,33,0.06)]'
                       }`}
                     >
                       {/* Input Area */}
@@ -558,7 +560,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         {!inputFocused && (
                           <Search className="w-[15px] h-[15px] mr-2.5 flex-shrink-0 transition-colors duration-500 ease-out text-[#6B7280]" />
                         )}
-                        
+
                         {/* Custom placeholder with cursor */}
                         {!message && !inputFocused && (
                           <div className="absolute left-[44px] pointer-events-none flex items-center text-[15px] text-[#9CA3AF]">
@@ -597,15 +599,37 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                         />
                         
                         {!inputFocused && !isListening && (
-                          <button
-                            onMouseDown={(e) => e.preventDefault()}
-                            onClick={() => fileInputRef.current?.click()}
-                            className="ml-2 flex-shrink-0 p-2 rounded-lg transition-all duration-200 hover:bg-[#F3F4F6]"
-                            aria-label="Attach file or image"
-                            title="Attach file or image"
-                          >
-                            <Plus className="w-[16px] h-[16px] text-[#6B7280]" strokeWidth={2.25} />
-                          </button>
+                          <div className="flex items-center gap-0.5 ml-2 flex-shrink-0">
+                            <button
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => fileInputRef.current?.click()}
+                              className="p-2 rounded-lg text-[#6B7280] hover:bg-[#F3F4F6] transition-colors"
+                              aria-label="Add image or files"
+                              title="Add image or files"
+                            >
+                              <Plus className="w-4 h-4" strokeWidth={2} />
+                            </button>
+                            <button
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => setComposerMode(composerMode === 'agent' ? null : 'agent')}
+                              className={`inline-flex items-center h-8 rounded-lg transition-all duration-200 ease-out active:scale-[0.97] ${composerMode === 'agent' ? 'pl-2 pr-2.5 bg-[#F5F3FF] text-[#7C3AED]' : 'w-8 justify-center text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                              aria-label="Create an agent"
+                              title="Create an agent"
+                            >
+                              <AgentStudioIcon className={`w-4 h-4 flex-shrink-0 transition-[filter] duration-200 ${composerMode === 'agent' ? '' : '[filter:grayscale(1)_brightness(0.62)]'}`} variant="purple" />
+                              <span className={`overflow-hidden whitespace-nowrap text-[13px] font-medium transition-all duration-200 ease-out ${composerMode === 'agent' ? 'max-w-[110px] opacity-100 ml-1.5' : 'max-w-0 opacity-0'}`}>Create agent</span>
+                            </button>
+                            <button
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => setComposerMode(composerMode === 'app' ? null : 'app')}
+                              className={`inline-flex items-center h-8 rounded-lg transition-all duration-200 ease-out active:scale-[0.97] ${composerMode === 'app' ? 'pl-2 pr-2.5 bg-[#FFF4ED] text-[#FF6B35]' : 'w-8 justify-center text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                              aria-label="Build an app"
+                              title="Build an app"
+                            >
+                              <LayoutGrid className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
+                              <span className={`overflow-hidden whitespace-nowrap text-[13px] font-medium transition-all duration-200 ease-out ${composerMode === 'app' ? 'max-w-[100px] opacity-100 ml-1.5' : 'max-w-0 opacity-0'}`}>Build app</span>
+                            </button>
+                          </div>
                         )}
 
                         {!inputFocused && !isListening && !(message && attachedFiles.length === 0) && (
@@ -725,25 +749,42 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                       {/* Action Buttons - Only visible when focused */}
                       {inputFocused && (
                         <div className="flex items-center justify-between px-4 pb-4 pt-1">
-                          <button
-                            onClick={() => {
-                              setMessage('');
-                              setInputFocused(false);
-                              setIsListening(false);
-                              setIsPaused(false);
-                              setAttachedFiles([]);
-                              if (listeningTimerRef.current) {
-                                clearTimeout(listeningTimerRef.current);
-                              }
-                              if (typewriterTimerRef.current) {
-                                clearTimeout(typewriterTimerRef.current);
-                              }
-                            }}
-                            className="px-3 h-8 inline-flex items-center text-[13px] text-[#6B7280] hover:text-[#1C1E21] rounded-lg border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 transition-all duration-150 font-medium"
-                          >
-                            Cancel
-                          </button>
-                          
+                          <div className="flex items-center gap-1">
+                          {!isListening && (
+                            <>
+                              <button
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => fileInputRef.current?.click()}
+                                className="flex items-center justify-center w-8 h-8 rounded-lg text-[#6B7280] hover:bg-[#F3F4F6] active:scale-[0.96] transition-all duration-150"
+                                aria-label="Add image or files"
+                                title="Add image or files"
+                              >
+                                <Plus className="w-4 h-4" strokeWidth={2} />
+                              </button>
+                              <button
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => setComposerMode(composerMode === 'agent' ? null : 'agent')}
+                                className={`inline-flex items-center h-8 rounded-lg transition-all duration-200 ease-out active:scale-[0.97] ${composerMode === 'agent' ? 'pl-2 pr-2.5 bg-[#F5F3FF] text-[#7C3AED]' : 'w-8 justify-center text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                                aria-label="Create an agent"
+                                title="Create an agent"
+                              >
+                                <AgentStudioIcon className={`w-4 h-4 flex-shrink-0 transition-[filter] duration-200 ${composerMode === 'agent' ? '' : '[filter:grayscale(1)_brightness(0.62)]'}`} variant="purple" />
+                                <span className={`overflow-hidden whitespace-nowrap text-[13px] font-medium transition-all duration-200 ease-out ${composerMode === 'agent' ? 'max-w-[110px] opacity-100 ml-1.5' : 'max-w-0 opacity-0'}`}>Create agent</span>
+                              </button>
+                              <button
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => setComposerMode(composerMode === 'app' ? null : 'app')}
+                                className={`inline-flex items-center h-8 rounded-lg transition-all duration-200 ease-out active:scale-[0.97] ${composerMode === 'app' ? 'pl-2 pr-2.5 bg-[#FFF4ED] text-[#FF6B35]' : 'w-8 justify-center text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                                aria-label="Build an app"
+                                title="Build an app"
+                              >
+                                <LayoutGrid className="w-4 h-4 flex-shrink-0" strokeWidth={2} />
+                                <span className={`overflow-hidden whitespace-nowrap text-[13px] font-medium transition-all duration-200 ease-out ${composerMode === 'app' ? 'max-w-[100px] opacity-100 ml-1.5' : 'max-w-0 opacity-0'}`}>Build app</span>
+                              </button>
+                            </>
+                          )}
+                          </div>
+
                           {isListening ? (
                             <div className="flex items-center gap-2">
                               <button
@@ -805,26 +846,16 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                           ) : (
                             <div className="flex items-center gap-1.5">
                               <button
-                                onMouseDown={(e) => e.preventDefault()}
-                                onClick={() => fileInputRef.current?.click()}
-                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 transition-all duration-150"
-                                aria-label="Attach file or image"
-                                title="Attach file or image"
-                              >
-                                <Plus className="w-[16px] h-[16px] text-[#6B7280]" strokeWidth={2.25} />
-                              </button>
-                              <button
                                 onClick={onToggleVoiceMode}
-                                className="flex items-center justify-center w-8 h-8 rounded-lg border border-[#E6E8EC] hover:bg-[#F3F4F6] hover:border-[#1C1E21]/15 transition-all duration-150"
+                                className="flex items-center justify-center w-8 h-8 rounded-lg text-[#6B7280] hover:bg-[#F3F4F6] active:scale-[0.96] transition-all duration-150"
                                 aria-label="Voice Mode"
                                 title="Voice Mode"
                               >
-                                <Mic className="w-[15px] h-[15px] text-[#6B7280]" />
+                                <Mic className="w-4 h-4 text-[#6B7280]" strokeWidth={2} />
                               </button>
-
                               <button
                                 onClick={() => handleMessageSubmit(message.trim())}
-                                className="inline-flex items-center h-8 gap-1.5 px-4 rounded-lg bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] text-white transition-all duration-150 shadow-[0_2px_8px_rgba(34,30,31,0.3)]"
+                                className="inline-flex items-center h-8 gap-1.5 px-4 rounded-lg bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] text-white active:scale-[0.97] transition-all duration-150 shadow-[0_2px_8px_rgba(34,30,31,0.3)]"
                               >
                                 <span className="text-[13px] font-medium">Generate</span>
                               </button>
@@ -913,6 +944,7 @@ export function ChatInterface({ voiceMode, onToggleVoiceMode, activeView, onView
                 isVp={isVp}
                 onUpgrade={onUpgrade}
                 onPersonalizationClick={onPersonalizationClick}
+                onOpenAgentBuilder={onOpenAgentBuilder}
                 demoMode={demoMode}
               />
             )}

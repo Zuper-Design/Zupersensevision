@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design token preview — before / after</title>
+<style>
+  :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  body{margin:0;background:#FAFAFB;color:#1C1E21;padding:32px;font-size:14px}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:#6B7280;margin:0 0 28px;font-size:13px}
+  section{background:#fff;border:1px solid #E6E8EC;border-radius:14px;padding:20px 22px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  h2{font-size:15px;margin:0 0 2px}
+  .note{font-size:12px;color:#6B7280;margin:0 0 16px}
+  .warn{color:#B91C1C}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .col{border:1px solid #F0F1F3;border-radius:10px;padding:16px;background:#fff}
+  .lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9CA3AF;margin:0 0 12px}
+  .lbl.after{color:#FD5000}
+  .swatch{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:#6B7280;margin-bottom:10px}
+  .chip{width:22px;height:22px;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .btn{border:0;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;color:#fff;cursor:default}
+  .onmuted{background:#F3F4F6;border-radius:8px;padding:10px 12px;margin-top:8px}
+  .ratio{font-size:11px;font-weight:600;margin-left:6px}
+  .pass{color:#15803D}.fail{color:#DC2626}
+  .card{border-radius:12px;padding:16px;background:#fff}
+  input{font-size:13px;padding:8px 11px;border-radius:8px;width:200px;outline:none}
+  small{color:#9CA3AF}
+</style></head>
+<body>
+<h1>Design token preview — before / after</h1>
+<p class="sub">Rows 3–5 + border token. Nothing committed yet. Left = current code, right = proposed canonical.</p>
+
+<!-- BRAND -->
+<section>
+  <h2>brand orange</h2>
+  <p class="note">140 spots. <code>#FF6B35</code> (coral) → <code>#FD5000</code> (red-orange). Affects CTAs, focus rings, hover tints.</p>
+  <div class="grid">
+    <div class="col"><p class="lbl">before · #FF6B35</p>
+      <div class="swatch"><span class="chip" style="background:#FF6B35"></span>#FF6B35</div>
+      <div class="row">
+        <button class="btn" style="background:#FF6B35;box-shadow:0 4px 12px rgba(255,107,53,.3)">Primary CTA</button>
+        <input placeholder="focus ring" style="border:1px solid #FF6B35;box-shadow:0 0 0 3px rgba(255,107,53,.12)">
+      </div>
+      <div class="row"><span style="padding:6px 12px;border-radius:8px;background:#FFF4ED;color:#FF6B35;font-weight:600;font-size:12px">hover tint chip</span></div>
+    </div>
+    <div class="col"><p class="lbl after">after · #FD5000</p>
+      <div class="swatch"><span class="chip" style="background:#FD5000"></span>#FD5000</div>
+      <div class="row">
+        <button class="btn" style="background:#FD5000;box-shadow:0 4px 12px rgba(253,80,0,.3)">Primary CTA</button>
+        <input placeholder="focus ring" style="border:1px solid #FD5000;box-shadow:0 0 0 3px rgba(253,80,0,.12)">
+      </div>
+      <div class="row"><span style="padding:6px 12px;border-radius:8px;background:#FFF4ED;color:#FD5000;font-weight:600;font-size:12px">hover tint chip</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ERROR -->
+<section>
+  <h2>error red</h2>
+  <p class="note">48 spots. <code>#DC2626</code> / <code>#B91C1C</code> / <code>#D4183D</code> → <code>#EF4444</code> (fill) + <code>#DC2626</code> (hover).</p>
+  <div class="grid">
+    <div class="col"><p class="lbl">before</p>
+      <div class="swatch"><span class="chip" style="background:#DC2626"></span>#DC2626 &nbsp;<span class="chip" style="background:#B91C1C"></span>#B91C1C &nbsp;<span class="chip" style="background:#D4183D"></span>#D4183D</div>
+      <div class="row">
+        <button class="btn" style="background:#DC2626">Delete</button>
+        <span style="color:#DC2626;font-size:13px;font-weight:600">Error message text</span>
+      </div>
+    </div>
+    <div class="col"><p class="lbl after">after</p>
+      <div class="swatch"><span class="chip" style="background:#EF4444"></span>#EF4444 fill &nbsp;<span class="chip" style="background:#DC2626"></span>#DC2626 hover</div>
+      <div class="row">
+        <button class="btn" style="background:#EF4444">Delete</button>
+        <span style="color:#EF4444;font-size:13px;font-weight:600">Error message text</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECONDARY TEXT -->
+<section>
+  <h2>secondary text <span class="warn">— contrast risk</span></h2>
+  <p class="note warn">Proposed merge #4B5563 → #6B7280 fails WCAG AA on muted backgrounds. Recommendation: keep both, do NOT merge.</p>
+  <div class="grid">
+    <div class="col"><p class="lbl">#4B5563 (current, 165×)</p>
+      <p style="color:#4B5563">Secondary label on white<span class="ratio pass">7.56 ✓AAA</span></p>
+      <div class="onmuted"><span style="color:#4B5563">Same on #F3F4F6<span class="ratio pass">6.87 ✓AA</span></span></div>
+    </div>
+    <div class="col"><p class="lbl after">#6B7280 (proposed)</p>
+      <p style="color:#6B7280">Secondary label on white<span class="ratio pass">4.83 ✓AA</span></p>
+      <div class="onmuted"><span style="color:#6B7280">Same on #F3F4F6<span class="ratio fail">4.39 ✗ fails AA</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- BORDER -->
+<section>
+  <h2>stroke / border</h2>
+  <p class="note">Formalizing <code>#E6E8EC</code> as <code>--color-stroke</code>. (Dupes already merged in Stage 2 — minimal visual change here.)</p>
+  <div class="grid">
+    <div class="col"><p class="lbl">before · mixed</p>
+      <div class="card" style="border:1px solid #ECEEF1">card border #ECEEF1</div>
+      <div class="card" style="border:1px solid #E6E8EC;margin-top:8px">card border #E6E8EC</div>
+    </div>
+    <div class="col"><p class="lbl after">after · #E6E8EC</p>
+      <div class="card" style="border:1px solid #E6E8EC">card border #E6E8EC</div>
+      <div class="card" style="border:1px solid #E6E8EC;margin-top:8px">card border #E6E8EC</div>
+    </div>
+  </div>
+</section>
+</body></html>
+</content>
