@@ -142,7 +142,7 @@ export function DispatchBoard({ showSkillBadge, selectedJobId, onSelectJob, isVi
         </span>
       </div>
 
-      <div className="flex-1 flex gap-3 p-3 pt-0 overflow-x-auto" style={{ background: '#F7F7F5' }}>
+      <div data-app-reveal className="flex-1 flex gap-3 p-3 pt-0 overflow-x-auto" style={{ background: '#F7F7F5' }}>
         {/* Unassigned tray */}
         <div className="w-[240px] flex-shrink-0 flex flex-col rounded-[24px] bg-white border border-white p-2"
           style={{ boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>

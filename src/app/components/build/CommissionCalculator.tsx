@@ -25,7 +25,7 @@ const commissionOf = (d: Deal) => d.amount * tierFor(d.margin).rate;
 
 export function CommissionCalculator({ isViewer, canSeeFinancials = true }: Props) {
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 650); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setLoading(false), 280); return () => clearTimeout(t); }, []);
 
   const totalPayout = COMMISSION_DEALS.reduce((s, d) => s + commissionOf(d), 0);
   const totalSold = COMMISSION_DEALS.reduce((s, d) => s + d.amount, 0);
@@ -84,7 +84,7 @@ export function CommissionCalculator({ isViewer, canSeeFinancials = true }: Prop
           </div>
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto p-3 pt-0 space-y-3">
+        <div data-app-reveal className="flex-1 overflow-y-auto p-3 pt-0 space-y-3">
           <div className="flex gap-3">
             <MetricStat label="Total payout" value={canSeeFinancials ? money(totalPayout) : '— hidden'} status="success" />
             <MetricStat label="Deals closed" value={String(COMMISSION_DEALS.length)} delta={{ dir: 'up', text: '2', good: true }} />

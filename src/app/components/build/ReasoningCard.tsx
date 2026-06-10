@@ -1,159 +1,238 @@
 import { motion, AnimatePresence } from "motion/react";
-import { Loader2, Check, Database, Briefcase, Users, FileText, LayoutGrid, Package } from "lucide-react";
-import { CLARIFY_REASONING, CLARIFY_PLAN } from "./buildData";
+import {
+  Loader2,
+  Check,
+  Database,
+  Briefcase,
+  Users,
+  FileText,
+  LayoutGrid,
+  Package,
+} from "lucide-react";
+import { CLARIFY_PLAN } from "./buildData";
 
-// per-module color theme — distinct hue per source (Linear-style)
-const MODULE_THEME: Record<string, { icon: typeof Database; tint: string; ink: string; ring: string }> = {
-  Schema:      { icon: Database,   tint: "#EDE9FE", ink: "#6D28D9", ring: "rgba(109,40,217,0.18)" },
-  Jobs:        { icon: Briefcase,  tint: "#FFE8DC", ink: "#C2410C", ring: "rgba(194,65,12,0.18)" },
-  Technicians: { icon: Users,      tint: "#DBEAFE", ink: "#1D4ED8", ring: "rgba(29,78,216,0.18)" },
-  Quotes:      { icon: FileText,   tint: "#D1FAE5", ink: "#047857", ring: "rgba(4,120,87,0.18)" },
-  Measurement: { icon: LayoutGrid, tint: "#FFE8DC", ink: "#C2410C", ring: "rgba(194,65,12,0.18)" },
-  Materials:   { icon: Package,    tint: "#FEF3C7", ink: "#B45309", ring: "rgba(180,83,9,0.18)" },
-  Templates:   { icon: LayoutGrid, tint: "#DBEAFE", ink: "#1D4ED8", ring: "rgba(29,78,216,0.18)" },
+// monochrome icon per module — the reference keeps icons neutral, not tinted
+const MODULE_ICON: Record<string, typeof Database> = {
+  Schema: Database,
+  Jobs: Briefcase,
+  Technicians: Users,
+  Quotes: FileText,
+  Measurement: LayoutGrid,
+  Materials: Package,
+  Templates: LayoutGrid,
 };
-const moduleTheme = (m: string) => MODULE_THEME[m] ?? MODULE_THEME.Schema;
+const moduleIcon = (m: string) => MODULE_ICON[m] ?? Database;
 
-// The "Gathering context" reasoning card. Shared between the live conversation
-// flow and the editor's chat pane so both show the identical elements.
-// `active` = still gathering (orange, spinner); false = resolved (green, done).
+// Flat reasoning step-list. Renders a lead "Context gathered" row plus one row
+// per plan step, each in a done / active / pending visual state — no card chrome.
+// `active` = still gathering (the lead row spins); false = fully resolved.
 export function ReasoningCard({
-  reasonLine,
   planStep,
   planStarted,
   active,
   reduceMotion = false,
 }: {
-  reasonLine: number;
+  reasonLine?: number;
   planStep: number;
   planStarted: boolean;
   active: boolean;
   reduceMotion?: boolean;
 }) {
-  const pct = Math.round((Math.min(planStep, CLARIFY_PLAN.length) / CLARIFY_PLAN.length) * 100);
+  // build the row list: a lead status row + each plan step
+  const total = CLARIFY_PLAN.length;
+  const leadDone = !active || planStep >= total;
+  const passed = Math.min(planStep, total);
+  const checkingDone = passed >= total;
+
+  type RowState = "done" | "active" | "pending";
+
   return (
+    // outer container — subtle fill, 1px top/left/right, more padding at bottom
+    // so the "Gathering context" footer sits inside the same surface.
     <div
-      className="relative rounded-[20px] bg-white overflow-hidden"
-      style={{ boxShadow: "0 0 0 1px rgba(28,30,33,0.05), 0 1px 2px rgba(28,30,33,0.04), 0 24px 48px -28px rgba(28,30,33,0.28)" }}
+      className="rounded-[20px] px-px pb-px"
+      style={{ background: "#F1F1EE" }}
     >
-      <div
-        className="absolute inset-x-0 top-0 h-24 pointer-events-none"
-        style={{ background: active
-          ? "linear-gradient(180deg, #FFF4EC 0%, rgba(255,244,236,0) 100%)"
-          : "linear-gradient(180deg, #EFF8EC 0%, rgba(239,248,236,0) 100%)" }}
-      />
-
-      {/* header */}
-      <div className="relative flex items-center gap-3 px-4 pt-4 pb-3">
-        <span
-          className="w-9 h-9 rounded-[12px] flex items-center justify-center flex-shrink-0 bg-white"
-          style={{ boxShadow: "0 1px 1px rgba(28,30,33,0.04), 0 6px 14px -6px rgba(28,30,33,0.28), inset 0 0 0 1px rgba(28,30,33,0.04)" }}
-        >
-          {active ? (
-            <Loader2 className={`w-[18px] h-[18px] text-[#FD5000] ${reduceMotion ? "" : "animate-spin"}`} />
-          ) : (
-            <span className="w-7 h-7 rounded-full bg-[#EAF3E4] flex items-center justify-center">
-              <Check className="w-4 h-4 text-[#5B8C3E]" strokeWidth={3} />
-            </span>
-          )}
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-[14px] font-semibold tracking-[-0.02em] text-[#111315] leading-tight">
-            {active ? "Gathering context" : "Context gathered"}
-          </p>
-          <p className="text-[12px] text-[#9CA3AF] leading-tight mt-0.5">
-            {active
-              ? "Reading your live Zuper data before I design anything"
-              : "Grounded against 4 live sources — ready to build"}
-          </p>
-        </div>
-        <span
-          className="flex-shrink-0 inline-flex items-center justify-center min-w-[44px] h-7 px-2.5 rounded-full text-[11.5px] font-semibold tabular-nums"
-          style={{ background: "#F4F4F2", color: "#6B7280" }}
-        >
-          {Math.min(planStep, CLARIFY_PLAN.length)}/{CLARIFY_PLAN.length}
-        </span>
-      </div>
-
-      {/* progress bar */}
-      <div className="relative h-[3px] mx-4 mb-3 rounded-full overflow-hidden bg-[#F0F0EE]">
-        <motion.div
-          className="h-full rounded-full"
-          initial={false}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          style={{ background: active ? "#FD5000" : "#5B8C3E" }}
-        />
-      </div>
-
-      {/* reasoning lines */}
-      <div className="relative px-4 pb-1 flex flex-col gap-2">
-        {CLARIFY_REASONING.map((line, i) => (
-          <motion.p
-            key={i}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: i < reasonLine ? 1 : 0, y: i < reasonLine ? 0 : 4 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[13px] leading-[1.55] text-[#6B7280]"
-            style={{ display: i < reasonLine ? "block" : "none" }}
+      {/* status row — at the top, indented to match the inner card rows */}
+      <div className="flex items-center px-4 py-2.5">
+        <p className="text-[12.5px] text-[#6B7280] leading-tight">
+          <span
+            className={
+              "font-medium " +
+              (checkingDone || reduceMotion
+                ? "text-[#374151]"
+                : "text-shimmer")
+            }
           >
-            {line}
-          </motion.p>
-        ))}
+            {checkingDone ? "Gathered context" : "Gathering context"}
+          </span>
+          {" — "}
+          {passed} of {total} sources read
+        </p>
       </div>
 
-      {/* plan steps */}
-      <div className="relative px-2.5 pt-3 pb-3 flex flex-col gap-1.5">
-        <AnimatePresence initial={false}>
-          {CLARIFY_PLAN.map((step, i) => {
-            const done = i < planStep;
-            const running = planStarted && i === planStep && active;
-            if (!done && !running) return null;
-            const t = moduleTheme(step.module);
-            const Icon = t.icon;
-            return (
-              <motion.div
-                key={step.label}
-                initial={{ opacity: 0, y: 6, height: 0, marginTop: 0 }}
-                animate={{ opacity: 1, y: 0, height: "auto", marginTop: 0 }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-                className="flex items-center gap-3 px-2.5 py-2 rounded-[14px] overflow-hidden"
-                style={{
-                  background: running ? "#FFFFFF" : "#FBFBFA",
-                  boxShadow: running
-                    ? `0 0 0 1px ${t.ring}, 0 8px 18px -10px rgba(28,30,33,0.30)`
-                    : "0 0 0 1px rgba(28,30,33,0.04)",
-                  transition: "box-shadow 280ms ease, background 280ms ease",
-                }}
-              >
-                <span className="w-9 h-9 rounded-[11px] flex items-center justify-center flex-shrink-0" style={{ background: t.tint }}>
-                  <Icon className="w-[17px] h-[17px]" style={{ color: t.ink }} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[13px] font-semibold tracking-[-0.01em] text-[#1C1E21] leading-tight truncate">{step.label}</p>
-                  <p className="text-[11.5px] leading-tight mt-0.5 truncate" style={{ color: running ? t.ink : "#9CA3AF" }}>
-                    {running ? "resolving…" : step.detail}
-                  </p>
-                </div>
-                {done ? (
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className="inline-flex items-center gap-1 h-6 pl-1.5 pr-2.5 rounded-full text-[11px] font-semibold flex-shrink-0"
-                    style={{ background: t.tint, color: t.ink }}
-                  >
-                    <Check className="w-3 h-3" strokeWidth={3} /> {step.count}
-                  </motion.span>
-                ) : (
-                  <Loader2 className={`w-4 h-4 flex-shrink-0 ${reduceMotion ? "" : "animate-spin"}`} style={{ color: t.ink }} />
-                )}
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+      {/* inner container — white, rounded, drop shadow; houses the step list */}
+      <div
+        className="flex flex-col gap-3.5 rounded-[19px] bg-white px-4 py-3.5"
+        style={{ boxShadow: "0 0 0 1px rgba(28,30,33,0.04), 0 1px 2px rgba(28,30,33,0.04), 0 10px 24px -16px rgba(28,30,33,0.2)" }}
+      >
+        {/* lead row — overall gather status */}
+        <Row
+          label={leadDone ? "Context gathered" : "Gathering context…"}
+          state={leadDone ? "done" : "active"}
+          delayIndex={0}
+          animateIn={active}
+          reduceMotion={reduceMotion}
+        />
+
+        {CLARIFY_PLAN.map((step, i) => {
+          const state: RowState =
+            i < planStep
+              ? "done"
+              : planStarted && i === planStep && active
+                ? "active"
+                : "pending";
+          const Icon = moduleIcon(step.module);
+          return (
+            <Row
+              key={step.label}
+              label={step.label}
+              boldPart={step.boldPart}
+              state={state}
+              Icon={Icon}
+              delayIndex={i + 1}
+              animateIn={active}
+              reduceMotion={reduceMotion}
+            />
+          );
+        })}
       </div>
     </div>
+  );
+}
+
+// split a label so only `part` is bold; renders the rest in normal weight
+function renderActiveLabel(label: string, part?: string) {
+  if (!part) return <span className="font-semibold">{label}</span>;
+  const idx = label.indexOf(part);
+  if (idx === -1) return <span className="font-semibold">{label}</span>;
+  return (
+    <>
+      {label.slice(0, idx)}
+      <span className="font-semibold text-[#111315]">{part}</span>
+      {label.slice(idx + part.length)}
+    </>
+  );
+}
+
+function Row({
+  label,
+  boldPart,
+  state,
+  Icon,
+  delayIndex = 0,
+  animateIn = true,
+  reduceMotion,
+}: {
+  label: string;
+  boldPart?: string;
+  state: "done" | "active" | "pending";
+  Icon?: typeof Database;
+  delayIndex?: number;
+  animateIn?: boolean;
+  reduceMotion?: boolean;
+}) {
+  // Only cascade rows in while context is actively gathering. A resolved card
+  // (revisited / already done) renders instantly — no replayed stagger.
+  const entrance =
+    animateIn && !reduceMotion
+      ? {
+          initial: { opacity: 0, y: 6 },
+          animate: { opacity: 1, y: 0 },
+          transition: {
+            duration: 0.28,
+            ease: [0.23, 1, 0.32, 1] as const,
+            delay: Math.min(delayIndex * 0.05, 0.3),
+          },
+        }
+      : { initial: false as const, animate: { opacity: 1, y: 0 } };
+
+  return (
+    <motion.div {...entrance} className="flex items-center gap-2.5">
+      {/* status dot — a single morphing circle (color animates between states),
+          with only the inner glyph crossfading. The row owns the entrance, so
+          the dot never runs a competing mount animation. */}
+      <motion.span
+        className="relative w-[22px] h-[22px] flex-shrink-0 rounded-full flex items-center justify-center"
+        initial={false}
+        animate={{
+          backgroundColor:
+            state === "done"
+              ? "#1C1E21"
+              : state === "active"
+                ? "#2A2A2C"
+                : "#FFFFFF",
+          boxShadow:
+            state === "pending"
+              ? "inset 0 0 0 1.5px #E3E5E8"
+              : "inset 0 0 0 0px rgba(227,229,232,0)",
+        }}
+        transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
+      >
+        <AnimatePresence initial={false} mode="wait">
+          {state === "done" ? (
+            <motion.span
+              key="done"
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.6 }}
+              transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+            </motion.span>
+          ) : state === "active" ? (
+            <motion.span
+              key="active"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14 }}
+            >
+              <Loader2
+                className={`w-3.5 h-3.5 text-white ${reduceMotion ? "" : "animate-spin"}`}
+              />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="pending"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14 }}
+            >
+              {Icon ? (
+                <Icon className="w-3 h-3 text-[#C4CAD4]" />
+              ) : (
+                <span className="block w-1.5 h-1.5 rounded-full bg-[#D6D9DE]" />
+              )}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </motion.span>
+
+      {/* label — active row bolds only the loading focus phrase */}
+      <span
+        className={
+          "text-[13.5px] tracking-[-0.01em] leading-tight font-normal transition-colors duration-300 " +
+          (state === "active"
+            ? "text-[#3A3F45]"
+            : state === "done"
+              ? "text-[#6B7280]"
+              : "text-[#B0B5BD]")
+        }
+      >
+        {state === "active" ? renderActiveLabel(label, boldPart) : label}
+      </span>
+    </motion.div>
   );
 }

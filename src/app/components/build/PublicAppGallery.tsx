@@ -23,6 +23,11 @@ interface Props {
   // Called when the user clicks "Use as template" — prefills the composer
   // prompt and attaches a thumbnail of the chosen template.
   onUseTemplate: (app: PublicApp) => void;
+  // Optional list of app categories to filter the gallery by. Empty/undefined
+  // shows every published app.
+  filterCategories?: readonly string[];
+  // Hide the built-in section header (title + description).
+  hideHeader?: boolean;
 }
 
 // Small square preview of a template — used as an attachment chip in the
@@ -385,30 +390,52 @@ function PreviewModal({
   );
 }
 
-export function PublicAppGallery({ onUseTemplate }: Props) {
+export function PublicAppGallery({
+  onUseTemplate,
+  filterCategories,
+  hideHeader,
+}: Props) {
   const [preview, setPreview] = useState<PublicApp | null>(null);
+
+  const apps =
+    filterCategories && filterCategories.length
+      ? PUBLIC_APPS.filter((a) => filterCategories.includes(a.category))
+      : PUBLIC_APPS;
 
   return (
     <div className="w-full">
-      {/* Section header — Sense `display` type token (26px / -0.025em), not the
-          Build. hero treatment. No accent dot. */}
-      <div className="mb-7 border-b border-[#F0F0F2] pb-5">
-        <h2
-          className="font-semibold text-[#1C1E21]"
-          style={{ fontSize: token.type.display.size, letterSpacing: token.type.display.tracking }}
-        >
-          App gallery
-        </h2>
-        <p className="mt-1.5 max-w-[58ch] text-[13px] leading-[1.45] text-[#6B7280]">
-          Public apps published by other teams. Preview one to start from it.
-        </p>
-      </div>
+      {!hideHeader && (
+        /* Section header — Sense `display` type token (26px / -0.025em), not
+           the Build. hero treatment. No accent dot. */
+        <div className="mb-7 border-b border-[#F0F0F2] pb-5">
+          <h2
+            className="font-semibold text-[#1C1E21]"
+            style={{ fontSize: token.type.display.size, letterSpacing: token.type.display.tracking }}
+          >
+            Or choose from our app gallery
+          </h2>
+          <p className="mt-1.5 max-w-[58ch] text-[13px] leading-[1.45] text-[#6B7280]">
+            Ready-made apps published by other teams — preview one and make it
+            your own in a click.
+          </p>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {PUBLIC_APPS.map((app) => (
-          <PublicAppCard key={app.id} app={app} onOpen={() => setPreview(app)} />
-        ))}
-      </div>
+      {apps.length === 0 ? (
+        <p className="py-10 text-center text-[13px] text-[#9CA3AF]">
+          No published apps in this category yet.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {apps.map((app) => (
+            <PublicAppCard
+              key={app.id}
+              app={app}
+              onOpen={() => setPreview(app)}
+            />
+          ))}
+        </div>
+      )}
 
       <AnimatePresence>
         {preview && (

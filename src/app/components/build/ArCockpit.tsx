@@ -25,7 +25,7 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
   const [sent, setSent] = useState<Set<string>>(new Set());
   // §8 loading — skeleton shaped like the final layout while the binding resolves
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 650); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setLoading(false), 280); return () => clearTimeout(t); }, []);
 
   const toggle = (id: string) => setSel(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
@@ -107,7 +107,7 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
           </div>
         </div>
       ) : (
-      <div className="flex-1 overflow-y-auto p-3 pt-0 space-y-3">
+      <div data-app-reveal className="flex-1 overflow-y-auto p-3 pt-0 space-y-3">
         {/* MetricStat row (§4a) */}
         <div className="flex gap-3">
           <MetricStat label="Total overdue" value={canSeeFinancials ? money(total) : '— hidden'} status="danger" />

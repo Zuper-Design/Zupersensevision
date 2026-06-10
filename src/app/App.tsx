@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, HelpCircle, MoreHorizontal, Pencil, Archive, Blocks } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, ArrowLeft, HelpCircle, MoreHorizontal, Pencil, Archive, Blocks } from 'lucide-react';
 import { AgentStudioIcon } from './components/icons/AgentStudioIcon';
 import { SenseLogo } from './components/SenseLogo';
 import { ReleasesModal } from './components/ReleasesModal';
@@ -32,6 +32,7 @@ import { JobListingPage } from './components/JobListingPage';
 import { AgentBuilderPage } from './components/AgentBuilderPage';
 import { SubscriptionFlowPage } from './components/SubscriptionFlowPage';
 import { BuildWorkspace } from './components/build/BuildWorkspace';
+import { MY_APPS } from './components/build/buildData';
 
 function AppContent() {
   const [showDemo, setShowDemo] = useState(false);
@@ -47,6 +48,9 @@ function AppContent() {
     return 'chat';
   });
   const [buildSeedPrompt, setBuildSeedPrompt] = useState<string | null>(null);
+  const [buildOpenAppId, setBuildOpenAppId] = useState<string | null>(null);
+  const [buildShowApps, setBuildShowApps] = useState(false);
+  const [buildCreateNonce, setBuildCreateNonce] = useState(0);
   const [pendingConversation, setPendingConversation] = useState<{ topic: string; fromCanvas: boolean; widgetId: string } | null>(null);
   const [pendingRadarCard, setPendingRadarCard] = useState<SavedCard | null>(null);
   const { activePage, setActivePage } = usePublishedPages();
@@ -268,8 +272,8 @@ function AppContent() {
         onExploreMore={() => window.open('https://www.zuper.co/book-a-demo', '_blank', 'noopener,noreferrer')}
       />
       <ReleasesModal open={releasesOpen} onClose={() => setReleasesOpen(false)} />
-{/* Top Navigation with Canvas/Chat Options */}
-      <TopNavigation
+{/* Top Navigation — hidden only inside the active builder flow, not the Apps listing */}
+      {!(activeView === 'build' && buildPlanning) && <TopNavigation
         activeView={activeView}
         onViewChange={setActiveView}
         currentUser={currentUser}
@@ -279,12 +283,12 @@ function AppContent() {
         onSettingsClick={demoMode ? () => {} : () => setSettingsOpen(v => !v)}
         onManageSubscriptionClick={demoMode ? () => {} : () => setManageSubOpen(true)}
         demoMode={demoMode}
-      />
+      />}
 
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden relative">
-        {/* Far Left: Compact App Navigation */}
-        {!demoMode && <AppNavigation
+        {/* Far Left: Compact App Navigation — hidden only inside the active builder flow */}
+        {!demoMode && !(activeView === 'build' && buildPlanning) && <AppNavigation
           onSubItemNavigate={(label) => {
             setActiveSubPage(label);
             setActivePage(null);
@@ -316,18 +320,31 @@ function AppContent() {
             }`}
           >
             <div className="h-full flex flex-col w-[230px]">
-              {/* Toggle */}
-              <div className="h-[56px] px-4 flex items-center justify-between flex-shrink-0">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#4B5563]">Sense</span>
-                <button
-                  onClick={() => setSidebarOpen(false)}
-                  className="p-1.5 rounded-md hover:bg-[#EEEEEE] transition-colors"
-                >
-                  <PanelLeftClose className="w-[18px] h-[18px] text-[#9CA3AF]" />
-                </button>
-              </div>
+              {/* Toggle / header row — in build mode it becomes "Go Back" */}
+              {activeView === 'build' ? (
+                <div className="h-[56px] px-3 flex items-center flex-shrink-0">
+                  <button
+                    onClick={() => { setBuildPlanning(false); setActiveView('chat'); if (typeof window !== 'undefined') window.location.hash = ''; }}
+                    className="flex items-center gap-2 px-2 py-1.5 -ml-0.5 rounded-md hover:bg-[#EEEEEE] transition-colors active:scale-[0.99]"
+                  >
+                    <ArrowLeft className="w-4 h-4 text-[#6B7280]" />
+                    <span className="text-[14px] font-medium text-[#1C1E21]">Go Back</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="h-[56px] px-4 flex items-center justify-between flex-shrink-0">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#4B5563]">Sense</span>
+                  <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="p-1.5 rounded-md hover:bg-[#EEEEEE] transition-colors"
+                  >
+                    <PanelLeftClose className="w-[18px] h-[18px] text-[#9CA3AF]" />
+                  </button>
+                </div>
+              )}
 
-              {/* Actions */}
+              {/* Actions — only in non-build mode (build header carries Go Back) */}
+              {activeView === 'build' ? null : (
               <div className="px-2 pb-0.5 flex flex-col">
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
@@ -383,11 +400,71 @@ function AppContent() {
                   </button>
                 )}
               </div>
+              )}
 
-              {currentUser !== 'MJ' && currentUser !== 'AU' && <div className="mx-2 my-1.5 border-t border-[#E6E8EC]" />}
+              {activeView !== 'build' && currentUser !== 'MJ' && currentUser !== 'AU' && <div className="mx-2 my-1.5 border-t border-[#E6E8EC]" />}
 
-              {/* Thread list */}
-              <div className="flex-1 overflow-y-auto scrollbar-auto-hide px-2 pb-2">
+              {/* sidebar body — swaps between the build menu and the thread list,
+                  sliding right → left on the swap (ease-out, under 300ms) */}
+              <div className="flex-1 overflow-hidden relative">
+                <AnimatePresence mode="wait" initial={false}>
+                {activeView === 'build' ? (
+                  <motion.div
+                    key="build-menu"
+                    initial={{ x: 24, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: -24, opacity: 0 }}
+                    transition={{ duration: 0.26, ease: [0.23, 1, 0.32, 1] }}
+                    className="absolute inset-0 overflow-y-auto scrollbar-auto-hide px-2 pt-2 pb-2"
+                  >
+                    {([
+                      { id: 'create', label: 'Create new', icon: Plus },
+                      { id: 'apps', label: 'Library', icon: Blocks },
+                    ] as const).map((item) => {
+                      const Icon = item.icon;
+                      const active = item.id === 'apps' ? buildShowApps : item.id === 'create' ? !buildShowApps : false;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            setActiveView('build');
+                            if (item.id === 'apps') setBuildShowApps(true);
+                            else if (item.id === 'create') { setBuildShowApps(false); setBuildCreateNonce((n) => n + 1); }
+                            if (typeof window !== 'undefined') window.location.hash = '#build';
+                          }}
+                          className="w-full flex items-center gap-2.5 px-2 py-2 rounded-md text-left transition-colors active:scale-[0.99]"
+                          style={{ background: active ? '#E8E8E8' : 'transparent' }}
+                          onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#EEEEEE'; }}
+                          onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
+                        >
+                          <Icon className="w-4 h-4 flex-shrink-0" style={{ color: active ? '#FD5000' : '#6B7280' }} />
+                          <span className="text-[14px]" style={{ color: '#1C1E21', fontWeight: active ? 500 : 400 }}>{item.label}</span>
+                        </button>
+                      );
+                    })}
+
+                    <div className="mx-2 my-2 border-t border-[#E6E8EC]" />
+                    <p className="px-2 pt-1 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent Apps</p>
+                    {MY_APPS.map((app) => (
+                      <button
+                        key={app.id}
+                        onClick={() => { setBuildOpenAppId(app.id); setBuildShowApps(false); setActiveView('build'); if (typeof window !== 'undefined') window.location.hash = '#build'; }}
+                        className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-[#EEEEEE] active:scale-[0.99]"
+                      >
+                        <span className="text-[15px] leading-none flex-shrink-0">{app.icon}</span>
+                        <span className="text-[14px] text-[#4B5563] truncate">{app.name}</span>
+                      </button>
+                    ))}
+                  </motion.div>
+                ) : (
+                <motion.div
+                  key="thread-list"
+                  initial={{ x: 24, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -24, opacity: 0 }}
+                  transition={{ duration: 0.26, ease: [0.23, 1, 0.32, 1] }}
+                  className="absolute inset-0 overflow-y-auto scrollbar-auto-hide px-2 pb-2"
+                >
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <p className="px-2 pt-4 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent threads</p>
                 )}
@@ -483,6 +560,9 @@ function AppContent() {
                 {sidebarSearch && threadHistory.filter((t) => !t.archived && t.title.toLowerCase().includes(sidebarSearch.toLowerCase())).length === 0 && (
                   <p className="text-[12px] text-[#9CA3AF] text-center py-4">No threads found</p>
                 )}
+                </motion.div>
+                )}
+                </AnimatePresence>
               </div>
 
               {/* Plan / trial card — bottom of side nav */}
@@ -791,7 +871,12 @@ function AppContent() {
                       currentUser={currentUser}
                       seededPrompt={buildSeedPrompt}
                       onConsumeSeed={() => setBuildSeedPrompt(null)}
+                      seededOpenAppId={buildOpenAppId}
+                      onConsumeOpenApp={() => setBuildOpenAppId(null)}
+                      seededShowApps={buildShowApps}
+                      createNonce={buildCreateNonce}
                       onPlanningChange={setBuildPlanning}
+                      onExit={() => { setBuildPlanning(false); setActiveView('chat'); }}
                     />
                   </div>
                 ) : activeView === 'radar' ? (

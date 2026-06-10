@@ -346,16 +346,18 @@ export const CLARIFY_REASONING: string[] = [
 // Planning steps — render as a checklist that completes top-to-bottom while
 // the reasoning streams. count = records "found" for that module.
 export interface PlanStep {
-  module: 'Measurement' | 'Materials' | 'Templates' | 'Schema';
+  module: 'Measurement' | 'Materials' | 'Templates' | 'Schema' | 'Jobs';
   label: string;
   detail: string;
   count?: string;
+  boldPart?: string; // substring of `label` to embolden while the step is loading
 }
 export const CLARIFY_PLAN: PlanStep[] = [
-  { module: 'Schema', label: 'Resolving entities', detail: 'RoofFacet · pitch · area', count: 'matched' },
-  { module: 'Measurement', label: 'Reading saved measurements', detail: 'recent roof draws', count: '12 draws' },
-  { module: 'Materials', label: 'Loading material units', detail: 'squares · bundles · waste %', count: 'mapped' },
-  { module: 'Templates', label: 'Checking facet templates', detail: 'gable · hip · shed', count: '3 shapes' },
+  { module: 'Schema', label: 'Resolving roof entities and pitch fields', boldPart: 'roof entities and pitch fields', detail: 'RoofFacet · pitch · area', count: 'matched' },
+  { module: 'Measurement', label: 'Reading recent roof-category jobs in Zuper', boldPart: 'roof-category jobs', detail: 'recent roof draws', count: '128 jobs' },
+  { module: 'Jobs', label: 'Reading job notes and inspection photos', boldPart: 'job notes and inspection photos', detail: 'site notes · attachments', count: '512 notes' },
+  { module: 'Materials', label: 'Loading shingle and material units', boldPart: 'shingle and material units', detail: 'squares · bundles · waste %', count: 'mapped' },
+  { module: 'Templates', label: 'Checking gable, hip and shed facet templates', boldPart: 'gable, hip and shed facet templates', detail: 'gable · hip · shed', count: '3 shapes' },
 ];
 
 // ── Multi-question clarify (asked all at once, §3a) ───────────────────────

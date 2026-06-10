@@ -207,6 +207,115 @@
     }
   }
 
+  /* sweeping highlight across text (clipped gradient) */
+  @keyframes text-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  .text-shimmer {
+    background: linear-gradient(
+      100deg,
+      #9CA3AF 0%,
+      #9CA3AF 38%,
+      #111315 50%,
+      #9CA3AF 62%,
+      #9CA3AF 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: text-shimmer 1.8s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .text-shimmer {
+      animation: none;
+      /* settle on the readable mid-tone rather than a frozen gradient frame */
+      background: none;
+      -webkit-text-fill-color: currentColor;
+      color: #374151;
+    }
+  }
+
+  /* app reveal — when a freshly built preview mounts, its top-level sections
+     rise into place one after another, each scaling up from a slightly
+     shrunken, center-anchored state to its final position. One-shot. */
+  @keyframes app-reveal-item {
+    from {
+      opacity: 0;
+      transform: scale(0.94) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  [data-app-reveal] > * {
+    transform-origin: center center;
+    opacity: 0;
+    animation: app-reveal-item 0.42s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+  [data-app-reveal] > *:nth-child(1) { animation-delay: 0.04s; }
+  [data-app-reveal] > *:nth-child(2) { animation-delay: 0.11s; }
+  [data-app-reveal] > *:nth-child(3) { animation-delay: 0.18s; }
+  [data-app-reveal] > *:nth-child(4) { animation-delay: 0.25s; }
+  [data-app-reveal] > *:nth-child(5) { animation-delay: 0.32s; }
+  [data-app-reveal] > *:nth-child(6) { animation-delay: 0.39s; }
+  [data-app-reveal] > *:nth-child(n + 7) { animation-delay: 0.46s; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-app-reveal] > * {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* generation overlay — the active module tile breathes as it scans */
+  @keyframes doc-glyph-pulse {
+    0%, 100% { transform: scale(1);    box-shadow: 0 0 0 0 rgba(28,30,33,0); }
+    50%      { transform: scale(1.07); box-shadow: 0 0 0 6px rgba(28,30,33,0.04); }
+  }
+  .doc-glyph {
+    animation: doc-glyph-pulse 1.8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .doc-glyph { animation: none; }
+  }
+
+  /* app-skeleton grid — grid lines breathe from normal → dark → normal */
+  @keyframes skeleton-grid-breathe {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+
+  /* single binary digit: subtle → dark → less-dark → subtle (traveling pulse) */
+  @keyframes binary-bit {
+    0%, 100% { color: rgba(28,30,33,0.06); }
+    8%       { color: rgba(28,30,33,0.55); }
+    20%      { color: rgba(28,30,33,0.22); }
+    40%      { color: rgba(28,30,33,0.06); }
+  }
+
+  /* grid cell fill: transparent → grey → fade (traveling left→right) */
+  @keyframes grid-cell {
+    0%, 100% { background-color: rgba(28,30,33,0); }
+    8%       { background-color: rgba(28,30,33,0.10); }
+    24%      { background-color: rgba(28,30,33,0.04); }
+    45%      { background-color: rgba(28,30,33,0); }
+  }
+  /* plus crosshair at active cell corners — fades in with the fill */
+  @keyframes grid-plus {
+    0%, 100% { opacity: 0; }
+    8%       { opacity: 0.55; }
+    24%      { opacity: 0.2; }
+    45%      { opacity: 0; }
+  }
+  @keyframes skeleton-block-pulse {
+    0%, 100% { opacity: 0.35; }
+    50%      { opacity: 0.7; }
+  }
+
   /* slow pan of the pixel grid inside the Build prompt bar */
   @keyframes build-grid-pan {
     0%   { background-position: 0 0, 0 0; }

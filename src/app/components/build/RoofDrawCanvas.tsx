@@ -27,7 +27,7 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
   const [waste, setWaste] = useState(ROOF_DEFAULTS.wastePct);
   const [localSel, setLocalSel] = useState<string | null>('f-1');
   const [showLines, setShowLines] = useState(true);
-  useEffect(() => { const t = setTimeout(() => setLoading(false), 650); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(() => setLoading(false), 280); return () => clearTimeout(t); }, []);
 
   const sel = selectedFacetId ?? localSel;
   const pick = (id: string) => { setLocalSel(id); onSelectFacet?.(id); };
@@ -77,7 +77,7 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
           <div className="w-[268px] rounded-[24px] animate-pulse" style={{ background: token.color.bg.surface, border: `1px solid ${token.color.border.default}` }} />
         </div>
       ) : (
-        <div className="flex-1 overflow-hidden p-3 pt-0 flex gap-3">
+        <div data-app-reveal className="flex-1 overflow-hidden p-3 pt-0 flex gap-3">
           {/* drawing surface — aerial image + traced facets */}
           <div className="flex-1 rounded-[24px] overflow-hidden relative bg-[#2A2D33]" style={{ border: '1px solid #FFFFFF', boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
             {/* real aerial roof photo (Unsplash, free license) */}
