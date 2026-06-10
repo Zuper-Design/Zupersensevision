@@ -6508,38 +6508,9 @@ function AUMarketplaceView({ onBack, onHire, onChatWith, isMJ = false }: { onBac
   const [triedAgent, setTriedAgent] = useState<typeof catalogItems[number] | null>(null);
   const [hiredForMJ, setHiredForMJ] = useState<typeof catalogItems[number] | null>(null);
 
-  // MJ Hire — after the ready modal opens, give it ~2s for the boot animation
-  // then send the user into the agent chat.
-  useEffect(() => {
-    if (!hiredForMJ) return;
-    const mpPaletteLocal = ['#A78BFA', '#EC4899', '#8B5CF6', '#C084FC', '#F472B6', '#6366F1'];
-    const accentLocal = mpPaletteLocal[Math.abs(hiredForMJ.title.split('').reduce((h, c) => (h << 5) - h + c.charCodeAt(0), 0)) % mpPaletteLocal.length];
-    const tintLocal = `linear-gradient(180deg, ${accentLocal}1F 0%, ${accentLocal}0A 40%, #FFFFFF 80%)`;
-    const t = setTimeout(() => {
-      const record: typeof myAgents[number] = {
-        name: hiredForMJ.title,
-        desc: hiredForMJ.desc,
-        runs: 0,
-        lastRun: 'just now',
-        users: 1,
-        rating: hiredForMJ.rating,
-        reviews: 0,
-        price: hiredForMJ.featured ? 'Free' : '$12/mo',
-        skills: 0,
-        tools: 0,
-        status: 'Active',
-        category: 'Operations',
-        img: hiredForMJ.img,
-        tint: tintLocal,
-        accent: accentLocal,
-      };
-      onHire?.(record);
-      onChatWith?.(record.name);
-      setHiredForMJ(null);
-    }, hiredForMJ.title === 'Google Review Digest' ? 4000 : 2000);
-    return () => clearTimeout(t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hiredForMJ]);
+  // MJ Hire — the "setting up" card loops its boot animation indefinitely;
+  // the user exits via the modal's close button (onClose → setHiredForMJ(null)).
+  // (No auto-advance to chat — intentional looping setup state.)
 
   // AU user: full-page swap into TryAgentView (with chat).
   // MJ user: modal overlay (rendered at the bottom of this component).
