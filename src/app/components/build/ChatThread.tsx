@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowUp, ArrowRight, Check, Plus, Database, ShieldCheck, LayoutTemplate, Activity, ChevronDown, MessageSquarePlus, MessagesSquare, FileText } from 'lucide-react';
 import { token } from './tokens';
-import PixelBlast from './PixelBlast';
+import PrismGlow from './PrismGlow';
 import { ReasoningCard } from './ReasoningCard';
 import { CLARIFY_PLAN, CLARIFY_REASONING } from './buildData';
 
@@ -255,34 +255,18 @@ export function ChatThread(p: ThreadProps) {
             exit={{ opacity: 0, transform: 'translateY(-4px)' }}
             transition={{ duration: 0.16, ease: [0.23, 1, 0.32, 1] }}
             className="relative overflow-hidden w-full"
-            style={{ height: 36, background: '#F0F0F0' }}
+            style={{ height: 36, background: '#FCFCFC' }}
           >
-            <div className="absolute inset-0">
-              <PixelBlast
-                variant="square"
-                pixelSize={2}
-                color="#959595"
-                patternScale={2.5}
-                patternDensity={0.8}
-                enableRipples={false}
-                liquid={false}
-                speed={0.35}
-                edgeFade={0.28}
-                transparent
-              />
-            </div>
+            {/* the spectrum breathes while the agent works — shared treatment
+                with the home composer tray (DESIGN.md §7); WebGL retired */}
+            <PrismGlow intensity={0.55} blur={18} />
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div
-                className="inline-flex items-center gap-2 h-6 px-3 rounded-full"
-                style={{
-                  background: '#FFFFFF',
-                  border: '1px solid rgba(236,139,73,0.24)',
-                  boxShadow: '0 4px 16px -2px rgba(236,139,73,0.34), 0 1px 3px rgba(0,0,0,0.08)',
-                  backdropFilter: 'blur(8px)',
-                }}
+                className="glass-soft inline-flex items-center gap-2 h-6 px-3 rounded-full"
+                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 16px -6px rgba(0,0,0,0.18)' }}
               >
-                <span className="w-3 h-3 rounded-full border-2 border-[#E8E8E8] border-t-[#636363] animate-spin" style={{ animationDuration: '0.7s' }} />
-                <span className="text-[12px] font-medium tracking-[-0.02em] text-[#636363]">Thinking...</span>
+                <span className="prism-sweep rounded-full" style={{ width: 20, height: 4 }} />
+                <span className="prism-text-shimmer text-[12px] font-medium tracking-[-0.02em]">Thinking...</span>
               </div>
             </div>
           </motion.div>

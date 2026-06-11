@@ -2172,11 +2172,11 @@ export function BuildWorkspace({
     // refine composer only appears once the app is actually ready.
     const isBuilding = homeFlowActive || stage === "generating";
     const conversationDone = !isBuilding; // app ready → refine input
-    // PixelBlast frame also lights up while a refine prompt is processing
+    // activity frame also lights up while a refine prompt is processing
     const showFrame = isBuilding || isRefining;
 
     // neutral frame skin — every state (waiting / thinking / building) uses the
-    // same gray treatment, no PixelBlast color, no gradient tinting.
+    // same neutral chrome; the PrismGlow layer carries the activity signal.
     const frameTheme = {
       gradient: "linear-gradient(to bottom, #F0F0F0 0%, #EDEDEA 74%)",
       pixel: "#D6D6D2",
@@ -2820,7 +2820,7 @@ export function BuildWorkspace({
                       </motion.div>
                     )}
                 </AnimatePresence>
-                {/* PixelBlast frame — wraps the box while building; label sits on the top gutter */}
+                {/* activity frame — wraps the box while building; label sits on the top gutter */}
                 <motion.div
                   className="relative w-full"
                   animate={{
@@ -2844,7 +2844,7 @@ export function BuildWorkspace({
                       "box-shadow 280ms cubic-bezier(0.23,1,0.32,1), border-color 280ms ease",
                   }}
                 >
-                  {/* tinted PixelBlast backdrop fills the frame gutter */}
+                  {/* frame gutter backdrop — prism breathes here while the agent works */}
                   <AnimatePresence>
                     {showFrame && (
                       <motion.div
@@ -2884,7 +2884,7 @@ export function BuildWorkspace({
                               : "opacity 300ms cubic-bezier(0.23,1,0.32,1)",
                           }}
                         />
-                        {/* inner glow + edge stroke — top-most so the PixelBlast
+                        {/* inner glow + edge stroke — top-most so the glow
                             and flash layers below never clip it */}
                         <div
                           className="absolute inset-0 pointer-events-none"
