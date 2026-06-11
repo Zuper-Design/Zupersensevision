@@ -243,7 +243,11 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
     setPublishedAt(new Date());
   };
 
-  const ctaLabel = publishedAt ? 'Publish changes' : 'Publish';
+  const ctaLabel = publishedAt
+    ? 'Publish changes'
+    : everyone
+      ? 'Publish to everyone'
+      : 'Publish';
 
   return createPortal(
     <>
@@ -359,6 +363,38 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
               );
             })}
           </div>
+
+          {/* blast radius — publishing org-wide is the one moment chrome earns
+              color: a calm, unmissable --red micro-accent strip */}
+          <AnimatePresence initial={false}>
+            {everyone && !publishedAt && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+                className="overflow-hidden"
+              >
+                <div
+                  className="mt-3 flex items-start gap-2.5 rounded-xl px-3.5 py-3"
+                  style={{
+                    background: 'rgba(229,72,77,0.05)',
+                    boxShadow: 'inset 0 0 0 1px rgba(229,72,77,0.25)',
+                  }}
+                >
+                  <Globe className="mt-0.5 h-4 w-4 flex-shrink-0" style={{ color: '#E5484D' }} />
+                  <p className="text-[12.5px] leading-[1.5] text-[#636363]">
+                    <span className="font-medium text-[#000000]">
+                      This publishes to your entire organization.
+                    </span>{' '}
+                    All <span className="font-medium" style={{ color: '#E5484D' }}>142 people</span> at
+                    Acme Co will be able to open and respond to this app the
+                    moment you publish.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* search + people checklist — only for selected users */}
           <AnimatePresence initial={false}>
