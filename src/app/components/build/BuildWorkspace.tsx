@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, Fragment } from "react";
 import {
   motion,
   AnimatePresence,
@@ -39,6 +39,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Star,
+  Mic,
 } from "lucide-react";
 import { RoofDrawCanvas } from "./RoofDrawCanvas"; // measurement canvas
 import { CommissionCalculator } from "./CommissionCalculator"; // calculator table
@@ -51,7 +52,6 @@ import { TemplateThumb, AppPreviewThumb, PublicAppGallery } from "./PublicAppGal
 import { ReasoningCard } from "./ReasoningCard";
 import { EditProvider, type SelectedElement } from "./EditContext";
 import { SenseLogo } from "../SenseLogo";
-import PixelBlast from "./PixelBlast";
 import BorderGlow from "./BorderGlow";
 import {
   TEMPLATES,
@@ -62,6 +62,12 @@ import {
   CLARIFY_REASONING,
   CLARIFY_PLAN,
   CLARIFY_QUESTIONS,
+  COCKPIT_REASONING,
+  COCKPIT_CLARIFY_PLAN,
+  COCKPIT_QUESTIONS,
+  COMMISSION_REASONING,
+  COMMISSION_CLARIFY_PLAN,
+  COMMISSION_QUESTIONS,
   ROOFDRAW_TREE,
   COMMISSION_TREE,
   COCKPIT_TREE,
@@ -266,6 +272,106 @@ const REFINE_SUGGESTIONS = [
   "Let me filter facets by pitch",
   "Export the measurement as a PDF",
 ];
+
+// Sense logo mark — the 3×3 rounded-square glyph used in conversation headers.
+function SenseMark({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 45 45"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
+      <rect y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
+      <rect x="15.75" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
+      <rect x="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
+      <rect x="15.75" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
+      <rect y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
+      <rect x="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
+      <rect x="31.5" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
+      <rect x="31.5" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
+    </svg>
+  );
+}
+
+// Refine thought-stream — a few plain-text lines (no checklist) that surface
+// the AI's reasoning while a refine prompt is processing, before it lands the
+// new version in the preview pane. Several variants so consecutive refines
+// don't read identically; chosen deterministically by the refine index.
+const REFINE_THOUGHT_SETS: {
+  secs: number;
+  lines: string[];
+  summaryTitle: string;
+  summary: string[];
+}[] = [
+  {
+    secs: 10,
+    lines: [
+      "Reading your request against the current layout…",
+      "Found where this fits — wiring it into the existing schema.",
+      "Adjusting the affected components and re-checking the data bindings.",
+      "Looks consistent. Applying the change and refreshing the preview.",
+    ],
+    summaryTitle: "Here's what I changed",
+    summary: [
+      "Added the requested element to the layout",
+      "Wired it into the existing schema",
+      "Re-checked every data binding so the rest of the app keeps working",
+    ],
+  },
+  {
+    secs: 7,
+    lines: [
+      "Parsing the change and locating the affected view…",
+      "This touches the summary section — updating its bindings.",
+      "Re-running validation to make sure nothing downstream breaks.",
+      "All green. Shipping a new version to the preview.",
+    ],
+    summaryTitle: "Here's what I changed",
+    summary: [
+      "Updated the summary section to reflect your change",
+      "Refreshed its bindings and validated dependent fields",
+      "Confirmed nothing downstream broke",
+    ],
+  },
+  {
+    secs: 13,
+    lines: [
+      "Mapping your ask onto the existing component tree…",
+      "Found two places this applies — reconciling both.",
+      "Recomputing derived fields and checking permissions.",
+      "Confirmed consistent. Rendering the updated version.",
+    ],
+    summaryTitle: "Here's what I changed",
+    summary: [
+      "Applied the change in both places it affected",
+      "Recomputed the derived fields",
+      "Confirmed permissions still hold and everything reconciles",
+    ],
+  },
+  {
+    secs: 8,
+    lines: [
+      "Interpreting the request in context of the current build…",
+      "Slotting it into the data model without breaking existing rules.",
+      "Verifying layout reflow and edge cases.",
+      "Done — applying and refreshing the preview.",
+    ],
+    summaryTitle: "Here's what I changed",
+    summary: [
+      "Slotted the change into the data model",
+      "Left your existing rules untouched",
+      "Verified the layout reflows correctly across edge cases",
+    ],
+  },
+];
+// deterministic per-refine pick — stable across re-renders (no randomness)
+const refineThoughtSet = (i: number) =>
+  REFINE_THOUGHT_SETS[i % REFINE_THOUGHT_SETS.length];
+// default set drives the streaming timer in runRefine (always the latest entry)
+const REFINE_THOUGHTS = REFINE_THOUGHT_SETS[0].lines;
 
 // Attachment preview — full card (thumbnail + name + "EXT, size" + trash) or,
 // in editor mode, a compact thumbnail-only chip with the name in a tooltip.
@@ -1025,6 +1131,9 @@ export function BuildWorkspace({
   const [refineDraft, setRefineDraft] = useState("");
   const [refineLog, setRefineLog] = useState<string[]>([]);
   const [isRefining, setIsRefining] = useState(false);
+  // how many refine thought-lines have streamed in for the current refine
+  const [refineThoughtStep, setRefineThoughtStep] = useState(0);
+  const refineThoughtTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   // version history — initial build is v1, each applied refine adds a version
   const [historyOpen, setHistoryOpen] = useState(false);
   const [convoCollapsed, setConvoCollapsed] = useState(false);
@@ -1049,6 +1158,26 @@ export function BuildWorkspace({
   const [autoOpen, setAutoOpen] = useState(false);
   const [, setEditLog] = useState<string[]>([]); // element-scoped edits applied
   const [archetype, setArchetype] = useState<Archetype>("roofdraw");
+  // per-archetype clarify content — reasoning trace, plan checklist, questions.
+  // cockpit/commission/roofdraw all run the reason→clarify flow; kanban skips it.
+  const clarifyReasoning =
+    archetype === "cockpit"
+      ? COCKPIT_REASONING
+      : archetype === "commission"
+        ? COMMISSION_REASONING
+        : CLARIFY_REASONING;
+  const clarifyPlan =
+    archetype === "cockpit"
+      ? COCKPIT_CLARIFY_PLAN
+      : archetype === "commission"
+        ? COMMISSION_CLARIFY_PLAN
+        : CLARIFY_PLAN;
+  const clarifyQuestions =
+    archetype === "cockpit"
+      ? COCKPIT_QUESTIONS
+      : archetype === "commission"
+        ? COMMISSION_QUESTIONS
+        : CLARIFY_QUESTIONS;
   const [homeStarter, setHomeStarter] = useState(0);
   const taRef = useRef<HTMLTextAreaElement>(null);
   const appGalleryRef = useRef<HTMLDivElement>(null);
@@ -1138,14 +1267,31 @@ export function BuildWorkspace({
   const refineTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // resume a build that was stopped mid-flow (canvas not finished yet)
   const resumeBuild = () => setStage("generating");
-  const sendRefine = () => {
-    if (!refineDraft.trim() || stage !== "preview" || isRefining) return;
-    const msg = refineDraft.trim();
+  // run a refine for a given prompt — used by the composer (sendRefine) and by
+  // clicking a suggested prompt (fires immediately, no typing needed).
+  const runRefine = (raw: string) => {
+    const msg = raw.trim();
+    if (!msg || stage !== "preview" || isRefining) return;
     setRefineLog((l) => [...l, msg]);
     setSkillBadge(true);
     setRefineDraft("");
     setIsRefining(true);
-    refineTimer.current = setTimeout(() => setIsRefining(false), 2200);
+    // stream the thought-lines one at a time, then land the version in preview
+    refineThoughtTimers.current.forEach(clearTimeout);
+    refineThoughtTimers.current = [];
+    setRefineThoughtStep(1);
+    // each consecutive refine thinks a bit longer than the previous one —
+    // the gap between thought-lines grows with the refine index.
+    const refineIndex = refineLog.length; // index of the entry being added
+    const THOUGHT_GAP = 850 + refineIndex * 500; // ms between thought-lines
+    REFINE_THOUGHTS.forEach((_, i) => {
+      if (i === 0) return; // first line shown immediately
+      refineThoughtTimers.current.push(
+        setTimeout(() => setRefineThoughtStep(i + 1), i * THOUGHT_GAP),
+      );
+    });
+    const total = REFINE_THOUGHTS.length * THOUGHT_GAP + 400;
+    refineTimer.current = setTimeout(() => setIsRefining(false), total);
     // auto-title an untitled thread from its first message
     setThreads((ts) =>
       ts.map((t) =>
@@ -1155,6 +1301,7 @@ export function BuildWorkspace({
       ),
     );
   };
+  const sendRefine = () => runRefine(refineDraft);
   // Stop the AI mid-process.
   // - Editor active (app already built → at preview/refine): just cancel, keep the editor.
   // - No editor yet (initial build flow): drop into the "Waiting for input" conversation.
@@ -1163,6 +1310,8 @@ export function BuildWorkspace({
       clearTimeout(refineTimer.current);
       refineTimer.current = null;
     }
+    refineThoughtTimers.current.forEach(clearTimeout);
+    refineThoughtTimers.current = [];
     setIsRefining(false);
     if (stage === "preview" || stage === "viewer") return; // editor active — keep it
     if (stage === "generating") {
@@ -1240,10 +1389,10 @@ export function BuildWorkspace({
     const START = 250; // initial beat before anything streams
     const REASON_GAP = 450; // gap between streamed reasoning lines
     const STEP_DUR = 650; // how long each plan step shows "resolving…"
-    const reasonDone = START + CLARIFY_REASONING.length * REASON_GAP;
+    const reasonDone = START + clarifyReasoning.length * REASON_GAP;
 
     // 1. stream the reasoning lines
-    CLARIFY_REASONING.forEach((_, i) =>
+    clarifyReasoning.forEach((_, i) =>
       timers.push(
         setTimeout(() => setReasonLine(i + 1), START + i * REASON_GAP),
       ),
@@ -1253,14 +1402,14 @@ export function BuildWorkspace({
     //    loading state (planStep === i) before completing (planStep > i).
     const stepsStart = reasonDone + 150;
     timers.push(setTimeout(() => setPlanStarted(true), stepsStart));
-    CLARIFY_PLAN.forEach((_, i) =>
+    clarifyPlan.forEach((_, i) =>
       timers.push(
         setTimeout(() => setPlanStep(i + 1), stepsStart + (i + 1) * STEP_DUR),
       ),
     );
 
     // 3. hand off once the last step has finished + a beat to read it
-    const total = stepsStart + (CLARIFY_PLAN.length + 1) * STEP_DUR + 350;
+    const total = stepsStart + (clarifyPlan.length + 1) * STEP_DUR + 350;
     timers.push(setTimeout(() => setStage("homeClarify"), total));
     return () => timers.forEach(clearTimeout);
   }, [stage]);
@@ -1309,14 +1458,14 @@ export function BuildWorkspace({
     const a = classify(prompt);
     setArchetype(a);
     setRefineLog([]);
+    setBuildComplete(false); // fresh build — no version exists until it finishes
     setClarifyAnswer(null);
     setClarifyAnswers({});
     setClarifyStep(0);
-    // roofdraw → reason (gather context) → clarify (ask the questions)
-    // cockpit / commission → thinking (brief pause, then generate)
-    // kanban   → generating immediately
-    if (a === "roofdraw") setStage("homeReasoning");
-    else if (a === "cockpit" || a === "commission") setStage("homeThinking");
+    // roofdraw / cockpit / commission → reason (gather context) → clarify (ask questions)
+    // kanban → generating immediately
+    if (a === "roofdraw" || a === "cockpit" || a === "commission")
+      setStage("homeReasoning");
     else {
       setStage("generating");
     }
@@ -1334,7 +1483,7 @@ export function BuildWorkspace({
 
   // one-at-a-time: advance to the next question, or submit on the last
   const advanceClarify = () => {
-    if (clarifyStep < CLARIFY_QUESTIONS.length - 1) {
+    if (clarifyStep < clarifyQuestions.length - 1) {
       setClarifyStep((s) => s + 1);
     } else {
       submitClarify();
@@ -1344,7 +1493,7 @@ export function BuildWorkspace({
   // go back to the previous question to change an answer
   const goBackClarify = () => {
     if (clarifyStep === 0) return;
-    const prev = CLARIFY_QUESTIONS[clarifyStep - 1];
+    const prev = clarifyQuestions[clarifyStep - 1];
     // restore a typed (non-choice) answer into the box for editing
     setFollowUpDraft(
       prev && prev.kind !== "choice" ? clarifyAnswers[prev.id] || "" : "",
@@ -1353,7 +1502,7 @@ export function BuildWorkspace({
   };
 
   // all required questions answered?
-  const clarifyComplete = CLARIFY_QUESTIONS.every(
+  const clarifyComplete = clarifyQuestions.every(
     (q) => q.optional || (clarifyAnswers[q.id] && clarifyAnswers[q.id].trim()),
   );
 
@@ -1365,7 +1514,7 @@ export function BuildWorkspace({
   const submitClarify = () => {
     if (!canContinueClarify) return;
     const summary = [
-      ...CLARIFY_QUESTIONS.map((q) => clarifyAnswers[q.id]).filter(Boolean),
+      ...clarifyQuestions.map((q) => clarifyAnswers[q.id]).filter(Boolean),
       followUpDraft.trim(),
     ]
       .filter(Boolean)
@@ -1734,10 +1883,19 @@ export function BuildWorkspace({
                 reduceMotion={!!reduceMotion}
               />
             ) : homeClarifyActive ? (
-              /* waiting for the user — overlay parked on a "Waiting for input" card */
+              /* waiting for the user — overlay parked on a "Waiting for input"
+                 card once context is gathered (clarify questions are showing). */
               <GenerationOverlay
                 mode="waiting"
                 title="Waiting for your input…"
+                reduceMotion={!!reduceMotion}
+              />
+            ) : archetype === "cockpit" && homeReasoningActive ? (
+              /* cockpit mounts the preview during reasoning too — show
+                 "Thinking…" while it gathers context, before clarify. */
+              <GenerationOverlay
+                mode="structure"
+                title="Thinking…"
                 reduceMotion={!!reduceMotion}
               />
             ) : homeFlowActive ? (
@@ -1844,6 +2002,60 @@ export function BuildWorkspace({
                 )}
               </EditProvider>
             )}
+
+            {/* refine loading — 50% white scrim over the current preview with a
+                single stack card floating on top while Sense applies a change */}
+            <AnimatePresence>
+              {isRefining && !isViewer && (
+                <motion.div
+                  key="refine-loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
+                  className="absolute inset-0 z-30 flex items-center justify-center"
+                  style={{ background: "rgba(255,255,255,0.8)" }}
+                >
+                  <motion.div
+                    initial={
+                      reduceMotion
+                        ? { opacity: 1 }
+                        : { opacity: 0, y: 10, scale: 0.98 }
+                    }
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
+                    className="flex items-center gap-3.5 rounded-[20px] bg-white"
+                    style={{
+                      width: 360,
+                      height: 80,
+                      paddingLeft: 16,
+                      paddingRight: 18,
+                      boxShadow:
+                        "0 3px 6px rgba(28,30,33,0.08), 0 20px 44px -16px rgba(28,30,33,0.3), 0 40px 80px -32px rgba(28,30,33,0.35)",
+                    }}
+                  >
+                    <div
+                      className="rounded-[13px] flex items-center justify-center flex-shrink-0"
+                      style={{ width: 46, height: 46, background: "#FD5000" }}
+                    >
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                    <span className="text-[16px] font-semibold tracking-[-0.01em] text-[#111315]">
+                      Applying changes…
+                    </span>
+                    {!reduceMotion && (
+                      <span
+                        className="ml-auto w-5 h-5 rounded-full border-2 flex-shrink-0 animate-spin"
+                        style={{
+                          borderColor: "rgba(28,30,33,0.1)",
+                          borderTopColor: "#FD5000",
+                        }}
+                      />
+                    )}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
         <AnimatePresence>
@@ -1880,12 +2092,12 @@ export function BuildWorkspace({
     stage === "viewer";
   if (inBuildView) {
     const promptText = prompt.trim() || activeStarter.template.prompt;
-    const answeredCount = CLARIFY_QUESTIONS.filter(
+    const answeredCount = clarifyQuestions.filter(
       (q) => clarifyAnswers[q.id] && clarifyAnswers[q.id].trim(),
     ).length;
     // current clarify question (one-at-a-time) + Enter/send handler
     const currentQ = homeClarifyActive
-      ? CLARIFY_QUESTIONS[clarifyStep]
+      ? clarifyQuestions[clarifyStep]
       : undefined;
     const submitClarifyStep = () => {
       if (currentQ && currentQ.kind !== "choice" && followUpDraft.trim()) {
@@ -1894,8 +2106,14 @@ export function BuildWorkspace({
       }
       advanceClarify();
     };
-    // canvas (built app) shows once we leave reasoning/clarify
-    const showCanvas = !homeReasoningActive && !homeClarifyActive;
+    // cockpit runs reasoning + clarify with the preview pane already mounted,
+    // so the user answers questions while the canvas shows a "Waiting for
+    // input" card in parallel. Other archetypes keep the centered-convo flow.
+    const clarifyWithPreview = archetype === "cockpit";
+    // canvas (built app) shows once we leave reasoning/clarify — except cockpit,
+    // which keeps it mounted through reasoning/clarify (showing the waiting card)
+    const showCanvas =
+      clarifyWithPreview || (!homeReasoningActive && !homeClarifyActive);
     // right pane appears only once we leave reasoning/clarify (→ "Building").
     // during reasoning + clarify the conversation column sits centered alone;
     // opening an existing app jumps straight to the canvas.
@@ -1909,46 +2127,19 @@ export function BuildWorkspace({
     // PixelBlast frame also lights up while a refine prompt is processing
     const showFrame = isBuilding || isRefining;
 
-    // per-state frame skin — each state gets its own gradient + glow + pixel
-    // tone, all sharing the same cyan-style treatment (gradient, right-half
-    // pixel fade, inner glow, drop shadow). Waiting = cyan, thinking = violet,
-    // building/generating = warm orange.
-    const frameThinking = homeReasoningActive || isRefining;
-    const frameTheme = homeClarifyActive
-      ? {
-          gradient: "linear-gradient(to bottom, #67C2FF 0%, #A8E3F8 74%)",
-          pixel: "#3AA0EE",
-          dropShadow: "0 6px 18px -8px rgba(58,160,238,0.45)",
-          innerGlow: "inset 0 0 2px 2px rgba(106,199,251,0.9)",
-          flash: "#E0EDFF",
-          label: "#1B8AD6",
-          ring: "rgba(58,160,238,0.3)",
-          spinTrack: "#B5E2F5",
-          spinHead: "#1B8AD6",
-        }
-      : frameThinking
-        ? {
-            gradient: "linear-gradient(to bottom, #B79CFF 0%, #E3D7FB 74%)",
-            pixel: "#8A6CE0",
-            dropShadow: "0 6px 18px -8px rgba(124,92,224,0.45)",
-            innerGlow: "inset 0 0 2px 2px rgba(177,150,250,0.9)",
-            flash: "#ECE6FB",
-            label: "#6D45C9",
-            ring: "rgba(124,92,224,0.3)",
-            spinTrack: "#DACCFA",
-            spinHead: "#6D45C9",
-          }
-        : {
-            gradient: "linear-gradient(to bottom, #FFB680 0%, #FDE3CC 74%)",
-            pixel: "#EC8B49",
-            dropShadow: "0 6px 18px -8px rgba(236,139,73,0.45)",
-            innerGlow: "inset 0 0 2px 2px rgba(245,180,133,0.9)",
-            flash: "#FCF4EC",
-            label: "#8F4A1F",
-            ring: "rgba(236,139,73,0.3)",
-            spinTrack: "#F6E0CB",
-            spinHead: "#EC8B49",
-          };
+    // neutral frame skin — every state (waiting / thinking / building) uses the
+    // same gray treatment, no PixelBlast color, no gradient tinting.
+    const frameTheme = {
+      gradient: "linear-gradient(to bottom, #F4F4F2 0%, #EDEDEA 74%)",
+      pixel: "#D6D6D2",
+      dropShadow: "0 6px 18px -8px rgba(28,30,33,0.2)",
+      innerGlow: "inset 0 0 2px 2px rgba(28,30,33,0.05)",
+      flash: "#F4F4F2",
+      label: "#1C1E21",
+      ring: "rgba(28,30,33,0.12)",
+      spinTrack: "#E2E2DE",
+      spinHead: "#6B7280",
+    };
 
     // @-mention of uploaded files in the refine input
     const mentionMatch = conversationDone
@@ -2108,13 +2299,21 @@ export function BuildWorkspace({
                 </div>
               ) : (
               <div className="w-full max-w-[720px] mx-auto px-8 py-10 flex flex-col gap-8">
-                {/* user message — right aligned bubble */}
+                {/* user message — right aligned bubble, with avatar + name */}
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex justify-end"
+                  className="flex flex-col items-end"
                 >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[14px] font-medium text-[#1C1E21]">
+                      You
+                    </span>
+                    <span className="w-5 h-5 rounded-full bg-[#1C1E21] text-white text-[10px] font-semibold flex items-center justify-center">
+                      {currentUser}
+                    </span>
+                  </div>
                   <div className="inline-block max-w-[80%] bg-[#F3F4F6] rounded-[16px] px-5 py-3">
                     <p className="text-[15px] text-[#1C1E21] font-normal whitespace-pre-wrap leading-[1.5]">
                       {promptText}
@@ -2235,10 +2434,10 @@ export function BuildWorkspace({
                     reasonLine={
                       homeReasoningActive
                         ? reasonLine
-                        : CLARIFY_REASONING.length
+                        : clarifyReasoning.length
                     }
                     planStep={
-                      homeReasoningActive ? planStep : CLARIFY_PLAN.length
+                      homeReasoningActive ? planStep : clarifyPlan.length
                     }
                     planStarted={planStarted || !homeReasoningActive}
                     active={homeReasoningActive}
@@ -2261,14 +2460,14 @@ export function BuildWorkspace({
                       </p>
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-semibold tracking-[0.04em] uppercase text-[#A0A0A0]">
-                          {answeredCount} of {CLARIFY_QUESTIONS.length} answered
+                          {answeredCount} of {clarifyQuestions.length} answered
                         </span>
                       </div>
 
                       {/* answered questions — accordion, shown once all are answered */}
                       {clarifyComplete && (
                         <div className="mt-3 rounded-xl overflow-hidden bg-white border border-[#1C1E21]/[0.07]">
-                          {CLARIFY_QUESTIONS.map((q, i) => {
+                          {clarifyQuestions.map((q, i) => {
                             const val = clarifyAnswers[q.id] || "";
                             if (!val.trim()) return null;
                             const open = clarifyOpenIdx === i;
@@ -2357,41 +2556,163 @@ export function BuildWorkspace({
                 {/* refine transcript — thinking → applied, in the scroll flow */}
                 {conversationDone &&
                   refineLog.map((r, i) => {
-                    const thinking = isRefining && i === refineLog.length - 1;
+                    const isLatest = i === refineLog.length - 1;
+                    const thinking = isRefining && isLatest;
+                    // every refine keeps its own thought-card. The latest reveals
+                    // rows as they stream (refineThoughtStep); past refines are
+                    // fully revealed. The version pill sits below each card.
+                    const thoughtSet = refineThoughtSet(i);
+                    const revealed = isLatest
+                      ? refineThoughtStep
+                      : thoughtSet.lines.length;
+                    const showCard = revealed > 0;
                     return (
                       <div key={i} className="flex flex-col gap-3">
-                        <div className="flex justify-end">
+                        <div className="flex flex-col items-end">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[14px] font-medium text-[#1C1E21]">
+                              You
+                            </span>
+                            <span className="w-5 h-5 rounded-full bg-[#1C1E21] text-white text-[10px] font-semibold flex items-center justify-center">
+                              {currentUser}
+                            </span>
+                          </div>
                           <div className="inline-block max-w-[80%] bg-[#F3F4F6] rounded-[16px] px-4 py-2.5 text-[14px] text-[#1C1E21] leading-[1.5]">
                             {r}
                           </div>
                         </div>
-                        {thinking ? (
-                          <div className="inline-flex items-center gap-2 text-[13px] text-[#A85A2A]">
-                            <span
-                              className={
-                                (reduceMotion ? "" : "animate-spin ") +
-                                "w-3.5 h-3.5 rounded-full border-2 border-[#F6E0CB] border-t-[#EC8B49]"
+                        {showCard &&
+                          /* thought-process card — same chrome as the reasoning
+                             card, but rows show the AI's thoughts (no checklist).
+                             Persists; the version pill lands below it. */
+                          (() => {
+                            const done = revealed >= thoughtSet.lines.length;
+                            return (
+                              <div className="flex flex-col">
+                                {/* Sense wrote this — logo + name, like the
+                                    first reasoning card */}
+                                <div className="flex items-center gap-2 mb-3">
+                                  <SenseMark size={20} />
+                                  <span className="text-[14px] font-medium text-[#1C1E21]">
+                                    Sense
+                                  </span>
+                                </div>
+                                <div
+                                  className="rounded-[20px] px-px pb-px"
+                                  style={{ background: "#F1F1EE" }}
+                                >
+                                <div className="flex items-center px-4 py-2.5">
+                                  <p className="text-[12.5px] text-[#6B7280] leading-tight">
+                                    <span
+                                      className={
+                                        "font-medium " +
+                                        (done || reduceMotion
+                                          ? "text-[#374151]"
+                                          : "text-shimmer")
+                                      }
+                                    >
+                                      {done
+                                        ? `Thought for ${thoughtSet.secs}s`
+                                        : "Thinking…"}
+                                    </span>
+                                  </p>
+                                </div>
+                                <div
+                                  className="flex flex-col gap-3.5 rounded-[19px] bg-white px-4 py-3.5"
+                                  style={{
+                                    boxShadow:
+                                      "0 0 0 1px rgba(28,30,33,0.04), 0 1px 2px rgba(28,30,33,0.04), 0 10px 24px -16px rgba(28,30,33,0.2)",
+                                  }}
+                                >
+                                  <AnimatePresence initial={false}>
+                                    {thoughtSet.lines.slice(
+                                      0,
+                                      revealed,
+                                    ).map((t, ti) => {
+                                      const isActiveRow =
+                                        ti === revealed - 1 && !done;
+                                      // only the first row carries an icon; the
+                                      // rest are plain text
+                                      const showIcon = ti === 0;
+                                      return (
+                                        <Fragment key={ti}>
+                                        <motion.div
+                                          initial={{ opacity: 0, y: 6 }}
+                                          animate={{ opacity: 1, y: 0 }}
+                                          transition={{
+                                            duration: 0.28,
+                                            ease: [0.23, 1, 0.32, 1],
+                                          }}
+                                          className="flex items-start gap-2.5"
+                                        >
+                                          {showIcon && (
+                                            <span className="relative mt-[3px] w-[22px] h-[22px] flex-shrink-0 rounded-full flex items-center justify-center bg-[#1C1E21]">
+                                              {isActiveRow ? (
+                                                <Loader2
+                                                  className={`w-3.5 h-3.5 text-white ${reduceMotion ? "" : "animate-spin"}`}
+                                                />
+                                              ) : (
+                                                <Sparkles className="w-3 h-3 text-white" />
+                                              )}
+                                            </span>
+                                          )}
+                                          <span
+                                            className={
+                                              "text-[13.5px] tracking-[-0.01em] leading-[1.45] " +
+                                              (isActiveRow
+                                                ? "text-[#3A3F45]"
+                                                : "text-[#6B7280]")
+                                            }
+                                          >
+                                            {t}
+                                          </span>
+                                        </motion.div>
+                                        {ti === 0 && (
+                                          <div className="h-px bg-[#1C1E21]/[0.07]" />
+                                        )}
+                                        </Fragment>
+                                      );
+                                    })}
+                                  </AnimatePresence>
+                                </div>
+                                </div>
+                              </div>
+                            );
+                          })()}
+                        {!thinking && (
+                          <>
+                            {/* summary — Sense recaps what it did, as plain
+                                chat content (no card chrome) */}
+                            <div>
+                              <p className="text-[14px] font-medium tracking-[-0.01em] text-[#1C1E21] mb-2">
+                                {thoughtSet.summaryTitle}
+                              </p>
+                              <ul className="flex flex-col gap-1.5">
+                                {thoughtSet.summary.map((s, si) => (
+                                  <li
+                                    key={si}
+                                    className="flex items-start gap-2.5"
+                                  >
+                                    <span className="mt-[8px] w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#FD5000]" />
+                                    <span className="text-[14px] leading-[1.55] text-[#1C1E21]">
+                                      {s}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            <VersionPill
+                              label={r}
+                              version={i + 2}
+                              current={i === refineLog.length - 1}
+                              onPreview={() =>
+                                setPreviewVersion(
+                                  i === refineLog.length - 1 ? null : i + 2,
+                                )
                               }
-                              style={
-                                reduceMotion
-                                  ? {}
-                                  : { animationDuration: "0.7s" }
-                              }
+                              onRestore={() => setPreviewVersion(i + 2)}
                             />
-                            Thinking…
-                          </div>
-                        ) : (
-                          <VersionPill
-                            label={r}
-                            version={i + 2}
-                            current={i === refineLog.length - 1}
-                            onPreview={() =>
-                              setPreviewVersion(
-                                i === refineLog.length - 1 ? null : i + 2,
-                              )
-                            }
-                            onRestore={() => setPreviewVersion(i + 2)}
-                          />
+                          </>
                         )}
                       </div>
                     );
@@ -2436,13 +2757,7 @@ export function BuildWorkspace({
                           {REFINE_SUGGESTIONS.map((s) => (
                             <button
                               key={s}
-                              onClick={() => {
-                                setRefineDraft(s);
-                                setTimeout(
-                                  () => refineInputRef.current?.focus(),
-                                  0,
-                                );
-                              }}
+                              onClick={() => runRefine(s)}
                               className="group inline-flex items-center gap-1.5 h-7 pl-2.5 pr-3 rounded-full bg-white text-[12.5px] text-[#374151] transition-colors hover:bg-[#FAFAF9]"
                               style={{
                                 border: "1px solid rgba(28,30,33,0.1)",
@@ -2502,30 +2817,6 @@ export function BuildWorkspace({
                           boxShadow: frameTheme.dropShadow,
                         }}
                       >
-                        {/* PixelBlast lives on the right half only, fading out
-                            from the right edge toward the centre of the frame */}
-                        <div
-                          className="absolute inset-y-0 right-0 w-1/2"
-                          style={{
-                            maskImage:
-                              "linear-gradient(to left, #000 0%, transparent 100%)",
-                            WebkitMaskImage:
-                              "linear-gradient(to left, #000 0%, transparent 100%)",
-                          }}
-                        >
-                          <PixelBlast
-                            variant="square"
-                            pixelSize={2}
-                            color={frameTheme.pixel}
-                            patternScale={2.5}
-                            patternDensity={0.95}
-                            enableRipples={false}
-                            liquid={false}
-                            speed={0.35}
-                            edgeFade={0.28}
-                            transparent
-                          />
-                        </div>
                         <div
                           className="absolute inset-0 pointer-events-none"
                           style={{
@@ -2624,9 +2915,9 @@ export function BuildWorkspace({
                     {/* clarify — one question at a time, inside the box above the input */}
                     <AnimatePresence initial={false}>
                       {homeClarifyActive &&
-                        CLARIFY_QUESTIONS[clarifyStep] &&
+                        clarifyQuestions[clarifyStep] &&
                         (() => {
-                          const q = CLARIFY_QUESTIONS[clarifyStep];
+                          const q = clarifyQuestions[clarifyStep];
                           const val = clarifyAnswers[q.id] || "";
                           return (
                             <motion.div
@@ -2653,8 +2944,8 @@ export function BuildWorkspace({
                                     </button>
                                   )}
                                   <span className="text-[10.5px] font-semibold tracking-[0.04em] uppercase text-[#A0A0A0]">
-                                    {CLARIFY_QUESTIONS.length - answeredCount} of{" "}
-                                    {CLARIFY_QUESTIONS.length} remaining
+                                    {clarifyQuestions.length - answeredCount} of{" "}
+                                    {clarifyQuestions.length} remaining
                                   </span>
                                 </div>
                                 <p className="mb-3 text-[13.5px] font-medium text-[#1C1E21] leading-snug">
@@ -2802,6 +3093,14 @@ export function BuildWorkspace({
                             "height 240ms cubic-bezier(0.23,1,0.32,1)",
                         }}
                       />
+                      {/* speech-to-text — present in every convo state */}
+                      <button
+                        type="button"
+                        title="Dictate"
+                        className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-[#6B7280] hover:bg-[#EFEFEC] hover:text-[#1C1E21] transition-colors"
+                      >
+                        <Mic className="w-4 h-4" />
+                      </button>
                       {/* button crossfades label↔icon — blur masks the swap */}
                       <AnimatePresence mode="wait" initial={false}>
                         {isRefining || (isBuilding && !homeClarifyActive) ? (
@@ -2862,18 +3161,14 @@ export function BuildWorkspace({
                                       : !!followUpDraft.trim()))
                                 )
                               }
-                              className="h-8 px-4 rounded-full text-[12.5px] font-medium text-white disabled:opacity-30 disabled:cursor-not-allowed"
-                              style={{
-                                textShadow: "0 4px 4px rgba(0,0,0,0.4)",
-                                background:
-                                  "linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.04) 35%, #1D1F23 100%), #1D1F23",
-                                boxShadow:
-                                  "inset 0 1.5px 0 rgba(255,255,255,0.15), 0 0 0 1px #000000, 0 4px 7px rgba(0,0,0,0.2)",
-                              }}
+                              title={
+                                clarifyStep < clarifyQuestions.length - 1
+                                  ? "Send"
+                                  : "Generate"
+                              }
+                              className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white bg-[#1C1E21] hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                             >
-                              {clarifyStep < CLARIFY_QUESTIONS.length - 1
-                                ? "Send"
-                                : "Generate"}
+                              <ArrowRight className="w-4 h-4 -rotate-90" />
                             </button>
                           </motion.div>
                         ) : (
@@ -3091,63 +3386,31 @@ export function BuildWorkspace({
                     className="relative overflow-hidden w-full"
                     style={{
                       height: 64,
-                      // bg crossfades between blue/orange instead of hard-swapping
-                      background: homeClarifyActive ? "#E0EDFF" : "#FCF4EC",
+                      // neutral tray — same gray for every state, no PixelBlast
+                      background: "#F4F4F2",
                       transition:
                         "background-color 320ms cubic-bezier(0.23,1,0.32,1)",
                     }}
                   >
-                    {/* single PixelBlast, one tone per state */}
-                    <div className="absolute inset-0">
-                      <PixelBlast
-                        variant="square"
-                        pixelSize={2}
-                        color={homeClarifyActive ? "#7FB0F0" : "#F2B485"}
-                        patternScale={2.5}
-                        patternDensity={0.8}
-                        enableRipples={false}
-                        liquid={false}
-                        speed={0.35}
-                        edgeFade={0.28}
-                        transparent
-                      />
-                    </div>
-                    {/* white bridge flash at the color swap */}
-                    <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background: "#FFFFFF",
-                        opacity: colorFlash ? 1 : 0,
-                        transition: colorFlash
-                          ? "opacity 90ms ease-out"
-                          : "opacity 300ms cubic-bezier(0.23,1,0.32,1)",
-                      }}
-                    />
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div
                         className="inline-flex items-center gap-2 h-8 px-3.5 rounded-full"
                         style={{
                           background: "#FFFFFF",
-                          border: `1px solid ${homeClarifyActive ? "rgba(37,99,235,0.34)" : "rgba(236,139,73,0.24)"}`,
-                          boxShadow: `0 4px 16px -2px ${homeClarifyActive ? "rgba(37,99,235,0.4)" : "rgba(236,139,73,0.34)"}, 0 1px 3px rgba(28,30,33,0.08)`,
-                          transition:
-                            "border-color 320ms ease, box-shadow 320ms ease",
+                          border: "1px solid rgba(28,30,33,0.12)",
+                          boxShadow:
+                            "0 1px 3px rgba(28,30,33,0.08), 0 4px 16px -6px rgba(28,30,33,0.18)",
                         }}
                       >
-                        {/* spinner — color crossfades, never restarts */}
+                        {/* spinner — neutral gray */}
                         <span
                           className={
                             (reduceMotion ? "" : "animate-spin ") +
                             "w-3 h-3 rounded-full border-2"
                           }
                           style={{
-                            borderColor: homeClarifyActive
-                              ? "#BCD6FF"
-                              : "#F6E0CB",
-                            borderTopColor: homeClarifyActive
-                              ? "#2563EB"
-                              : "#EC8B49",
-                            transition: "border-color 320ms ease",
+                            borderColor: "#E2E2DE",
+                            borderTopColor: "#6B7280",
                             ...(reduceMotion
                               ? {}
                               : { animationDuration: "0.7s" }),
@@ -3169,11 +3432,7 @@ export function BuildWorkspace({
                                 ease: [0.23, 1, 0.32, 1],
                               }}
                               className="whitespace-nowrap"
-                              style={{
-                                color: homeClarifyActive
-                                  ? "#1D4ED8"
-                                  : "#A85A2A",
-                              }}
+                              style={{ color: "#1C1E21" }}
                             >
                               {homeClarifyActive
                                 ? "Waiting for input"
@@ -3272,6 +3531,19 @@ export function BuildWorkspace({
                   }}
                 />
 
+                {/* speech-to-text — always present, even during flow/clarify */}
+                {(homeFlowActive || homeClarifyActive) && (
+                  <div className="flex items-center mt-2 pt-2.5 border-t border-[#F0F0F2]">
+                    <button
+                      type="button"
+                      title="Dictate"
+                      className="w-7 h-7 rounded-full border border-[#ECEEF1] flex items-center justify-center text-[#9CA3AF] hover:text-[#1C1E21] hover:border-[#D5D9DE] transition-colors"
+                    >
+                      <Mic className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 {!(homeFlowActive || homeClarifyActive) && (
                   <div className="flex items-center gap-2 mt-2 pt-2.5 border-t border-[#F0F0F2]">
                     <button
@@ -3295,6 +3567,13 @@ export function BuildWorkspace({
                     >
                       ⌘ enter
                     </span>
+                    <button
+                      type="button"
+                      title="Dictate"
+                      className="w-7 h-7 rounded-full border border-[#ECEEF1] flex items-center justify-center text-[#9CA3AF] hover:text-[#1C1E21] hover:border-[#D5D9DE] transition-colors"
+                    >
+                      <Mic className="w-4 h-4" />
+                    </button>
                     <BorderGlow
                       animated
                       borderRadius={9999}

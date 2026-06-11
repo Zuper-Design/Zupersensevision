@@ -398,6 +398,87 @@ export const CLARIFY_QUESTIONS: ClarifyQuestion[] = [
   },
 ];
 
+// ── Cockpit (overdue invoices / collections) clarify set ─────────────────
+export const COCKPIT_REASONING: string[] = [
+  'A collections cockpit needs the overdue invoices, an aging definition, and a sense of which accounts you actually chase — so I should ground the receivables schema and your defaults before laying anything out.',
+  'Aging buckets vary by team (some cut at 30/60/90, some weekly) and "overdue" can mean past-due-date or past-grace — guessing here would mis-sort every account.',
+  'Let me resolve the invoice schema first, then ask you the few things I genuinely can\'t infer.',
+];
+export const COCKPIT_CLARIFY_PLAN: PlanStep[] = [
+  { module: 'Schema', label: 'Resolving invoice and aging fields', boldPart: 'invoice and aging fields', detail: 'Invoice · dueDate · balance', count: 'matched' },
+  { module: 'Jobs', label: 'Reading overdue accounts in Zuper', boldPart: 'overdue accounts', detail: 'status = overdue', count: '7 accounts' },
+  { module: 'Jobs', label: 'Reading last-contact and dispute notes', boldPart: 'last-contact and dispute notes', detail: 'follow-ups · disputes', count: '212 notes' },
+  { module: 'Materials', label: 'Loading currency and balance units', boldPart: 'currency and balance units', detail: 'amount · days-overdue', count: 'mapped' },
+  { module: 'Templates', label: 'Checking aging-bucket presets', boldPart: 'aging-bucket presets', detail: '0-30 · 31-60 · 61-90 · 90+', count: '4 buckets' },
+];
+export const COCKPIT_QUESTIONS: ClarifyQuestion[] = [
+  {
+    id: 'buckets',
+    prompt: 'How should I cut the aging buckets?',
+    kind: 'choice',
+    options: ['0-30 / 31-60 / 61-90 / 90+', 'Weekly (0-7 / 8-14 / 15-30 / 30+)', 'Let me set them'],
+  },
+  {
+    id: 'overdue',
+    prompt: 'What counts as "overdue"?',
+    kind: 'choice',
+    options: ['Past due date', 'Past due date + grace period', 'Past a custom threshold'],
+  },
+  {
+    id: 'sort',
+    prompt: 'Within a bucket, what should I sort by?',
+    kind: 'choice',
+    options: ['Amount (largest first)', 'Days overdue', 'Last contacted'],
+  },
+  {
+    id: 'cnotes',
+    prompt: 'Anything else I should account for? (disputes, payment plans, write-offs…)',
+    kind: 'text',
+    placeholder: 'e.g. exclude accounts already on a payment plan',
+    optional: true,
+  },
+];
+
+// ── Commission (calculator) clarify set ──────────────────────────────────
+export const COMMISSION_REASONING: string[] = [
+  'A commission calculator needs the deal records, a tier definition, and how payout is computed — so I should ground the deals schema and your rules before laying anything out.',
+  'Tiers and rates vary by team (flat vs. accelerators, margin vs. revenue base) — guessing here would mis-pay every rep.',
+  'Let me resolve the deals schema first, then ask you the few things I genuinely can\'t infer.',
+];
+export const COMMISSION_CLARIFY_PLAN: PlanStep[] = [
+  { module: 'Schema', label: 'Resolving deal and rep fields', boldPart: 'deal and rep fields', detail: 'Deal · rep · margin', count: 'matched' },
+  { module: 'Jobs', label: 'Reading closed deals in Zuper', boldPart: 'closed deals', detail: 'status = won', count: '94 deals' },
+  { module: 'Materials', label: 'Loading rate tables and tier presets', boldPart: 'rate tables and tier presets', detail: 'tiers · accelerators', count: 'mapped' },
+  { module: 'Templates', label: 'Checking payout templates', boldPart: 'payout templates', detail: 'flat · tiered · bonus', count: '3 shapes' },
+];
+export const COMMISSION_QUESTIONS: ClarifyQuestion[] = [
+  {
+    id: 'base',
+    prompt: 'What should commission be calculated on?',
+    kind: 'choice',
+    options: ['Revenue', 'Gross margin', 'Net profit'],
+  },
+  {
+    id: 'tiers',
+    prompt: 'How are the tiers structured?',
+    kind: 'choice',
+    options: ['Flat rate', 'Tiered with accelerators', 'Let me set them'],
+  },
+  {
+    id: 'period',
+    prompt: 'What period should payouts roll up to?',
+    kind: 'choice',
+    options: ['Monthly', 'Quarterly', 'Per-deal'],
+  },
+  {
+    id: 'mnotes',
+    prompt: 'Anything else I should account for? (splits, clawbacks, draws…)',
+    kind: 'text',
+    placeholder: 'e.g. apply a 90-day clawback on refunded deals',
+    optional: true,
+  },
+];
+
 // ── Dispatch board live data ────────────────────────────────────────────
 export type Priority = 'High' | 'Medium' | 'Low';
 

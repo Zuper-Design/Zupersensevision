@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, ArrowLeft, HelpCircle, MoreHorizontal, Pencil, Archive, Blocks } from 'lucide-react';
+import { X, FlaskConical, Search, Plus, PanelLeftClose, Palette, CreditCard, Check, ArrowRight, ArrowLeft, HelpCircle, MoreHorizontal, Pencil, Archive, Blocks,
+  Wallet, Ruler, Calculator, Mail, BarChart3, FolderKanban, Wrench, Calendar, Home, Package, Clock, type LucideIcon } from 'lucide-react';
 import { AgentStudioIcon } from './components/icons/AgentStudioIcon';
 import { SenseLogo } from './components/SenseLogo';
 import { ReleasesModal } from './components/ReleasesModal';
@@ -33,6 +34,14 @@ import { AgentBuilderPage } from './components/AgentBuilderPage';
 import { SubscriptionFlowPage } from './components/SubscriptionFlowPage';
 import { BuildWorkspace } from './components/build/BuildWorkspace';
 import { MY_APPS } from './components/build/buildData';
+
+// map the legacy emoji app icons (buildData) → lucide glyphs for the sidebar
+const APP_EMOJI_ICON: Record<string, LucideIcon> = {
+  '💰': Wallet, '💸': Wallet, '📐': Ruler, '🧮': Calculator, '📨': Mail,
+  '📊': BarChart3, '📈': BarChart3, '🗂️': FolderKanban, '🔧': Wrench,
+  '📅': Calendar, '🏠': Home, '📦': Package, '🕐': Clock,
+};
+const appIconFor = (emoji: string): LucideIcon => APP_EMOJI_ICON[emoji] ?? Blocks;
 
 function AppContent() {
   const [showDemo, setShowDemo] = useState(false);
@@ -445,16 +454,19 @@ function AppContent() {
 
                     <div className="mx-2 my-2 border-t border-[#E6E8EC]" />
                     <p className="px-2 pt-1 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent Apps</p>
-                    {MY_APPS.map((app) => (
+                    {MY_APPS.map((app) => {
+                      const AppIcon = appIconFor(app.icon);
+                      return (
                       <button
                         key={app.id}
                         onClick={() => { setBuildOpenAppId(app.id); setBuildShowApps(false); setActiveView('build'); if (typeof window !== 'undefined') window.location.hash = '#build'; }}
                         className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-[#EEEEEE] active:scale-[0.99]"
                       >
-                        <span className="text-[15px] leading-none flex-shrink-0">{app.icon}</span>
+                        <AppIcon className="w-4 h-4 flex-shrink-0 text-[#6B7280]" />
                         <span className="text-[14px] text-[#4B5563] truncate">{app.name}</span>
                       </button>
-                    ))}
+                      );
+                    })}
                   </motion.div>
                 ) : (
                 <motion.div
