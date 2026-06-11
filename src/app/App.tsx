@@ -641,7 +641,7 @@ function AppContent() {
                       <div className="overflow-hidden">
                         <div
                           className="relative h-[124px]"
-                          style={{ background: 'linear-gradient(180deg, #FFCFA8 0%, #FFE2C5 45%, #FFF1E0 80%, #FFFFFF 100%)' }}
+                          style={{ background: 'linear-gradient(180deg, #D9D9D9 0%, #E0E0E0 45%, #ECECEC 80%, #FFFFFF 100%)' }}
                         >
                           {/* Dashboard window */}
                           <div
@@ -666,14 +666,14 @@ function AppContent() {
                             {/* 2x2 widget grid */}
                             <div className="grid grid-cols-2 gap-[5px] px-[6px] pb-[6px]">
                               {/* TL — horizontal bars */}
-                              <div className="rounded-md px-[7px] py-[6px] flex flex-col gap-[3px] justify-center" style={{ background: '#FFF6EC', height: 34 }}>
+                              <div className="rounded-md px-[7px] py-[6px] flex flex-col gap-[3px] justify-center" style={{ background: '#F0F0F0', height: 34 }}>
                                 <div className="h-[3px] w-[78%] rounded-full" style={{ background: 'linear-gradient(90deg, #BFBFBF, #000000)' }} />
                                 <div className="h-[3px] w-[55%] rounded-full bg-[#D9D9D9]" />
-                                <div className="h-[3px] w-[42%] rounded-full bg-[#FFC4A0]" />
+                                <div className="h-[3px] w-[42%] rounded-full bg-[#D9D9D9]" />
                               </div>
 
                               {/* TR — donut + legend */}
-                              <div className="rounded-md px-[7px] py-[6px] flex items-center gap-[5px]" style={{ background: '#FFF6EC', height: 34 }}>
+                              <div className="rounded-md px-[7px] py-[6px] flex items-center gap-[5px]" style={{ background: '#F0F0F0', height: 34 }}>
                                 <div className="relative w-[20px] h-[20px] flex-shrink-0">
                                   <div
                                     className="absolute inset-0 rounded-full"
@@ -689,16 +689,16 @@ function AppContent() {
                               </div>
 
                               {/* BL — vertical bars */}
-                              <div className="rounded-md px-[7px] py-[6px] flex items-end gap-[3px] justify-center" style={{ background: '#FFF6EC', height: 34 }}>
-                                <div className="w-[4px] rounded-sm bg-[#FFC4A0]" style={{ height: '40%' }} />
+                              <div className="rounded-md px-[7px] py-[6px] flex items-end gap-[3px] justify-center" style={{ background: '#F0F0F0', height: 34 }}>
+                                <div className="w-[4px] rounded-sm bg-[#D9D9D9]" style={{ height: '40%' }} />
                                 <div className="w-[4px] rounded-sm bg-[#D9D9D9]" style={{ height: '70%' }} />
                                 <div className="w-[4px] rounded-sm" style={{ height: '95%', background: 'linear-gradient(180deg, #BFBFBF, #000000)' }} />
                                 <div className="w-[4px] rounded-sm bg-[#D9D9D9]" style={{ height: '55%' }} />
-                                <div className="w-[4px] rounded-sm bg-[#FFC4A0]" style={{ height: '75%' }} />
+                                <div className="w-[4px] rounded-sm bg-[#D9D9D9]" style={{ height: '75%' }} />
                               </div>
 
                               {/* BR — big metric */}
-                              <div className="rounded-md px-[7px] py-[5px] flex flex-col justify-center" style={{ background: '#FFF6EC', height: 34 }}>
+                              <div className="rounded-md px-[7px] py-[5px] flex flex-col justify-center" style={{ background: '#F0F0F0', height: 34 }}>
                                 <div className="h-[2.5px] w-[60%] rounded-full bg-[#ECECEC] mb-[3px]" />
                                 <div className="flex items-baseline gap-[3px]">
                                   <span className="text-[11px] font-medium text-[#000000] leading-none tracking-[-0.02em]">$24.5K</span>
@@ -733,14 +733,14 @@ function AppContent() {
                           </p>
                           <button
                             onClick={() => setAnnouncementOpen(true)}
-                            className="w-full py-1 rounded-md text-[11px] font-medium text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                            className="w-full py-1 rounded-md text-[11px] font-medium text-white bg-gradient-to-r from-[#1A1A1A] to-[#636363] hover:from-[#0A0A0A] hover:to-[#636363] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
                             style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                           >
                             View update
                           </button>
                           <button
                             onClick={() => setReleasesOpen(true)}
-                            className="w-full py-1 rounded-md text-[11px] font-medium text-[#000000] bg-white border border-[rgba(0,0,0,0.08)] hover:bg-[#FAFAFA] hover:border-[#D1D5DB] mt-1.5 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                            className="w-full py-1 rounded-md text-[11px] font-medium text-[#000000] bg-white border border-[rgba(0,0,0,0.08)] hover:bg-[#FAFAFA] hover:border-[#D9D9D9] mt-1.5 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
                             style={{ transition: 'background-color 180ms cubic-bezier(0.23,1,0.32,1), border-color 180ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 140ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                           >
                             Releases
@@ -776,7 +776,7 @@ function AppContent() {
                         <p className="text-[11px] text-[#636363] leading-tight mt-0.5">Upgrade to keep your insights flowing</p>
                       </div>
                     </div>
-                    <button onClick={openUpgrade} className="w-full py-1.5 rounded-lg text-[12px] font-medium text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
+                    <button onClick={openUpgrade} className="w-full py-1.5 rounded-lg text-[12px] font-medium text-white bg-gradient-to-r from-[#1A1A1A] to-[#636363] hover:from-[#0A0A0A] hover:to-[#636363] transition-colors">
                       Upgrade Sense
                     </button>
                   </div>
@@ -839,7 +839,7 @@ function AppContent() {
                     <button
                       onClick={() => setPurchaseSuccess(false)}
                       className="px-8 py-3 rounded-[12px] text-[14px] font-medium text-white transition-all duration-150"
-                      style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
+                      style={{ background: 'linear-gradient(135deg, #1A1A1A 0%, #0A0A0A 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
                       onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
                       onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
                     >
@@ -1002,7 +1002,7 @@ function AppContent() {
                 <button
                   onClick={() => { setPaymentFailedModalOpen(false); setPurchaseSuccess(false); setCheckoutPageOpen(true); }}
                   className="flex-1 py-2.5 rounded-xl text-[13px] font-medium text-white"
-                  style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)' }}
+                  style={{ background: 'linear-gradient(135deg, #1A1A1A, #0A0A0A)' }}
                 >
                   Update payment
                 </button>

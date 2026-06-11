@@ -143,7 +143,7 @@ function NavFlyout({
   return ReactDOM.createPortal(
     <div
       ref={flyoutRef}
-      className="fixed left-[76px] bg-white rounded-xl shadow-lg border border-[#E6E8EC] py-2 min-w-[200px] z-50"
+      className="fixed left-[76px] bg-white rounded-xl shadow-lg border border-[rgba(0,0,0,0.08)] py-2 min-w-[200px] z-50"
       style={{ top: `${top}px` }}
     >
       {subItems.map((sub, idx) => {
@@ -151,25 +151,25 @@ function NavFlyout({
         return (
           <div key={idx}>
             {dividerAfter !== undefined && idx === dividerAfter && (
-              <div className="mx-3 my-1 border-t border-[#E6E8EC]" />
+              <div className="mx-3 my-1 border-t border-[rgba(0,0,0,0.08)]" />
             )}
             <button
               onClick={() => onSubItemClick?.(sub)}
               className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left group/item ${
                 sub.isRadarItem
-                  ? 'hover:bg-[#FFF4ED] bg-[#FFFAF6]'
-                  : 'hover:bg-[#FFF7ED]'
+                  ? 'hover:bg-[#F0F0F0] bg-[#FAFAFA]'
+                  : 'hover:bg-[#F0F0F0]'
               }`}
             >
               <SubIcon className={`w-[18px] h-[18px] transition-colors flex-shrink-0 ${
                 sub.isRadarItem
-                  ? 'text-[#FD5000] group-hover/item:text-[#FD5000]'
-                  : 'text-[#8B7355] group-hover/item:text-[#FF6B35]'
+                  ? 'text-[#000000] group-hover/item:text-[#000000]'
+                  : 'text-[#636363] group-hover/item:text-[#636363]'
               }`} />
               <span className={`text-[14px] whitespace-nowrap ${
                 sub.isRadarItem
-                  ? 'text-[#FD5000]'
-                  : 'text-[#1C1E21]'
+                  ? 'text-[#000000]'
+                  : 'text-[#000000]'
               }`} style={sub.isRadarItem ? { fontWeight: 500 } : undefined}>{sub.label}</span>
             </button>
           </div>
@@ -271,7 +271,7 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
   };
 
   return (
-    <div className="w-[72px] h-full flex flex-col items-center py-4 bg-[#F8F2EC] relative z-20">
+    <div className="w-[72px] h-full flex flex-col items-center py-4 bg-[#F8F8F8] relative z-20">
       {/* Navigation Items */}
       <nav className="flex-1 flex flex-col gap-1 w-full px-2 overflow-y-auto">
         {navigationItems.map((rawItem, index) => {
@@ -315,15 +315,15 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
                 }`}>
                   {item.label === 'Sense' ? (
                     <svg width="20" height="20" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
-                      <rect y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
-                      <rect x="15.75" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
-                      <rect x="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
-                      <rect x="15.75" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
-                      <rect y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
-                      <rect x="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
-                      <rect x="31.5" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7"/>
-                      <rect x="31.5" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A"/>
+                      <rect width="13.5" height="13.5" rx="3.375" fill="#000000"/>
+                      <rect y="15.75" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7"/>
+                      <rect x="15.75" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7"/>
+                      <rect x="15.75" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7"/>
+                      <rect x="15.75" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#000000"/>
+                      <rect y="31.5" width="13.5" height="13.5" rx="3.375" fill="#000000"/>
+                      <rect x="31.5" width="13.5" height="13.5" rx="3.375" fill="#000000"/>
+                      <rect x="31.5" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7"/>
+                      <rect x="31.5" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#000000"/>
                     </svg>
                   ) : Icon ? (
                     item.label === 'Agent Studio' ? (
@@ -331,14 +331,14 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
                     ) : (
                       <Icon className={`w-5 h-5 transition-colors ${
                         (item.active && !activePage) || hasActivePageInWorkspace
-                          ? 'text-[#FF6B35]'
-                          : 'text-[#8B7355] group-hover:text-[#FF6B35]'
+                          ? 'text-[#636363]'
+                          : 'text-[#636363] group-hover:text-[#636363]'
                       }`} />
                     )
                   ) : null}
                 </div>
                 <span className={`text-[10px] font-medium ${
-                  hasActivePageInWorkspace ? 'text-[#FF6B35]' : 'text-[#8B7355]'
+                  hasActivePageInWorkspace ? 'text-[#636363]' : 'text-[#636363]'
                 }`}>{item.label}</span>
               </button>
 
@@ -365,9 +365,9 @@ export function AppNavigation({ onSubItemNavigate, onSenseClick, currentUser, on
                   onClick={() => onRadarClick?.()}
                 >
                   <div className="p-2 rounded-md transition-all duration-200 group-hover:bg-white/60">
-                    <Radar className="w-5 h-5 text-[#8B7355] group-hover:text-[#FF6B35] transition-colors" />
+                    <Radar className="w-5 h-5 text-[#636363] group-hover:text-[#636363] transition-colors" />
                   </div>
-                  <span className="text-[10px] font-medium text-[#8B7355]">Radar</span>
+                  <span className="text-[10px] font-medium text-[#636363]">Radar</span>
                 </button>
               )}
             </div>

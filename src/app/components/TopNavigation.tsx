@@ -51,25 +51,25 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
   }, [avatarDropdownOpen]);
 
   const users = [
-    { initials: 'RG', name: 'Ravi Gupta', role: 'Owner', color: '#6B7280' },
+    { initials: 'RG', name: 'Ravi Gupta', role: 'Owner', color: '#636363' },
     { initials: 'VP', name: 'Vikram Patel', role: 'Operations Manager', color: '#7C3AED' },
     { initials: 'AU', name: 'Anita Upadhyay', role: 'Field Supervisor', color: '#0891B2' },
-    { initials: 'MJ', name: 'Meera Joshi', role: 'Business Analyst', color: '#D946EF' },
+    { initials: 'MJ', name: 'Meera Joshi', role: 'Business Analyst', color: '#636363' },
   ];
 
   const activeUserData = users.find(u => u.initials === currentUser) || users[0];
 
   return (
-    <div className="h-[44px] flex items-center justify-between flex-shrink-0 bg-[#f8f2ec] px-4 py-1 relative">
+    <div className="h-[44px] flex items-center justify-between flex-shrink-0 bg-[#F8F8F8] px-4 py-1 relative">
       {/* Left Side: Logo + Tabs */}
       <div className="flex items-center gap-3 flex-1 overflow-hidden px-[8px] py-[0px]">
         {/* Logo */}
         <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20.3313 11.374L16.2031 17.8265H19.5327H20.5405H23.87L28.0005 11.374H20.3313Z" fill="#FD5000"/>
-            <path d="M14.6525 4L9.93262 11.3736H20.3306L25.0505 4H14.6525Z" fill="#FD5000"/>
-            <path d="M8.13041 14.1748L4 20.6272H11.6692L15.7996 14.1748H8.13041Z" fill="#2A292E"/>
-            <path d="M11.67 20.626L6.9502 27.9995H17.3505L22.0703 20.626H11.67Z" fill="#2A292E"/>
+            <path d="M20.3313 11.374L16.2031 17.8265H19.5327H20.5405H23.87L28.0005 11.374H20.3313Z" fill="#000000"/>
+            <path d="M14.6525 4L9.93262 11.3736H20.3306L25.0505 4H14.6525Z" fill="#000000"/>
+            <path d="M8.13041 14.1748L4 20.6272H11.6692L15.7996 14.1748H8.13041Z" fill="#1A1A1A"/>
+            <path d="M11.67 20.626L6.9502 27.9995H17.3505L22.0703 20.626H11.67Z" fill="#1A1A1A"/>
           </svg>
         </div>
 
@@ -79,7 +79,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
             <button
               key={tab.id}
               onClick={() => handleTabClick(tab.id)}
-              className={`flex items-center gap-2 h-[32px] rounded text-[13px] font-medium transition-all duration-150 whitespace-nowrap flex-shrink-0 ${tab.isActive ? 'bg-white text-[#1C1E21] shadow-sm' : 'bg-transparent text-[#6B7280] hover:bg-white/50' } px-[16px] py-[0px]`}
+              className={`flex items-center gap-2 h-[32px] rounded text-[13px] font-medium transition-all duration-150 whitespace-nowrap flex-shrink-0 ${tab.isActive ? 'bg-white text-[#000000] shadow-sm' : 'bg-transparent text-[#636363] hover:bg-white/50' } px-[16px] py-[0px]`}
             >
               <span>{tab.label}</span>
               <X
@@ -91,7 +91,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
         </div>
 
         {/* All Tabs Dropdown */}
-        <button className="flex items-center gap-1.5 px-3 h-[32px] rounded-md text-[13px] font-medium text-[#6B7280] hover:bg-white/50 transition-colors flex-shrink-0 ml-1">
+        <button className="flex items-center gap-1.5 px-3 h-[32px] rounded-md text-[13px] font-medium text-[#636363] hover:bg-white/50 transition-colors flex-shrink-0 ml-1">
           <span>All Tabs</span>
           <ChevronDown className="w-3.5 h-3.5" />
         </button>
@@ -103,7 +103,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
         <button
           className="flex items-center h-[30px] px-2 rounded-lg transition-colors duration-150"
           style={{
-            background: askSenseOpen || askSenseHovered ? '#E8E3DC' : 'transparent',
+            background: askSenseOpen || askSenseHovered ? '#E8E8E8' : 'transparent',
             opacity: demoMode ? 0.5 : 1,
             cursor: demoMode ? 'not-allowed' : 'pointer',
           }}
@@ -115,18 +115,18 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
           <span className="mr-1.5 flex items-center">
             <SenseLogo size={13} animated={askSenseHovered} />
           </span>
-          <span className="text-[12px] transition-colors duration-150" style={{ fontWeight: 500, color: askSenseOpen || askSenseHovered ? '#1C1E21' : '#374151' }}>Ask Sense</span>
+          <span className="text-[12px] transition-colors duration-150" style={{ fontWeight: 500, color: askSenseOpen || askSenseHovered ? '#000000' : '#636363' }}>Ask Sense</span>
         </button>
 
         {demoMode && (
           <>
-            <div className="w-px h-4 bg-[#E6E8EC] mx-1" />
+            <div className="w-px h-4 bg-[rgba(0,0,0,0.08)] mx-1" />
             <a
               href="https://www.zuper.co/contact-us"
               target="_blank"
               rel="noopener noreferrer"
               style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="inline-flex items-center h-8 px-3 rounded-lg text-[12.5px] font-medium text-[#1C1E21] hover:bg-[#F3F4F6] active:scale-[0.97]"
+              className="inline-flex items-center h-8 px-3 rounded-lg text-[12.5px] font-medium text-[#000000] hover:bg-[#F0F0F0] active:scale-[0.97]"
             >
               Sign in
             </a>
@@ -135,32 +135,32 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
               target="_blank"
               rel="noopener noreferrer"
               style={{ transition: 'background-color 160ms cubic-bezier(0.23,1,0.32,1), transform 160ms cubic-bezier(0.23,1,0.32,1), box-shadow 160ms cubic-bezier(0.23,1,0.32,1)' }}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1C1E21] hover:bg-black text-white text-[12.5px] font-semibold active:scale-[0.97] hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#000000] hover:bg-black text-white text-[12.5px] font-medium active:scale-[0.97] hover:shadow-[0_4px_12px_rgba(0,0,0,0.10)]"
             >
               Schedule a demo
             </a>
           </>
         )}
 
-        {!demoMode && <div className="w-px h-4 bg-[#E6E8EC] mx-0.5" />}
+        {!demoMode && <div className="w-px h-4 bg-[rgba(0,0,0,0.08)] mx-0.5" />}
 
         {!demoMode && (
           <>
             <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
-              <HelpCircle className="w-4.5 h-4.5 text-[#6B7280]" />
+              <HelpCircle className="w-4.5 h-4.5 text-[#636363]" />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
-              <Search className="w-4.5 h-4.5 text-[#6B7280]" />
+              <Search className="w-4.5 h-4.5 text-[#636363]" />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors">
-              <Bell className="w-4.5 h-4.5 text-[#6B7280]" />
+              <Bell className="w-4.5 h-4.5 text-[#636363]" />
             </button>
 
             <button
               onClick={onSettingsClick}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/50 transition-colors"
             >
-              <Settings className="w-4.5 h-4.5 text-[#6B7280]" />
+              <Settings className="w-4.5 h-4.5 text-[#636363]" />
             </button>
           </>
         )}
@@ -169,7 +169,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
         <div ref={avatarDropdownRef} className="relative">
           <button
             className={`w-8 h-8 flex items-center justify-center rounded-lg text-white text-[11px] transition-colors ml-2 ${demoMode ? 'cursor-default' : ''}`}
-            style={{ background: activeUserData.color, fontWeight: 600 }}
+            style={{ background: activeUserData.color, fontWeight: 500 }}
             onClick={() => { if (!demoMode) setAvatarDropdownOpen(!avatarDropdownOpen); }}
           >
             {activeUserData.initials}
@@ -180,7 +180,7 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
               style={{
                 width: '200px',
                 background: '#FFFFFF',
-                border: '1px solid #E6E8EC',
+                border: '1px solid rgba(0,0,0,0.08)',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
               }}
             >
@@ -196,26 +196,26 @@ export function TopNavigation({ activeView, onViewChange, currentUser = 'RG', on
                   >
                     <div
                       className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] flex-shrink-0"
-                      style={{ background: user.color, fontWeight: 600 }}
+                      style={{ background: user.color, fontWeight: 500 }}
                     >
                       {user.initials}
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[13px] text-[#1C1E21] block truncate" style={{ fontWeight: 500 }}>{user.name}</span>
-                      <span className="text-[11px] text-[#9CA3AF] block truncate">{user.role}</span>
+                      <span className="text-[13px] text-[#000000] block truncate" style={{ fontWeight: 500 }}>{user.name}</span>
+                      <span className="text-[11px] text-[#959595] block truncate">{user.role}</span>
                     </div>
                     {user.initials === currentUser && (
-                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#10B981] flex-shrink-0" />
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#000000] flex-shrink-0" />
                     )}
                   </button>
                 ))}
-                <div className="mx-2 my-1 h-px bg-[#F0F0F2]" />
+                <div className="mx-2 my-1 h-px bg-[rgba(0,0,0,0.05)]" />
                 <button
                   className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-[#F8F9FB] transition-colors text-left"
                   onClick={() => { setAvatarDropdownOpen(false); onManageSubscriptionClick?.(); }}
                 >
-                  <CreditCard className="w-3.5 h-3.5 text-[#6B7280] flex-shrink-0" />
-                  <span className="text-[13px] text-[#1C1E21]" style={{ fontWeight: 500 }}>My subscription</span>
+                  <CreditCard className="w-3.5 h-3.5 text-[#636363] flex-shrink-0" />
+                  <span className="text-[13px] text-[#000000]" style={{ fontWeight: 500 }}>My subscription</span>
                 </button>
               </div>
             </div>
