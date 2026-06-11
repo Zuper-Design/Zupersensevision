@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { token } from './tokens';
 import { GripVertical, Clock, MapPin, AlertTriangle, Check, X, ShieldCheck, Sparkles, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import {
   UNASSIGNED_JOBS, TECHNICIANS, ASSIGNED_JOBS,
   type Job, type Technician, type Priority,
 } from './buildData';
 
+// Priority reads from the system scale (DESIGN.md: ink ramp carries priority;
+// chroma is reserved for SLA-critical states like the overdue badge).
 const PRIORITY_STYLE: Record<Priority, { bg: string; fg: string }> = {
-  High: { bg: '#FBEAEA', fg: '#E5484D' },
-  Medium: { bg: '#F0F0F0', fg: '#636363' },
-  Low: { bg: '#F0F0F0', fg: '#636363' },
+  High: { bg: token.priority.high.bg, fg: token.priority.high.fg },
+  Medium: { bg: token.priority.med.bg, fg: token.priority.med.fg },
+  Low: { bg: token.priority.low.bg, fg: token.priority.low.fg },
 };
 
 interface CardProps {
@@ -31,7 +34,7 @@ function JobCard({ job, onDragStart, draggable, showSkill, selected, onSelect, c
       className="group rounded-[18px] bg-white p-2.5 cursor-pointer select-none"
       style={{
         border: selected ? '1.5px solid #000000' : job.overdue ? '1px solid #F0B7B9' : '1px solid rgba(0,0,0,0.08)',
-        boxShadow: selected ? '0 10px 26px -22px rgba(253,80,0,0.65)' : job.overdue ? '0 0 0 3px rgba(239,68,68,0.06)' : '0 1px 2px rgba(28,30,33,0.04)',
+        boxShadow: selected ? '0 10px 26px -22px rgba(253,80,0,0.65)' : job.overdue ? '0 0 0 3px rgba(239,68,68,0.06)' : '0 1px 2px rgba(0,0,0,0.04)',
         background: job.overdue ? '#FCF1F1' : '#FFFFFF',
       }}
     >
@@ -124,7 +127,7 @@ export function DispatchBoard({ showSkillBadge, selectedJobId, onSelectJob, isVi
       {/* FilterBar — single compact filter expression, only what matters */}
       <div className="flex items-center gap-2.5 px-4 h-14 flex-shrink-0">
         <span className="w-8 h-8 rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] inline-flex items-center justify-center text-[12px] font-medium text-[#000000]"
-          style={{ boxShadow: '0 10px 24px -22px rgba(28,30,33,0.5)' }}>
+          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           Q
         </span>
         <div className="min-w-0">
@@ -145,7 +148,7 @@ export function DispatchBoard({ showSkillBadge, selectedJobId, onSelectJob, isVi
       <div data-app-reveal className="flex-1 flex gap-3 p-3 pt-0 overflow-x-auto" style={{ background: '#F8F8F8' }}>
         {/* Unassigned tray */}
         <div className="w-[240px] flex-shrink-0 flex flex-col rounded-[24px] bg-white border border-white p-2"
-          style={{ boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
+          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <div className="flex items-center gap-2 px-1 pb-2.5 h-6">
             <span className="text-[10.5px] font-mono uppercase tracking-wider text-[#959595]">Unassigned</span>
             <span className="text-[10.5px] font-mono text-[#D9D9D9]">{tray.length}</span>
@@ -172,7 +175,7 @@ export function DispatchBoard({ showSkillBadge, selectedJobId, onSelectJob, isVi
           const isOver = dropTarget === tech.id;
           return (
             <div key={tech.id} className="w-[240px] flex-shrink-0 flex flex-col rounded-[24px] bg-white border border-white p-2"
-              style={{ boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
+              style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
               <div className="flex items-center gap-2 px-1 pb-2.5 h-6">
                 <div className="w-5 h-5 rounded-md flex items-center justify-center text-white text-[9px] font-medium flex-shrink-0" style={{ background: tech.color }}>
                   {tech.initials}
@@ -220,7 +223,7 @@ export function DispatchBoard({ showSkillBadge, selectedJobId, onSelectJob, isVi
               initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 8 }}
               transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
               className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[410] w-[400px] bg-white rounded-2xl p-5"
-              style={{ boxShadow: '0 24px 60px rgba(30,34,60,0.22)' }}
+              style={{ boxShadow: '0 24px 60px rgba(0,0,0,0.22)' }}
             >
               <div className="flex items-center gap-2.5 mb-3">
                 <div className="w-9 h-9 rounded-full bg-[#F0F0F0] flex items-center justify-center flex-shrink-0">

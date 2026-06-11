@@ -117,7 +117,7 @@ export function ChatThread(p: ThreadProps) {
                 style={{
                   background: '#FFFFFF',
                   border: `1px solid ${token.color.border.default}`,
-                  boxShadow: '0 8px 24px -8px rgba(28,30,33,0.18), 0 2px 6px -2px rgba(28,30,33,0.08)',
+                  boxShadow: '0 8px 24px -8px rgba(0,0,0,0.18), 0 2px 6px -2px rgba(0,0,0,0.08)',
                   transformOrigin: 'top left',
                 }}
               >
@@ -243,7 +243,7 @@ export function ChatThread(p: ThreadProps) {
           layout
           transition={{ layout: { duration: 0.18, ease: [0.23, 1, 0.32, 1] } }}
           className="rounded-[20px] bg-white overflow-hidden"
-          style={{ border: `1px solid ${token.color.border.default}`, boxShadow: '0 12px 30px -26px rgba(28,30,33,0.5)' }}
+          style={{ border: `1px solid ${token.color.border.default}`, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
         >
           {/* Thinking tray — shown during generating and after refine send */}
           <AnimatePresence>
@@ -277,7 +277,7 @@ export function ChatThread(p: ThreadProps) {
                 style={{
                   background: '#FFFFFF',
                   border: '1px solid rgba(236,139,73,0.24)',
-                  boxShadow: '0 4px 16px -2px rgba(236,139,73,0.34), 0 1px 3px rgba(28,30,33,0.08)',
+                  boxShadow: '0 4px 16px -2px rgba(236,139,73,0.34), 0 1px 3px rgba(0,0,0,0.08)',
                   backdropFilter: 'blur(8px)',
                 }}
               >
@@ -291,7 +291,7 @@ export function ChatThread(p: ThreadProps) {
 
           {/* @-mention suggestions */}
           {mention && (
-            <div className="mx-2 mb-1 overflow-hidden rounded-xl border bg-white" style={{ borderColor: token.color.border.default, boxShadow: '0 12px 28px -16px rgba(28,30,33,0.3)' }}>
+            <div className="mx-2 mb-1 overflow-hidden rounded-xl border bg-white" style={{ borderColor: token.color.border.default, boxShadow: '0 12px 28px -16px rgba(0,0,0,0.3)' }}>
               <div className="px-3 pt-2 pb-1 text-[10.5px] font-medium uppercase tracking-wider" style={{ color: token.color.text.muted }}>Uploaded files</div>
               {mention.hits.slice(0, 5).map(f => (
                 <button key={f.id} onClick={() => pickMention(f.name)}
@@ -349,7 +349,7 @@ function BuildTrace({ archetype, phase }: { archetype: string; phase: Phase }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
       className="rounded-[20px] p-2.5"
-      style={{ background: '#FFFFFF', border: `1px solid ${token.color.border.default}`, boxShadow: '0 12px 32px -30px rgba(28,30,33,0.5)' }}
+      style={{ background: '#FFFFFF', border: `1px solid ${token.color.border.default}`, boxShadow: '0 12px 32px -30px rgba(0,0,0,0.5)' }}
     >
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10.5px] font-mono uppercase tracking-wider" style={{ color: token.color.text.muted }}>Checks</span>
@@ -382,7 +382,7 @@ function Msg({ from, children }: { from: 'user' | 'sense'; children: React.React
       className={isUser ? 'flex justify-end' : 'flex justify-start'}>
       {isUser ? (
         <motion.div className="max-w-[88%] rounded-[22px] px-3.5 py-2.5 text-[13px] leading-relaxed"
-          style={{ background: '#FFFFFF', border: `1px solid ${token.color.border.default}`, color: token.color.text.primary, boxShadow: '0 10px 28px -26px rgba(28,30,33,0.55)' }}>{children}</motion.div>
+          style={{ background: '#FFFFFF', border: `1px solid ${token.color.border.default}`, color: token.color.text.primary, boxShadow: '0 10px 28px -26px rgba(0,0,0,0.55)' }}>{children}</motion.div>
       ) : (
         <div className="flex gap-2 max-w-[92%]">
           <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FFFFFF', border: `1px solid ${token.color.border.default}` }}>

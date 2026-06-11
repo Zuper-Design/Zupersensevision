@@ -648,7 +648,7 @@ function AppContent() {
                             className="absolute inset-x-[12px] top-[12px] bottom-[12px] bg-white rounded-[10px] overflow-hidden opacity-0 group-hover:opacity-100"
                             style={{
                               boxShadow:
-                                '0 1px 2px rgba(28,30,33,0.04), 0 10px 24px -12px rgba(28,30,33,0.18), 0 18px 32px -20px rgba(253,80,0,0.30)',
+                                '0 1px 2px rgba(0,0,0,0.04), 0 10px 24px -12px rgba(0,0,0,0.18), 0 18px 32px -20px rgba(253,80,0,0.30)',
                               transition:
                                 'opacity 280ms cubic-bezier(0.23,1,0.32,1) 80ms, transform 280ms cubic-bezier(0.23,1,0.32,1) 80ms',
                             }}
@@ -981,7 +981,7 @@ function AppContent() {
         <>
           <div className="fixed bg-black/40 backdrop-blur-sm z-[400]" style={{ inset: 0 }} onClick={() => setPaymentFailedModalOpen(false)} />
           <div className="fixed z-[410] flex items-center justify-center p-4 pointer-events-none" style={{ inset: 0 }}>
-            <div className="pointer-events-auto bg-white w-full p-6" style={{ maxWidth: 420, borderRadius: 16, boxShadow: '0 24px 60px rgba(30,34,60,0.22)' }}>
+            <div className="pointer-events-auto bg-white w-full p-6" style={{ maxWidth: 420, borderRadius: 16, boxShadow: '0 24px 60px rgba(0,0,0,0.22)' }}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#FDECEC' }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E5484D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>

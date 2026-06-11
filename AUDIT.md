@@ -30,7 +30,7 @@ Status column tracks the transformation; updated as commits land.
 
 | # | Surface | File(s) | Verdict | Notes | Status |
 |---|---------|---------|---------|-------|--------|
-| 0 | Design foundation | `styles/theme.css`, `styles/fonts.css`, `build/motion.ts`, `build/PrismGlow.tsx` | REBUILD | New @theme tokens, DM Sans, .glass, prism keyframes, spring presets | ⬜ pending |
+| 0 | Design foundation | `styles/theme.css`, `styles/fonts.css`, `build/motion.ts`, `build/PrismGlow.tsx` | REBUILD | New @theme tokens, DM Sans, .glass, prism keyframes, spring presets | ✅ done |
 | 1 | App shell + sidebar | `App.tsx`, `AppNavigation.tsx` | RESTYLE | Warm canvas → `#F8F8F8`; orange nav accents → ink ramp; sidebar frosted; Recent Apps rows neutral | ⬜ pending |
 | 2 | Build home + composer | `BuildWorkspace.tsx` (home section) | RESTYLE | Hero "Build." → 300-weight display; composer frosted 30px; BorderGlow CTA → black pill; starter chips neutral; orange ambient washes → removed (idle = achromatic) | ⬜ pending |
 | 3 | Thinking tray + frame | `BuildWorkspace.tsx` | REBUILD | Current flat-gray tray → frosted tray with prism breathing glow; frameTheme token object → prism activity frame; spinner stays only as micro-cue inside status pill | ⬜ pending |

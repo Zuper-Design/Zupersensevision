@@ -81,7 +81,7 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
       {/* FilterBar */}
       <div className="flex items-center gap-2.5 px-4 h-14 flex-shrink-0">
         <span className="w-8 h-8 rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] inline-flex items-center justify-center text-[12px] font-medium"
-          style={{ color: token.status.danger.fg, boxShadow: '0 10px 24px -22px rgba(28,30,33,0.5)' }}>
+          style={{ color: token.status.danger.fg, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           AR
         </span>
         <div className="min-w-0">
@@ -102,7 +102,7 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
           <div className="flex gap-3">
             {[0, 1, 2].map(i => <div key={i} className="flex-1 h-[76px] rounded-[20px] animate-pulse" style={{ background: token.color.bg.surface, border: `1px solid ${token.color.border.default}` }} />)}
           </div>
-          <div className="rounded-[24px] overflow-hidden bg-white" style={{ border: `1px solid #FFFFFF`, boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
+          <div className="rounded-[24px] overflow-hidden bg-white" style={{ border: `1px solid #FFFFFF`, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
             <SkeletonRows rows={6} />
           </div>
         </div>
@@ -189,7 +189,7 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
           <motion.button onClick={onOpenAudit}
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}
             className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[420] inline-flex items-center gap-3 px-3.5 h-12 rounded-[18px] text-[12.5px] font-medium"
-            style={{ background: token.color.bg.surface, color: token.color.text.primary, border: `1px solid ${token.color.border.default}`, boxShadow: '0 16px 42px -22px rgba(28,30,33,0.42)' }}>
+            style={{ background: token.color.bg.surface, color: token.color.text.primary, border: `1px solid ${token.color.border.default}`, boxShadow: '0 16px 42px -22px rgba(0,0,0,0.42)' }}>
             <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: token.status.success.bg, color: token.status.success.fg }}>
               <Check className="w-4 h-4" />
             </span>

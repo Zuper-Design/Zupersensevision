@@ -121,7 +121,7 @@ function ListCardThumb({ module }: { module: string }) {
   return (
     <div
       className="absolute left-7 right-3 top-7 rounded-[16px] bg-white/85 px-3.5 py-3 backdrop-blur-sm"
-      style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.05), 0 18px 36px -22px rgba(28,30,33,0.4)" }}
+      style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05), 0 18px 36px -22px rgba(0,0,0,0.4)" }}
     >
       <p className="mb-2.5 text-[12px] font-medium tracking-[-0.02em] text-[#1C2A3A]">
         {module === "Schedule" ? "Today" : "Activity"}
@@ -151,7 +151,7 @@ function MetricCardThumb({ module }: { module: string }) {
   return (
     <div
       className="absolute left-5 right-5 top-6 rounded-[16px] bg-white/85 px-4 py-3.5 backdrop-blur-sm"
-      style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.05), 0 18px 36px -22px rgba(28,30,33,0.4)" }}
+      style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.05), 0 18px 36px -22px rgba(0,0,0,0.4)" }}
     >
       <div className="mb-2 flex items-center justify-between">
         <div
@@ -167,7 +167,7 @@ function MetricCardThumb({ module }: { module: string }) {
       </p>
       <div
         className="mt-2.5 inline-flex h-6 items-center gap-1 rounded-full bg-white px-2.5"
-        style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.08)" }}
+        style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.08)" }}
       >
         <span className="text-[10px] font-medium text-[#636363]">Get details</span>
         <ArrowUpRight className="h-3 w-3 text-[#959595]" />
@@ -184,7 +184,7 @@ function ChatCardThumb({ module }: { module: string }) {
       <div className="absolute right-3 top-[52px] h-6 rounded-full bg-white/75 backdrop-blur-sm" style={{ width: "74%" }} />
       <div
         className="absolute left-6 right-5 top-[78px] flex h-9 items-center gap-2.5 rounded-full bg-white px-3"
-        style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.06), 0 14px 30px -18px rgba(124,92,224,0.5)" }}
+        style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 14px 30px -18px rgba(124,92,224,0.5)" }}
       >
         <Sparkles className="h-3.5 w-3.5 flex-shrink-0" style={{ color: t.accent }} />
         <span className="h-4 w-px bg-[#E5E7EB]" />
@@ -298,7 +298,7 @@ function PreviewModal({
         exit={{ opacity: 0, scale: 0.97, y: 8 }}
         transition={{ duration: 0.17, ease: [0.22, 1, 0.36, 1] }}
         className="fixed left-1/2 top-1/2 z-[460] w-[480px] max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white"
-        style={{ boxShadow: "0 24px 70px rgba(30,34,60,0.25)" }}
+        style={{ boxShadow: "0 24px 70px rgba(0,0,0,0.25)" }}
       >
         {/* Hero thumbnail */}
         <div

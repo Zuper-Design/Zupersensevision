@@ -7,7 +7,7 @@ import { token, statusFor, type StatusKey } from './tokens';
 export function MetricStat({ label, value, delta, status }: { label: string; value: string; delta?: { dir: 'up' | 'down'; text: string; good?: boolean }; status?: StatusKey }) {
   const accent = status ? token.status[status] : null;
   return (
-    <div className="rounded-[20px] p-3.5 flex-1 min-w-0" style={{ background: token.color.bg.surface, border: '1px solid #FFFFFF', boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
+    <div className="rounded-[20px] p-3.5 flex-1 min-w-0" style={{ background: token.color.bg.surface, border: '1px solid #FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
       <p className="text-[11px] font-medium truncate" style={{ color: token.color.text.muted }}>{label}</p>
       <div className="flex items-baseline gap-2 mt-1.5">
         <span className="text-[22px] font-medium tracking-[-0.02em]" style={{ color: accent ? accent.fg : token.color.text.primary }}>{value}</span>
@@ -29,7 +29,7 @@ export function DataTable<T extends { id: string }>({ columns, groups, rowAction
   rowAction?: (row: T) => React.ReactNode;
 }) {
   return (
-    <div className="rounded-[24px] overflow-hidden" style={{ background: token.color.bg.surface, border: '1px solid #FFFFFF', boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
+    <div className="rounded-[24px] overflow-hidden" style={{ background: token.color.bg.surface, border: '1px solid #FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
       <div className="grid items-center px-3 h-9 border-b text-[10.5px] font-mono uppercase tracking-wide"
         style={{ gridTemplateColumns: `${columns.map(c => '1fr').join(' ')}${rowAction ? ' 120px' : ''}`, borderColor: token.color.border.hairline, color: token.color.text.muted }}>
         {columns.map(c => <span key={c.key} className={c.align === 'right' ? 'text-right' : ''}>{c.header}</span>)}

@@ -399,7 +399,7 @@ function AttachmentCard({
         width: compact ? 28 : 38,
         height: compact ? 28 : 38,
         background: "linear-gradient(135deg, #ECECEA 0%, #DFDFDC 100%)",
-        boxShadow: "inset 0 0 0 1px rgba(28,30,33,0.05)",
+        boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)",
       }}
     >
       {ext.slice(0, 4)}
@@ -419,7 +419,7 @@ function AttachmentCard({
       className="inline-flex items-center gap-2.5 rounded-[14px] bg-white py-1.5 pl-1.5 pr-1.5"
       style={{
         boxShadow:
-          "0 0 0 1px rgba(28,30,33,0.06), 0 1px 2px rgba(28,30,33,0.05), 0 10px 24px -16px rgba(28,30,33,0.2)",
+          "0 0 0 1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.05), 0 10px 24px -16px rgba(0,0,0,0.2)",
       }}
     >
       {thumb}
@@ -473,7 +473,7 @@ function VersionPill({
             }
           : {
               background: "#F0F0F0",
-              boxShadow: "inset 0 0 0 1px rgba(28,30,33,0.07)",
+              boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.07)",
             }
       }
     >
@@ -1701,7 +1701,7 @@ export function BuildWorkspace({
               className="flex items-center gap-2 rounded-full bg-white pl-1.5 pr-1.5 py-1.5"
               style={{
                 boxShadow:
-                  "0 0 0 1px rgba(28,30,33,0.06), 0 1px 2px rgba(28,30,33,0.06), 0 16px 40px -16px rgba(28,30,33,0.35)",
+                  "0 0 0 1px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.06), 0 16px 40px -16px rgba(0,0,0,0.35)",
               }}
             >
               <button
@@ -1742,7 +1742,7 @@ export function BuildWorkspace({
                 onClick={() => setConvoCollapsed(false)}
                 title="Expand panel"
                 className="w-8 h-7 rounded-md flex items-center justify-center text-[#636363] bg-white transition-colors hover:text-[#000000]"
-                style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.08)" }}
+                style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.08)" }}
               >
                 <PanelLeftOpen className="w-3.5 h-3.5" />
               </button>
@@ -1770,7 +1770,7 @@ export function BuildWorkspace({
                         background: on ? "#FFFFFF" : "transparent",
                         color: on ? "#000000" : "#959595",
                         boxShadow: on
-                          ? "0 1px 2px rgba(28,30,33,0.08)"
+                          ? "0 1px 2px rgba(0,0,0,0.08)"
                           : "none",
                       }}
                       onMouseEnter={(e) => {
@@ -1871,9 +1871,9 @@ export function BuildWorkspace({
             transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
             className="relative h-full overflow-hidden rounded-[20px] bg-white"
             style={{
-              border: "1px solid rgba(28,30,33,0.07)",
+              border: "1px solid rgba(0,0,0,0.07)",
               boxShadow:
-                "0 1px 2px rgba(28,30,33,0.03), 0 18px 44px -34px rgba(28,30,33,0.28)",
+                "0 1px 2px rgba(0,0,0,0.03), 0 18px 44px -34px rgba(0,0,0,0.28)",
             }}
           >
             {phase === "generating" ? (
@@ -1912,7 +1912,7 @@ export function BuildWorkspace({
                 style={{
                   backgroundColor: "#F8F8F8",
                   backgroundImage:
-                    "radial-gradient(circle at 1px 1px, rgba(28,30,33,0.05) 1px, transparent 0)",
+                    "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)",
                   backgroundSize: "22px 22px",
                 }}
               >
@@ -1920,7 +1920,7 @@ export function BuildWorkspace({
                   className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white"
                   style={{
                     boxShadow:
-                      "0 1px 2px rgba(28,30,33,0.05), 0 10px 28px -18px rgba(28,30,33,0.4)",
+                      "0 1px 2px rgba(0,0,0,0.05), 0 10px 28px -18px rgba(0,0,0,0.4)",
                   }}
                 >
                   <Sparkles className="w-5 h-5 text-[#000000]" />
@@ -2031,7 +2031,7 @@ export function BuildWorkspace({
                       paddingLeft: 16,
                       paddingRight: 18,
                       boxShadow:
-                        "0 3px 6px rgba(28,30,33,0.08), 0 20px 44px -16px rgba(28,30,33,0.3), 0 40px 80px -32px rgba(28,30,33,0.35)",
+                        "0 3px 6px rgba(0,0,0,0.08), 0 20px 44px -16px rgba(0,0,0,0.3), 0 40px 80px -32px rgba(0,0,0,0.35)",
                     }}
                   >
                     <div
@@ -2047,7 +2047,7 @@ export function BuildWorkspace({
                       <span
                         className="ml-auto w-5 h-5 rounded-full border-2 flex-shrink-0 animate-spin"
                         style={{
-                          borderColor: "rgba(28,30,33,0.1)",
+                          borderColor: "rgba(0,0,0,0.1)",
                           borderTopColor: "#000000",
                         }}
                       />
@@ -2132,11 +2132,11 @@ export function BuildWorkspace({
     const frameTheme = {
       gradient: "linear-gradient(to bottom, #F0F0F0 0%, #EDEDEA 74%)",
       pixel: "#D6D6D2",
-      dropShadow: "0 6px 18px -8px rgba(28,30,33,0.2)",
-      innerGlow: "inset 0 0 2px 2px rgba(28,30,33,0.05)",
+      dropShadow: "0 6px 18px -8px rgba(0,0,0,0.2)",
+      innerGlow: "inset 0 0 2px 2px rgba(0,0,0,0.05)",
       flash: "#F0F0F0",
       label: "#000000",
-      ring: "rgba(28,30,33,0.12)",
+      ring: "rgba(0,0,0,0.12)",
       spinTrack: "#E8E8E8",
       spinHead: "#636363",
     };
@@ -2173,11 +2173,11 @@ export function BuildWorkspace({
               marginBottom: showRightPane && !convoCollapsed ? 12 : 0,
               borderRight:
                 showRightPane && !convoCollapsed
-                  ? "1px solid rgba(28,30,33,0.07)"
+                  ? "1px solid rgba(0,0,0,0.07)"
                   : "none",
               boxShadow:
                 showRightPane && !convoCollapsed
-                  ? "6px 0 18px -10px rgba(28,30,33,0.18)"
+                  ? "6px 0 18px -10px rgba(0,0,0,0.18)"
                   : "none",
               transition:
                 "width 450ms cubic-bezier(0.32,0.72,0,1), opacity 300ms ease",
@@ -2262,7 +2262,7 @@ export function BuildWorkspace({
                   <p className="mb-3 text-[11px] font-medium tracking-[0.04em] uppercase text-[#959595]">
                     Version history
                   </p>
-                  <div className="flex flex-col rounded-xl bg-white overflow-hidden" style={{ border: "1px solid rgba(28,30,33,0.07)" }}>
+                  <div className="flex flex-col rounded-xl bg-white overflow-hidden" style={{ border: "1px solid rgba(0,0,0,0.07)" }}>
                     {[...refineLog.map((r, i) => ({ v: i + 2, label: r })), { v: 1, label: "Initial build" }]
                       .sort((a, b) => b.v - a.v)
                       .map((entry, row) => {
@@ -2621,7 +2621,7 @@ export function BuildWorkspace({
                                   className="flex flex-col gap-3.5 rounded-[19px] bg-white px-4 py-3.5"
                                   style={{
                                     boxShadow:
-                                      "0 0 0 1px rgba(28,30,33,0.04), 0 1px 2px rgba(28,30,33,0.04), 0 10px 24px -16px rgba(28,30,33,0.2)",
+                                      "0 0 0 1px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.04), 0 10px 24px -16px rgba(0,0,0,0.2)",
                                   }}
                                 >
                                   <AnimatePresence initial={false}>
@@ -2760,8 +2760,8 @@ export function BuildWorkspace({
                               onClick={() => runRefine(s)}
                               className="group inline-flex items-center gap-1.5 h-7 pl-2.5 pr-3 rounded-full bg-white text-[12.5px] text-[#636363] transition-colors hover:bg-[#FAFAF9]"
                               style={{
-                                border: "1px solid rgba(28,30,33,0.1)",
-                                boxShadow: "0 1px 2px rgba(28,30,33,0.04)",
+                                border: "1px solid rgba(0,0,0,0.1)",
+                                boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
                               }}
                             >
                               <Sparkles className="w-3 h-3 text-[#959595] group-hover:text-[#000000] transition-colors" />
@@ -2788,10 +2788,10 @@ export function BuildWorkspace({
                     // edge — drop the outer gray border to avoid a doubled ring
                     border: showFrame
                       ? "1px solid transparent"
-                      : `1px solid ${refineFocused ? "rgba(28,30,33,0.18)" : "rgba(28,30,33,0.09)"}`,
+                      : `1px solid ${refineFocused ? "rgba(0,0,0,0.18)" : "rgba(0,0,0,0.09)"}`,
                     boxShadow: refineFocused
-                      ? "0 1px 2px rgba(28,30,33,0.04), 0 20px 48px -24px rgba(28,30,33,0.4)"
-                      : "0 1px 2px rgba(28,30,33,0.03), 0 12px 32px -22px rgba(28,30,33,0.28)",
+                      ? "0 1px 2px rgba(0,0,0,0.04), 0 20px 48px -24px rgba(0,0,0,0.4)"
+                      : "0 1px 2px rgba(0,0,0,0.03), 0 12px 32px -22px rgba(0,0,0,0.28)",
                     transition:
                       "box-shadow 280ms cubic-bezier(0.23,1,0.32,1), border-color 280ms ease",
                   }}
@@ -2859,7 +2859,7 @@ export function BuildWorkspace({
                           className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full"
                           style={{
                             background: "rgba(255,255,255,0.92)",
-                            boxShadow: `0 1px 2px rgba(28,30,33,0.06), 0 0 0 1px ${frameTheme.ring}`,
+                            boxShadow: `0 1px 2px rgba(0,0,0,0.06), 0 0 0 1px ${frameTheme.ring}`,
                             backdropFilter: "blur(4px)",
                           }}
                         >
@@ -2907,7 +2907,7 @@ export function BuildWorkspace({
                     className="relative z-[1] rounded-[18px] bg-white overflow-hidden"
                     style={{
                       border: showFrame
-                        ? "1px solid rgba(28,30,33,0.06)"
+                        ? "1px solid rgba(0,0,0,0.06)"
                         : "none",
                       transition: "border-color 280ms ease",
                     }}
@@ -3021,7 +3021,7 @@ export function BuildWorkspace({
                         <div
                           className="absolute bottom-full left-3 right-3 mb-2 overflow-hidden rounded-xl border border-[rgba(0,0,0,0.08)] bg-white py-1"
                           style={{
-                            boxShadow: "0 12px 28px -16px rgba(28,30,33,0.3)",
+                            boxShadow: "0 12px 28px -16px rgba(0,0,0,0.3)",
                           }}
                         >
                           <div className="px-3 pt-1 pb-0.5 text-[10.5px] font-medium uppercase tracking-wider text-[#959595]">
@@ -3255,7 +3255,7 @@ export function BuildWorkspace({
         style={{
           backgroundColor: "#F8F8F8",
           backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(28,30,33,0.035) 1px, transparent 0)",
+            "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.035) 1px, transparent 0)",
           backgroundSize: "22px 22px",
           // Reserve the scrollbar gutter so toggling between the short (cards)
           // and tall (apps) gallery states doesn't change the content width
@@ -3350,7 +3350,7 @@ export function BuildWorkspace({
                         onClick={() => answerClarify(opt)}
                         whileTap={{ scale: 0.96 }}
                         className="h-9 px-4 rounded-full text-[13px] font-medium tracking-[-0.01em] transition-all bg-white border border-[#DCDFE4] text-[#636363] hover:border-[#959595] hover:text-[#636363]"
-                        style={{ boxShadow: "0 1px 3px rgba(28,30,33,0.07)" }}
+                        style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.07)" }}
                       >
                         {opt}
                       </motion.button>
@@ -3369,9 +3369,9 @@ export function BuildWorkspace({
               }}
               className="rounded-[18px] bg-white mb-4 overflow-hidden w-full"
               style={{
-                border: "1px solid rgba(28,30,33,0.14)",
+                border: "1px solid rgba(0,0,0,0.14)",
                 boxShadow:
-                  "0 1px 2px rgba(28,30,33,0.03), 0 14px 36px -24px rgba(28,30,33,0.3)",
+                  "0 1px 2px rgba(0,0,0,0.03), 0 14px 36px -24px rgba(0,0,0,0.3)",
               }}
             >
               {/* Thinking tray — fade+slide, no height animation (height triggers layout) */}
@@ -3397,9 +3397,9 @@ export function BuildWorkspace({
                         className="inline-flex items-center gap-2 h-8 px-3.5 rounded-full"
                         style={{
                           background: "#FFFFFF",
-                          border: "1px solid rgba(28,30,33,0.12)",
+                          border: "1px solid rgba(0,0,0,0.12)",
                           boxShadow:
-                            "0 1px 3px rgba(28,30,33,0.08), 0 4px 16px -6px rgba(28,30,33,0.18)",
+                            "0 1px 3px rgba(0,0,0,0.08), 0 4px 16px -6px rgba(0,0,0,0.18)",
                         }}
                       >
                         {/* spinner — neutral gray */}
@@ -3662,7 +3662,7 @@ export function BuildWorkspace({
                 className="group relative flex w-full max-w-[420px] items-center gap-4 overflow-hidden rounded-[18px] border border-[rgba(0,0,0,0.08)] bg-white pl-5 pr-3 py-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#D4D7DD] active:scale-[0.995]"
                 style={{
                   boxShadow:
-                    "0 1px 2px rgba(28,30,33,0.04), 0 12px 30px -22px rgba(28,30,33,0.35)",
+                    "0 1px 2px rgba(0,0,0,0.04), 0 12px 30px -22px rgba(0,0,0,0.35)",
                 }}
               >
                 <div className="min-w-0 flex-1">
@@ -3679,7 +3679,7 @@ export function BuildWorkspace({
                   <div className="absolute right-3 top-1 h-[50px] w-[64px] -rotate-[10deg] overflow-hidden rounded-[10px] ring-1 ring-black/[0.05] transition-transform duration-200 group-hover:-rotate-[14deg]">
                     <AppPreviewThumb module="Customers" className="h-full w-full" />
                   </div>
-                  <div className="absolute right-0 top-0 h-[54px] w-[68px] rotate-[4deg] overflow-hidden rounded-[10px] bg-white p-1 shadow-[0_4px_12px_-6px_rgba(28,30,33,0.4)] ring-1 ring-black/[0.05] transition-transform duration-200 group-hover:rotate-[6deg]">
+                  <div className="absolute right-0 top-0 h-[54px] w-[68px] rotate-[4deg] overflow-hidden rounded-[10px] bg-white p-1 shadow-[0_4px_12px_-6px_rgba(0,0,0,0.4)] ring-1 ring-black/[0.05] transition-transform duration-200 group-hover:rotate-[6deg]">
                     <AppPreviewThumb
                       module="Invoices"
                       className="h-full w-full rounded-[10px]"
@@ -3719,7 +3719,7 @@ export function BuildWorkspace({
         style={{
           backgroundColor: "#F8F8F8",
           backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(28,30,33,0.035) 1px, transparent 0)",
+            "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.035) 1px, transparent 0)",
           backgroundSize: "22px 22px",
           scrollbarGutter: "stable",
         }}
@@ -3744,15 +3744,15 @@ export function BuildWorkspace({
                 className="group overflow-hidden rounded-[18px] bg-white text-left transition-all duration-200 hover:-translate-y-1"
                 style={{
                   boxShadow:
-                    "0 0 0 1px rgba(28,30,33,0.05), 0 1px 2px rgba(28,30,33,0.04), 0 10px 30px -20px rgba(28,30,33,0.25)",
+                    "0 0 0 1px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04), 0 10px 30px -20px rgba(0,0,0,0.25)",
                 }}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.boxShadow =
-                    "0 0 0 1px rgba(253,80,0,0.18), 0 1px 2px rgba(28,30,33,0.04), 0 28px 56px -30px rgba(28,30,33,0.4)")
+                    "0 0 0 1px rgba(253,80,0,0.18), 0 1px 2px rgba(0,0,0,0.04), 0 28px 56px -30px rgba(0,0,0,0.4)")
                 }
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.boxShadow =
-                    "0 0 0 1px rgba(28,30,33,0.05), 0 1px 2px rgba(28,30,33,0.04), 0 10px 30px -20px rgba(28,30,33,0.25)")
+                    "0 0 0 1px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04), 0 10px 30px -20px rgba(0,0,0,0.25)")
                 }
               >
                 {/* thumbnail — its own gradient field, padded on white */}
@@ -3816,7 +3816,7 @@ function GenerationOverlay({
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(28,30,33,0.06) 1px, transparent 0)",
+            "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.06) 1px, transparent 0)",
           backgroundSize: "16px 16px",
         }}
       />
@@ -3867,8 +3867,8 @@ function GenerationOverlay({
                 opacity,
                 background: isActive ? "#FFFFFF" : "rgba(255,255,255,0.66)",
                 boxShadow: isActive
-                  ? "0 2px 4px rgba(28,30,33,0.05), 0 40px 80px -40px rgba(28,30,33,0.45)"
-                  : "0 1px 2px rgba(28,30,33,0.03)",
+                  ? "0 2px 4px rgba(0,0,0,0.05), 0 40px 80px -40px rgba(0,0,0,0.45)"
+                  : "0 1px 2px rgba(0,0,0,0.03)",
                 backdropFilter: isActive ? "none" : "blur(2px)",
                 transition: reduceMotion
                   ? "none"
@@ -3928,7 +3928,7 @@ function GenerationOverlay({
                 <span
                   className="ml-auto w-5 h-5 rounded-full border-2 flex-shrink-0 animate-spin"
                   style={{
-                    borderColor: "rgba(28,30,33,0.1)",
+                    borderColor: "rgba(0,0,0,0.1)",
                     borderTopColor: phase.accent,
                   }}
                 />

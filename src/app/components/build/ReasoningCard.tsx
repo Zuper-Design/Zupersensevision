@@ -74,7 +74,7 @@ export function ReasoningCard({
       {/* inner container — white, rounded, drop shadow; houses the step list */}
       <div
         className="flex flex-col gap-3.5 rounded-[19px] bg-white px-4 py-3.5"
-        style={{ boxShadow: "0 0 0 1px rgba(28,30,33,0.04), 0 1px 2px rgba(28,30,33,0.04), 0 10px 24px -16px rgba(28,30,33,0.2)" }}
+        style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.04), 0 10px 24px -16px rgba(0,0,0,0.2)" }}
       >
         {/* lead row — overall gather status */}
         <Row

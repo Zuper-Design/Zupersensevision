@@ -117,7 +117,7 @@ function WorkspaceMenu({ value, onChange }: { value: string; onChange: (v: strin
           <div className="fixed inset-0 z-[1490]" onClick={() => setOpen(false)} />
           <div
             className="fixed z-[1500] overflow-hidden rounded-lg border border-[rgba(0,0,0,0.08)] bg-white py-1"
-            style={{ top: pos.top, left: pos.left, width: pos.width, boxShadow: '0 12px 32px -12px rgba(28,30,33,0.22)' }}
+            style={{ top: pos.top, left: pos.left, width: pos.width, boxShadow: '0 12px 32px -12px rgba(0,0,0,0.22)' }}
           >
             {WORKSPACES.map((w) => (
               <button key={w} onClick={() => { onChange(w); setOpen(false); }}
@@ -161,7 +161,7 @@ function RoleMenu({ value, onChange }: { value: Perm; onChange: (v: Perm) => voi
         <>
           <div className="fixed inset-0 z-[1490]" onClick={(e) => { e.stopPropagation(); setOpen(false); }} />
           <div className="fixed z-[1500] overflow-hidden rounded-lg border border-[rgba(0,0,0,0.08)] bg-white py-1"
-            style={{ top: pos.top, left: pos.left, width: W, boxShadow: '0 12px 32px -12px rgba(28,30,33,0.22)' }}>
+            style={{ top: pos.top, left: pos.left, width: W, boxShadow: '0 12px 32px -12px rgba(0,0,0,0.22)' }}>
             {PERMS.map((p) => (
               <button key={p} onClick={(e) => { e.stopPropagation(); onChange(p); setOpen(false); }}
                 className="flex w-full items-center justify-between gap-3 px-3 h-8 text-[13px] text-[#636363] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]">
@@ -253,7 +253,7 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
         initial={{ opacity: 0, scale: 0.97, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.97, y: 8 }}
         transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
         className="fixed left-1/2 top-1/2 z-[460] w-[480px] max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[24px] bg-white"
-        style={{ boxShadow: '0 0 0 1px rgba(28,30,33,0.07), 0 1px 2px rgba(28,30,33,0.04), 0 32px 90px -42px rgba(28,30,33,0.5)' }}
+        style={{ boxShadow: '0 0 0 1px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04), 0 32px 90px -42px rgba(0,0,0,0.5)' }}
       >
         {/* header */}
         <div className="flex items-center justify-between border-b border-[rgba(0,0,0,0.05)] px-6 py-4">
@@ -305,7 +305,7 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                 <div className="fixed inset-0 z-[1490]" onClick={() => setIconOpen(false)} />
                 <div
                   className="fixed z-[1500] grid grid-cols-6 gap-1 rounded-lg border border-[rgba(0,0,0,0.08)] bg-white p-2"
-                  style={{ top: iconPos.top, left: iconPos.left, boxShadow: '0 12px 32px -12px rgba(28,30,33,0.22)' }}
+                  style={{ top: iconPos.top, left: iconPos.left, boxShadow: '0 12px 32px -12px rgba(0,0,0,0.22)' }}
                 >
                   {APP_ICONS.map(({ key, Icon }) => (
                     <button key={key} type="button" onClick={() => { setIcon(key); setIconOpen(false); }}
@@ -351,7 +351,7 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                   style={{
                     background: active ? '#FFFFFF' : 'transparent',
                     color: active ? '#000000' : '#636363',
-                    boxShadow: active ? '0 1px 2px rgba(28,30,33,0.1), 0 0 0 1px rgba(28,30,33,0.04)' : 'none',
+                    boxShadow: active ? '0 1px 2px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04)' : 'none',
                   }}>
                   <Ic className="h-3.5 w-3.5" style={{ color: active ? '#000000' : '#959595' }} />
                   {label}
@@ -384,7 +384,7 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                     <>
                       <div className="fixed inset-0 z-[1490]" onClick={() => setSearchOpen(false)} />
                       <div className="fixed z-[1500] max-h-[260px] overflow-y-auto rounded-lg border border-[rgba(0,0,0,0.08)] bg-white p-1.5"
-                        style={{ top: searchPos.top, left: searchPos.left, width: searchPos.width, boxShadow: '0 16px 40px -16px rgba(28,30,33,0.28)' }}>
+                        style={{ top: searchPos.top, left: searchPos.left, width: searchPos.width, boxShadow: '0 16px 40px -16px rgba(0,0,0,0.28)' }}>
                         {filtered.map((p) => {
                           const checked = selected.has(p.id);
                           return (

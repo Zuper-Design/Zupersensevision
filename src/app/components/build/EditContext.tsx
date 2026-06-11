@@ -89,7 +89,7 @@ export function EditProvider({
             style={{
               background: "rgba(255,255,255,0.92)",
               border: `1px solid ${token.color.border.default}`,
-              boxShadow: "0 8px 24px -12px rgba(28,30,33,0.3), 0 1px 2px rgba(28,30,33,0.06)",
+              boxShadow: "0 8px 24px -12px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.06)",
               backdropFilter: "blur(8px)",
             }}
           >
@@ -164,7 +164,7 @@ export function EditProvider({
                   width: POP_W,
                   background: "#FFFFFF",
                   border: `1px solid ${token.color.border.default}`,
-                  boxShadow: "0 12px 32px -12px rgba(28,30,33,0.28), 0 2px 6px -2px rgba(28,30,33,0.08)",
+                  boxShadow: "0 12px 32px -12px rgba(0,0,0,0.28), 0 2px 6px -2px rgba(0,0,0,0.08)",
                   transformOrigin: side === "right" ? "left top" : "right top",
                 }}
               >

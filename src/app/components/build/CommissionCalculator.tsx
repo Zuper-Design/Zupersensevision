@@ -58,7 +58,7 @@ export function CommissionCalculator({ isViewer, canSeeFinancials = true }: Prop
       {/* header / filter row */}
       <div className="flex items-center gap-2.5 px-4 h-14 flex-shrink-0">
         <span className="w-8 h-8 rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] inline-flex items-center justify-center text-[12px] font-medium"
-          style={{ color: token.color.brand.primary, boxShadow: '0 10px 24px -22px rgba(28,30,33,0.5)' }}>
+          style={{ color: token.color.brand.primary, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           ﹩
         </span>
         <div className="min-w-0">
@@ -79,7 +79,7 @@ export function CommissionCalculator({ isViewer, canSeeFinancials = true }: Prop
           <div className="flex gap-3">
             {[0, 1, 2].map((i) => <div key={i} className="flex-1 h-[76px] rounded-[20px] animate-pulse" style={{ background: token.color.bg.surface, border: `1px solid ${token.color.border.default}` }} />)}
           </div>
-          <div className="rounded-[24px] overflow-hidden bg-white" style={{ border: '1px solid #FFFFFF', boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
+          <div className="rounded-[24px] overflow-hidden bg-white" style={{ border: '1px solid #FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
             <SkeletonRows rows={6} />
           </div>
         </div>

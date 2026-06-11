@@ -15,11 +15,13 @@ interface Props {
 const trueArea = (f: RoofFacet) => f.planeArea * slopeMultiplier(f.pitch);
 const ptsToStr = (pts: [number, number][]) => pts.map((p) => p.join(',')).join(' ');
 
+// Edge topology is data-viz, not status — differentiated by tone + line style
+// so the layer stays legible inside the achromatic system (DESIGN.md 3).
 const EDGE_STYLE: Record<string, { color: string; dash?: string; label: string }> = {
   ridge: { color: '#000000', label: 'Ridge' },
   hip: { color: '#636363', label: 'Hip' },
-  valley: { color: '#7C3AED', dash: '2 2', label: 'Valley' },
-  eave: { color: '#000000', dash: '3 2', label: 'Eave' },
+  valley: { color: '#959595', dash: '2 2', label: 'Valley' },
+  eave: { color: '#636363', dash: '4 3', label: 'Eave' },
 };
 
 export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Props) {
@@ -42,7 +44,7 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
       {/* toolbar */}
       <div className="flex items-center gap-2.5 px-4 h-14 flex-shrink-0">
         <span className="w-8 h-8 rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] inline-flex items-center justify-center"
-          style={{ color: token.color.brand.primary, boxShadow: '0 10px 24px -22px rgba(28,30,33,0.5)' }}>
+          style={{ color: token.color.brand.primary, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <Ruler className="w-4 h-4" />
         </span>
         <div className="min-w-0">
@@ -79,7 +81,7 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
       ) : (
         <div data-app-reveal className="flex-1 overflow-hidden p-3 pt-0 flex gap-3">
           {/* drawing surface — aerial image + traced facets */}
-          <div className="flex-1 rounded-[24px] overflow-hidden relative bg-[#2A2D33]" style={{ border: '1px solid #FFFFFF', boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
+          <div className="flex-1 rounded-[24px] overflow-hidden relative bg-[#2A2D33]" style={{ border: '1px solid #FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
             {/* real aerial roof photo (Unsplash, free license) */}
             <img
               src={ROOF_IMAGE_URL}
