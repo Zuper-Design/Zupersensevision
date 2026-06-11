@@ -51,16 +51,16 @@ export function ReasoningCard({
     // so the "Gathering context" footer sits inside the same surface.
     <div
       className="rounded-[20px] px-px pb-px"
-      style={{ background: "#F1F1EE" }}
+      style={{ background: "#F0F0F0" }}
     >
       {/* status row — at the top, indented to match the inner card rows */}
       <div className="flex items-center px-4 py-2.5">
-        <p className="text-[12.5px] text-[#6B7280] leading-tight">
+        <p className="text-[12.5px] text-[#636363] leading-tight">
           <span
             className={
               "font-medium " +
               (checkingDone || reduceMotion
-                ? "text-[#374151]"
+                ? "text-[#636363]"
                 : "text-shimmer")
             }
           >
@@ -113,13 +113,13 @@ export function ReasoningCard({
 
 // split a label so only `part` is bold; renders the rest in normal weight
 function renderActiveLabel(label: string, part?: string) {
-  if (!part) return <span className="font-semibold">{label}</span>;
+  if (!part) return <span className="font-medium">{label}</span>;
   const idx = label.indexOf(part);
-  if (idx === -1) return <span className="font-semibold">{label}</span>;
+  if (idx === -1) return <span className="font-medium">{label}</span>;
   return (
     <>
       {label.slice(0, idx)}
-      <span className="font-semibold text-[#111315]">{part}</span>
+      <span className="font-medium text-[#000000]">{part}</span>
       {label.slice(idx + part.length)}
     </>
   );
@@ -168,13 +168,13 @@ function Row({
         animate={{
           backgroundColor:
             state === "done"
-              ? "#1C1E21"
+              ? "#000000"
               : state === "active"
-                ? "#2A2A2C"
+                ? "#000000"
                 : "#FFFFFF",
           boxShadow:
             state === "pending"
-              ? "inset 0 0 0 1.5px #E3E5E8"
+              ? "inset 0 0 0 1.5px rgba(0,0,0,0.08)"
               : "inset 0 0 0 0px rgba(227,229,232,0)",
         }}
         transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
@@ -211,9 +211,9 @@ function Row({
               transition={{ duration: 0.14 }}
             >
               {Icon ? (
-                <Icon className="w-3 h-3 text-[#C4CAD4]" />
+                <Icon className="w-3 h-3 text-[#D9D9D9]" />
               ) : (
-                <span className="block w-1.5 h-1.5 rounded-full bg-[#D6D9DE]" />
+                <span className="block w-1.5 h-1.5 rounded-full bg-[#D9D9D9]" />
               )}
             </motion.span>
           )}
@@ -225,10 +225,10 @@ function Row({
         className={
           "text-[13.5px] tracking-[-0.01em] leading-tight font-normal transition-colors duration-300 " +
           (state === "active"
-            ? "text-[#3A3F45]"
+            ? "text-[#000000]"
             : state === "done"
-              ? "text-[#6B7280]"
-              : "text-[#B0B5BD]")
+              ? "text-[#636363]"
+              : "text-[#959595]")
         }
       >
         {state === "active" ? renderActiveLabel(label, boldPart) : label}

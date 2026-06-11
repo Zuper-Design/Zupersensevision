@@ -17,7 +17,7 @@ export function AutomationPanel({ onClose }: { onClose: () => void }) {
       className="absolute top-0 right-0 h-full w-[360px] z-[50] flex flex-col"
       style={{ background: token.color.bg.surface, borderLeft: `1px solid ${token.color.border.default}`, boxShadow: '-8px 0 24px rgba(0,0,0,0.06)' }}>
       <div className="h-12 flex items-center justify-between px-4 border-b flex-shrink-0" style={{ borderColor: token.color.border.default }}>
-        <span className="inline-flex items-center gap-2 text-[13px] font-semibold" style={{ color: token.color.text.primary }}>
+        <span className="inline-flex items-center gap-2 text-[13px] font-medium" style={{ color: token.color.text.primary }}>
           <Zap className="w-4 h-4" style={{ color: token.color.brand.primary }} /> Automations
         </span>
         <button onClick={onClose} className="w-7 h-7 rounded-md flex items-center justify-center" style={{ color: token.color.text.muted }}><X className="w-4 h-4" /></button>

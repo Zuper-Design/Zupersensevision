@@ -77,15 +77,15 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#F7F7F5' }}>
+    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#F8F8F8' }}>
       {/* FilterBar */}
       <div className="flex items-center gap-2.5 px-4 h-14 flex-shrink-0">
-        <span className="w-8 h-8 rounded-2xl bg-white border border-[#ECEEF1] inline-flex items-center justify-center text-[12px] font-semibold"
+        <span className="w-8 h-8 rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] inline-flex items-center justify-center text-[12px] font-medium"
           style={{ color: token.status.danger.fg, boxShadow: '0 10px 24px -22px rgba(28,30,33,0.5)' }}>
           AR
         </span>
         <div className="min-w-0">
-          <p className="text-[15px] font-semibold tracking-[-0.015em]" style={{ color: token.color.text.primary }}>Collections</p>
+          <p className="text-[15px] font-medium tracking-[-0.015em]" style={{ color: token.color.text.primary }}>Collections</p>
           <p className="text-[11px]" style={{ color: token.color.text.muted }}>Overdue invoices · grouped by aging</p>
         </div>
         <span className="inline-flex items-center gap-2 h-8 px-3 rounded-full text-[11.5px] font-mono ml-2" style={{ background: '#FFFFFF', border: `1px solid ${token.color.border.default}`, color: token.color.text.secondary }}>
@@ -120,7 +120,7 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
           <div className="flex items-center gap-3 px-3.5 h-11 rounded-xl" style={{ background: token.color.text.primary }}>
             <span className="text-[12.5px] font-medium text-white">{sel.size} selected</span>
             <button onClick={() => setConfirm({ rows: OVERDUE_INVOICES.filter(i => sel.has(i.id)) })}
-              className="ml-auto inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-semibold text-white transition-colors" style={{ background: token.color.brand.primary }}>
+              className="ml-auto inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-medium text-white transition-colors" style={{ background: token.color.brand.primary }}>
               <Send className="w-3.5 h-3.5" /> Send {sel.size} reminders
             </button>
             <button onClick={() => setSel(new Set())} className="text-white/70 hover:text-white"><X className="w-4 h-4" /></button>
@@ -151,12 +151,12 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
             <motion.div initial={{ x: 380 }} animate={{ x: 0 }} exit={{ x: 380 }} transition={{ type: 'spring', damping: 32, stiffness: 320 }}
               className="fixed top-0 right-0 h-full w-[380px] z-[410] flex flex-col" style={{ background: token.color.bg.surface, boxShadow: '-8px 0 24px rgba(0,0,0,0.12)' }}>
               <div className="h-12 flex items-center justify-between px-4 border-b" style={{ borderColor: token.color.border.default }}>
-                <span className="text-[14px] font-semibold" style={{ color: token.color.text.primary }}>Send reminders</span>
+                <span className="text-[14px] font-medium" style={{ color: token.color.text.primary }}>Send reminders</span>
                 <button onClick={() => setConfirm(null)} className="w-7 h-7 rounded-md flex items-center justify-center" style={{ color: token.color.text.muted }}><X className="w-4 h-4" /></button>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 <p className="text-[13px] leading-relaxed" style={{ color: token.color.text.primary }}>
-                  Send a payment reminder to <span className="font-semibold">{confirm.rows.length} account{confirm.rows.length > 1 ? 's' : ''}</span>? This logs a contact + promise-to-pay on each invoice.
+                  Send a payment reminder to <span className="font-medium">{confirm.rows.length} account{confirm.rows.length > 1 ? 's' : ''}</span>? This logs a contact + promise-to-pay on each invoice.
                 </p>
                 <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${token.color.border.default}` }}>
                   {confirm.rows.map(r => (
@@ -174,7 +174,7 @@ export function ArCockpit({ isViewer, canSeeFinancials = true, canWrite = true, 
               </div>
               <div className="p-4 border-t flex items-center gap-2" style={{ borderColor: token.color.border.default }}>
                 <button onClick={() => setConfirm(null)} className="flex-1 h-9 rounded-xl text-[13px] font-medium transition-colors" style={{ background: token.color.bg.muted, color: token.color.text.secondary }}>Cancel</button>
-                <button onClick={commitSend} className="flex-1 h-9 rounded-xl text-[13px] font-semibold text-white inline-flex items-center justify-center gap-1.5 transition-colors"
+                <button onClick={commitSend} className="flex-1 h-9 rounded-xl text-[13px] font-medium text-white inline-flex items-center justify-center gap-1.5 transition-colors"
                   style={{ background: confirm.rows.length > 3 ? token.status.danger.fg : token.color.brand.primary }}>
                   <Send className="w-4 h-4" /> Send {confirm.rows.length}
                 </button>

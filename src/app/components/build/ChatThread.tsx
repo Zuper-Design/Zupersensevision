@@ -79,14 +79,14 @@ export function ChatThread(p: ThreadProps) {
   const title = activeThread?.title ?? 'New conversation';
 
   return (
-    <div className="h-full flex flex-col" style={{ background: '#F7F7F5' }}>
+    <div className="h-full flex flex-col" style={{ background: '#F8F8F8' }}>
       {/* header — thread title dropdown + new-thread button */}
       <div className="h-12 flex items-center gap-1 px-3 border-b flex-shrink-0 relative" style={{ borderColor: '#E1E3E6' }}>
         <button
           onClick={() => setThreadMenuOpen(o => !o)}
           className="flex items-center gap-1.5 min-w-0 h-8 px-2 rounded-lg transition-colors"
           style={{ color: token.color.text.primary }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#EFEFEC')}
+          onMouseEnter={e => (e.currentTarget.style.background = '#F0F0F0')}
           onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         >
           <span className="text-[13px] font-medium tracking-[-0.01em] truncate max-w-[220px]">{title}</span>
@@ -97,7 +97,7 @@ export function ChatThread(p: ThreadProps) {
           title="New conversation"
           className="ml-auto w-8 h-8 rounded-lg flex items-center justify-center transition-colors flex-shrink-0"
           style={{ color: token.color.text.muted }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#EFEFEC'; e.currentTarget.style.color = token.color.text.primary; }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#F0F0F0'; e.currentTarget.style.color = token.color.text.primary; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = token.color.text.muted; }}
         >
           <Plus className="w-4 h-4" />
@@ -227,7 +227,7 @@ export function ChatThread(p: ThreadProps) {
                 border: `1px solid ${token.color.border.default}`,
                 background: token.color.bg.surface,
               }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#B497CF'; e.currentTarget.style.color = '#5B3D7A'; }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#959595'; e.currentTarget.style.color = '#636363'; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = token.color.border.default; e.currentTarget.style.color = token.color.text.muted; }}
             >
               {s}
@@ -255,13 +255,13 @@ export function ChatThread(p: ThreadProps) {
             exit={{ opacity: 0, transform: 'translateY(-4px)' }}
             transition={{ duration: 0.16, ease: [0.23, 1, 0.32, 1] }}
             className="relative overflow-hidden w-full"
-            style={{ height: 36, background: '#FCF4EC' }}
+            style={{ height: 36, background: '#F0F0F0' }}
           >
             <div className="absolute inset-0">
               <PixelBlast
                 variant="square"
                 pixelSize={2}
-                color="#F2B485"
+                color="#959595"
                 patternScale={2.5}
                 patternDensity={0.8}
                 enableRipples={false}
@@ -281,8 +281,8 @@ export function ChatThread(p: ThreadProps) {
                   backdropFilter: 'blur(8px)',
                 }}
               >
-                <span className="w-3 h-3 rounded-full border-2 border-[#F6E0CB] border-t-[#EC8B49] animate-spin" style={{ animationDuration: '0.7s' }} />
-                <span className="text-[12px] font-semibold tracking-[-0.02em] text-[#A85A2A]">Thinking...</span>
+                <span className="w-3 h-3 rounded-full border-2 border-[#E8E8E8] border-t-[#636363] animate-spin" style={{ animationDuration: '0.7s' }} />
+                <span className="text-[12px] font-medium tracking-[-0.02em] text-[#636363]">Thinking...</span>
               </div>
             </div>
           </motion.div>
@@ -292,10 +292,10 @@ export function ChatThread(p: ThreadProps) {
           {/* @-mention suggestions */}
           {mention && (
             <div className="mx-2 mb-1 overflow-hidden rounded-xl border bg-white" style={{ borderColor: token.color.border.default, boxShadow: '0 12px 28px -16px rgba(28,30,33,0.3)' }}>
-              <div className="px-3 pt-2 pb-1 text-[10.5px] font-semibold uppercase tracking-wider" style={{ color: token.color.text.muted }}>Uploaded files</div>
+              <div className="px-3 pt-2 pb-1 text-[10.5px] font-medium uppercase tracking-wider" style={{ color: token.color.text.muted }}>Uploaded files</div>
               {mention.hits.slice(0, 5).map(f => (
                 <button key={f.id} onClick={() => pickMention(f.name)}
-                  className="flex w-full items-center gap-2 px-3 h-8 text-left hover:bg-[#F4F4F2] transition-colors">
+                  className="flex w-full items-center gap-2 px-3 h-8 text-left hover:bg-[#F0F0F0] transition-colors">
                   <FileText className="w-3.5 h-3.5 flex-shrink-0" style={{ color: token.color.text.muted }} />
                   <span className="text-[12.5px] truncate" style={{ color: token.color.text.primary }}>{f.name}</span>
                 </button>
@@ -360,7 +360,7 @@ function BuildTrace({ archetype, phase }: { archetype: string; phase: Phase }) {
       </div>
       <div className="grid grid-cols-2 gap-1.5">
         {items.map(({ icon: Icon, label: k, value }) => (
-          <div key={k} className="rounded-2xl px-2 py-1.5" style={{ background: '#F7F7F5', border: `1px solid ${token.color.border.hairline}` }}>
+          <div key={k} className="rounded-2xl px-2 py-1.5" style={{ background: '#F8F8F8', border: `1px solid ${token.color.border.hairline}` }}>
             <div className="flex items-center gap-1.5">
               <Icon className="w-3 h-3" style={{ color: token.color.text.faint }} />
               <span className="text-[9.5px] font-mono uppercase tracking-wide" style={{ color: token.color.text.muted }}>{k}</span>

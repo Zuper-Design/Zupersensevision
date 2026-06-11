@@ -638,3 +638,129 @@
     100% { background-position: -200% 0; }
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   PRISM ON WHITE STATIONERY — DESIGN.md foundation
+   Single source of styling truth for the restyle. Later rules win.
+   ════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* One typeface, three weights (DESIGN.md §2) */
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Radius floor: nothing sharper than 10px (DESIGN.md §1).
+     Remapping the scale enforces it across every utility class. */
+  --radius-xs: 10px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 30px;
+  --radius-card: 30px;
+
+  /* Achromatic ramp (DESIGN.md §3) */
+  --color-canvas: #F8F8F8;
+  --color-ink: #000000;
+  --color-ink-2: #636363;
+  --color-ink-3: #959595;
+  --color-ink-4: #D9D9D9;
+
+  /* Earned micro-accents */
+  --color-accent-red: #E5484D;
+  --color-accent-blue: #3E63DD;
+
+  /* Prism spectrum (DESIGN.md §4) */
+  --color-prism-pink: #F6A0E4;
+  --color-prism-red: #FF7A6B;
+  --color-prism-amber: #FFC56B;
+  --color-prism-lavender: #C0AFFF;
+  --color-prism-blue: #6FA8FF;
+
+  /* THE shadow */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+:root {
+  /* Inline-style aliases (components using style={{ }} read these) */
+  --canvas: #F8F8F8;
+  --glass: rgba(255, 255, 255, 0.9);
+  --recessed: rgba(0, 0, 0, 0.04);
+  --hairline: rgba(0, 0, 0, 0.06);
+  --ink: #000000;
+  --ink-2: #636363;
+  --ink-3: #959595;
+  --ink-4: #D9D9D9;
+  --red: #E5484D;
+  --blue: #3E63DD;
+  --prism-pink: #F6A0E4;
+  --prism-red: #FF7A6B;
+  --prism-amber: #FFC56B;
+  --prism-lavender: #C0AFFF;
+  --prism-blue: #6FA8FF;
+  --gradient-prism: linear-gradient(105deg, var(--prism-pink) 0%, var(--prism-red) 26%, var(--prism-amber) 50%, var(--prism-lavender) 74%, var(--prism-blue) 100%);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+html, body {
+  font-family: 'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-optical-sizing: auto;
+  background: var(--canvas);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Frosted card surface — THE card treatment (DESIGN.md §1) */
+.glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--shadow-card);
+}
+/* Lighter frost for layered chips/trays sitting on glass */
+.glass-soft {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* ── Prism motion: the AI-activity vocabulary (DESIGN.md §4/§7) ── */
+@keyframes prism-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(7%, -5%) scale(1.12); }
+  66%  { transform: translate(-6%, 6%) scale(0.92); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes prism-pan {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes prism-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+/* Animated spectrum band (sweeps left→right, seamless loop) */
+.prism-sweep {
+  background: linear-gradient(105deg,
+    var(--prism-pink), var(--prism-red), var(--prism-amber),
+    var(--prism-lavender), var(--prism-blue), var(--prism-pink));
+  background-size: 200% 100%;
+  animation: prism-pan 2.8s linear infinite;
+}
+
+/* Streaming-label treatment — gradient lives inside the glyphs, transient only */
+.prism-text-shimmer {
+  background: linear-gradient(105deg,
+    var(--ink-2), var(--prism-red), var(--prism-amber),
+    var(--prism-lavender), var(--prism-blue), var(--ink-2));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: prism-pan 2.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prism-sweep, .prism-text-shimmer { animation: none; }
+}

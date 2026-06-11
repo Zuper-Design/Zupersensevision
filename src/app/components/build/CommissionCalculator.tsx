@@ -48,21 +48,21 @@ export function CommissionCalculator({ isViewer, canSeeFinancials = true }: Prop
     {
       key: 'commission', header: 'Commission', align: 'right', mono: true,
       render: (r) => (canSeeFinancials
-        ? <span style={{ color: token.color.text.primary, fontWeight: 600 }}>{money(commissionOf(r))}</span>
+        ? <span style={{ color: token.color.text.primary, fontWeight: 500 }}>{money(commissionOf(r))}</span>
         : '— hidden'),
     },
   ];
 
   return (
-    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#F7F7F5' }}>
+    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#F8F8F8' }}>
       {/* header / filter row */}
       <div className="flex items-center gap-2.5 px-4 h-14 flex-shrink-0">
-        <span className="w-8 h-8 rounded-2xl bg-white border border-[#ECEEF1] inline-flex items-center justify-center text-[12px] font-semibold"
+        <span className="w-8 h-8 rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] inline-flex items-center justify-center text-[12px] font-medium"
           style={{ color: token.color.brand.primary, boxShadow: '0 10px 24px -22px rgba(28,30,33,0.5)' }}>
           ﹩
         </span>
         <div className="min-w-0">
-          <p className="text-[15px] font-semibold tracking-[-0.015em]" style={{ color: token.color.text.primary }}>Commissions</p>
+          <p className="text-[15px] font-medium tracking-[-0.015em]" style={{ color: token.color.text.primary }}>Commissions</p>
           <p className="text-[11px]" style={{ color: token.color.text.muted }}>Closed deals · tiered by margin · grouped by rep</p>
         </div>
         <span className="inline-flex items-center gap-2 h-8 px-3 rounded-full text-[11.5px] font-mono ml-2" style={{ background: '#FFFFFF', border: `1px solid ${token.color.border.default}`, color: token.color.text.secondary }}>

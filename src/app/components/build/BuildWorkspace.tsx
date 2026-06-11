@@ -241,14 +241,14 @@ const GEN_PHASES = [
   {
     icon: Workflow,
     label: "Extracting tables",
-    accent: "#FD5000",
+    accent: "#000000",
     tint: "#FFE8DC",
   },
   {
     icon: Wand2,
     label: "Wiring live data",
-    accent: "#7C5CE0",
-    tint: "#ECE6FB",
+    accent: "#636363",
+    tint: "#F0F0F0",
   },
   {
     icon: ShieldCheck,
@@ -283,15 +283,15 @@ function SenseMark({ size = 20 }: { size?: number }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
-      <rect y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
-      <rect x="15.75" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
-      <rect x="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
-      <rect x="15.75" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
-      <rect y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
-      <rect x="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
-      <rect x="31.5" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#F8D5C2" fillOpacity="0.7" />
-      <rect x="31.5" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#EB5D2A" />
+      <rect width="13.5" height="13.5" rx="3.375" fill="#000000" />
+      <rect y="15.75" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7" />
+      <rect x="15.75" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7" />
+      <rect x="15.75" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7" />
+      <rect x="15.75" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#000000" />
+      <rect y="31.5" width="13.5" height="13.5" rx="3.375" fill="#000000" />
+      <rect x="31.5" width="13.5" height="13.5" rx="3.375" fill="#000000" />
+      <rect x="31.5" y="15.75" width="13.5" height="13.5" rx="3.375" fill="#B3B3B3" fillOpacity="0.7" />
+      <rect x="31.5" y="31.5" width="13.5" height="13.5" rx="3.375" fill="#000000" />
     </svg>
   );
 }
@@ -394,7 +394,7 @@ function AttachmentCard({
   const ext = attExt(name);
   const thumb = (
     <span
-      className="flex flex-shrink-0 items-center justify-center rounded-[9px] text-[9px] font-bold tracking-wide text-[#9CA3AF]"
+      className="flex flex-shrink-0 items-center justify-center rounded-[10px] text-[9px] font-medium tracking-wide text-[#959595]"
       style={{
         width: compact ? 28 : 38,
         height: compact ? 28 : 38,
@@ -424,10 +424,10 @@ function AttachmentCard({
     >
       {thumb}
       <span className="min-w-0">
-        <span className="block text-[11px] font-medium uppercase tracking-wide text-[#9CA3AF] leading-tight">
+        <span className="block text-[11px] font-medium uppercase tracking-wide text-[#959595] leading-tight">
           {ext}, {size}
         </span>
-        <span className="block max-w-[180px] truncate text-[13.5px] font-medium tracking-[-0.01em] text-[#1C1E21] leading-tight">
+        <span className="block max-w-[180px] truncate text-[13.5px] font-medium tracking-[-0.01em] text-[#000000] leading-tight">
           {name}
         </span>
       </span>
@@ -435,7 +435,7 @@ function AttachmentCard({
         <button
           onClick={onRemove}
           aria-label={`Remove ${name}`}
-          className="ml-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#F1F1EF] text-[#6B7280] transition-colors hover:bg-[#E6E8EC] hover:text-[#1C1E21] active:scale-[0.95]"
+          className="ml-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#F0F0F0] text-[#636363] transition-colors hover:bg-[rgba(0,0,0,0.08)] hover:text-[#000000] active:scale-[0.95]"
         >
           <Trash2 className="h-4 w-4" />
         </button>
@@ -472,13 +472,13 @@ function VersionPill({
                 "inset 0 0 0 1px rgba(22,163,74,0.18), 0 1px 2px rgba(22,163,74,0.12), 0 6px 14px -8px rgba(22,163,74,0.4)",
             }
           : {
-              background: "#F4F4F2",
+              background: "#F0F0F0",
               boxShadow: "inset 0 0 0 1px rgba(28,30,33,0.07)",
             }
       }
     >
       {current ? (
-        <span className="w-[18px] h-[18px] flex-shrink-0 rounded-full bg-[#16A34A] flex items-center justify-center">
+        <span className="w-[18px] h-[18px] flex-shrink-0 rounded-full bg-[#000000] flex items-center justify-center">
           <Check className="w-3 h-3 text-white" strokeWidth={3} />
         </span>
       ) : (
@@ -488,20 +488,20 @@ function VersionPill({
             onRestore();
           }}
           title={`Restore v${version}.0`}
-          className="w-[22px] h-[22px] -ml-0.5 flex-shrink-0 rounded-full flex items-center justify-center text-[#9CA3AF] transition-colors hover:bg-[#FFF1E8] hover:text-[#FD5000]"
+          className="w-[22px] h-[22px] -ml-0.5 flex-shrink-0 rounded-full flex items-center justify-center text-[#959595] transition-colors hover:bg-[#FFF1E8] hover:text-[#000000]"
         >
           <RotateCcw className="w-[15px] h-[15px]" />
         </button>
       )}
       <span
-        className="min-w-0 flex-1 truncate text-[13.5px] font-semibold leading-tight"
-        style={{ color: current ? "#15803D" : "#6B7280" }}
+        className="min-w-0 flex-1 truncate text-[13.5px] font-medium leading-tight"
+        style={{ color: current ? "#000000" : "#636363" }}
       >
         {label}
       </span>
       <span
-        className="flex-shrink-0 text-[12px] font-semibold tabular-nums"
-        style={{ color: current ? "#16A34A" : "#9CA3AF" }}
+        className="flex-shrink-0 text-[12px] font-medium tabular-nums"
+        style={{ color: current ? "#000000" : "#959595" }}
       >
         v{version}.0
       </span>
@@ -518,7 +518,7 @@ const HOME_STARTERS = [
     icon: Ruler,
     phrase:
       "*Sketch roof facets*, set the *pitch*, and *total the squares* with waste.",
-    accent: "#FD5000",
+    accent: "#000000",
     template: TEMPLATES[0],
   },
   {
@@ -528,7 +528,7 @@ const HOME_STARTERS = [
     chip: "*Group* overdue invoices into aging buckets",
     icon: Receipt,
     phrase: "Group *overdue invoices* into *aging buckets* I can *act on*.",
-    accent: "#16A34A",
+    accent: "#000000",
     template: TEMPLATES[2],
   },
   {
@@ -538,7 +538,7 @@ const HOME_STARTERS = [
     chip: "*Surface* quotes stuck in sent 3+ days",
     icon: ListChecks,
     phrase: "Surface *quotes stuck in sent* for *3+ days*, *oldest first*.",
-    accent: "#2563EB",
+    accent: "#636363",
     template: TEMPLATES[1],
   },
   {
@@ -581,11 +581,11 @@ function ChipPhrase({ phrase }: { phrase: string }) {
     <span className="inline whitespace-nowrap">
       {parts.map((part, i) =>
         part.startsWith("*") && part.endsWith("*") ? (
-          <span key={i} className="font-semibold text-[#1C1E21]">
+          <span key={i} className="font-medium text-[#000000]">
             {part.slice(1, -1)}
           </span>
         ) : (
-          <span key={i} className="font-normal text-[#6B7280]">
+          <span key={i} className="font-normal text-[#636363]">
             {part}
           </span>
         ),
@@ -645,24 +645,24 @@ function FileRow({
       <button
         type="button"
         onClick={() => onSelect?.(el)}
-        className="flex w-full items-center gap-2 h-8 rounded-lg px-2 text-left transition-colors hover:bg-[#F4F4F2]"
+        className="flex w-full items-center gap-2 h-8 rounded-lg px-2 text-left transition-colors hover:bg-[#F0F0F0]"
         style={{
           paddingLeft: 8 + depth * 18,
-          background: on ? "#FFF4ED" : undefined,
+          background: on ? "#F0F0F0" : undefined,
         }}
       >
         {isFolder ? (
-          <Folder className="w-3.5 h-3.5 flex-shrink-0 text-[#FD5000]" />
+          <Folder className="w-3.5 h-3.5 flex-shrink-0 text-[#000000]" />
         ) : (
-          <FileText className="w-3.5 h-3.5 flex-shrink-0 text-[#9CA3AF]" />
+          <FileText className="w-3.5 h-3.5 flex-shrink-0 text-[#959595]" />
         )}
         <span
           className="text-[13px] truncate"
-          style={{ color: on ? "#C0410C" : "#1C1E21" }}
+          style={{ color: on ? "#000000" : "#000000" }}
         >
           {el.label}
           {!isFolder && (
-            <span style={{ color: on ? "#C0410C" : "#9CA3AF" }}>
+            <span style={{ color: on ? "#000000" : "#959595" }}>
               .{fileExt(el)}
             </span>
           )}
@@ -685,18 +685,18 @@ function FileRow({
 function extBadge(name: string) {
   const ext = (name.split(".").pop() ?? "").toLowerCase();
   const map: Record<string, { bg: string; fg: string }> = {
-    pdf: { bg: "#FEE2E2", fg: "#B91C1C" },
-    csv: { bg: "#DCFCE7", fg: "#15803D" },
-    xlsx: { bg: "#DCFCE7", fg: "#15803D" },
+    pdf: { bg: "#FBEAEA", fg: "#E5484D" },
+    csv: { bg: "#F0F0F0", fg: "#000000" },
+    xlsx: { bg: "#F0F0F0", fg: "#000000" },
     png: { bg: "#EDE9FE", fg: "#6D28D9" },
     jpg: { bg: "#EDE9FE", fg: "#6D28D9" },
     jpeg: { bg: "#EDE9FE", fg: "#6D28D9" },
-    json: { bg: "#FEF3C7", fg: "#B45309" },
+    json: { bg: "#F0F0F0", fg: "#636363" },
     fig: { bg: "#FFE8DC", fg: "#C2410C" },
   };
   return {
     ext: ext || "file",
-    ...(map[ext] ?? { bg: "#EEF1F0", fg: "#6B7280" }),
+    ...(map[ext] ?? { bg: "#EEF1F0", fg: "#636363" }),
   };
 }
 
@@ -715,13 +715,13 @@ function FileTreeView({
   return (
     <div className="h-full overflow-y-auto bg-white">
       {/* header */}
-      <div className="h-11 px-4 flex items-center gap-2 border-b border-[#F0F0F2]">
-        <Code2 className="w-4 h-4 text-[#6B7280]" />
-        <span className="text-[13px] font-semibold tracking-[-0.01em] text-[#1C1E21]">
+      <div className="h-11 px-4 flex items-center gap-2 border-b border-[rgba(0,0,0,0.05)]">
+        <Code2 className="w-4 h-4 text-[#636363]" />
+        <span className="text-[13px] font-medium tracking-[-0.01em] text-[#000000]">
           {appName}
         </span>
-        <span className="text-[11px] text-[#9CA3AF]">· code</span>
-        <span className="ml-auto text-[11px] font-medium text-[#9CA3AF]">
+        <span className="text-[11px] text-[#959595]">· code</span>
+        <span className="ml-auto text-[11px] font-medium text-[#959595]">
           {uploads.length} {uploads.length === 1 ? "file" : "files"}
         </span>
       </div>
@@ -742,46 +742,46 @@ function FileTreeView({
         {uploads.length === 0 ? (
           <button
             onClick={() => upRef.current?.click()}
-            className="group flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#E1E3E6] py-10 text-center transition-colors hover:border-[#C9CDD4] hover:bg-[#FAFAFA]"
+            className="group flex w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[#E1E3E6] py-10 text-center transition-colors hover:border-[rgba(0,0,0,0.18)] hover:bg-[#FAFAFA]"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F4F4F2] text-[#9CA3AF] transition-colors group-hover:bg-[#EEF1F0] group-hover:text-[#6B7280]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F0F0F0] text-[#959595] transition-colors group-hover:bg-[#EEF1F0] group-hover:text-[#636363]">
               <Plus className="w-4 h-4" />
             </span>
-            <span className="text-[13px] font-medium text-[#374151]">
+            <span className="text-[13px] font-medium text-[#636363]">
               Upload files
             </span>
-            <span className="max-w-[220px] text-[11.5px] leading-snug text-[#9CA3AF]">
+            <span className="max-w-[220px] text-[11.5px] leading-snug text-[#959595]">
               Reference them in chat by typing{" "}
-              <span className="font-mono text-[#6B7280]">@</span>
+              <span className="font-mono text-[#636363]">@</span>
             </span>
           </button>
         ) : (
           <>
-            <div className="overflow-hidden rounded-xl border border-[#ECEEF1]">
+            <div className="overflow-hidden rounded-xl border border-[rgba(0,0,0,0.06)]">
               {uploads.map((f, i) => {
                 const b = extBadge(f.name);
                 return (
                   <div
                     key={f.id}
-                    className={`group flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-[#FAFAFA] ${i > 0 ? "border-t border-[#F0F0F2]" : ""}`}
+                    className={`group flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-[#FAFAFA] ${i > 0 ? "border-t border-[rgba(0,0,0,0.05)]" : ""}`}
                   >
                     <span
-                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[9px] font-bold uppercase tracking-tight"
+                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[9px] font-medium uppercase tracking-tight"
                       style={{ background: b.bg, color: b.fg }}
                     >
                       {b.ext.slice(0, 4)}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-medium text-[#1C1E21]">
+                      <span className="block truncate text-[13px] font-medium text-[#000000]">
                         {f.name}
                       </span>
-                      <span className="block text-[11px] text-[#9CA3AF]">
+                      <span className="block text-[11px] text-[#959595]">
                         {f.size}
                       </span>
                     </span>
                     <button
                       onClick={() => onRemove(f.id)}
-                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-[#9CA3AF] opacity-0 transition-all hover:bg-[#EEF1F0] hover:text-[#1C1E21] group-hover:opacity-100"
+                      className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-[#959595] opacity-0 transition-all hover:bg-[#EEF1F0] hover:text-[#000000] group-hover:opacity-100"
                       aria-label={`Remove ${f.name}`}
                     >
                       <X className="w-3.5 h-3.5" />
@@ -792,7 +792,7 @@ function FileTreeView({
             </div>
             <button
               onClick={() => upRef.current?.click()}
-              className="mt-2 inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12.5px] font-medium text-[#374151] transition-colors hover:bg-[#F4F4F2]"
+              className="mt-2 inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12.5px] font-medium text-[#636363] transition-colors hover:bg-[#F0F0F0]"
             >
               <Plus className="w-3.5 h-3.5" /> Add files
             </button>
@@ -852,13 +852,13 @@ function highlight(line: string) {
   return parts.map((p, i) => {
     if (/^(import|export|function|const|return)$/.test(p))
       return (
-        <span key={i} style={{ color: "#C026D3" }}>
+        <span key={i} style={{ color: "#636363" }}>
           {p}
         </span>
       );
     if (/^".*"$/.test(p))
       return (
-        <span key={i} style={{ color: "#15803D" }}>
+        <span key={i} style={{ color: "#000000" }}>
           {p}
         </span>
       );
@@ -881,10 +881,10 @@ function CodeView({
   return (
     <div className="h-full flex overflow-hidden bg-white">
       {/* file tree */}
-      <div className="w-[220px] flex-shrink-0 border-r border-[#F0F0F2] flex flex-col">
-        <div className="h-11 px-4 flex items-center gap-2 border-b border-[#F0F0F2]">
-          <Code2 className="w-4 h-4 text-[#6B7280]" />
-          <span className="text-[13px] font-semibold tracking-[-0.01em] text-[#1C1E21] truncate">
+      <div className="w-[220px] flex-shrink-0 border-r border-[rgba(0,0,0,0.05)] flex flex-col">
+        <div className="h-11 px-4 flex items-center gap-2 border-b border-[rgba(0,0,0,0.05)]">
+          <Code2 className="w-4 h-4 text-[#636363]" />
+          <span className="text-[13px] font-medium tracking-[-0.01em] text-[#000000] truncate">
             {appName}
           </span>
         </div>
@@ -894,23 +894,23 @@ function CodeView({
       </div>
       {/* source */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="h-11 px-4 flex items-center gap-2 border-b border-[#F0F0F2]">
-          <FileText className="w-3.5 h-3.5 text-[#9CA3AF]" />
-          <span className="text-[12.5px] font-medium text-[#374151]">
+        <div className="h-11 px-4 flex items-center gap-2 border-b border-[rgba(0,0,0,0.05)]">
+          <FileText className="w-3.5 h-3.5 text-[#959595]" />
+          <span className="text-[12.5px] font-medium text-[#636363]">
             {fileName}
           </span>
-          <span className="ml-auto text-[10.5px] font-mono uppercase tracking-wider text-[#C4CAD4]">
+          <span className="ml-auto text-[10.5px] font-mono uppercase tracking-wider text-[#D9D9D9]">
             {archetype}
           </span>
         </div>
         <pre
           className="flex-1 overflow-auto p-4 text-[12.5px] leading-[1.7] font-mono"
-          style={{ color: "#1C1E21" }}
+          style={{ color: "#000000" }}
         >
           {src.split("\n").map((ln, i) => (
             <div key={i} className="flex">
               <span
-                className="select-none pr-4 text-right text-[#C4CAD4]"
+                className="select-none pr-4 text-right text-[#D9D9D9]"
                 style={{ minWidth: "2.5ch" }}
               >
                 {i + 1}
@@ -942,11 +942,11 @@ function ToolbarIcon({
       title={title}
       className="w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
       style={{
-        background: active ? "#FFF4ED" : "transparent",
-        color: active ? "#FD5000" : "#6B7280",
+        background: active ? "#F0F0F0" : "transparent",
+        color: active ? "#000000" : "#636363",
       }}
       onMouseEnter={(e) => {
-        if (!active) e.currentTarget.style.background = "#EFEFEC";
+        if (!active) e.currentTarget.style.background = "#F0F0F0";
       }}
       onMouseLeave={(e) => {
         if (!active) e.currentTarget.style.background = "transparent";
@@ -1653,31 +1653,31 @@ export function BuildWorkspace({
   const Canvas = (
     <div
       className="h-full flex flex-col overflow-hidden"
-      style={{ background: "#F4F3F0" }}
+      style={{ background: "#F8F8F8" }}
     >
       {isViewer ? (
         /* viewer header — back arrow + breadcrumb + star */
         <div
           className="relative z-30 h-14 flex items-center gap-3 px-4 flex-shrink-0"
-          style={{ background: "#F4F3F0" }}
+          style={{ background: "#F8F8F8" }}
         >
           <button
             onClick={() => setStage("preview")}
             title="Back"
-            className="w-8 h-8 -ml-1 rounded-lg flex items-center justify-center text-[#6B7280] hover:bg-[#F3F4F6] hover:text-[#1C1E21] transition-colors flex-shrink-0"
+            className="w-8 h-8 -ml-1 rounded-lg flex items-center justify-center text-[#636363] hover:bg-[#F0F0F0] hover:text-[#000000] transition-colors flex-shrink-0"
           >
             <ArrowLeft className="w-[18px] h-[18px]" />
           </button>
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[14px] font-medium text-[#6B7280]">Work</span>
-            <span className="text-[#D6D9DE] text-[15px]">/</span>
-            <span className="text-[14px] font-semibold tracking-[-0.01em] text-[#1C1E21] truncate">
+            <span className="text-[14px] font-medium text-[#636363]">Work</span>
+            <span className="text-[#D9D9D9] text-[15px]">/</span>
+            <span className="text-[14px] font-medium tracking-[-0.01em] text-[#000000] truncate">
               {appName.replace(/\s*·\s*/g, " ")}
             </span>
           </div>
           <button
             title="Favorite"
-            className="ml-auto w-8 h-8 rounded-lg flex items-center justify-center text-[#C4CAD4] hover:bg-[#F3F4F6] hover:text-[#F5A623] transition-colors flex-shrink-0"
+            className="ml-auto w-8 h-8 rounded-lg flex items-center justify-center text-[#D9D9D9] hover:bg-[#F0F0F0] hover:text-[#000000] transition-colors flex-shrink-0"
           >
             <Star className="w-[18px] h-[18px]" />
           </button>
@@ -1688,7 +1688,7 @@ export function BuildWorkspace({
              slides+fades down into the row (ease-out, under 300ms). */
           <div
             className="relative z-30 h-14 flex items-center justify-center px-3 flex-shrink-0 overflow-hidden"
-            style={{ background: "#F4F3F0" }}
+            style={{ background: "#F8F8F8" }}
           >
             <motion.div
               initial={
@@ -1707,11 +1707,11 @@ export function BuildWorkspace({
               <button
                 onClick={() => setPreviewVersion(null)}
                 title="Exit preview"
-                className="w-7 h-7 flex-shrink-0 rounded-full flex items-center justify-center text-[#6B7280] transition-colors hover:bg-[#F1F1EF] hover:text-[#1C1E21] active:scale-[0.95]"
+                className="w-7 h-7 flex-shrink-0 rounded-full flex items-center justify-center text-[#636363] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000] active:scale-[0.95]"
               >
                 <X className="w-4 h-4" />
               </button>
-              <span className="pr-1 text-[13.5px] font-semibold tracking-[-0.01em] text-[#1C1E21]">
+              <span className="pr-1 text-[13.5px] font-medium tracking-[-0.01em] text-[#000000]">
                 Preview of version {previewVersion}
               </span>
               <button
@@ -1719,9 +1719,9 @@ export function BuildWorkspace({
                 className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full text-[12.5px] font-medium text-white transition-transform duration-150 ease-out active:scale-[0.97]"
                 style={{
                   background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 35%, #FD5000 100%), #FD5000",
+                    "linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 35%, #000000 100%), #000000",
                   boxShadow:
-                    "inset 0 1.5px 0 rgba(255,255,255,0.25), 0 0 0 1px #C0410C, 0 4px 7px rgba(253,80,0,0.3)",
+                    "inset 0 1.5px 0 rgba(255,255,255,0.25), 0 0 0 1px #000000, 0 4px 7px rgba(253,80,0,0.3)",
                 }}
               >
                 <RotateCcw className="w-3.5 h-3.5 text-white/90" />
@@ -1733,7 +1733,7 @@ export function BuildWorkspace({
         /* board header — pill toolbar */
         <div
           className="relative z-30 h-14 flex items-center justify-between px-3 flex-shrink-0"
-          style={{ background: "#F4F3F0" }}
+          style={{ background: "#F8F8F8" }}
         >
           {/* left: Preview/Code toggle pill */}
           <div className="flex items-center gap-2">
@@ -1741,7 +1741,7 @@ export function BuildWorkspace({
               <button
                 onClick={() => setConvoCollapsed(false)}
                 title="Expand panel"
-                className="w-8 h-7 rounded-md flex items-center justify-center text-[#6B7280] bg-white transition-colors hover:text-[#1C1E21]"
+                className="w-8 h-7 rounded-md flex items-center justify-center text-[#636363] bg-white transition-colors hover:text-[#000000]"
                 style={{ boxShadow: "0 1px 2px rgba(28,30,33,0.08)" }}
               >
                 <PanelLeftOpen className="w-3.5 h-3.5" />
@@ -1750,7 +1750,7 @@ export function BuildWorkspace({
             {!isViewer ? (
               <div
                 className="inline-flex items-center gap-0.5 p-0.5 rounded-lg"
-                style={{ background: "#EAE9E5" }}
+                style={{ background: "#ECECEC" }}
               >
                 {(
                   [
@@ -1768,16 +1768,16 @@ export function BuildWorkspace({
                       className="inline-flex items-center justify-center h-7 w-8 rounded-md transition-colors"
                       style={{
                         background: on ? "#FFFFFF" : "transparent",
-                        color: on ? "#1C1E21" : "#9CA3AF",
+                        color: on ? "#000000" : "#959595",
                         boxShadow: on
                           ? "0 1px 2px rgba(28,30,33,0.08)"
                           : "none",
                       }}
                       onMouseEnter={(e) => {
-                        if (!on) e.currentTarget.style.color = "#1C1E21";
+                        if (!on) e.currentTarget.style.color = "#000000";
                       }}
                       onMouseLeave={(e) => {
-                        if (!on) e.currentTarget.style.color = "#9CA3AF";
+                        if (!on) e.currentTarget.style.color = "#959595";
                       }}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -1810,7 +1810,7 @@ export function BuildWorkspace({
               style={{
                 textShadow: "0 4px 4px rgba(0,0,0,0.4)",
                 background:
-                  "linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.04) 35%, #1D1F23 100%), #1D1F23",
+                  "linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.04) 35%, #000000 100%), #000000",
                 boxShadow:
                   "inset 0 1.5px 0 rgba(255,255,255,0.15), 0 0 0 1px #000000, 0 4px 7px rgba(0,0,0,0.2)",
                 transition:
@@ -1858,7 +1858,7 @@ export function BuildWorkspace({
       <div className="flex-1 flex overflow-hidden relative">
         <div
           className="flex-1 overflow-hidden p-3 pt-0"
-          style={{ background: "#F4F3F0" }}
+          style={{ background: "#F8F8F8" }}
         >
           <motion.div
             // brief crossfade when entering/leaving a version preview so the
@@ -1910,7 +1910,7 @@ export function BuildWorkspace({
               <div
                 className="h-full flex flex-col items-center justify-center px-8 text-center"
                 style={{
-                  backgroundColor: "#F4F3F0",
+                  backgroundColor: "#F8F8F8",
                   backgroundImage:
                     "radial-gradient(circle at 1px 1px, rgba(28,30,33,0.05) 1px, transparent 0)",
                   backgroundSize: "22px 22px",
@@ -1923,12 +1923,12 @@ export function BuildWorkspace({
                       "0 1px 2px rgba(28,30,33,0.05), 0 10px 28px -18px rgba(28,30,33,0.4)",
                   }}
                 >
-                  <Sparkles className="w-5 h-5 text-[#FD5000]" />
+                  <Sparkles className="w-5 h-5 text-[#000000]" />
                 </span>
-                <p className="mt-4 text-[15px] font-semibold tracking-[-0.02em] text-[#1C1E21]">
+                <p className="mt-4 text-[15px] font-medium tracking-[-0.02em] text-[#000000]">
                   Build paused
                 </p>
-                <p className="mt-1.5 max-w-[280px] text-[13px] leading-[1.5] text-[#6B7280]">
+                <p className="mt-1.5 max-w-[280px] text-[13px] leading-[1.5] text-[#636363]">
                   You stopped before the app finished. Hit Generate to pick up
                   where Sense left off.
                 </p>
@@ -2036,11 +2036,11 @@ export function BuildWorkspace({
                   >
                     <div
                       className="rounded-[13px] flex items-center justify-center flex-shrink-0"
-                      style={{ width: 46, height: 46, background: "#FD5000" }}
+                      style={{ width: 46, height: 46, background: "#000000" }}
                     >
                       <Sparkles className="w-6 h-6 text-white" />
                     </div>
-                    <span className="text-[16px] font-semibold tracking-[-0.01em] text-[#111315]">
+                    <span className="text-[16px] font-medium tracking-[-0.01em] text-[#000000]">
                       Applying changes…
                     </span>
                     {!reduceMotion && (
@@ -2048,7 +2048,7 @@ export function BuildWorkspace({
                         className="ml-auto w-5 h-5 rounded-full border-2 flex-shrink-0 animate-spin"
                         style={{
                           borderColor: "rgba(28,30,33,0.1)",
-                          borderTopColor: "#FD5000",
+                          borderTopColor: "#000000",
                         }}
                       />
                     )}
@@ -2130,15 +2130,15 @@ export function BuildWorkspace({
     // neutral frame skin — every state (waiting / thinking / building) uses the
     // same gray treatment, no PixelBlast color, no gradient tinting.
     const frameTheme = {
-      gradient: "linear-gradient(to bottom, #F4F4F2 0%, #EDEDEA 74%)",
+      gradient: "linear-gradient(to bottom, #F0F0F0 0%, #EDEDEA 74%)",
       pixel: "#D6D6D2",
       dropShadow: "0 6px 18px -8px rgba(28,30,33,0.2)",
       innerGlow: "inset 0 0 2px 2px rgba(28,30,33,0.05)",
-      flash: "#F4F4F2",
-      label: "#1C1E21",
+      flash: "#F0F0F0",
+      label: "#000000",
       ring: "rgba(28,30,33,0.12)",
-      spinTrack: "#E2E2DE",
-      spinHead: "#6B7280",
+      spinTrack: "#E8E8E8",
+      spinHead: "#636363",
     };
 
     // @-mention of uploaded files in the refine input
@@ -2159,7 +2159,7 @@ export function BuildWorkspace({
     return (
       <div
         className="flex-1 flex overflow-hidden"
-        style={{ background: "#F4F3F0" }}
+        style={{ background: "#F8F8F8" }}
       >
         {/* ── Left: conversation column ─────────────────────────────────── */}
         {showConversation && (
@@ -2201,11 +2201,11 @@ export function BuildWorkspace({
                       resetBuild();
                     }}
                     title="Back"
-                    className="w-7 h-7 -ml-1.5 rounded-lg flex items-center justify-center text-[#6B7280] hover:bg-[#EFEFEC] hover:text-[#1C1E21] transition-colors flex-shrink-0"
+                    className="w-7 h-7 -ml-1.5 rounded-lg flex items-center justify-center text-[#636363] hover:bg-[#F0F0F0] hover:text-[#000000] transition-colors flex-shrink-0"
                   >
                     <ArrowLeft className="w-4 h-4" />
                   </button>
-                  <span className="text-[13px] font-medium text-[#1C1E21] truncate tracking-[-0.01em]">
+                  <span className="text-[13px] font-medium text-[#000000] truncate tracking-[-0.01em]">
                     {activeThread?.title ?? appName}
                   </span>
                   {buildComplete && (
@@ -2215,12 +2215,12 @@ export function BuildWorkspace({
                         title="Version history"
                         className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
                         style={{
-                          background: historyOpen ? "#EFEFEC" : "transparent",
-                          color: historyOpen ? "#1C1E21" : "#6B7280",
+                          background: historyOpen ? "#F0F0F0" : "transparent",
+                          color: historyOpen ? "#000000" : "#636363",
                         }}
                         onMouseEnter={(e) => {
                           if (!historyOpen)
-                            e.currentTarget.style.background = "#F4F4F2";
+                            e.currentTarget.style.background = "#F0F0F0";
                         }}
                         onMouseLeave={(e) => {
                           if (!historyOpen)
@@ -2233,7 +2233,7 @@ export function BuildWorkspace({
                         <button
                           onClick={() => setConvoCollapsed(true)}
                           title="Collapse panel"
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[#6B7280] transition-colors hover:bg-[#F4F4F2] hover:text-[#1C1E21]"
+                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[#636363] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]"
                         >
                           <PanelLeftClose className="w-4 h-4" />
                         </button>
@@ -2259,7 +2259,7 @@ export function BuildWorkspace({
               {historyOpen ? (
                 /* version history — replaces the conversation; pick a version to return */
                 <div className="w-full max-w-[720px] mx-auto px-8 py-8">
-                  <p className="mb-3 text-[11px] font-semibold tracking-[0.04em] uppercase text-[#A0A0A0]">
+                  <p className="mb-3 text-[11px] font-medium tracking-[0.04em] uppercase text-[#959595]">
                     Version history
                   </p>
                   <div className="flex flex-col rounded-xl bg-white overflow-hidden" style={{ border: "1px solid rgba(28,30,33,0.07)" }}>
@@ -2278,16 +2278,16 @@ export function BuildWorkspace({
                                   : entry.v,
                               );
                             }}
-                            className={`flex items-center gap-3 px-3.5 py-3 text-left transition-colors hover:bg-[#FAFAF9] ${row > 0 ? "border-t border-[#1C1E21]/[0.06]" : ""}`}
+                            className={`flex items-center gap-3 px-3.5 py-3 text-left transition-colors hover:bg-[#FAFAF9] ${row > 0 ? "border-t border-[#000000]/[0.06]" : ""}`}
                           >
-                            <span className="inline-flex items-center h-6 px-2 rounded-md bg-[#F1F1EF] text-[11.5px] font-semibold text-[#374151] flex-shrink-0">
+                            <span className="inline-flex items-center h-6 px-2 rounded-md bg-[#F0F0F0] text-[11.5px] font-medium text-[#636363] flex-shrink-0">
                               v{entry.v}
                             </span>
-                            <span className="min-w-0 flex-1 truncate text-[13.5px] text-[#1C1E21]">
+                            <span className="min-w-0 flex-1 truncate text-[13.5px] text-[#000000]">
                               {entry.label}
                             </span>
                             {isLatest && (
-                              <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#16A34A] flex-shrink-0">
+                              <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#000000] flex-shrink-0">
                                 <Check className="w-3.5 h-3.5" strokeWidth={3} />
                                 Current
                               </span>
@@ -2307,15 +2307,15 @@ export function BuildWorkspace({
                   className="flex flex-col items-end"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[14px] font-medium text-[#1C1E21]">
+                    <span className="text-[14px] font-medium text-[#000000]">
                       You
                     </span>
-                    <span className="w-5 h-5 rounded-full bg-[#1C1E21] text-white text-[10px] font-semibold flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-[#000000] text-white text-[10px] font-medium flex items-center justify-center">
                       {currentUser}
                     </span>
                   </div>
-                  <div className="inline-block max-w-[80%] bg-[#F3F4F6] rounded-[16px] px-5 py-3">
-                    <p className="text-[15px] text-[#1C1E21] font-normal whitespace-pre-wrap leading-[1.5]">
+                  <div className="inline-block max-w-[80%] bg-[#F0F0F0] rounded-[16px] px-5 py-3">
+                    <p className="text-[15px] text-[#000000] font-normal whitespace-pre-wrap leading-[1.5]">
                       {promptText}
                     </p>
                     {uploadedFiles.length > 0 && (
@@ -2357,14 +2357,14 @@ export function BuildWorkspace({
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#EB5D2A"
+                        fill="#000000"
                       />
                       <rect
                         y="15.75"
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#F8D5C2"
+                        fill="#B3B3B3"
                         fillOpacity="0.7"
                       />
                       <rect
@@ -2373,7 +2373,7 @@ export function BuildWorkspace({
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#F8D5C2"
+                        fill="#B3B3B3"
                         fillOpacity="0.7"
                       />
                       <rect
@@ -2381,7 +2381,7 @@ export function BuildWorkspace({
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#F8D5C2"
+                        fill="#B3B3B3"
                         fillOpacity="0.7"
                       />
                       <rect
@@ -2390,21 +2390,21 @@ export function BuildWorkspace({
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#EB5D2A"
+                        fill="#000000"
                       />
                       <rect
                         y="31.5"
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#EB5D2A"
+                        fill="#000000"
                       />
                       <rect
                         x="31.5"
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#EB5D2A"
+                        fill="#000000"
                       />
                       <rect
                         x="31.5"
@@ -2412,7 +2412,7 @@ export function BuildWorkspace({
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#F8D5C2"
+                        fill="#B3B3B3"
                         fillOpacity="0.7"
                       />
                       <rect
@@ -2421,10 +2421,10 @@ export function BuildWorkspace({
                         width="13.5"
                         height="13.5"
                         rx="3.375"
-                        fill="#EB5D2A"
+                        fill="#000000"
                       />
                     </svg>
-                    <span className="text-[14px] font-medium text-[#1C1E21]">
+                    <span className="text-[14px] font-medium text-[#000000]">
                       Sense
                     </span>
                   </div>
@@ -2454,19 +2454,19 @@ export function BuildWorkspace({
                       transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
                       className="mt-5 scroll-mt-6"
                     >
-                      <p className="text-[14px] text-[#1C1E21] leading-relaxed mb-1">
+                      <p className="text-[14px] text-[#000000] leading-relaxed mb-1">
                         I've pulled the records. A few things I can't infer —
                         answer these and I'll build it:
                       </p>
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-semibold tracking-[0.04em] uppercase text-[#A0A0A0]">
+                        <span className="text-[11px] font-medium tracking-[0.04em] uppercase text-[#959595]">
                           {answeredCount} of {clarifyQuestions.length} answered
                         </span>
                       </div>
 
                       {/* answered questions — accordion, shown once all are answered */}
                       {clarifyComplete && (
-                        <div className="mt-3 rounded-xl overflow-hidden bg-white border border-[#1C1E21]/[0.07]">
+                        <div className="mt-3 rounded-xl overflow-hidden bg-white border border-[#000000]/[0.07]">
                           {clarifyQuestions.map((q, i) => {
                             const val = clarifyAnswers[q.id] || "";
                             if (!val.trim()) return null;
@@ -2474,7 +2474,7 @@ export function BuildWorkspace({
                             return (
                               <div
                                 key={q.id}
-                                className="border-b border-[#1C1E21]/[0.06] last:border-b-0"
+                                className="border-b border-[#000000]/[0.06] last:border-b-0"
                               >
                                 <button
                                   onClick={() =>
@@ -2482,14 +2482,14 @@ export function BuildWorkspace({
                                   }
                                   className="flex w-full items-center gap-2.5 px-3.5 h-10 text-left transition-colors hover:bg-[#FAFAF9]"
                                 >
-                                  <span className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full bg-[#EDEDEB] text-[10.5px] font-semibold text-[#6B7280]">
+                                  <span className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full bg-[#EDEDEB] text-[10.5px] font-medium text-[#636363]">
                                     {i + 1}
                                   </span>
-                                  <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-[#374151]">
+                                  <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-[#636363]">
                                     {q.prompt}
                                   </span>
                                   <ChevronDown
-                                    className="w-3.5 h-3.5 flex-shrink-0 text-[#9CA3AF] transition-transform"
+                                    className="w-3.5 h-3.5 flex-shrink-0 text-[#959595] transition-transform"
                                     style={{
                                       transform: open
                                         ? "rotate(180deg)"
@@ -2510,7 +2510,7 @@ export function BuildWorkspace({
                                       className="overflow-hidden"
                                     >
                                       <div className="flex items-center justify-between gap-2 px-3.5 pb-3 pl-[42px]">
-                                        <span className="inline-flex items-center h-6 px-2 rounded-md bg-[#FFF1E8] text-[12px] font-medium text-[#C0410C]">
+                                        <span className="inline-flex items-center h-6 px-2 rounded-md bg-[#FFF1E8] text-[12px] font-medium text-[#000000]">
                                           {val}
                                         </span>
                                         {homeClarifyActive && (
@@ -2522,7 +2522,7 @@ export function BuildWorkspace({
                                               );
                                               setClarifyStep(i);
                                             }}
-                                            className="text-[11.5px] font-semibold text-[#6B7280] transition-colors hover:text-[#1C1E21]"
+                                            className="text-[11.5px] font-medium text-[#636363] transition-colors hover:text-[#000000]"
                                           >
                                             Edit
                                           </button>
@@ -2570,14 +2570,14 @@ export function BuildWorkspace({
                       <div key={i} className="flex flex-col gap-3">
                         <div className="flex flex-col items-end">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-[14px] font-medium text-[#1C1E21]">
+                            <span className="text-[14px] font-medium text-[#000000]">
                               You
                             </span>
-                            <span className="w-5 h-5 rounded-full bg-[#1C1E21] text-white text-[10px] font-semibold flex items-center justify-center">
+                            <span className="w-5 h-5 rounded-full bg-[#000000] text-white text-[10px] font-medium flex items-center justify-center">
                               {currentUser}
                             </span>
                           </div>
-                          <div className="inline-block max-w-[80%] bg-[#F3F4F6] rounded-[16px] px-4 py-2.5 text-[14px] text-[#1C1E21] leading-[1.5]">
+                          <div className="inline-block max-w-[80%] bg-[#F0F0F0] rounded-[16px] px-4 py-2.5 text-[14px] text-[#000000] leading-[1.5]">
                             {r}
                           </div>
                         </div>
@@ -2593,21 +2593,21 @@ export function BuildWorkspace({
                                     first reasoning card */}
                                 <div className="flex items-center gap-2 mb-3">
                                   <SenseMark size={20} />
-                                  <span className="text-[14px] font-medium text-[#1C1E21]">
+                                  <span className="text-[14px] font-medium text-[#000000]">
                                     Sense
                                   </span>
                                 </div>
                                 <div
                                   className="rounded-[20px] px-px pb-px"
-                                  style={{ background: "#F1F1EE" }}
+                                  style={{ background: "#F0F0F0" }}
                                 >
                                 <div className="flex items-center px-4 py-2.5">
-                                  <p className="text-[12.5px] text-[#6B7280] leading-tight">
+                                  <p className="text-[12.5px] text-[#636363] leading-tight">
                                     <span
                                       className={
                                         "font-medium " +
                                         (done || reduceMotion
-                                          ? "text-[#374151]"
+                                          ? "text-[#636363]"
                                           : "text-shimmer")
                                       }
                                     >
@@ -2646,7 +2646,7 @@ export function BuildWorkspace({
                                           className="flex items-start gap-2.5"
                                         >
                                           {showIcon && (
-                                            <span className="relative mt-[3px] w-[22px] h-[22px] flex-shrink-0 rounded-full flex items-center justify-center bg-[#1C1E21]">
+                                            <span className="relative mt-[3px] w-[22px] h-[22px] flex-shrink-0 rounded-full flex items-center justify-center bg-[#000000]">
                                               {isActiveRow ? (
                                                 <Loader2
                                                   className={`w-3.5 h-3.5 text-white ${reduceMotion ? "" : "animate-spin"}`}
@@ -2660,15 +2660,15 @@ export function BuildWorkspace({
                                             className={
                                               "text-[13.5px] tracking-[-0.01em] leading-[1.45] " +
                                               (isActiveRow
-                                                ? "text-[#3A3F45]"
-                                                : "text-[#6B7280]")
+                                                ? "text-[#000000]"
+                                                : "text-[#636363]")
                                             }
                                           >
                                             {t}
                                           </span>
                                         </motion.div>
                                         {ti === 0 && (
-                                          <div className="h-px bg-[#1C1E21]/[0.07]" />
+                                          <div className="h-px bg-[#000000]/[0.07]" />
                                         )}
                                         </Fragment>
                                       );
@@ -2684,7 +2684,7 @@ export function BuildWorkspace({
                             {/* summary — Sense recaps what it did, as plain
                                 chat content (no card chrome) */}
                             <div>
-                              <p className="text-[14px] font-medium tracking-[-0.01em] text-[#1C1E21] mb-2">
+                              <p className="text-[14px] font-medium tracking-[-0.01em] text-[#000000] mb-2">
                                 {thoughtSet.summaryTitle}
                               </p>
                               <ul className="flex flex-col gap-1.5">
@@ -2693,8 +2693,8 @@ export function BuildWorkspace({
                                     key={si}
                                     className="flex items-start gap-2.5"
                                   >
-                                    <span className="mt-[8px] w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#FD5000]" />
-                                    <span className="text-[14px] leading-[1.55] text-[#1C1E21]">
+                                    <span className="mt-[8px] w-1.5 h-1.5 flex-shrink-0 rounded-full bg-[#000000]" />
+                                    <span className="text-[14px] leading-[1.55] text-[#000000]">
                                       {s}
                                     </span>
                                   </li>
@@ -2758,13 +2758,13 @@ export function BuildWorkspace({
                             <button
                               key={s}
                               onClick={() => runRefine(s)}
-                              className="group inline-flex items-center gap-1.5 h-7 pl-2.5 pr-3 rounded-full bg-white text-[12.5px] text-[#374151] transition-colors hover:bg-[#FAFAF9]"
+                              className="group inline-flex items-center gap-1.5 h-7 pl-2.5 pr-3 rounded-full bg-white text-[12.5px] text-[#636363] transition-colors hover:bg-[#FAFAF9]"
                               style={{
                                 border: "1px solid rgba(28,30,33,0.1)",
                                 boxShadow: "0 1px 2px rgba(28,30,33,0.04)",
                               }}
                             >
-                              <Sparkles className="w-3 h-3 text-[#9CA3AF] group-hover:text-[#FD5000] transition-colors" />
+                              <Sparkles className="w-3 h-3 text-[#959595] group-hover:text-[#000000] transition-colors" />
                               {s}
                             </button>
                           ))}
@@ -2876,7 +2876,7 @@ export function BuildWorkspace({
                                 : { animationDuration: "0.7s" }),
                             }}
                           />
-                          <span className="relative inline-flex items-center leading-none text-[12px] font-semibold tracking-[-0.01em]">
+                          <span className="relative inline-flex items-center leading-none text-[12px] font-medium tracking-[-0.01em]">
                             <AnimatePresence mode="wait" initial={false}>
                               <motion.span
                                 key={homeClarifyActive ? "waiting" : "thinking"}
@@ -2937,21 +2937,21 @@ export function BuildWorkspace({
                                     <button
                                       onClick={goBackClarify}
                                       title="Previous question"
-                                      className="inline-flex items-center gap-0.5 h-5 -ml-1 pl-1 pr-1.5 rounded-md text-[10.5px] font-semibold uppercase tracking-[0.03em] text-[#6B7280] transition-colors hover:bg-[#F1F1EF] hover:text-[#1C1E21]"
+                                      className="inline-flex items-center gap-0.5 h-5 -ml-1 pl-1 pr-1.5 rounded-md text-[10.5px] font-medium uppercase tracking-[0.03em] text-[#636363] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]"
                                     >
                                       <ArrowLeft className="w-3 h-3" />
                                       Back
                                     </button>
                                   )}
-                                  <span className="text-[10.5px] font-semibold tracking-[0.04em] uppercase text-[#A0A0A0]">
+                                  <span className="text-[10.5px] font-medium tracking-[0.04em] uppercase text-[#959595]">
                                     {clarifyQuestions.length - answeredCount} of{" "}
                                     {clarifyQuestions.length} remaining
                                   </span>
                                 </div>
-                                <p className="mb-3 text-[13.5px] font-medium text-[#1C1E21] leading-snug">
+                                <p className="mb-3 text-[13.5px] font-medium text-[#000000] leading-snug">
                                   {q.prompt}
                                   {q.optional && (
-                                    <span className="text-[#9CA3AF] font-normal">
+                                    <span className="text-[#959595] font-normal">
                                       {" "}
                                       · optional
                                     </span>
@@ -2972,10 +2972,10 @@ export function BuildWorkspace({
                                           style={{
                                             background: active
                                               ? "#FFF1E8"
-                                              : "#F1F1EF",
+                                              : "#F0F0F0",
                                             color: active
-                                              ? "#C0410C"
-                                              : "#374151",
+                                              ? "#000000"
+                                              : "#636363",
                                           }}
                                           onMouseEnter={(e) => {
                                             if (!active)
@@ -2985,7 +2985,7 @@ export function BuildWorkspace({
                                           onMouseLeave={(e) => {
                                             if (!active)
                                               e.currentTarget.style.background =
-                                                "#F1F1EF";
+                                                "#F0F0F0";
                                           }}
                                         >
                                           {active && (
@@ -3001,7 +3001,7 @@ export function BuildWorkspace({
                                   </div>
                                 )}
                               </div>
-                              <div className="mx-4 border-t border-[#1C1E21]/[0.06]" />
+                              <div className="mx-4 border-t border-[#000000]/[0.06]" />
                             </motion.div>
                           );
                         })()}
@@ -3019,12 +3019,12 @@ export function BuildWorkspace({
                       {/* @-mention suggestions — uploaded files */}
                       {showMentions && (
                         <div
-                          className="absolute bottom-full left-3 right-3 mb-2 overflow-hidden rounded-xl border border-[#E6E8EC] bg-white py-1"
+                          className="absolute bottom-full left-3 right-3 mb-2 overflow-hidden rounded-xl border border-[rgba(0,0,0,0.08)] bg-white py-1"
                           style={{
                             boxShadow: "0 12px 28px -16px rgba(28,30,33,0.3)",
                           }}
                         >
-                          <div className="px-3 pt-1 pb-0.5 text-[10.5px] font-semibold uppercase tracking-wider text-[#9CA3AF]">
+                          <div className="px-3 pt-1 pb-0.5 text-[10.5px] font-medium uppercase tracking-wider text-[#959595]">
                             Uploaded files
                           </div>
                           {mentionHits.slice(0, 5).map((f) => (
@@ -3034,10 +3034,10 @@ export function BuildWorkspace({
                                 e.preventDefault();
                                 pickMention(f.name);
                               }}
-                              className="flex w-full items-center gap-2 px-3 h-8 text-left hover:bg-[#F4F4F2] transition-colors"
+                              className="flex w-full items-center gap-2 px-3 h-8 text-left hover:bg-[#F0F0F0] transition-colors"
                             >
-                              <FileText className="w-3.5 h-3.5 flex-shrink-0 text-[#9CA3AF]" />
-                              <span className="text-[12.5px] truncate text-[#1C1E21]">
+                              <FileText className="w-3.5 h-3.5 flex-shrink-0 text-[#959595]" />
+                              <span className="text-[12.5px] truncate text-[#000000]">
                                 {f.name}
                               </span>
                             </button>
@@ -3086,7 +3086,7 @@ export function BuildWorkspace({
                               ? "Type anything to add or change…"
                               : "Sense is working…"
                         }
-                        className="flex-1 bg-transparent text-[14px] text-[#1C1E21] outline-none placeholder:text-[#B0B8C4] pl-1"
+                        className="flex-1 bg-transparent text-[14px] text-[#000000] outline-none placeholder:text-[#959595] pl-1"
                         style={{
                           height: 28,
                           transition:
@@ -3097,7 +3097,7 @@ export function BuildWorkspace({
                       <button
                         type="button"
                         title="Dictate"
-                        className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-[#6B7280] hover:bg-[#EFEFEC] hover:text-[#1C1E21] transition-colors"
+                        className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-[#636363] hover:bg-[#F0F0F0] hover:text-[#000000] transition-colors"
                       >
                         <Mic className="w-4 h-4" />
                       </button>
@@ -3129,9 +3129,9 @@ export function BuildWorkspace({
                             whileTap={{ scale: 0.95 }}
                             onClick={stopProcessing}
                             title="Stop"
-                            className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white bg-[#1C1E21] hover:bg-black transition-colors"
+                            className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white bg-[#000000] hover:bg-black transition-colors"
                           >
-                            <span className="w-2.5 h-2.5 rounded-[3px] bg-white" />
+                            <span className="w-2.5 h-2.5 rounded-[10px] bg-white" />
                           </motion.button>
                         ) : !conversationDone ? (
                           /* clarify — Skip (secondary) + Send (primary label) */
@@ -3146,7 +3146,7 @@ export function BuildWorkspace({
                             <button
                               onClick={advanceClarify}
                               title="Skip this question"
-                              className="h-8 px-3 rounded-full text-[12.5px] font-medium text-[#6B7280] transition-colors hover:bg-[#EFEFEC] hover:text-[#1C1E21]"
+                              className="h-8 px-3 rounded-full text-[12.5px] font-medium text-[#636363] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]"
                             >
                               Skip
                             </button>
@@ -3166,7 +3166,7 @@ export function BuildWorkspace({
                                   ? "Send"
                                   : "Generate"
                               }
-                              className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white bg-[#1C1E21] hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                              className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white bg-[#000000] hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                             >
                               <ArrowRight className="w-4 h-4 -rotate-90" />
                             </button>
@@ -3205,7 +3205,7 @@ export function BuildWorkspace({
                             }
                             disabled={!buildComplete ? false : !refineDraft.trim()}
                             title={!buildComplete ? "Resume build" : "Send"}
-                            className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white bg-[#1C1E21] hover:bg-black disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                            className="w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center text-white bg-[#000000] hover:bg-black disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                           >
                             <ArrowRight className="w-4 h-4 -rotate-90" />
                           </motion.button>
@@ -3253,7 +3253,7 @@ export function BuildWorkspace({
       <div
         className="flex-1 relative overflow-hidden overflow-y-auto scroll-smooth"
         style={{
-          backgroundColor: "#F4F3F0",
+          backgroundColor: "#F8F8F8",
           backgroundImage:
             "radial-gradient(circle at 1px 1px, rgba(28,30,33,0.035) 1px, transparent 0)",
           backgroundSize: "22px 22px",
@@ -3314,13 +3314,13 @@ export function BuildWorkspace({
               }}
             >
               <div>
-                <h1 className="flex items-baseline text-[56px] sm:text-[60px] leading-[0.82] font-semibold tracking-[-0.04em] text-[#111315]">
+                <h1 className="flex items-baseline text-[56px] sm:text-[60px] leading-[0.82] font-medium tracking-[-0.04em] text-[#000000]">
                   <span>Build</span>
-                  <span className="ml-1 text-[48px] sm:text-[52px] leading-none text-[#FD5000] tracking-[-0.08em]">
+                  <span className="ml-1 text-[48px] sm:text-[52px] leading-none text-[#000000] tracking-[-0.08em]">
                     .
                   </span>
                 </h1>
-                <p className="text-[14px] sm:text-[15px] leading-[1.45] tracking-[-0.01em] text-[#5F6670] max-w-[420px] mt-4">
+                <p className="text-[14px] sm:text-[15px] leading-[1.45] tracking-[-0.01em] text-[#636363] max-w-[420px] mt-4">
                   Describe the workflow in plain language. Sense turns it into a
                   native Zuper app — layout, data, actions, and permissions
                   wired in.
@@ -3340,7 +3340,7 @@ export function BuildWorkspace({
                   transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                   className="mb-5"
                 >
-                  <p className="text-[22px] font-semibold tracking-[-0.03em] leading-snug text-[#111315] mb-4">
+                  <p className="text-[22px] font-medium tracking-[-0.03em] leading-snug text-[#000000] mb-4">
                     {CLARIFY.question}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -3349,7 +3349,7 @@ export function BuildWorkspace({
                         key={opt}
                         onClick={() => answerClarify(opt)}
                         whileTap={{ scale: 0.96 }}
-                        className="h-9 px-4 rounded-full text-[13px] font-medium tracking-[-0.01em] transition-all bg-white border border-[#DCDFE4] text-[#374151] hover:border-[#B497CF] hover:text-[#5B3D7A]"
+                        className="h-9 px-4 rounded-full text-[13px] font-medium tracking-[-0.01em] transition-all bg-white border border-[#DCDFE4] text-[#636363] hover:border-[#959595] hover:text-[#636363]"
                         style={{ boxShadow: "0 1px 3px rgba(28,30,33,0.07)" }}
                       >
                         {opt}
@@ -3387,7 +3387,7 @@ export function BuildWorkspace({
                     style={{
                       height: 64,
                       // neutral tray — same gray for every state, no PixelBlast
-                      background: "#F4F4F2",
+                      background: "#F0F0F0",
                       transition:
                         "background-color 320ms cubic-bezier(0.23,1,0.32,1)",
                     }}
@@ -3409,8 +3409,8 @@ export function BuildWorkspace({
                             "w-3 h-3 rounded-full border-2"
                           }
                           style={{
-                            borderColor: "#E2E2DE",
-                            borderTopColor: "#6B7280",
+                            borderColor: "#E8E8E8",
+                            borderTopColor: "#636363",
                             ...(reduceMotion
                               ? {}
                               : { animationDuration: "0.7s" }),
@@ -3418,7 +3418,7 @@ export function BuildWorkspace({
                         />
                         {/* label crossfade — only the changing word swaps */}
                         <span
-                          className="relative inline-flex text-[13px] font-semibold tracking-[-0.02em]"
+                          className="relative inline-flex text-[13px] font-medium tracking-[-0.02em]"
                           style={{ height: 17 }}
                         >
                           <AnimatePresence mode="wait" initial={false}>
@@ -3432,7 +3432,7 @@ export function BuildWorkspace({
                                 ease: [0.23, 1, 0.32, 1],
                               }}
                               className="whitespace-nowrap"
-                              style={{ color: "#1C1E21" }}
+                              style={{ color: "#000000" }}
                             >
                               {homeClarifyActive
                                 ? "Waiting for input"
@@ -3461,7 +3461,7 @@ export function BuildWorkspace({
                   rows={2}
                   readOnly={homeFlowActive || homeClarifyActive}
                   placeholder={activeStarter.template.prompt}
-                  className="w-full resize-none outline-none bg-transparent text-[15px] tracking-normal text-[#111315] placeholder:text-[#B0B8C4] leading-[1.5] px-1 pt-0.5 min-h-[48px]"
+                  className="w-full resize-none outline-none bg-transparent text-[15px] tracking-normal text-[#000000] placeholder:text-[#959595] leading-[1.5] px-1 pt-0.5 min-h-[48px]"
                 />
 
                 {/* Attached template — small square thumbnail chip */}
@@ -3477,26 +3477,26 @@ export function BuildWorkspace({
                           duration: 0.18,
                           ease: [0.22, 1, 0.36, 1],
                         }}
-                        className="mt-3 inline-flex items-center gap-2.5 rounded-2xl border border-[#ECEEF1] bg-[#FAFAFA] py-1.5 pl-1.5 pr-3"
+                        className="mt-3 inline-flex items-center gap-2.5 rounded-2xl border border-[rgba(0,0,0,0.06)] bg-[#FAFAFA] py-1.5 pl-1.5 pr-3"
                       >
-                        <div className="group relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-xl border border-[#ECEEF1]">
+                        <div className="group relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-xl border border-[rgba(0,0,0,0.06)]">
                           <TemplateThumb
                             app={attachedTemplate}
                             className="h-full w-full"
                           />
                         </div>
                         <div className="min-w-0">
-                          <p className="truncate text-[12px] font-semibold tracking-[-0.01em] text-[#1C1E21]">
+                          <p className="truncate text-[12px] font-medium tracking-[-0.01em] text-[#000000]">
                             {attachedTemplate.name}
                           </p>
-                          <p className="truncate text-[11px] text-[#9CA3AF]">
+                          <p className="truncate text-[11px] text-[#959595]">
                             Template · {attachedTemplate.company}
                           </p>
                         </div>
                         <button
                           type="button"
                           onClick={() => setAttachedTemplate(null)}
-                          className="ml-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[#9CA3AF] transition-colors hover:bg-[#ECEEF1] hover:text-[#1C1E21]"
+                          className="ml-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[#959595] transition-colors hover:bg-[rgba(0,0,0,0.06)] hover:text-[#000000]"
                           aria-label="Remove template"
                         >
                           <X className="h-3.5 w-3.5" />
@@ -3533,11 +3533,11 @@ export function BuildWorkspace({
 
                 {/* speech-to-text — always present, even during flow/clarify */}
                 {(homeFlowActive || homeClarifyActive) && (
-                  <div className="flex items-center mt-2 pt-2.5 border-t border-[#F0F0F2]">
+                  <div className="flex items-center mt-2 pt-2.5 border-t border-[rgba(0,0,0,0.05)]">
                     <button
                       type="button"
                       title="Dictate"
-                      className="w-7 h-7 rounded-full border border-[#ECEEF1] flex items-center justify-center text-[#9CA3AF] hover:text-[#1C1E21] hover:border-[#D5D9DE] transition-colors"
+                      className="w-7 h-7 rounded-full border border-[rgba(0,0,0,0.06)] flex items-center justify-center text-[#959595] hover:text-[#000000] hover:border-[rgba(0,0,0,0.18)] transition-colors"
                     >
                       <Mic className="w-4 h-4" />
                     </button>
@@ -3545,11 +3545,11 @@ export function BuildWorkspace({
                 )}
 
                 {!(homeFlowActive || homeClarifyActive) && (
-                  <div className="flex items-center gap-2 mt-2 pt-2.5 border-t border-[#F0F0F2]">
+                  <div className="flex items-center gap-2 mt-2 pt-2.5 border-t border-[rgba(0,0,0,0.05)]">
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       title="Attach files"
-                      className="w-7 h-7 rounded-full border border-[#ECEEF1] flex items-center justify-center text-[#9CA3AF] hover:text-[#1C1E21] hover:border-[#D5D9DE] transition-colors"
+                      className="w-7 h-7 rounded-full border border-[rgba(0,0,0,0.06)] flex items-center justify-center text-[#959595] hover:text-[#000000] hover:border-[rgba(0,0,0,0.18)] transition-colors"
                       disabled={homeFlowActive || homeClarifyActive}
                       style={{
                         opacity: homeFlowActive || homeClarifyActive ? 0.35 : 1,
@@ -3559,7 +3559,7 @@ export function BuildWorkspace({
                       <Plus className="w-4 h-4" />
                     </button>
                     <span
-                      className="ml-auto text-[11px] text-[#C4CAD4] font-mono"
+                      className="ml-auto text-[11px] text-[#D9D9D9] font-mono"
                       style={{
                         opacity: homeFlowActive || homeClarifyActive ? 0 : 1,
                         transition: "opacity 150ms",
@@ -3570,14 +3570,14 @@ export function BuildWorkspace({
                     <button
                       type="button"
                       title="Dictate"
-                      className="w-7 h-7 rounded-full border border-[#ECEEF1] flex items-center justify-center text-[#9CA3AF] hover:text-[#1C1E21] hover:border-[#D5D9DE] transition-colors"
+                      className="w-7 h-7 rounded-full border border-[rgba(0,0,0,0.06)] flex items-center justify-center text-[#959595] hover:text-[#000000] hover:border-[rgba(0,0,0,0.18)] transition-colors"
                     >
                       <Mic className="w-4 h-4" />
                     </button>
                     <BorderGlow
                       animated
                       borderRadius={9999}
-                      backgroundColor="#111315"
+                      backgroundColor="#000000"
                       glowColor="0 0 100"
                       colors={["#ffffff", "#cccccc", "#ffffff"]}
                       glowIntensity={1.2}
@@ -3592,7 +3592,7 @@ export function BuildWorkspace({
                           !(homeFlowActive || homeClarifyActive)
                         }
                         whileTap={{ scale: 0.97 }}
-                        className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-white disabled:opacity-25 disabled:cursor-not-allowed text-[13px] font-semibold tracking-[-0.01em]"
+                        className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-white disabled:opacity-25 disabled:cursor-not-allowed text-[13px] font-medium tracking-[-0.01em]"
                         style={{
                           transition:
                             "transform 160ms cubic-bezier(0.23,1,0.32,1), opacity 200ms",
@@ -3639,7 +3639,7 @@ export function BuildWorkspace({
                           className="group inline-flex max-w-full items-center gap-2 rounded-[12px] border border-[#D4D7DD] bg-transparent py-2 pl-3 pr-3.5 text-left text-[13.25px] leading-none transition-all duration-200 hover:border-[#BFC3CB] hover:bg-white/40 active:scale-[0.99]"
                         >
                           <RowIcon
-                            className="h-4 w-4 flex-shrink-0 text-[#9CA3AF] transition-colors group-hover:text-[#6B7280]"
+                            className="h-4 w-4 flex-shrink-0 text-[#959595] transition-colors group-hover:text-[#636363]"
                             strokeWidth={1.75}
                           />
                           <span className="min-w-0">
@@ -3659,30 +3659,30 @@ export function BuildWorkspace({
               <button
                 type="button"
                 onClick={scrollToAppGallery}
-                className="group relative flex w-full max-w-[420px] items-center gap-4 overflow-hidden rounded-[18px] border border-[#E6E8EC] bg-white pl-5 pr-3 py-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#D4D7DD] active:scale-[0.995]"
+                className="group relative flex w-full max-w-[420px] items-center gap-4 overflow-hidden rounded-[18px] border border-[rgba(0,0,0,0.08)] bg-white pl-5 pr-3 py-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#D4D7DD] active:scale-[0.995]"
                 style={{
                   boxShadow:
                     "0 1px 2px rgba(28,30,33,0.04), 0 12px 30px -22px rgba(28,30,33,0.35)",
                 }}
               >
                 <div className="min-w-0 flex-1">
-                  <p className="text-[16px] font-semibold tracking-[-0.01em] text-[#1C1E21]">
+                  <p className="text-[16px] font-medium tracking-[-0.01em] text-[#000000]">
                     App Gallery
                   </p>
-                  <p className="mt-0.5 text-[13px] leading-snug text-[#9CA3AF]">
+                  <p className="mt-0.5 text-[13px] leading-snug text-[#959595]">
                     Browse &amp; pick a template
                   </p>
                 </div>
 
                 {/* Decorative stacked-card thumbnail on the right */}
                 <div className="relative h-[58px] w-[88px] flex-shrink-0">
-                  <div className="absolute right-3 top-1 h-[50px] w-[64px] -rotate-[10deg] overflow-hidden rounded-[9px] ring-1 ring-black/[0.05] transition-transform duration-200 group-hover:-rotate-[14deg]">
+                  <div className="absolute right-3 top-1 h-[50px] w-[64px] -rotate-[10deg] overflow-hidden rounded-[10px] ring-1 ring-black/[0.05] transition-transform duration-200 group-hover:-rotate-[14deg]">
                     <AppPreviewThumb module="Customers" className="h-full w-full" />
                   </div>
-                  <div className="absolute right-0 top-0 h-[54px] w-[68px] rotate-[4deg] overflow-hidden rounded-[9px] bg-white p-1 shadow-[0_4px_12px_-6px_rgba(28,30,33,0.4)] ring-1 ring-black/[0.05] transition-transform duration-200 group-hover:rotate-[6deg]">
+                  <div className="absolute right-0 top-0 h-[54px] w-[68px] rotate-[4deg] overflow-hidden rounded-[10px] bg-white p-1 shadow-[0_4px_12px_-6px_rgba(28,30,33,0.4)] ring-1 ring-black/[0.05] transition-transform duration-200 group-hover:rotate-[6deg]">
                     <AppPreviewThumb
                       module="Invoices"
-                      className="h-full w-full rounded-[6px]"
+                      className="h-full w-full rounded-[10px]"
                     />
                   </div>
                 </div>
@@ -3717,7 +3717,7 @@ export function BuildWorkspace({
       <div
         className="flex-1 relative overflow-hidden overflow-y-auto scroll-smooth"
         style={{
-          backgroundColor: "#F4F3F0",
+          backgroundColor: "#F8F8F8",
           backgroundImage:
             "radial-gradient(circle at 1px 1px, rgba(28,30,33,0.035) 1px, transparent 0)",
           backgroundSize: "22px 22px",
@@ -3727,10 +3727,10 @@ export function BuildWorkspace({
         <div className="relative mx-auto w-full max-w-[1180px] px-6 pt-[7vh] pb-16 sm:px-10 lg:px-14">
           <div className="mb-6 flex items-center gap-2">
             <Folder
-              className="h-[20px] w-[20px] text-[#6B7280]"
+              className="h-[20px] w-[20px] text-[#636363]"
               strokeWidth={2}
             />
-            <h1 className="text-[22px] font-semibold tracking-[-0.01em] text-[#1C1E21]">
+            <h1 className="text-[22px] font-medium tracking-[-0.01em] text-[#000000]">
               Library
             </h1>
           </div>
@@ -3763,11 +3763,11 @@ export function BuildWorkspace({
                   />
                 </div>
                 {/* footer — title + edited date inside the same card */}
-                <div className="border-t border-[#F4F4F2] px-4 py-3">
-                  <p className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[#1C1E21]">
+                <div className="border-t border-[#F0F0F0] px-4 py-3">
+                  <p className="truncate text-[15px] font-medium tracking-[-0.01em] text-[#000000]">
                     {app.name}
                   </p>
-                  <p className="mt-0.5 text-[12.5px] text-[#9CA3AF]">
+                  <p className="mt-0.5 text-[12.5px] text-[#959595]">
                     Edited {app.updated}
                   </p>
                 </div>
@@ -3809,7 +3809,7 @@ function GenerationOverlay({
   return (
     <div
       className="h-full w-full relative overflow-hidden flex items-center justify-center"
-      style={{ background: "#EEEDEA" }}
+      style={{ background: "#F8F8F8" }}
     >
       {/* dotted halftone backdrop */}
       <div
@@ -3824,7 +3824,7 @@ function GenerationOverlay({
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(120% 90% at 50% 40%, rgba(238,237,234,0) 35%, #EEEDEA 80%)",
+            "radial-gradient(120% 90% at 50% 40%, rgba(238,237,234,0) 35%, #F8F8F8 80%)",
         }}
       />
 
@@ -3886,7 +3886,7 @@ function GenerationOverlay({
                   height: isActive ? 46 : 40,
                   background: isActive
                     ? waiting
-                      ? "#2563EB"
+                      ? "#636363"
                       : phase.accent
                     : phase.tint,
                   transition: reduceMotion ? "none" : `all 500ms ${ease}`,
@@ -3908,7 +3908,7 @@ function GenerationOverlay({
                   fontSize: isActive ? 20 : 16,
                   letterSpacing: "-0.02em",
                   fontWeight: isActive ? 600 : 500,
-                  color: isActive ? "#111315" : isPast ? "#A3A8B0" : "#B6BAC2",
+                  color: isActive ? "#000000" : isPast ? "#959595" : "#959595",
                   transition: reduceMotion ? "none" : `all 400ms ${ease}`,
                 }}
               >
@@ -3922,7 +3922,7 @@ function GenerationOverlay({
                     "ml-auto w-2.5 h-2.5 rounded-full flex-shrink-0 " +
                     (reduceMotion ? "" : "animate-pulse")
                   }
-                  style={{ background: "#2563EB" }}
+                  style={{ background: "#636363" }}
                 />
               ) : isActive && !reduceMotion ? (
                 <span
@@ -3935,7 +3935,7 @@ function GenerationOverlay({
               ) : isPast ? (
                 <CheckCircle2
                   className="ml-auto w-4 h-4 flex-shrink-0"
-                  style={{ color: "#16A34A", opacity: 0.7 }}
+                  style={{ color: "#000000", opacity: 0.7 }}
                 />
               ) : null}
             </div>
@@ -3945,7 +3945,7 @@ function GenerationOverlay({
 
       {/* caption */}
       <div className="absolute bottom-10 left-0 right-0 flex justify-center px-6">
-        <p className="text-[12.5px] tracking-[-0.01em] text-[#6B7280]">
+        <p className="text-[12.5px] tracking-[-0.01em] text-[#636363]">
           {title}
         </p>
       </div>

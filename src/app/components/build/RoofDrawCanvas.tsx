@@ -16,10 +16,10 @@ const trueArea = (f: RoofFacet) => f.planeArea * slopeMultiplier(f.pitch);
 const ptsToStr = (pts: [number, number][]) => pts.map((p) => p.join(',')).join(' ');
 
 const EDGE_STYLE: Record<string, { color: string; dash?: string; label: string }> = {
-  ridge: { color: '#FD5000', label: 'Ridge' },
-  hip: { color: '#2563EB', label: 'Hip' },
+  ridge: { color: '#000000', label: 'Ridge' },
+  hip: { color: '#636363', label: 'Hip' },
   valley: { color: '#7C3AED', dash: '2 2', label: 'Valley' },
-  eave: { color: '#15803D', dash: '3 2', label: 'Eave' },
+  eave: { color: '#000000', dash: '3 2', label: 'Eave' },
 };
 
 export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Props) {
@@ -38,15 +38,15 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
   const pitchPredominant = '6/12';
 
   return (
-    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#F7F7F5' }}>
+    <div className="h-full flex flex-col overflow-hidden" style={{ background: '#F8F8F8' }}>
       {/* toolbar */}
       <div className="flex items-center gap-2.5 px-4 h-14 flex-shrink-0">
-        <span className="w-8 h-8 rounded-2xl bg-white border border-[#ECEEF1] inline-flex items-center justify-center"
+        <span className="w-8 h-8 rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] inline-flex items-center justify-center"
           style={{ color: token.color.brand.primary, boxShadow: '0 10px 24px -22px rgba(28,30,33,0.5)' }}>
           <Ruler className="w-4 h-4" />
         </span>
         <div className="min-w-0">
-          <p className="text-[15px] font-semibold tracking-[-0.015em]" style={{ color: token.color.text.primary }}>Roof draw</p>
+          <p className="text-[15px] font-medium tracking-[-0.015em]" style={{ color: token.color.text.primary }}>Roof draw</p>
           <p className="text-[11px]" style={{ color: token.color.text.muted }}>1428 Oakridge Dr · traced from aerial imagery</p>
         </div>
         <button
@@ -139,7 +139,7 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
                 const [cx, cy] = polygonCentroid(f.points);
                 return (
                   <g key={f.id + '-chip'} style={{ pointerEvents: 'none' }} opacity={sel === f.id ? 1 : 0.85}>
-                    <rect x={cx - 4.2} y={cy - 1.9} width={8.4} height={3.8} rx={1.9} fill="#1C1E21" opacity={0.82} />
+                    <rect x={cx - 4.2} y={cy - 1.9} width={8.4} height={3.8} rx={1.9} fill="#000000" opacity={0.82} />
                     <text x={cx} y={cy + 0.1} textAnchor="middle" dominantBaseline="middle" fontSize="2.2" fontWeight={700} fill="#FFFFFF">{f.pitch}</text>
                   </g>
                 );
@@ -147,11 +147,11 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
             </svg>
 
             {/* scale + legend chips */}
-            <div className="absolute left-3 bottom-3 inline-flex items-center gap-2 h-7 px-2.5 rounded-full bg-white/90 backdrop-blur-sm text-[10.5px] font-medium text-[#374151] border border-[#ECEEF1]">
-              <Maximize2 className="w-3 h-3 text-[#9CA3AF]" /> 1 sq = 100 ft²
+            <div className="absolute left-3 bottom-3 inline-flex items-center gap-2 h-7 px-2.5 rounded-full bg-white/90 backdrop-blur-sm text-[10.5px] font-medium text-[#636363] border border-[rgba(0,0,0,0.06)]">
+              <Maximize2 className="w-3 h-3 text-[#959595]" /> 1 sq = 100 ft²
             </div>
             {showLines && (
-              <div className="absolute right-3 bottom-3 inline-flex items-center gap-3 h-7 px-3 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-medium border border-[#ECEEF1]">
+              <div className="absolute right-3 bottom-3 inline-flex items-center gap-3 h-7 px-3 rounded-full bg-white/90 backdrop-blur-sm text-[10px] font-medium border border-[rgba(0,0,0,0.06)]">
                 {(['ridge', 'hip', 'eave'] as const).map((k) => (
                   <span key={k} className="inline-flex items-center gap-1" style={{ color: EDGE_STYLE[k].color }}>
                     <span className="w-2.5 h-[2px] rounded-full" style={{ background: EDGE_STYLE[k].color }} />
@@ -174,7 +174,7 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
                 <button key={f.id} onClick={() => pick(f.id)}
                   className="w-full flex items-center gap-2.5 px-3 h-11 text-left transition-colors hover:bg-[#FAFAFA]"
                   style={{ borderBottom: `1px solid ${token.color.border.hairline}`, background: sel === f.id ? token.color.brand.subtle : 'transparent' }}>
-                  <span className="h-2.5 w-2.5 rounded-[3px] flex-shrink-0" style={{ background: f.color }} />
+                  <span className="h-2.5 w-2.5 rounded-[10px] flex-shrink-0" style={{ background: f.color }} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[12.5px] font-medium" style={{ color: token.color.text.primary }}>{f.name}</span>
                     <span className="block text-[11px]" style={{ color: token.color.text.muted }}>{f.pitch} · {Math.round(trueArea(f))} ft²</span>
@@ -201,15 +201,15 @@ export function RoofDrawCanvas({ isViewer, selectedFacetId, onSelectFacet }: Pro
 
               <div className="mt-3 mb-1 flex items-center justify-between">
                 <span className="text-[12px]" style={{ color: token.color.text.secondary }}>Waste factor</span>
-                <span className="text-[12px] font-semibold" style={{ color: token.color.text.primary }}>{waste}%</span>
+                <span className="text-[12px] font-medium" style={{ color: token.color.text.primary }}>{waste}%</span>
               </div>
               <input type="range" min={0} max={25} step={5} value={waste} disabled={isViewer}
                 onChange={(e) => setWaste(Number(e.target.value))}
-                className="w-full accent-[#FD5000]" />
+                className="w-full accent-[#000000]" />
 
               <div className="mt-3 pt-3 flex items-center justify-between" style={{ borderTop: `1px solid ${token.color.border.hairline}` }}>
                 <span className="text-[12.5px] font-medium" style={{ color: token.color.text.primary }}>Order qty</span>
-                <span className="text-[18px] font-semibold tracking-[-0.03em]" style={{ color: token.color.brand.primary }}>
+                <span className="text-[18px] font-medium tracking-[-0.03em]" style={{ color: token.color.brand.primary }}>
                   {Math.ceil(orderSquares)} sq
                 </span>
               </div>

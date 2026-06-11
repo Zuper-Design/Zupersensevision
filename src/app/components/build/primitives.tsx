@@ -10,7 +10,7 @@ export function MetricStat({ label, value, delta, status }: { label: string; val
     <div className="rounded-[20px] p-3.5 flex-1 min-w-0" style={{ background: token.color.bg.surface, border: '1px solid #FFFFFF', boxShadow: '0 14px 38px -34px rgba(28,30,33,0.55)' }}>
       <p className="text-[11px] font-medium truncate" style={{ color: token.color.text.muted }}>{label}</p>
       <div className="flex items-baseline gap-2 mt-1.5">
-        <span className="text-[22px] font-semibold tracking-[-0.02em]" style={{ color: accent ? accent.fg : token.color.text.primary }}>{value}</span>
+        <span className="text-[22px] font-medium tracking-[-0.02em]" style={{ color: accent ? accent.fg : token.color.text.primary }}>{value}</span>
         {delta && (
           <span className="inline-flex items-center gap-0.5 text-[11px] font-medium" style={{ color: delta.good ? token.status.success.fg : token.status.danger.fg }}>
             {delta.dir === 'up' ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}{delta.text}
@@ -39,7 +39,7 @@ export function DataTable<T extends { id: string }>({ columns, groups, rowAction
         <div key={g.label}>
           <div className="flex items-center gap-2 px-3 h-7" style={{ background: token.color.bg.muted, borderBottom: `1px solid ${token.color.border.hairline}` }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: g.status ? token.status[g.status].dot : token.color.text.faint }} />
-            <span className="text-[11px] font-semibold" style={{ color: token.color.text.secondary }}>{g.label}</span>
+            <span className="text-[11px] font-medium" style={{ color: token.color.text.secondary }}>{g.label}</span>
             <span className="text-[10.5px] font-mono" style={{ color: token.color.text.faint }}>{g.rows.length}</span>
           </div>
           {g.rows.map(row => (
@@ -135,17 +135,17 @@ export function NoAccessState({ what }: { what: string }) {
 // Binding-broken (§8) — inline, fixable, never silent.
 export function BindingBroken({ field, onRemap, onRemove }: { field: string; onRemap?: () => void; onRemove?: () => void }) {
   return (
-    <div className="rounded-xl p-3" style={{ background: token.status.danger.bg, border: `1px solid #FCA5A5` }}>
+    <div className="rounded-xl p-3" style={{ background: token.status.danger.bg, border: `1px solid #F0B7B9` }}>
       <div className="flex items-center gap-1.5 mb-1">
         <AlertTriangle className="w-3.5 h-3.5" style={{ color: token.status.danger.fg }} />
-        <span className="text-[12px] font-semibold" style={{ color: '#991B1B' }}>Binding broken</span>
+        <span className="text-[12px] font-medium" style={{ color: '#C13539' }}>Binding broken</span>
       </div>
-      <p className="text-[11px] leading-snug mb-2.5" style={{ color: '#B91C1C' }}>
+      <p className="text-[11px] leading-snug mb-2.5" style={{ color: '#E5484D' }}>
         <span className="font-mono">{field}</span> no longer exists in the schema. Data isn't dropped silently — remap or remove.
       </p>
       <div className="flex gap-1.5">
-        <button onClick={onRemap} className="flex-1 h-8 rounded-lg text-[11.5px] font-semibold text-white transition-colors" style={{ background: token.status.danger.fg }}>Remap field</button>
-        <button onClick={onRemove} className="flex-1 h-8 rounded-lg text-[11.5px] font-medium bg-white transition-colors" style={{ color: '#991B1B', border: '1px solid #FCA5A5' }}>Remove</button>
+        <button onClick={onRemap} className="flex-1 h-8 rounded-lg text-[11.5px] font-medium text-white transition-colors" style={{ background: token.status.danger.fg }}>Remap field</button>
+        <button onClick={onRemove} className="flex-1 h-8 rounded-lg text-[11.5px] font-medium bg-white transition-colors" style={{ color: '#C13539', border: '1px solid #F0B7B9' }}>Remove</button>
       </div>
     </div>
   );

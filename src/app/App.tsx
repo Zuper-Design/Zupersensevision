@@ -273,7 +273,7 @@ function AppContent() {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col bg-[#F8F2EC] relative">
+    <div className="w-full h-screen flex flex-col bg-[#F8F8F8] relative">
       <FeatureAnnouncementModal
         open={announcementOpen}
         onClose={closeAnnouncement}
@@ -316,7 +316,7 @@ function AppContent() {
         {/* Content + Ask Sense Panel */}
         <div className="flex-1 flex overflow-hidden pb-2 pr-2 gap-2">
           {/* Thread Sidebar — inside content area */}
-          <div className="flex-1 flex overflow-hidden rounded-xl border border-[#E6E8EC] bg-white relative">
+          <div className="flex-1 flex overflow-hidden rounded-xl border border-[rgba(0,0,0,0.08)] bg-white relative">
             {!demoMode && currentUser === 'RG' && !sidebarOpen && (
               <WhatsNewFloater
                 onOpenAnnouncement={() => setAnnouncementOpen(true)}
@@ -324,7 +324,7 @@ function AppContent() {
               />
             )}
           <div
-            className={`transition-all duration-300 bg-[#FAFAFA] flex-shrink-0 overflow-hidden border-r border-[#E6E8EC] ${
+            className={`transition-all duration-300 bg-[#FAFAFA] flex-shrink-0 overflow-hidden border-r border-[rgba(0,0,0,0.08)] ${
               sidebarOpen && !agentBuilderOpen && (activeView === 'chat' || (activeView === 'build' && !buildPlanning)) ? 'w-[230px]' : 'w-0 border-r-0'
             }`}
           >
@@ -336,18 +336,18 @@ function AppContent() {
                     onClick={() => { setBuildPlanning(false); setActiveView('chat'); if (typeof window !== 'undefined') window.location.hash = ''; }}
                     className="flex items-center gap-2 px-2 py-1.5 -ml-0.5 rounded-md hover:bg-[#EEEEEE] transition-colors active:scale-[0.99]"
                   >
-                    <ArrowLeft className="w-4 h-4 text-[#6B7280]" />
-                    <span className="text-[14px] font-medium text-[#1C1E21]">Go Back</span>
+                    <ArrowLeft className="w-4 h-4 text-[#636363]" />
+                    <span className="text-[14px] font-medium text-[#000000]">Go Back</span>
                   </button>
                 </div>
               ) : (
                 <div className="h-[56px] px-4 flex items-center justify-between flex-shrink-0">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#4B5563]">Sense</span>
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-[#636363]">Sense</span>
                   <button
                     onClick={() => setSidebarOpen(false)}
                     className="p-1.5 rounded-md hover:bg-[#EEEEEE] transition-colors"
                   >
-                    <PanelLeftClose className="w-[18px] h-[18px] text-[#9CA3AF]" />
+                    <PanelLeftClose className="w-[18px] h-[18px] text-[#959595]" />
                   </button>
                 </div>
               )}
@@ -357,29 +357,29 @@ function AppContent() {
               <div className="px-2 pb-0.5 flex flex-col">
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                    <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
-                    <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
+                    <Plus className="w-3.5 h-3.5 text-[#000000]" />
+                    <span className="text-[14px] font-normal text-[#000000]">New thread</span>
                   </button>
                 )}
                 {sidebarSearchOpen ? (
-                  <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-md border border-[#E6E8EC]">
-                    <Search className="w-3.5 h-3.5 text-[#9CA3AF] flex-shrink-0" />
+                  <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-md border border-[rgba(0,0,0,0.08)]">
+                    <Search className="w-3.5 h-3.5 text-[#959595] flex-shrink-0" />
                     <input
                       ref={sidebarSearchRef}
                       autoFocus
                       value={sidebarSearch}
                       onChange={(e) => setSidebarSearch(e.target.value)}
                       placeholder="Search threads..."
-                      className="flex-1 text-[14px] text-[#1C1E21] placeholder:text-[#9CA3AF] bg-transparent outline-none"
+                      className="flex-1 text-[14px] text-[#000000] placeholder:text-[#959595] bg-transparent outline-none"
                     />
-                    <button onClick={() => { setSidebarSearchOpen(false); setSidebarSearch(''); }} className="p-0.5 hover:bg-[#F3F4F6] rounded">
-                      <X className="w-3 h-3 text-[#9CA3AF]" />
+                    <button onClick={() => { setSidebarSearchOpen(false); setSidebarSearch(''); }} className="p-0.5 hover:bg-[#F0F0F0] rounded">
+                      <X className="w-3 h-3 text-[#959595]" />
                     </button>
                   </div>
                 ) : (
                   <button onClick={() => { setSidebarSearchOpen(true); setTimeout(() => sidebarSearchRef.current?.focus(), 50); }} className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                    <Search className="w-3.5 h-3.5 text-[#1C1E21]" />
-                    <span className="text-[14px] font-normal text-[#1C1E21]">Search</span>
+                    <Search className="w-3.5 h-3.5 text-[#000000]" />
+                    <span className="text-[14px] font-normal text-[#000000]">Search</span>
                   </button>
                 )}
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
@@ -388,7 +388,7 @@ function AppContent() {
                     className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors"
                   >
                     <AgentStudioIcon className="w-[15px] h-[15px]" variant={currentUser === 'AU' ? 'orange' : 'purple'} />
-                    <span className="text-[14px] font-normal text-[#1C1E21]">Agent Studio</span>
+                    <span className="text-[14px] font-normal text-[#000000]">Agent Studio</span>
                   </button>
                 )}
                 <button
@@ -398,20 +398,20 @@ function AppContent() {
                   onMouseEnter={(e) => { if (activeView !== 'build') e.currentTarget.style.background = '#EEEEEE'; }}
                   onMouseLeave={(e) => { if (activeView !== 'build') e.currentTarget.style.background = 'transparent'; }}
                 >
-                  <Blocks className="w-3.5 h-3.5" style={{ color: activeView === 'build' ? '#FD5000' : '#1C1E21' }} />
-                  <span className="text-[14px] font-normal" style={{ color: activeView === 'build' ? '#1C1E21' : '#1C1E21', fontWeight: activeView === 'build' ? 500 : 400 }}>Apps</span>
-                  <span className="ml-auto text-[9px] font-semibold px-1 py-px rounded bg-[#FFF4ED] text-[#FD5000]">Beta</span>
+                  <Blocks className="w-3.5 h-3.5" style={{ color: activeView === 'build' ? '#000000' : '#000000' }} />
+                  <span className="text-[14px] font-normal" style={{ color: activeView === 'build' ? '#000000' : '#000000', fontWeight: activeView === 'build' ? 500 : 400 }}>Apps</span>
+                  <span className="ml-auto text-[9px] font-medium px-1 py-px rounded bg-[#F0F0F0] text-[#000000]">Beta</span>
                 </button>
                 {currentUser !== 'MJ' && currentUser !== 'AU' && (
                   <button className="w-full flex items-center gap-2 px-2 py-1.5 text-left hover:bg-[#EEEEEE] rounded-md transition-colors">
-                    <Plus className="w-3.5 h-3.5 text-[#1C1E21]" />
-                    <span className="text-[14px] font-normal text-[#1C1E21]">New thread</span>
+                    <Plus className="w-3.5 h-3.5 text-[#000000]" />
+                    <span className="text-[14px] font-normal text-[#000000]">New thread</span>
                   </button>
                 )}
               </div>
               )}
 
-              {activeView !== 'build' && currentUser !== 'MJ' && currentUser !== 'AU' && <div className="mx-2 my-1.5 border-t border-[#E6E8EC]" />}
+              {activeView !== 'build' && currentUser !== 'MJ' && currentUser !== 'AU' && <div className="mx-2 my-1.5 border-t border-[rgba(0,0,0,0.08)]" />}
 
               {/* sidebar body — swaps between the build menu and the thread list,
                   sliding right → left on the swap (ease-out, under 300ms) */}
@@ -446,14 +446,14 @@ function AppContent() {
                           onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#EEEEEE'; }}
                           onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; }}
                         >
-                          <Icon className="w-4 h-4 flex-shrink-0" style={{ color: active ? '#FD5000' : '#6B7280' }} />
-                          <span className="text-[14px]" style={{ color: '#1C1E21', fontWeight: active ? 500 : 400 }}>{item.label}</span>
+                          <Icon className="w-4 h-4 flex-shrink-0" style={{ color: active ? '#000000' : '#636363' }} />
+                          <span className="text-[14px]" style={{ color: '#000000', fontWeight: active ? 500 : 400 }}>{item.label}</span>
                         </button>
                       );
                     })}
 
-                    <div className="mx-2 my-2 border-t border-[#E6E8EC]" />
-                    <p className="px-2 pt-1 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent Apps</p>
+                    <div className="mx-2 my-2 border-t border-[rgba(0,0,0,0.08)]" />
+                    <p className="px-2 pt-1 pb-2 text-[11px] font-medium text-[#959595] uppercase tracking-[0.06em]">Recent Apps</p>
                     {MY_APPS.map((app) => {
                       const AppIcon = appIconFor(app.icon);
                       return (
@@ -462,8 +462,8 @@ function AppContent() {
                         onClick={() => { setBuildOpenAppId(app.id); setBuildShowApps(false); setActiveView('build'); if (typeof window !== 'undefined') window.location.hash = '#build'; }}
                         className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-[#EEEEEE] active:scale-[0.99]"
                       >
-                        <AppIcon className="w-4 h-4 flex-shrink-0 text-[#6B7280]" />
-                        <span className="text-[14px] text-[#4B5563] truncate">{app.name}</span>
+                        <AppIcon className="w-4 h-4 flex-shrink-0 text-[#636363]" />
+                        <span className="text-[14px] text-[#636363] truncate">{app.name}</span>
                       </button>
                       );
                     })}
@@ -478,7 +478,7 @@ function AppContent() {
                   className="absolute inset-0 overflow-y-auto scrollbar-auto-hide px-2 pb-2"
                 >
                 {(currentUser === 'MJ' || currentUser === 'AU') && (
-                  <p className="px-2 pt-4 pb-2 text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-[0.06em]">Recent threads</p>
+                  <p className="px-2 pt-4 pb-2 text-[11px] font-medium text-[#959595] uppercase tracking-[0.06em]">Recent threads</p>
                 )}
                 {threadHistory
                   .filter((t) => !t.archived)
@@ -499,7 +499,7 @@ function AppContent() {
                         style={{ zIndex: menuOpen || editing ? 60 : 'auto' }}
                       >
                         <button onClick={() => openThread(thread.id)} className="block w-full text-left px-2 py-1.5" style={{ visibility: editing ? 'hidden' : 'visible' }}>
-                          <p className={`text-[14px] truncate ${threadActive ? 'text-[#1C1E21] font-medium' : 'text-[#4B5563] font-normal'}`}>
+                          <p className={`text-[14px] truncate ${threadActive ? 'text-[#000000] font-medium' : 'text-[#636363] font-normal'}`}>
                             {thread.title}
                           </p>
                         </button>
@@ -515,12 +515,12 @@ function AppContent() {
                               if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveRename(); }
                               else if (e.key === 'Escape') setRenameThreadId(null);
                             }}
-                            className="absolute left-0 right-0 top-0 block w-full text-left text-[14px] font-medium text-[#1C1E21] outline-none resize-none overflow-hidden rounded-md"
+                            className="absolute left-0 right-0 top-0 block w-full text-left text-[14px] font-medium text-[#000000] outline-none resize-none overflow-hidden rounded-md"
                             style={{
                               padding: '8px 10px',
                               lineHeight: 1.4,
                               background: '#FFFFFF',
-                              border: '1px solid #1C1E21',
+                              border: '1px solid #000000',
                               boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)',
                               zIndex: 70,
                             }}
@@ -536,7 +536,7 @@ function AppContent() {
                         >
                           <button
                             onClick={(e) => { e.stopPropagation(); setThreadMenuId(menuOpen ? null : thread.id); }}
-                            className="w-6 h-6 rounded-md flex items-center justify-center text-[#6B7280] hover:bg-[#DCDCDC] hover:text-[#1C1E21] active:scale-[0.94]"
+                            className="w-6 h-6 rounded-md flex items-center justify-center text-[#636363] hover:bg-[#DCDCDC] hover:text-[#000000] active:scale-[0.94]"
                             style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1), color 140ms cubic-bezier(0.23,1,0.32,1), transform 140ms cubic-bezier(0.23,1,0.32,1)' }}
                             aria-label="Thread options"
                           >
@@ -545,11 +545,11 @@ function AppContent() {
                           {menuOpen && (
                             <div
                               className="absolute right-0 top-full mt-1 min-w-[160px] rounded-lg py-1"
-                              style={{ background: '#FFFFFF', border: '1px solid #E6E8EC', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)', zIndex: 100 }}
+                              style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.12), 0 2px 6px -2px rgba(0,0,0,0.06)', zIndex: 100 }}
                             >
                               <button
                                 onClick={() => renameThread(thread.id)}
-                                className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-[#1C1E21] text-left hover:bg-[#F3F4F6]"
+                                className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-[#000000] text-left hover:bg-[#F0F0F0]"
                                 style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
                               >
                                 <Pencil className="w-[13px] h-[13px]" strokeWidth={2} />
@@ -557,7 +557,7 @@ function AppContent() {
                               </button>
                               <button
                                 onClick={() => archiveThread(thread.id)}
-                                className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-[#1C1E21] text-left hover:bg-[#F3F4F6]"
+                                className="w-full flex items-center gap-2 px-3 h-9 text-[12.5px] font-medium text-[#000000] text-left hover:bg-[#F0F0F0]"
                                 style={{ transition: 'background-color 140ms cubic-bezier(0.23,1,0.32,1)' }}
                               >
                                 <Archive className="w-[13px] h-[13px]" strokeWidth={2} />
@@ -570,7 +570,7 @@ function AppContent() {
                     );
                   })}
                 {sidebarSearch && threadHistory.filter((t) => !t.archived && t.title.toLowerCase().includes(sidebarSearch.toLowerCase())).length === 0 && (
-                  <p className="text-[12px] text-[#9CA3AF] text-center py-4">No threads found</p>
+                  <p className="text-[12px] text-[#959595] text-center py-4">No threads found</p>
                 )}
                 </motion.div>
                 )}
@@ -589,9 +589,9 @@ function AppContent() {
                         exit={{ opacity: 0, scale: 0.96, y: -4 }}
                         transition={{ duration: 0.13, ease: [0.22, 1, 0.36, 1] }}
                         className="fixed z-[500]"
-                        style={{ top: 48, right: 56, width: 224, background: '#FFFFFF', border: '1px solid #E6E8EC', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.10)', padding: '6px' }}
+                        style={{ top: 48, right: 56, width: 224, background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.10)', padding: '6px' }}
                       >
-                        <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '4px 0 4px 10px' }}>Theme</p>
+                        <p style={{ fontSize: 11, fontWeight: 500, color: '#959595', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '4px 0 4px 10px' }}>Theme</p>
                         {([
                           { key: 'clean', desc: 'Minimal & light' },
                           { key: 'rams',  desc: 'Braun · Less but better' },
@@ -603,27 +603,27 @@ function AppContent() {
                               key={tn}
                               onClick={() => { setThemeName(tn); setSettingsOpen(false); }}
                               className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg transition-colors text-left"
-                              style={{ background: themeName === tn ? '#F3F4F6' : 'transparent' }}
-                              onMouseEnter={e => (e.currentTarget.style.background = '#F3F4F6')}
-                              onMouseLeave={e => (e.currentTarget.style.background = themeName === tn ? '#F3F4F6' : 'transparent')}
+                              style={{ background: themeName === tn ? '#F0F0F0' : 'transparent' }}
+                              onMouseEnter={e => (e.currentTarget.style.background = '#F0F0F0')}
+                              onMouseLeave={e => (e.currentTarget.style.background = themeName === tn ? '#F0F0F0' : 'transparent')}
                             >
                               <div
                                 className="w-7 h-7 flex-shrink-0 flex flex-col gap-0.5 items-center justify-center overflow-hidden"
                                 style={{
                                   background: th.pageBg,
-                                  border: tn === 'rams' ? '1.5px solid #0A0A0A' : tn === 'neon' ? '1px solid #2A2A6A' : '1px solid #E6E8EC',
+                                  border: tn === 'rams' ? '1.5px solid #0A0A0A' : tn === 'neon' ? '1px solid #2A2A6A' : '1px solid rgba(0,0,0,0.08)',
                                   borderRadius: tn === 'rams' ? '0px' : tn === 'neon' ? '3px' : '6px',
                                   boxShadow: tn === 'neon' ? '0 0 6px rgba(123,63,255,0.4)' : 'none',
                                 }}
                               >
-                                <div className="w-4 h-1.5" style={{ background: th.cardBg, border: tn === 'rams' ? '1px solid #0A0A0A' : tn === 'neon' ? '1px solid #7B3FFF' : '1px solid #E6E8EC', borderRadius: tn === 'rams' ? '0' : tn === 'neon' ? '1px' : '2px' }} />
+                                <div className="w-4 h-1.5" style={{ background: th.cardBg, border: tn === 'rams' ? '1px solid #0A0A0A' : tn === 'neon' ? '1px solid #7B3FFF' : '1px solid rgba(0,0,0,0.08)', borderRadius: tn === 'rams' ? '0' : tn === 'neon' ? '1px' : '2px' }} />
                                 <div className="w-4 h-0.5" style={{ background: th.accentColor, opacity: 0.9 }} />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p style={{ fontSize: 12, fontWeight: 600, color: '#1C1E21', margin: 0 }}>{th.name}</p>
-                                <p style={{ fontSize: 10, color: '#6B7280', margin: 0 }}>{desc}</p>
+                                <p style={{ fontSize: 12, fontWeight: 500, color: '#000000', margin: 0 }}>{th.name}</p>
+                                <p style={{ fontSize: 10, color: '#636363', margin: 0 }}>{desc}</p>
                               </div>
-                              {themeName === tn && <Check className="w-3 h-3 ml-auto flex-shrink-0 text-[#1C1E21]" />}
+                              {themeName === tn && <Check className="w-3 h-3 ml-auto flex-shrink-0 text-[#000000]" />}
                             </button>
                           );
                         })}
@@ -632,7 +632,7 @@ function AppContent() {
                   </AnimatePresence>
                 </div>
                 {demoMode ? null : currentUser === 'RG' ? (
-                  <div className="group rounded-xl bg-white border border-[#E6E8EC] overflow-hidden">
+                  <div className="group rounded-xl bg-white border border-[rgba(0,0,0,0.08)] overflow-hidden">
                     {/* Hover-revealed chat illustration header */}
                     <div
                       className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr]"
@@ -655,11 +655,11 @@ function AppContent() {
                           >
                             {/* Window title strip */}
                             <div className="flex items-center justify-between px-2 pt-[7px] pb-1">
-                              <div className="h-[3px] w-[34%] rounded-full bg-[#E6E8EC]" />
+                              <div className="h-[3px] w-[34%] rounded-full bg-[rgba(0,0,0,0.08)]" />
                               <div className="flex items-center gap-[3px]">
-                                <span className="w-[3px] h-[3px] rounded-full bg-[#FD5000]" />
-                                <span className="w-[3px] h-[3px] rounded-full bg-[#FFAB7E]" />
-                                <span className="w-[3px] h-[3px] rounded-full bg-[#FFD9C2]" />
+                                <span className="w-[3px] h-[3px] rounded-full bg-[#000000]" />
+                                <span className="w-[3px] h-[3px] rounded-full bg-[#D9D9D9]" />
+                                <span className="w-[3px] h-[3px] rounded-full bg-[#ECECEC]" />
                               </div>
                             </div>
 
@@ -667,8 +667,8 @@ function AppContent() {
                             <div className="grid grid-cols-2 gap-[5px] px-[6px] pb-[6px]">
                               {/* TL — horizontal bars */}
                               <div className="rounded-md px-[7px] py-[6px] flex flex-col gap-[3px] justify-center" style={{ background: '#FFF6EC', height: 34 }}>
-                                <div className="h-[3px] w-[78%] rounded-full" style={{ background: 'linear-gradient(90deg, #FF8043, #FD5000)' }} />
-                                <div className="h-[3px] w-[55%] rounded-full bg-[#FFAB7E]" />
+                                <div className="h-[3px] w-[78%] rounded-full" style={{ background: 'linear-gradient(90deg, #BFBFBF, #000000)' }} />
+                                <div className="h-[3px] w-[55%] rounded-full bg-[#D9D9D9]" />
                                 <div className="h-[3px] w-[42%] rounded-full bg-[#FFC4A0]" />
                               </div>
 
@@ -677,32 +677,32 @@ function AppContent() {
                                 <div className="relative w-[20px] h-[20px] flex-shrink-0">
                                   <div
                                     className="absolute inset-0 rounded-full"
-                                    style={{ background: 'conic-gradient(#FD5000 0% 55%, #FFAB7E 55% 78%, #FFD9C2 78% 100%)' }}
+                                    style={{ background: 'conic-gradient(#000000 0% 55%, #D9D9D9 55% 78%, #ECECEC 78% 100%)' }}
                                   />
                                   <div className="absolute inset-[3px] rounded-full bg-white" />
                                 </div>
                                 <div className="flex-1 flex flex-col gap-[2px]">
-                                  <div className="h-[2.5px] w-[80%] rounded-full bg-[#FFD9C2]" />
-                                  <div className="h-[2.5px] w-[60%] rounded-full bg-[#FFD9C2]" />
-                                  <div className="h-[2.5px] w-[70%] rounded-full bg-[#FFD9C2]" />
+                                  <div className="h-[2.5px] w-[80%] rounded-full bg-[#ECECEC]" />
+                                  <div className="h-[2.5px] w-[60%] rounded-full bg-[#ECECEC]" />
+                                  <div className="h-[2.5px] w-[70%] rounded-full bg-[#ECECEC]" />
                                 </div>
                               </div>
 
                               {/* BL — vertical bars */}
                               <div className="rounded-md px-[7px] py-[6px] flex items-end gap-[3px] justify-center" style={{ background: '#FFF6EC', height: 34 }}>
                                 <div className="w-[4px] rounded-sm bg-[#FFC4A0]" style={{ height: '40%' }} />
-                                <div className="w-[4px] rounded-sm bg-[#FFAB7E]" style={{ height: '70%' }} />
-                                <div className="w-[4px] rounded-sm" style={{ height: '95%', background: 'linear-gradient(180deg, #FF8043, #FD5000)' }} />
-                                <div className="w-[4px] rounded-sm bg-[#FFAB7E]" style={{ height: '55%' }} />
+                                <div className="w-[4px] rounded-sm bg-[#D9D9D9]" style={{ height: '70%' }} />
+                                <div className="w-[4px] rounded-sm" style={{ height: '95%', background: 'linear-gradient(180deg, #BFBFBF, #000000)' }} />
+                                <div className="w-[4px] rounded-sm bg-[#D9D9D9]" style={{ height: '55%' }} />
                                 <div className="w-[4px] rounded-sm bg-[#FFC4A0]" style={{ height: '75%' }} />
                               </div>
 
                               {/* BR — big metric */}
                               <div className="rounded-md px-[7px] py-[5px] flex flex-col justify-center" style={{ background: '#FFF6EC', height: 34 }}>
-                                <div className="h-[2.5px] w-[60%] rounded-full bg-[#FFD9C2] mb-[3px]" />
+                                <div className="h-[2.5px] w-[60%] rounded-full bg-[#ECECEC] mb-[3px]" />
                                 <div className="flex items-baseline gap-[3px]">
-                                  <span className="text-[11px] font-semibold text-[#1C1E21] leading-none tracking-[-0.02em]">$24.5K</span>
-                                  <span className="text-[8px] font-semibold leading-none" style={{ color: '#10B981' }}>+8%</span>
+                                  <span className="text-[11px] font-medium text-[#000000] leading-none tracking-[-0.02em]">$24.5K</span>
+                                  <span className="text-[8px] font-medium leading-none" style={{ color: '#000000' }}>+8%</span>
                                 </div>
                               </div>
                             </div>
@@ -715,8 +715,8 @@ function AppContent() {
                     <div className="px-2.5 py-2">
                       {/* Inline icon + title */}
                       <div className="flex items-center gap-1.5">
-                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#374151' }} strokeWidth={2} />
-                        <p className="text-[11.5px] font-semibold text-[#1C1E21] leading-none">What's new</p>
+                        <HelpCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#636363' }} strokeWidth={2} />
+                        <p className="text-[11.5px] font-medium text-[#000000] leading-none">What's new</p>
                       </div>
 
                       {/* Expanding subtitle + button on hover */}
@@ -726,21 +726,21 @@ function AppContent() {
                       >
                         <div className="overflow-hidden">
                           <p
-                            className="text-[10.5px] text-[#6B7280] leading-tight mt-1.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
+                            className="text-[10.5px] text-[#636363] leading-tight mt-1.5 opacity-0 group-hover:opacity-100 -translate-y-0.5 group-hover:translate-y-0"
                             style={{ transition: 'opacity 220ms cubic-bezier(0.23,1,0.32,1) 60ms, transform 220ms cubic-bezier(0.23,1,0.32,1) 60ms' }}
                           >
                             Sense is now available with smarter answers and pinned insights.
                           </p>
                           <button
                             onClick={() => setAnnouncementOpen(true)}
-                            className="w-full py-1 rounded-md text-[11px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                            className="w-full py-1 rounded-md text-[11px] font-medium text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] mt-2 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
                             style={{ transition: 'background-color 200ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 100ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                           >
                             View update
                           </button>
                           <button
                             onClick={() => setReleasesOpen(true)}
-                            className="w-full py-1 rounded-md text-[11px] font-semibold text-[#1C1E21] bg-white border border-[#E6E8EC] hover:bg-[#FAFAFA] hover:border-[#D1D5DB] mt-1.5 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
+                            className="w-full py-1 rounded-md text-[11px] font-medium text-[#000000] bg-white border border-[rgba(0,0,0,0.08)] hover:bg-[#FAFAFA] hover:border-[#D1D5DB] mt-1.5 opacity-0 group-hover:opacity-100 active:scale-[0.98]"
                             style={{ transition: 'background-color 180ms cubic-bezier(0.23,1,0.32,1), border-color 180ms cubic-bezier(0.23,1,0.32,1), opacity 220ms cubic-bezier(0.23,1,0.32,1) 140ms, transform 160ms cubic-bezier(0.23,1,0.32,1)' }}
                           >
                             Releases
@@ -750,33 +750,33 @@ function AppContent() {
                     </div>
                   </div>
                 ) : currentUser === 'AU' ? (
-                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
+                  <div className="rounded-xl p-3 bg-white border border-[rgba(0,0,0,0.08)]">
                     <div className="flex items-start gap-2.5">
-                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#FEF3C7' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: '#F0F0F0' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#636363" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                           <line x1="12" y1="9" x2="12" y2="13" />
                           <line x1="12" y1="17" x2="12.01" y2="17" />
                         </svg>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-snug">Subscription ends<br />May 17, 2026</p>
-                        <p className="text-[11px] text-[#6B7280] leading-snug mt-1">Activate to continue using Sense</p>
+                        <p className="text-[12px] font-medium text-[#000000] leading-snug">Subscription ends<br />May 17, 2026</p>
+                        <p className="text-[11px] text-[#636363] leading-snug mt-1">Activate to continue using Sense</p>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-xl p-3 bg-white border border-[#E6E8EC]">
+                  <div className="rounded-xl p-3 bg-white border border-[rgba(0,0,0,0.08)]">
                     <div className="flex items-center gap-2.5 mb-3">
-                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#FEE2E2' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      <div className="w-[26px] h-[26px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#FBEAEA' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E5484D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[12px] font-semibold text-[#1C1E21] leading-tight">Your trial has ended</p>
-                        <p className="text-[11px] text-[#6B7280] leading-tight mt-0.5">Upgrade to keep your insights flowing</p>
+                        <p className="text-[12px] font-medium text-[#000000] leading-tight">Your trial has ended</p>
+                        <p className="text-[11px] text-[#636363] leading-tight mt-0.5">Upgrade to keep your insights flowing</p>
                       </div>
                     </div>
-                    <button onClick={openUpgrade} className="w-full py-1.5 rounded-lg text-[12px] font-semibold text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
+                    <button onClick={openUpgrade} className="w-full py-1.5 rounded-lg text-[12px] font-medium text-white bg-gradient-to-r from-[#221E1F] to-[#6D5F63] hover:from-[#0f0d0e] hover:to-[#4a3d40] transition-colors">
                       Upgrade Sense
                     </button>
                   </div>
@@ -824,21 +824,21 @@ function AppContent() {
               </div>
             ) : purchaseSuccess && currentUser === 'RG' ? (
               <div className="flex-1 overflow-hidden">
-                <div className="w-full h-full overflow-y-auto bg-white rounded-xl border border-[#E6E8EC] flex items-center justify-center p-8">
+                <div className="w-full h-full overflow-y-auto bg-white rounded-xl border border-[rgba(0,0,0,0.08)] flex items-center justify-center p-8">
                   <div className="flex flex-col items-center text-center max-w-[440px]">
                     <div
                       className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
                       style={{ background: 'rgba(16,185,129,0.10)', border: '2px solid rgba(16,185,129,0.25)' }}
                     >
-                      <Check className="w-8 h-8" style={{ color: '#10B981' }} strokeWidth={2.5} />
+                      <Check className="w-8 h-8" style={{ color: '#000000' }} strokeWidth={2.5} />
                     </div>
-                    <h2 style={{ fontSize: 26, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.02em', marginBottom: 10 }}>You're all set!</h2>
-                    <p style={{ fontSize: 14, color: '#6B7280', lineHeight: 1.65, marginBottom: 28 }}>
+                    <h2 style={{ fontSize: 26, fontWeight: 500, color: '#000000', letterSpacing: '-0.02em', marginBottom: 10 }}>You're all set!</h2>
+                    <p style={{ fontSize: 14, color: '#636363', lineHeight: 1.65, marginBottom: 28 }}>
                       Welcome to Sense. Ask anything about your JobNimbus data in plain English.
                     </p>
                     <button
                       onClick={() => setPurchaseSuccess(false)}
-                      className="px-8 py-3 rounded-[12px] text-[14px] font-semibold text-white transition-all duration-150"
+                      className="px-8 py-3 rounded-[12px] text-[14px] font-medium text-white transition-all duration-150"
                       style={{ background: 'linear-gradient(135deg, #221E1F 0%, #0f0d0e 100%)', boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
                       onMouseEnter={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)')}
                       onMouseLeave={e => ((e.currentTarget as HTMLElement).style.transform = 'translateY(0)')}
@@ -926,7 +926,7 @@ function AppContent() {
                 transition={{ type: 'spring', damping: 32, stiffness: 300 }}
                 className="flex-shrink-0 overflow-hidden"
               >
-                <div className="h-full w-[420px] bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #E6E8EC', boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}>
+                <div className="h-full w-[420px] bg-white rounded-xl overflow-hidden" style={{ border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}>
                   <RadarChatPanel title="Ask Sense" onClose={() => setAskSenseOpen(false)} isVp={currentUser === 'VP'} onUpgrade={openUpgrade} />
                 </div>
               </motion.div>
@@ -943,7 +943,7 @@ function AppContent() {
                 transition={{ type: 'spring', damping: 32, stiffness: 300 }}
                 className="flex-shrink-0 overflow-hidden"
               >
-                <div className="h-full w-[420px] bg-white rounded-xl overflow-hidden" style={{ border: '1px solid #E6E8EC', boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}>
+                <div className="h-full w-[420px] bg-white rounded-xl overflow-hidden" style={{ border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}>
                   <RadarChatPanel
                     key={radarCardChatTitle}
                     initialCardTitle={radarCardChatTitle}
@@ -984,24 +984,24 @@ function AppContent() {
             <div className="pointer-events-auto bg-white w-full p-6" style={{ maxWidth: 420, borderRadius: 16, boxShadow: '0 24px 60px rgba(30,34,60,0.22)' }}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#FDECEC' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E5484D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 </div>
-                <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1C1E21', letterSpacing: '-0.01em' }}>Payment failed</h3>
+                <h3 style={{ fontSize: 17, fontWeight: 500, color: '#000000', letterSpacing: '-0.01em' }}>Payment failed</h3>
               </div>
-              <p style={{ fontSize: 13.5, color: '#6B7280', lineHeight: 1.55, marginBottom: 18 }}>
+              <p style={{ fontSize: 13.5, color: '#636363', lineHeight: 1.55, marginBottom: 18 }}>
                 We couldn't process your card. Please update your payment method and try again to keep access to Sense.
               </p>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => { setPaymentFailedModalOpen(false); setPurchaseSuccess(false); setManageSubOpen(true); }}
                   className="flex-1 py-2.5 rounded-xl text-[13px] font-medium"
-                  style={{ background: '#F3F4F6', color: '#374151' }}
+                  style={{ background: '#F0F0F0', color: '#636363' }}
                 >
                   Close
                 </button>
                 <button
                   onClick={() => { setPaymentFailedModalOpen(false); setPurchaseSuccess(false); setCheckoutPageOpen(true); }}
-                  className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold text-white"
+                  className="flex-1 py-2.5 rounded-xl text-[13px] font-medium text-white"
                   style={{ background: 'linear-gradient(135deg, #221E1F, #0f0d0e)' }}
                 >
                   Update payment

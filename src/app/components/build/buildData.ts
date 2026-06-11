@@ -705,16 +705,16 @@ export const ROOF_IMAGE_CREDIT = 'Aerial roof · top view';
 
 export const ROOF_FACETS: RoofFacet[] = [
   // front (top) slope — eave edge → ridge
-  { id: 'f-1', name: 'Front slope', pitch: '6/12', planeArea: 540, color: '#FD5000',
+  { id: 'f-1', name: 'Front slope', pitch: '6/12', planeArea: 540, color: '#000000',
     points: [[20, 20], [80, 20], [60, 46], [40, 40]] },
   // rear (bottom) slope
   { id: 'f-2', name: 'Rear slope', pitch: '6/12', planeArea: 540, color: '#4A90D9',
     points: [[40, 40], [60, 46], [80, 72], [20, 72]] },
   // left hip end (triangle)
-  { id: 'f-3', name: 'Left hip', pitch: '6/12', planeArea: 240, color: '#16A34A',
+  { id: 'f-3', name: 'Left hip', pitch: '6/12', planeArea: 240, color: '#000000',
     points: [[20, 20], [40, 40], [20, 72]] },
   // right hip end (triangle)
-  { id: 'f-4', name: 'Right hip', pitch: '6/12', planeArea: 240, color: '#7C5CE0',
+  { id: 'f-4', name: 'Right hip', pitch: '6/12', planeArea: 240, color: '#636363',
     points: [[80, 20], [80, 72], [60, 46]] },
 ];
 

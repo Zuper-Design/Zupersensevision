@@ -106,24 +106,24 @@ function WorkspaceMenu({ value, onChange }: { value: string; onChange: (v: strin
         ref={btnRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[13.5px] font-medium text-[#1C1E21] transition-colors hover:bg-[#F4F4F2]"
+        className="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-[13.5px] font-medium text-[#000000] transition-colors hover:bg-[#F0F0F0]"
       >
-        <Globe className="h-4 w-4 text-[#9CA3AF]" />
+        <Globe className="h-4 w-4 text-[#959595]" />
         {value}
-        <ChevronDown className="h-3.5 w-3.5 text-[#9CA3AF]" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 160ms ease' }} />
+        <ChevronDown className="h-3.5 w-3.5 text-[#959595]" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 160ms ease' }} />
       </button>
       {open && pos && createPortal(
         <>
           <div className="fixed inset-0 z-[1490]" onClick={() => setOpen(false)} />
           <div
-            className="fixed z-[1500] overflow-hidden rounded-lg border border-[#E6E8EC] bg-white py-1"
+            className="fixed z-[1500] overflow-hidden rounded-lg border border-[rgba(0,0,0,0.08)] bg-white py-1"
             style={{ top: pos.top, left: pos.left, width: pos.width, boxShadow: '0 12px 32px -12px rgba(28,30,33,0.22)' }}
           >
             {WORKSPACES.map((w) => (
               <button key={w} onClick={() => { onChange(w); setOpen(false); }}
-                className="flex w-full items-center justify-between gap-3 px-3 h-9 text-[13.5px] text-[#374151] transition-colors hover:bg-[#F4F4F2] hover:text-[#1C1E21]">
-                <span className="inline-flex items-center gap-2"><Globe className="h-3.5 w-3.5 text-[#9CA3AF]" />{w}</span>
-                {w === value && <Check className="h-3.5 w-3.5 text-[#1C1E21]" />}
+                className="flex w-full items-center justify-between gap-3 px-3 h-9 text-[13.5px] text-[#636363] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]">
+                <span className="inline-flex items-center gap-2"><Globe className="h-3.5 w-3.5 text-[#959595]" />{w}</span>
+                {w === value && <Check className="h-3.5 w-3.5 text-[#000000]" />}
               </button>
             ))}
           </div>
@@ -153,20 +153,20 @@ function RoleMenu({ value, onChange }: { value: Perm; onChange: (v: Perm) => voi
   return (
     <>
       <button ref={btnRef} type="button" onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
-        className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-[12.5px] font-medium text-[#374151] transition-colors hover:bg-[#EFEFEC]">
+        className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-[12.5px] font-medium text-[#636363] transition-colors hover:bg-[#F0F0F0]">
         {value}
-        <ChevronDown className="h-3.5 w-3.5 text-[#9CA3AF]" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 160ms ease' }} />
+        <ChevronDown className="h-3.5 w-3.5 text-[#959595]" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 160ms ease' }} />
       </button>
       {open && pos && createPortal(
         <>
           <div className="fixed inset-0 z-[1490]" onClick={(e) => { e.stopPropagation(); setOpen(false); }} />
-          <div className="fixed z-[1500] overflow-hidden rounded-lg border border-[#E6E8EC] bg-white py-1"
+          <div className="fixed z-[1500] overflow-hidden rounded-lg border border-[rgba(0,0,0,0.08)] bg-white py-1"
             style={{ top: pos.top, left: pos.left, width: W, boxShadow: '0 12px 32px -12px rgba(28,30,33,0.22)' }}>
             {PERMS.map((p) => (
               <button key={p} onClick={(e) => { e.stopPropagation(); onChange(p); setOpen(false); }}
-                className="flex w-full items-center justify-between gap-3 px-3 h-8 text-[13px] text-[#374151] transition-colors hover:bg-[#F4F4F2] hover:text-[#1C1E21]">
+                className="flex w-full items-center justify-between gap-3 px-3 h-8 text-[13px] text-[#636363] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]">
                 {p}
-                {p === value && <Check className="h-3.5 w-3.5 text-[#1C1E21]" />}
+                {p === value && <Check className="h-3.5 w-3.5 text-[#000000]" />}
               </button>
             ))}
           </div>
@@ -248,7 +248,7 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
   return createPortal(
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[450] bg-[#1C1E21]/30" onClick={onClose} />
+        className="fixed inset-0 z-[450] bg-[#000000]/30" onClick={onClose} />
       <motion.div
         initial={{ opacity: 0, scale: 0.97, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.97, y: 8 }}
         transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
@@ -256,15 +256,15 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
         style={{ boxShadow: '0 0 0 1px rgba(28,30,33,0.07), 0 1px 2px rgba(28,30,33,0.04), 0 32px 90px -42px rgba(28,30,33,0.5)' }}
       >
         {/* header */}
-        <div className="flex items-center justify-between border-b border-[#F0F0F2] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-[rgba(0,0,0,0.05)] px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F4F4F2]"><IconCmp className="h-[18px] w-[18px] text-[#1C1E21]" /></span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F0F0F0]"><IconCmp className="h-[18px] w-[18px] text-[#000000]" /></span>
             <div>
-              <h3 className="text-[15.5px] font-semibold leading-tight tracking-[-0.01em] text-[#1C1E21]">Publish this app</h3>
-              <p className="text-[12.5px] text-[#9CA3AF]">Choose who can open and respond to this app</p>
+              <h3 className="text-[15.5px] font-medium leading-tight tracking-[-0.01em] text-[#000000]">Publish this app</h3>
+              <p className="text-[12.5px] text-[#959595]">Choose who can open and respond to this app</p>
             </div>
           </div>
-          <button onClick={onClose} className="flex h-7 w-7 items-center justify-center rounded-md text-[#9CA3AF] transition-colors hover:bg-[#F3F4F6] hover:text-[#1C1E21]">
+          <button onClick={onClose} className="flex h-7 w-7 items-center justify-center rounded-md text-[#959595] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -277,11 +277,11 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                 initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                 className="overflow-hidden">
-                <div className="mb-5 flex items-center gap-2.5 rounded-lg border border-[#E6E8EC] bg-[#F7F7F5] px-3.5 py-3">
-                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-[#1C1E21]" />
+                <div className="mb-5 flex items-center gap-2.5 rounded-lg border border-[rgba(0,0,0,0.08)] bg-[#F8F8F8] px-3.5 py-3">
+                  <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-[#000000]" />
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13.5px] font-semibold text-[#1C1E21]">Published</p>
-                    <p className="text-[12px] text-[#9CA3AF]">Last published on {formatStamp(publishedAt)}</p>
+                    <p className="text-[13.5px] font-medium text-[#000000]">Published</p>
+                    <p className="text-[12px] text-[#959595]">Last published on {formatStamp(publishedAt)}</p>
                   </div>
                 </div>
               </motion.div>
@@ -289,29 +289,29 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
           </AnimatePresence>
 
           {/* Name + icon */}
-          <label className="mb-1.5 block text-[12px] font-semibold text-[#374151]">Name</label>
+          <label className="mb-1.5 block text-[12px] font-medium text-[#636363]">Name</label>
           <div className="mb-4 flex items-center gap-2">
             <button
               ref={iconBtnRef}
               type="button"
               onClick={() => setIconOpen((o) => !o)}
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[#E6E8EC] bg-white transition-colors hover:border-[#C9CDD4]"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[rgba(0,0,0,0.08)] bg-white transition-colors hover:border-[rgba(0,0,0,0.18)]"
               title="Choose an icon"
             >
-              <IconCmp className="h-5 w-5 text-[#1C1E21]" />
+              <IconCmp className="h-5 w-5 text-[#000000]" />
             </button>
             {iconOpen && iconPos && createPortal(
               <>
                 <div className="fixed inset-0 z-[1490]" onClick={() => setIconOpen(false)} />
                 <div
-                  className="fixed z-[1500] grid grid-cols-6 gap-1 rounded-lg border border-[#E6E8EC] bg-white p-2"
+                  className="fixed z-[1500] grid grid-cols-6 gap-1 rounded-lg border border-[rgba(0,0,0,0.08)] bg-white p-2"
                   style={{ top: iconPos.top, left: iconPos.left, boxShadow: '0 12px 32px -12px rgba(28,30,33,0.22)' }}
                 >
                   {APP_ICONS.map(({ key, Icon }) => (
                     <button key={key} type="button" onClick={() => { setIcon(key); setIconOpen(false); }}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-[#F4F4F2]"
-                      style={{ background: key === icon ? '#EFEFEC' : 'transparent' }}>
-                      <Icon className="h-[18px] w-[18px] text-[#1C1E21]" />
+                      className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-[#F0F0F0]"
+                      style={{ background: key === icon ? '#F0F0F0' : 'transparent' }}>
+                      <Icon className="h-[18px] w-[18px] text-[#000000]" />
                     </button>
                   ))}
                 </div>
@@ -321,28 +321,28 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="h-10 w-full rounded-lg border border-[#E6E8EC] bg-white px-3.5 text-[14px] text-[#1C1E21] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#C9CDD4]"
+              className="h-10 w-full rounded-lg border border-[rgba(0,0,0,0.08)] bg-white px-3.5 text-[14px] text-[#000000] outline-none transition-colors placeholder:text-[#959595] focus:border-[rgba(0,0,0,0.18)]"
             />
           </div>
 
           {/* Workspace — breadcrumb: Work / measurement-roof-draw */}
-          <label className="mb-1.5 block text-[12px] font-semibold text-[#374151]">Workspace</label>
-          <div className="mb-5 flex h-10 w-full items-center gap-1 rounded-lg border border-[#E6E8EC] bg-white pl-2 pr-2.5">
+          <label className="mb-1.5 block text-[12px] font-medium text-[#636363]">Workspace</label>
+          <div className="mb-5 flex h-10 w-full items-center gap-1 rounded-lg border border-[rgba(0,0,0,0.08)] bg-white pl-2 pr-2.5">
             <WorkspaceMenu value={workspace} onChange={setWorkspace} />
-            <span className="text-[14px] text-[#C4CAD4]">/</span>
+            <span className="text-[14px] text-[#D9D9D9]">/</span>
             <input
               value={pageSlug}
               onChange={(e) => setSlug(e.target.value.replace(/\s+/g, '-').toLowerCase())}
               spellCheck={false}
-              className="h-7 min-w-0 flex-1 rounded-md bg-transparent px-1.5 text-[13.5px] font-medium tracking-[-0.01em] text-[#1C1E21] outline-none focus:bg-[#F7F7F5]"
+              className="h-7 min-w-0 flex-1 rounded-md bg-transparent px-1.5 text-[13.5px] font-medium tracking-[-0.01em] text-[#000000] outline-none focus:bg-[#F8F8F8]"
             />
           </div>
 
-          <div className="mb-5 border-t border-[#F0F0F2]" />
+          <div className="mb-5 border-t border-[rgba(0,0,0,0.05)]" />
 
           {/* Share this App to — compact pill segmented toggle */}
-          <label className="mb-1.5 block text-[12px] font-semibold text-[#374151]">Share this App to</label>
-          <div className="flex w-full gap-0.5 rounded-full border border-[#E6E8EC] bg-[#F4F4F2] p-0.5">
+          <label className="mb-1.5 block text-[12px] font-medium text-[#636363]">Share this App to</label>
+          <div className="flex w-full gap-0.5 rounded-full border border-[rgba(0,0,0,0.08)] bg-[#F0F0F0] p-0.5">
             {MODES.map(({ v, label, icon: Ic }) => {
               const active = mode === v;
               return (
@@ -350,10 +350,10 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                   className="relative flex h-7 flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-[12.5px] font-medium transition-colors"
                   style={{
                     background: active ? '#FFFFFF' : 'transparent',
-                    color: active ? '#1C1E21' : '#6B7280',
+                    color: active ? '#000000' : '#636363',
                     boxShadow: active ? '0 1px 2px rgba(28,30,33,0.1), 0 0 0 1px rgba(28,30,33,0.04)' : 'none',
                   }}>
-                  <Ic className="h-3.5 w-3.5" style={{ color: active ? '#1C1E21' : '#9CA3AF' }} />
+                  <Ic className="h-3.5 w-3.5" style={{ color: active ? '#000000' : '#959595' }} />
                   {label}
                 </button>
               );
@@ -369,13 +369,13 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                 className="overflow-hidden">
                 <div className="pt-4">
                   <div ref={searchRef} className="relative">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9CA3AF]" />
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#959595]" />
                     <input
                       value={query}
                       onChange={(e) => { setQuery(e.target.value); setSearchOpen(true); }}
                       onFocus={() => setSearchOpen(true)}
                       placeholder="Search people to add"
-                      className="h-10 w-full rounded-lg border border-[#E6E8EC] bg-white pl-9 pr-3 text-[14px] text-[#1C1E21] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-[#C9CDD4]"
+                      className="h-10 w-full rounded-lg border border-[rgba(0,0,0,0.08)] bg-white pl-9 pr-3 text-[14px] text-[#000000] outline-none transition-colors placeholder:text-[#959595] focus:border-[rgba(0,0,0,0.18)]"
                     />
                   </div>
 
@@ -383,29 +383,29 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                   {searchOpen && searchPos && createPortal(
                     <>
                       <div className="fixed inset-0 z-[1490]" onClick={() => setSearchOpen(false)} />
-                      <div className="fixed z-[1500] max-h-[260px] overflow-y-auto rounded-lg border border-[#E6E8EC] bg-white p-1.5"
+                      <div className="fixed z-[1500] max-h-[260px] overflow-y-auto rounded-lg border border-[rgba(0,0,0,0.08)] bg-white p-1.5"
                         style={{ top: searchPos.top, left: searchPos.left, width: searchPos.width, boxShadow: '0 16px 40px -16px rgba(28,30,33,0.28)' }}>
                         {filtered.map((p) => {
                           const checked = selected.has(p.id);
                           return (
                             <button key={p.id} type="button" onClick={() => toggle(p.id)}
-                              className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-[#F4F4F2]">
-                              <span className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[6px] border-2 transition-colors"
-                                style={{ borderColor: checked ? '#1C1E21' : '#D6D9DE', background: checked ? '#1C1E21' : '#FFFFFF' }}>
+                              className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-[#F0F0F0]">
+                              <span className="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[10px] border-2 transition-colors"
+                                style={{ borderColor: checked ? '#000000' : '#D9D9D9', background: checked ? '#000000' : '#FFFFFF' }}>
                                 {checked && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
                               </span>
-                              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-[12px] font-semibold text-[#374151]" style={{ background: p.color }}>
+                              <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-[12px] font-medium text-[#636363]" style={{ background: p.color }}>
                                 {initials(p.name)}
                               </span>
                               <span className="min-w-0 flex-1">
-                                <span className="block truncate text-[13.5px] font-medium tracking-[-0.01em] text-[#1C1E21]">{p.name}</span>
-                                <span className="block truncate text-[12px] text-[#9CA3AF]">{p.email}</span>
+                                <span className="block truncate text-[13.5px] font-medium tracking-[-0.01em] text-[#000000]">{p.name}</span>
+                                <span className="block truncate text-[12px] text-[#959595]">{p.email}</span>
                               </span>
                             </button>
                           );
                         })}
                         {filtered.length === 0 && (
-                          <p className="px-2.5 py-6 text-center text-[12.5px] text-[#9CA3AF]">No people match “{query}”</p>
+                          <p className="px-2.5 py-6 text-center text-[12.5px] text-[#959595]">No people match “{query}”</p>
                         )}
                       </div>
                     </>,
@@ -415,22 +415,22 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
                   {/* persistent list of who's selected + their permission */}
                   {added.length > 0 && (
                     <>
-                      <p className="mb-1 mt-4 text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF]">
+                      <p className="mb-1 mt-4 text-[11px] font-medium uppercase tracking-wider text-[#959595]">
                         Selected users · {added.length}
                       </p>
-                      <div className="rounded-lg border border-[#E6E8EC]">
+                      <div className="rounded-lg border border-[rgba(0,0,0,0.08)]">
                         {added.map((p, i) => (
-                          <div key={p.id} className={`flex items-center gap-3 px-2.5 py-2 ${i > 0 ? 'border-t border-[#F0F0F2]' : ''}`}>
-                            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[11.5px] font-semibold text-[#374151]" style={{ background: p.color }}>
+                          <div key={p.id} className={`flex items-center gap-3 px-2.5 py-2 ${i > 0 ? 'border-t border-[rgba(0,0,0,0.05)]' : ''}`}>
+                            <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[11.5px] font-medium text-[#636363]" style={{ background: p.color }}>
                               {initials(p.name)}
                             </span>
                             <span className="min-w-0 flex-1">
-                              <span className="block truncate text-[13.5px] font-medium tracking-[-0.01em] text-[#1C1E21]">{p.name}</span>
-                              <span className="block truncate text-[12px] text-[#9CA3AF]">{p.email}</span>
+                              <span className="block truncate text-[13.5px] font-medium tracking-[-0.01em] text-[#000000]">{p.name}</span>
+                              <span className="block truncate text-[12px] text-[#959595]">{p.email}</span>
                             </span>
                             <RoleMenu value={roles[p.id] ?? 'Viewer'} onChange={(v) => setRole(p.id, v)} />
                             <button onClick={() => toggle(p.id)} title="Remove"
-                              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-[#C4CAD4] transition-colors hover:bg-[#F3F4F6] hover:text-[#1C1E21]">
+                              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md text-[#D9D9D9] transition-colors hover:bg-[#F0F0F0] hover:text-[#000000]">
                               <X className="h-3.5 w-3.5" />
                             </button>
                           </div>
@@ -445,13 +445,13 @@ export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPubli
         </div>
 
         {/* footer — publish at bottom-right */}
-        <div className="flex items-center justify-end gap-2 border-t border-[#F0F0F2] px-6 py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-[rgba(0,0,0,0.05)] px-6 py-4">
           <button onClick={onClose}
-            className="h-9 rounded-lg border border-[#E6E8EC] bg-white px-4 text-[13px] font-medium text-[#374151] transition-colors hover:bg-[#F4F4F2]">
+            className="h-9 rounded-lg border border-[rgba(0,0,0,0.08)] bg-white px-4 text-[13px] font-medium text-[#636363] transition-colors hover:bg-[#F0F0F0]">
             Cancel
           </button>
           <button onClick={submit}
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#1C1E21] px-5 text-[13px] font-semibold text-white transition-colors hover:bg-[#2C2F33]">
+            className="inline-flex h-9 items-center gap-2 rounded-lg bg-[#000000] px-5 text-[13px] font-medium text-white transition-colors hover:bg-[#2C2F33]">
             {publishedAt ? <CheckCircle2 className="h-4 w-4" /> : <Globe className="h-4 w-4" />}
             {ctaLabel}
           </button>
