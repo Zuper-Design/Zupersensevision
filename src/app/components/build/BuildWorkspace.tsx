@@ -50,6 +50,7 @@ import { AuditPanel } from "./AuditPanel";
 import { AutomationPanel } from "./AutomationPanel";
 import { TemplateThumb, AppPreviewThumb, PublicAppGallery } from "./PublicAppGallery";
 import { ReasoningCard } from "./ReasoningCard";
+import PrismGlow from "./PrismGlow";
 import { EditProvider, type SelectedElement } from "./EditContext";
 import { SenseLogo } from "../SenseLogo";
 import BorderGlow from "./BorderGlow";
@@ -225,43 +226,16 @@ const GEN_TITLE: Record<Archetype, string> = {
 
 // Full-screen generation overlay — vertically scrolling build phases.
 // Each phase advances on a timer; the active one is centered + highlighted.
+// Each phase rides one stop of the prism spectrum — the gradient is the
+// signature of AI activity (DESIGN.md §4); the final phase resolves to the
+// full spectrum as the app materializes.
 const GEN_PHASES = [
-  {
-    icon: LayoutGrid,
-    label: "Reading your schema",
-    accent: "#C08552",
-    tint: "#F3E8DC",
-  },
-  {
-    icon: Database,
-    label: "Querying jobs & quotes",
-    accent: "#4A90D9",
-    tint: "#E1ECF8",
-  },
-  {
-    icon: Workflow,
-    label: "Extracting tables",
-    accent: "#000000",
-    tint: "#FFE8DC",
-  },
-  {
-    icon: Wand2,
-    label: "Wiring live data",
-    accent: "#636363",
-    tint: "#F0F0F0",
-  },
-  {
-    icon: ShieldCheck,
-    label: "Applying permissions",
-    accent: "#5B9BD5",
-    tint: "#E3EFF9",
-  },
-  {
-    icon: CheckCircle2,
-    label: "Finishing the final polish",
-    accent: "#7DAE6B",
-    tint: "#EAF3E4",
-  },
+  { icon: LayoutGrid,   label: "Reading your schema",        accent: "var(--prism-pink)" },
+  { icon: Database,     label: "Querying jobs & quotes",     accent: "var(--prism-red)" },
+  { icon: Workflow,     label: "Extracting tables",          accent: "var(--prism-amber)" },
+  { icon: Wand2,        label: "Wiring live data",           accent: "var(--prism-lavender)" },
+  { icon: ShieldCheck,  label: "Applying permissions",       accent: "var(--prism-blue)" },
+  { icon: CheckCircle2, label: "Finishing the final polish", accent: "var(--gradient-prism)" },
 ] as const;
 
 // Editorial starters — `phrase` uses *asterisks* to mark the words that carry
@@ -1265,6 +1239,20 @@ export function BuildWorkspace({
     setTimeout(() => taRef.current?.focus(), 60);
   };
   const refineTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // one-shot materialization reveal — fires when a build lands or a refine
+  // finishes, driving the prism sweep + blur-to-sharp over the canvas
+  const [materializeNonce, setMaterializeNonce] = useState(0);
+  const prevRefiningRef = useRef(false);
+  useEffect(() => {
+    if (prevRefiningRef.current && !isRefining) setMaterializeNonce((n) => n + 1);
+    prevRefiningRef.current = isRefining;
+  }, [isRefining]);
+  const prevBuildCompleteRef = useRef(buildComplete);
+  useEffect(() => {
+    if (!prevBuildCompleteRef.current && buildComplete)
+      setMaterializeNonce((n) => n + 1);
+    prevBuildCompleteRef.current = buildComplete;
+  }, [buildComplete]);
   // resume a build that was stopped mid-flow (canvas not finished yet)
   const resumeBuild = () => setStage("generating");
   // run a refine for a given prompt — used by the composer (sendRefine) and by
@@ -2003,8 +1991,8 @@ export function BuildWorkspace({
               </EditProvider>
             )}
 
-            {/* refine loading — 50% white scrim over the current preview with a
-                single stack card floating on top while Sense applies a change */}
+            {/* refine materialization — frosted scrim; a single card floats
+                over the app while the change refracts in (no spinner) */}
             <AnimatePresence>
               {isRefining && !isViewer && (
                 <motion.div
@@ -2014,44 +2002,97 @@ export function BuildWorkspace({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
                   className="absolute inset-0 z-30 flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.8)" }}
+                  style={{
+                    background: "rgba(255,255,255,0.72)",
+                    backdropFilter: "blur(10px)",
+                    WebkitBackdropFilter: "blur(10px)",
+                  }}
                 >
                   <motion.div
                     initial={
                       reduceMotion
                         ? { opacity: 1 }
-                        : { opacity: 0, y: 10, scale: 0.98 }
+                        : { opacity: 0, y: 14, scale: 0.96 }
                     }
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
-                    className="flex items-center gap-3.5 rounded-[20px] bg-white"
+                    transition={
+                      reduceMotion
+                        ? { duration: 0.2 }
+                        : { type: "spring", stiffness: 300, damping: 24 }
+                    }
+                    className="relative flex items-center gap-3.5 overflow-hidden rounded-[20px]"
                     style={{
                       width: 360,
                       height: 80,
                       paddingLeft: 16,
                       paddingRight: 18,
+                      background: "rgba(255,255,255,0.9)",
+                      backdropFilter: "blur(24px)",
+                      WebkitBackdropFilter: "blur(24px)",
                       boxShadow:
-                        "0 3px 6px rgba(0,0,0,0.08), 0 20px 44px -16px rgba(0,0,0,0.3), 0 40px 80px -32px rgba(0,0,0,0.35)",
+                        "0 2px 8px rgba(0,0,0,0.08), 0 32px 64px -24px rgba(0,0,0,0.3)",
                     }}
                   >
+                    {/* the spectrum breathes beneath the frosted card */}
+                    <PrismGlow intensity={0.5} blur={30} animate={!reduceMotion} />
                     <div
-                      className="rounded-[13px] flex items-center justify-center flex-shrink-0"
-                      style={{ width: 46, height: 46, background: "#000000" }}
+                      className="relative rounded-[13px] flex items-center justify-center flex-shrink-0"
+                      style={{ width: 46, height: 46, background: "var(--gradient-prism)" }}
                     >
                       <Sparkles className="w-6 h-6 text-white" />
                     </div>
-                    <span className="text-[16px] font-medium tracking-[-0.01em] text-[#000000]">
-                      Applying changes…
+                    <span
+                      className={
+                        "relative text-[16px] font-medium tracking-[-0.01em] " +
+                        (reduceMotion ? "text-[#000000]" : "prism-text-shimmer")
+                      }
+                    >
+                      Materializing changes…
                     </span>
-                    {!reduceMotion && (
-                      <span
-                        className="ml-auto w-5 h-5 rounded-full border-2 flex-shrink-0 animate-spin"
-                        style={{
-                          borderColor: "rgba(0,0,0,0.1)",
-                          borderTopColor: "#000000",
-                        }}
-                      />
-                    )}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            {/* materialization reveal — one-shot prism sweep + blur-to-sharp
+                as the (re)built app refracts into existence */}
+            <AnimatePresence>
+              {materializeNonce > 0 && !reduceMotion && (
+                <motion.div
+                  key={`materialize-${materializeNonce}`}
+                  className="absolute inset-0 z-40 pointer-events-none overflow-hidden"
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 0 }}
+                  transition={{ delay: 0.7, duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                >
+                  {/* frosted veil fades — content sharpens into focus */}
+                  <motion.div
+                    className="absolute inset-0"
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 0 }}
+                    transition={{ duration: 0.75, ease: [0.23, 1, 0.32, 1] }}
+                    style={{
+                      backdropFilter: "blur(14px)",
+                      WebkitBackdropFilter: "blur(14px)",
+                      background: "rgba(255,255,255,0.35)",
+                    }}
+                  />
+                  {/* the prism band passes through once */}
+                  <motion.div
+                    className="absolute inset-y-0"
+                    initial={{ x: "-80%" }}
+                    animate={{ x: "180%" }}
+                    transition={{ duration: 0.85, ease: [0.23, 1, 0.32, 1] }}
+                    style={{ width: "55%" }}
+                  >
+                    <div
+                      className="h-full w-full"
+                      style={{
+                        background:
+                          "linear-gradient(100deg, transparent 0%, rgba(246,160,228,0.22) 18%, rgba(255,122,107,0.22) 34%, rgba(255,197,107,0.22) 50%, rgba(192,175,255,0.22) 66%, rgba(111,168,255,0.22) 82%, transparent 100%)",
+                        filter: "blur(16px)",
+                        transform: "skewX(-10deg)",
+                      }}
+                    />
                   </motion.div>
                 </motion.div>
               )}
@@ -2608,7 +2649,7 @@ export function BuildWorkspace({
                                         "font-medium " +
                                         (done || reduceMotion
                                           ? "text-[#636363]"
-                                          : "text-shimmer")
+                                          : "prism-text-shimmer")
                                       }
                                     >
                                       {done
@@ -2817,6 +2858,15 @@ export function BuildWorkspace({
                           boxShadow: frameTheme.dropShadow,
                         }}
                       >
+                        {/* spectrum breathes in the frame gutter while the
+                            agent works; waiting (user's turn) stays calm */}
+                        {!homeClarifyActive && (
+                          <PrismGlow
+                            intensity={0.5}
+                            blur={22}
+                            animate={!reduceMotion}
+                          />
+                        )}
                         <div
                           className="absolute inset-0 pointer-events-none"
                           style={{
@@ -2887,8 +2937,17 @@ export function BuildWorkspace({
                                   duration: 0.2,
                                   ease: [0.23, 1, 0.32, 1],
                                 }}
-                                className="whitespace-nowrap leading-none"
-                                style={{ color: frameTheme.label }}
+                                className={
+                                  "whitespace-nowrap leading-none " +
+                                  (!homeClarifyActive && !reduceMotion
+                                    ? "prism-text-shimmer"
+                                    : "")
+                                }
+                                style={
+                                  homeClarifyActive || reduceMotion
+                                    ? { color: frameTheme.label }
+                                    : undefined
+                                }
                               >
                                 {homeClarifyActive
                                   ? "Waiting for input"
@@ -3386,36 +3445,43 @@ export function BuildWorkspace({
                     className="relative overflow-hidden w-full"
                     style={{
                       height: 64,
-                      // neutral tray — same gray for every state, no PixelBlast
-                      background: "#F0F0F0",
+                      // waiting = the user's turn (calm gray); thinking = the
+                      // prism breathes beneath the frosted tray
+                      background: homeClarifyActive ? "#F0F0F0" : "#FCFCFC",
                       transition:
                         "background-color 320ms cubic-bezier(0.23,1,0.32,1)",
                     }}
                   >
+                    {!homeClarifyActive && (
+                      <PrismGlow
+                        intensity={0.55}
+                        blur={26}
+                        animate={!reduceMotion}
+                      />
+                    )}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div
-                        className="inline-flex items-center gap-2 h-8 px-3.5 rounded-full"
+                        className="glass-soft inline-flex items-center gap-2 h-8 px-3.5 rounded-full"
                         style={{
-                          background: "#FFFFFF",
-                          border: "1px solid rgba(0,0,0,0.12)",
                           boxShadow:
                             "0 1px 3px rgba(0,0,0,0.08), 0 4px 16px -6px rgba(0,0,0,0.18)",
                         }}
                       >
-                        {/* spinner — neutral gray */}
-                        <span
-                          className={
-                            (reduceMotion ? "" : "animate-spin ") +
-                            "w-3 h-3 rounded-full border-2"
-                          }
-                          style={{
-                            borderColor: "#E8E8E8",
-                            borderTopColor: "#636363",
-                            ...(reduceMotion
-                              ? {}
-                              : { animationDuration: "0.7s" }),
-                          }}
-                        />
+                        {homeClarifyActive ? (
+                          /* user's turn — quiet pulse dot */
+                          <span
+                            className={
+                              (reduceMotion ? "" : "animate-pulse ") +
+                              "w-2 h-2 rounded-full bg-[#959595]"
+                            }
+                          />
+                        ) : (
+                          /* AI working — spectrum bar, not a spinner */
+                          <span
+                            className="prism-sweep rounded-full"
+                            style={{ width: 22, height: 5 }}
+                          />
+                        )}
                         {/* label crossfade — only the changing word swaps */}
                         <span
                           className="relative inline-flex text-[13px] font-medium tracking-[-0.02em]"
@@ -3431,8 +3497,17 @@ export function BuildWorkspace({
                                 duration: 0.2,
                                 ease: [0.23, 1, 0.32, 1],
                               }}
-                              className="whitespace-nowrap"
-                              style={{ color: "#000000" }}
+                              className={
+                                "whitespace-nowrap " +
+                                (!homeClarifyActive && !reduceMotion
+                                  ? "prism-text-shimmer"
+                                  : "")
+                              }
+                              style={
+                                homeClarifyActive || reduceMotion
+                                  ? { color: "#000000" }
+                                  : undefined
+                              }
                             >
                               {homeClarifyActive
                                 ? "Waiting for input"
@@ -3820,6 +3895,11 @@ function GenerationOverlay({
           backgroundSize: "16px 16px",
         }}
       />
+      {/* prism field — the interface breathes while the agent works; absent
+          while waiting on the user (waiting is the user's turn, not AI work) */}
+      {!waiting && (
+        <PrismGlow intensity={0.4} blur={72} animate={!reduceMotion} />
+      )}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -3865,22 +3945,27 @@ function GenerationOverlay({
                 transformOrigin: "center center",
                 zIndex: isActive ? 50 : 40 - abs,
                 opacity,
-                background: isActive ? "#FFFFFF" : "rgba(255,255,255,0.66)",
+                background: isActive ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.6)",
                 boxShadow: isActive
                   ? "0 2px 4px rgba(0,0,0,0.05), 0 40px 80px -40px rgba(0,0,0,0.45)"
                   : "0 1px 2px rgba(0,0,0,0.03)",
-                backdropFilter: isActive ? "none" : "blur(2px)",
+                backdropFilter: isActive ? "blur(24px)" : "blur(2px)",
+                WebkitBackdropFilter: isActive ? "blur(24px)" : "blur(2px)",
                 transition: reduceMotion
                   ? "none"
                   : `transform 600ms ${ease}, opacity 600ms ${ease}, height 500ms ${ease}, background 500ms ${ease}, box-shadow 500ms ${ease}`,
               }}
             >
+              {/* refraction — a prism band drifts across the active card */}
+              {isActive && !waiting && !reduceMotion && (
+                <span
+                  className="prism-sweep absolute inset-0 pointer-events-none"
+                  style={{ borderRadius: 20, opacity: 0.12 }}
+                />
+              )}
               {/* module icon tile */}
               <div
-                className={
-                  "rounded-[13px] flex items-center justify-center flex-shrink-0 " +
-                  (isActive && !reduceMotion ? "doc-glyph" : "")
-                }
+                className="rounded-[13px] flex items-center justify-center flex-shrink-0"
                 style={{
                   width: isActive ? 46 : 40,
                   height: isActive ? 46 : 40,
@@ -3888,7 +3973,7 @@ function GenerationOverlay({
                     ? waiting
                       ? "#636363"
                       : phase.accent
-                    : phase.tint,
+                    : "#F0F0F0",
                   transition: reduceMotion ? "none" : `all 500ms ${ease}`,
                 }}
               >
@@ -3896,7 +3981,7 @@ function GenerationOverlay({
                   style={{
                     width: isActive ? 24 : 19,
                     height: isActive ? 24 : 19,
-                    color: isActive ? "#FFFFFF" : phase.accent,
+                    color: isActive ? "#FFFFFF" : "#959595",
                   }}
                 />
               </div>
@@ -3907,7 +3992,7 @@ function GenerationOverlay({
                 style={{
                   fontSize: isActive ? 20 : 16,
                   letterSpacing: "-0.02em",
-                  fontWeight: isActive ? 600 : 500,
+                  fontWeight: isActive ? 500 : 400,
                   color: isActive ? "#000000" : isPast ? "#959595" : "#959595",
                   transition: reduceMotion ? "none" : `all 400ms ${ease}`,
                 }}
@@ -3924,13 +4009,11 @@ function GenerationOverlay({
                   }
                   style={{ background: "#636363" }}
                 />
-              ) : isActive && !reduceMotion ? (
+              ) : isActive ? (
+                /* no spinner — the spectrum itself is the progress signal */
                 <span
-                  className="ml-auto w-5 h-5 rounded-full border-2 flex-shrink-0 animate-spin"
-                  style={{
-                    borderColor: "rgba(0,0,0,0.1)",
-                    borderTopColor: phase.accent,
-                  }}
+                  className="prism-sweep ml-auto flex-shrink-0 rounded-full"
+                  style={{ width: 28, height: 6 }}
                 />
               ) : isPast ? (
                 <CheckCircle2
@@ -3943,9 +4026,14 @@ function GenerationOverlay({
         })}
       </div>
 
-      {/* caption */}
+      {/* caption — streams with the spectrum while the agent works */}
       <div className="absolute bottom-10 left-0 right-0 flex justify-center px-6">
-        <p className="text-[12.5px] tracking-[-0.01em] text-[#636363]">
+        <p
+          className={
+            "text-[12.5px] tracking-[-0.01em] " +
+            (!waiting && !reduceMotion ? "prism-text-shimmer" : "text-[#636363]")
+          }
+        >
           {title}
         </p>
       </div>

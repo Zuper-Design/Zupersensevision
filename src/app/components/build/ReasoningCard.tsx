@@ -61,7 +61,7 @@ export function ReasoningCard({
               "font-medium " +
               (checkingDone || reduceMotion
                 ? "text-[#636363]"
-                : "text-shimmer")
+                : "prism-text-shimmer")
             }
           >
             {checkingDone ? "Gathered context" : "Gathering context"}
