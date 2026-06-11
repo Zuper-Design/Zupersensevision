@@ -1852,11 +1852,18 @@ export function BuildWorkspace({
             // brief crossfade when entering/leaving a version preview so the
             // pane reads as a deliberate state change, not an instant swap
             key={previewVersion === null ? "current" : `preview-${previewVersion}`}
+            // opening from the Library zooms the card into the canvas as one
+            // continuous shared element (springy, Apple-y — DESIGN.md §6)
+            layoutId={openedApp ? `app-zoom-${openedApp.id}` : undefined}
             initial={
               reduceMotion ? { opacity: 1 } : { opacity: 0.4, filter: "blur(6px)" }
             }
             animate={{ opacity: 1, filter: "blur(0px)" }}
-            transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
+            transition={
+              openedApp && !reduceMotion
+                ? { type: "spring", stiffness: 300, damping: 26, opacity: { duration: 0.25 }, filter: { duration: 0.25 } }
+                : { duration: 0.28, ease: [0.23, 1, 0.32, 1] }
+            }
             className="relative h-full overflow-hidden rounded-[20px] bg-white"
             style={{
               border: "1px solid rgba(0,0,0,0.07)",
@@ -3812,11 +3819,15 @@ export function BuildWorkspace({
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {MY_APPS.map((app) => (
-              <button
+              <motion.button
                 key={app.id}
                 type="button"
                 onClick={() => openApp(app)}
-                className="group overflow-hidden rounded-[18px] bg-white text-left transition-all duration-200 hover:-translate-y-1"
+                layoutId={`app-zoom-${app.id}`}
+                whileHover={{ y: -5 }}
+                whileTap={{ scale: 0.985 }}
+                transition={{ type: "spring", stiffness: 300, damping: 24 }}
+                className="group overflow-hidden rounded-[18px] bg-white text-left"
                 style={{
                   boxShadow:
                     "0 0 0 1px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04), 0 10px 30px -20px rgba(0,0,0,0.25)",
@@ -3846,7 +3857,7 @@ export function BuildWorkspace({
                     Edited {app.updated}
                   </p>
                 </div>
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { PUBLIC_APPS, type PublicApp } from "./buildData";
 import { token } from "./tokens";
+import { springs, easings } from "./motion";
 
 interface Props {
   // Called when the user clicks "Use as template" — prefills the composer
@@ -225,16 +226,33 @@ export function AppPreviewThumb({
 function PublicAppCard({ app, onOpen }: { app: PublicApp; onOpen: () => void }) {
   const t = themeFor(app.category);
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="group overflow-hidden rounded-2xl border border-[rgba(0,0,0,0.08)] bg-white text-left transition-all duration-200 hover:-translate-y-1"
-      style={{ boxShadow: token.elev[1] }}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = token.elev[2])}
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = token.elev[1])}
-    >
-      {/* Thumbnail — gradient field with a floating glassy card */}
+    <div className="group relative">
+      {/* prism under-glow — the gallery floats on soft spectrum light;
+          brightens as the card lifts */}
       <div
+        aria-hidden
+        className="absolute -inset-x-2 bottom-0 top-6 -z-[1] rounded-[28px] opacity-25 blur-2xl transition-opacity duration-300 group-hover:opacity-55"
+        style={{ background: "var(--gradient-prism)" }}
+      />
+      <motion.button
+        type="button"
+        onClick={onOpen}
+        layoutId={`pub-card-${app.id}`}
+        whileHover={{ y: -5 }}
+        whileTap={{ scale: 0.985 }}
+        transition={springs.bouncy}
+        className="w-full overflow-hidden rounded-2xl text-left"
+        style={{
+          background: "rgba(255,255,255,0.9)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          boxShadow: token.elev[1],
+          borderRadius: 20,
+        }}
+      >
+      {/* Thumbnail — gradient field with a floating glassy card */}
+      <motion.div
+        layoutId={`pub-thumb-${app.id}`}
         className="relative h-[150px] w-full overflow-hidden border-b border-[rgba(0,0,0,0.05)]"
         style={{ background: t.grad }}
       >
@@ -243,7 +261,7 @@ function PublicAppCard({ app, onOpen }: { app: PublicApp; onOpen: () => void }) 
           style={{ background: t.accent }}
         />
         <Thumbnail module={app.category} />
-      </div>
+      </motion.div>
 
       {/* Content */}
       <div className="p-4">
@@ -269,7 +287,8 @@ function PublicAppCard({ app, onOpen }: { app: PublicApp; onOpen: () => void }) 
           <span className="ml-auto">{app.category}</span>
         </div>
       </div>
-    </button>
+      </motion.button>
+    </div>
   );
 }
 
@@ -289,19 +308,31 @@ function PreviewModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[450] bg-black/35 backdrop-blur-[2px]"
+        transition={{ duration: 0.2, ease: easings.exit }}
+        className="fixed inset-0 z-[450] bg-black/25 backdrop-blur-[6px]"
         onClick={onClose}
       />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.97, y: 8 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.97, y: 8 }}
-        transition={{ duration: 0.17, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed left-1/2 top-1/2 z-[460] w-[480px] max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white"
-        style={{ boxShadow: "0 24px 70px rgba(0,0,0,0.25)" }}
+      {/* flex container centers the panel without translate transforms so the
+          shared-element layout zoom from the gallery card stays continuous */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[460] flex items-center justify-center p-4"
       >
-        {/* Hero thumbnail */}
-        <div
+      <motion.div
+        layoutId={`pub-card-${app.id}`}
+        transition={springs.bouncy}
+        className="pointer-events-auto w-[480px] max-w-[calc(100vw-32px)] overflow-hidden"
+        style={{
+          background: "rgba(255,255,255,0.92)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.08), 0 32px 90px rgba(0,0,0,0.22)",
+          borderRadius: 30,
+        }}
+      >
+        {/* Hero thumbnail — same shared element as the card's thumb */}
+        <motion.div
+          layoutId={`pub-thumb-${app.id}`}
+          transition={springs.bouncy}
           className="relative h-[140px] w-full overflow-hidden border-b border-[rgba(0,0,0,0.05)]"
           style={{ background: t.grad }}
         >
@@ -316,9 +347,15 @@ function PreviewModal({
           >
             <X className="h-4 w-4" />
           </button>
-        </div>
+        </motion.div>
 
-        <div className="max-h-[52vh] space-y-4 overflow-y-auto p-5">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, delay: 0.06 }}
+          className="max-h-[52vh] space-y-4 overflow-y-auto p-5"
+        >
           <div>
             <div className="flex items-center gap-2">
               <span className="text-base leading-none">{app.icon}</span>
@@ -368,7 +405,7 @@ function PreviewModal({
             </p>
             <p className="text-[12.5px] leading-[1.5] text-[#636363]">{app.prompt}</p>
           </div>
-        </div>
+        </motion.div>
 
         <div className="flex items-center justify-end gap-2 border-t border-[rgba(0,0,0,0.08)] px-5 py-3.5">
           <button
@@ -386,6 +423,7 @@ function PreviewModal({
           </button>
         </div>
       </motion.div>
+      </div>
     </>
   );
 }
