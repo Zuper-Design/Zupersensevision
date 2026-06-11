@@ -1,14 +1,44 @@
 import { useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Search, Check, ChevronDown, Globe, Users, Lock, CheckCircle2 } from 'lucide-react';
+import {
+  X, Search, Check, ChevronDown, Globe, Users, Lock, CheckCircle2,
+  Wallet, Ruler, Calculator, Mail, BarChart3, FolderKanban,
+  Wrench, Calendar, Home, Package, Zap, Hammer,
+  type LucideIcon,
+} from 'lucide-react';
 
 export type Role = 'Owner' | 'Admin' | 'Editor' | 'Viewer';
 
 const WORKSPACES = ['Work', 'CRM', 'Finance', 'Field Service'];
 
-// icon choices for the app — emoji, picked next to Name
-const APP_ICONS = ['💰', '📐', '🧮', '📨', '📊', '🗂️', '🔧', '📅', '🏠', '📦', '⚡', '🛠️'];
+// icon choices for the app — lucide glyphs, picked next to Name. The `key` is
+// the stable string stored/emitted via onPublish; `Icon` is the rendered glyph.
+const APP_ICONS: { key: string; Icon: LucideIcon }[] = [
+  { key: 'wallet', Icon: Wallet },
+  { key: 'ruler', Icon: Ruler },
+  { key: 'calculator', Icon: Calculator },
+  { key: 'mail', Icon: Mail },
+  { key: 'chart', Icon: BarChart3 },
+  { key: 'board', Icon: FolderKanban },
+  { key: 'wrench', Icon: Wrench },
+  { key: 'calendar', Icon: Calendar },
+  { key: 'home', Icon: Home },
+  { key: 'package', Icon: Package },
+  { key: 'zap', Icon: Zap },
+  { key: 'hammer', Icon: Hammer },
+];
+// legacy emoji icons (from buildData) → lucide key, so apps opened with an
+// emoji icon still land on a sensible glyph in the picker.
+const EMOJI_TO_KEY: Record<string, string> = {
+  '💰': 'wallet', '💸': 'wallet', '📐': 'ruler', '🧮': 'calculator',
+  '📨': 'mail', '📊': 'chart', '📈': 'chart', '🗂️': 'board', '🔧': 'wrench',
+  '🛠️': 'hammer', '📅': 'calendar', '🏠': 'home', '📦': 'package', '⚡': 'zap',
+};
+const normalizeIconKey = (k: string): string =>
+  APP_ICONS.some((i) => i.key === k) ? k : (EMOJI_TO_KEY[k] ?? 'wallet');
+const iconForKey = (key: string): LucideIcon =>
+  APP_ICONS.find((i) => i.key === key)?.Icon ?? Wallet;
 
 // ── People directory for the "selected users" checklist ─────────────────────
 export interface Person {
@@ -153,9 +183,10 @@ const MODES: { v: Mode; label: string; icon: typeof Lock }[] = [
   { v: 'selected', label: 'Selected users', icon: Users },
 ];
 
-export function PublishAppDialog({ appName, appIcon = '💰', onClose, onPublish }: Props) {
+export function PublishAppDialog({ appName, appIcon = 'wallet', onClose, onPublish }: Props) {
   const [name, setName] = useState(appName);
-  const [icon, setIcon] = useState(appIcon);
+  const [icon, setIcon] = useState(normalizeIconKey(appIcon));
+  const IconCmp = iconForKey(icon);
   const [iconOpen, setIconOpen] = useState(false);
   const iconBtnRef = useRef<HTMLButtonElement>(null);
   const [iconPos, setIconPos] = useState<{ top: number; left: number } | null>(null);
@@ -227,9 +258,9 @@ export function PublishAppDialog({ appName, appIcon = '💰', onClose, onPublish
         {/* header */}
         <div className="flex items-center justify-between border-b border-[#F0F0F2] px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F4F4F2] text-[16px]">{icon}</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F4F4F2]"><IconCmp className="h-[18px] w-[18px] text-[#1C1E21]" /></span>
             <div>
-              <h3 className="text-[15.5px] font-semibold leading-tight tracking-[-0.01em] text-[#1C1E21]">Publish this app for</h3>
+              <h3 className="text-[15.5px] font-semibold leading-tight tracking-[-0.01em] text-[#1C1E21]">Publish this app</h3>
               <p className="text-[12.5px] text-[#9CA3AF]">Choose who can open and respond to this app</p>
             </div>
           </div>
@@ -264,10 +295,10 @@ export function PublishAppDialog({ appName, appIcon = '💰', onClose, onPublish
               ref={iconBtnRef}
               type="button"
               onClick={() => setIconOpen((o) => !o)}
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[#E6E8EC] bg-white text-[18px] transition-colors hover:border-[#C9CDD4]"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[#E6E8EC] bg-white transition-colors hover:border-[#C9CDD4]"
               title="Choose an icon"
             >
-              {icon}
+              <IconCmp className="h-5 w-5 text-[#1C1E21]" />
             </button>
             {iconOpen && iconPos && createPortal(
               <>
@@ -276,11 +307,11 @@ export function PublishAppDialog({ appName, appIcon = '💰', onClose, onPublish
                   className="fixed z-[1500] grid grid-cols-6 gap-1 rounded-lg border border-[#E6E8EC] bg-white p-2"
                   style={{ top: iconPos.top, left: iconPos.left, boxShadow: '0 12px 32px -12px rgba(28,30,33,0.22)' }}
                 >
-                  {APP_ICONS.map((e) => (
-                    <button key={e} type="button" onClick={() => { setIcon(e); setIconOpen(false); }}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-[18px] transition-colors hover:bg-[#F4F4F2]"
-                      style={{ background: e === icon ? '#EFEFEC' : 'transparent' }}>
-                      {e}
+                  {APP_ICONS.map(({ key, Icon }) => (
+                    <button key={key} type="button" onClick={() => { setIcon(key); setIconOpen(false); }}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-[#F4F4F2]"
+                      style={{ background: key === icon ? '#EFEFEC' : 'transparent' }}>
+                      <Icon className="h-[18px] w-[18px] text-[#1C1E21]" />
                     </button>
                   ))}
                 </div>
